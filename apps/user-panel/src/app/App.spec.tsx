@@ -4,7 +4,7 @@ import App from './App'
 describe(App.name, () => {
   it('renders learn react link', () => {
     render(<App />)
-    const linkElement = screen.getByText(/learn react/i)
+    const linkElement = screen.getByText(/Electron communication test/i)
     expect(linkElement).toBeInTheDocument()
   })
 })
