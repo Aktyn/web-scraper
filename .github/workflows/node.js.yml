@@ -9,9 +9,6 @@ on:
 jobs:
   setup:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: [ 18.x ]
     steps:
       - name: Install dependencies
         run: npm install
