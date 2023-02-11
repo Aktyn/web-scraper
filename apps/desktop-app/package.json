@@ -15,6 +15,7 @@
     "lint": "eslint src/**/*.ts --fix"
   },
   "dependencies": {
+    "@web-scrapper/common": "^1.0.0",
     "electron": "^23.0.0",
     "electron-is-dev": "^2.0.0"
   },

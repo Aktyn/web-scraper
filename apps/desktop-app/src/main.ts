@@ -5,8 +5,8 @@ import isDev from 'electron-is-dev'
 
 function createWindow() {
   const win = new BrowserWindow({
-    width: 800,
-    height: 600,
+    width: 1024,
+    height: 720,
     webPreferences: {
       nodeIntegration: true,
     },
@@ -20,7 +20,7 @@ function createWindow() {
     .catch(console.error)
   // Open the DevTools.
   if (isDev) {
-    win.webContents.openDevTools({ mode: 'detach' })
+    win.webContents.openDevTools({ mode: 'bottom' })
   }
 }
 
