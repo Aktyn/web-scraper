@@ -7,31 +7,32 @@ on:
     branches: [ "main" ]
 
 jobs:
-  setup:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Install dependencies
-        run: npm install
+  deploy:
 
-  lint-check:
-    needs: setup
     runs-on: ubuntu-latest
-    steps:
-      - name: Check code with linter
-        run: npm run lint
 
-  build:
-    needs: lint-check
-    runs-on: ubuntu-latest
-    steps:
-      - name: Build all projects
-        run: npm run build
+    strategy:
+      matrix:
+        node-version: [18.x]
 
-  test:
-    needs: build
-    runs-on: ubuntu-latest
     steps:
-      - name: Run all tests
-        run: npm run test
-        env:
-          CI: true
+    - uses: actions/checkout@v3
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: npm install
+
+    - name: Check code with linter
+      run: npm run lint
+
+    - name: Build all projects
+      run: npm run build
+
+    - name: Run all tests
+      run: npm run test
+      env:
+        CI: true
