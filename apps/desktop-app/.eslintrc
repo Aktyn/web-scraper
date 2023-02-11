@@ -133,7 +133,7 @@
         }
       }
     ],
-    "no-console": "warn",
+    'no-console': ['warn', { allow: ['warn', 'error'] }],
     "@typescript-eslint/no-explicit-any": "error",
     "import/no-extraneous-dependencies": [
       "error",
