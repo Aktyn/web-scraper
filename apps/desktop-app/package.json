@@ -1,0 +1,32 @@
+{
+  "name": "@web-scrapper/desktop-app",
+  "version": "1.0.0",
+  "description": "",
+  "main": "./dist/main.js",
+  "private": true,
+  "scripts": {
+    "build": "tsc -p ./tsconfig.json",
+    "start": "node ./dist/main.js",
+    "dev": "cross-env NODE_ENV=dev nodemon --legacy-watch ./src/**/* --exec \"npm run build && npm run start\" -e ts",
+    "test": "vitest --watch=false",
+    "test:watch": "vitest",
+    "test:ci": "vitest --coverage --threads=false --watch=false --reporter=default --reporter=junit",
+    "format": "prettier --write src/**/*{.ts,.tsx}",
+    "lint": "eslint src/**/*.ts --fix"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^5.51.0",
+    "@typescript-eslint/parser": "^5.51.0",
+    "@vitest/coverage-c8": "^0.28.4",
+    "cross-env": "^7.0.3",
+    "electron": "^23.0.0",
+    "eslint": "^8.34.0",
+    "eslint-config-prettier": "^8.6.0",
+    "eslint-import-resolver-typescript": "^3.5.3",
+    "eslint-plugin-import": "^2.27.5",
+    "eslint-plugin-prettier": "^4.2.1",
+    "nodemon": "^2.0.20",
+    "typescript": "^4.9.5",
+    "vitest": "^0.28.4"
+  }
+}

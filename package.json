@@ -1,0 +1,36 @@
+{
+  "name": "web-scraper",
+  "version": "1.0.0",
+  "private": true,
+  "author": "Aktyn",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Aktyn/web-scraper.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Aktyn/web-scraper/issues"
+  },
+  "homepage": "https://github.com/Aktyn/web-scrapers#readme",
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev",
+    "test": "turbo run test",
+    "test:ci": "turbo run test:ci",
+    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
+    "lint": "turbo run lint"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "prettier": "^2.8.4",
+    "turbo": "^1.7.4"
+  },
+  "engines": {
+    "npm": ">=7.0.0",
+    "node": ">=14.0.0"
+  },
+  "packageManager": "npm@8.19.2"
+}
