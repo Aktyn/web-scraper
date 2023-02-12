@@ -1,15 +1,19 @@
 import path from 'path'
 
-import { app, BrowserWindow, ipcMain } from 'electron'
+import { ElectronToRendererMessage, RendererToElectronMessage } from '@web-scrapper/common'
+import { app, ipcMain } from 'electron'
 import isDev from 'electron-is-dev'
 
+import { ExtendedBrowserWindow } from './extendedBrowserWindow'
+
+// import './types/electronApiDeclaration'
+
 function createWindow() {
-  const mainWindow = new BrowserWindow({
+  const mainWindow = new ExtendedBrowserWindow({
     width: 1024,
     height: 720,
     title: 'Web Scraper',
     webPreferences: {
-      // nodeIntegration: true,
       preload: path.join(__dirname, 'preload.js'),
     },
   })
@@ -25,25 +29,25 @@ function createWindow() {
     mainWindow.webContents.openDevTools({ mode: 'bottom' })
   }
 
-  let tempCounter = 0
-  ipcMain.handle('dummyEvent', () => {
-    // eslint-disable-next-line no-console
-    console.log('dummyEvent')
-    return tempCounter++
-  })
-
   // Emit dummy event every second
   let tempCounter2 = 0
   setInterval(() => {
-    mainWindow.webContents.send('dummyEventFromMain', tempCounter2++)
+    mainWindow.sendMessage(ElectronToRendererMessage.dummyEventFromMain, tempCounter2++)
   }, 1000)
 }
 
 app.whenReady().then(() => {
   createWindow()
 
+  let tempCounter = 0
+  ipcMain.handle(RendererToElectronMessage.dummyEvent, () => {
+    // eslint-disable-next-line no-console
+    console.log('dummyEvent')
+    return tempCounter++
+  })
+
   app.on('activate', () => {
-    if (BrowserWindow.getAllWindows().length === 0) {
+    if (ExtendedBrowserWindow.getAllWindows().length === 0) {
       createWindow()
     }
   })

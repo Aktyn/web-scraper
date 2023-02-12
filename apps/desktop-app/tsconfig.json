@@ -1,24 +1,18 @@
 {
-  "include": [
-    "./src"
-  ],
-  "exclude": [
-    "./node_modules",
-    "./dist"
-  ],
+  "include": ["./src"],
+  "exclude": ["./node_modules", "./dist"],
   "compilerOptions": {
     "target": "ES2020",
     "module": "commonjs",
     "moduleResolution": "node",
-    "lib": [
-      "es6",
-      "dom"
-    ],
-    "allowSyntheticDefaultImports": true,
+    "lib": ["es6", "dom"],
     "allowJs": false,
     "outDir": "./dist",
     "rootDir": "./src",
     "baseUrl": "./src",
+    "paths": {
+      "~/*": ["./src/*"]
+    },
     "removeComments": true,
     "strict": true,
     "strictNullChecks": false,
@@ -31,6 +25,7 @@
     "noFallthroughCasesInSwitch": true,
     "resolveJsonModule": true,
     "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
     "experimentalDecorators": true
   },
   "ts-node": {

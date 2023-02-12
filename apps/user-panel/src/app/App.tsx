@@ -6,7 +6,6 @@ function App() {
   const [valueFromElectron, setValueFromElectron] = useState(0)
 
   useEffect(() => {
-    //@ts-expect-error No type definitions for electronAPI
     window.electronAPI.dummyEventFromMain((event, value) => {
       // eslint-disable-next-line no-console
       console.log('Event from electron:', event, value)
@@ -16,7 +15,6 @@ function App() {
   }, [])
 
   const handleElectronCommunicationTest = async () => {
-    //@ts-expect-error No type definitions for electronAPI
     const response = await window.electronAPI.dummyEvent()
     setResponseValue(response)
     // eslint-disable-next-line no-console

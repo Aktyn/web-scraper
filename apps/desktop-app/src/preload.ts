@@ -1,7 +1,31 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import type { ElectronApi } from '@web-scrapper/common'
 import { contextBridge, ipcRenderer, type IpcRendererEvent } from 'electron'
 
-contextBridge.exposeInMainWorld('electronAPI', {
-  dummyEvent: (): Promise<number> => ipcRenderer.invoke('dummyEvent'),
-  dummyEventFromMain: (callback: (event: IpcRendererEvent, value: number) => void) =>
-    ipcRenderer.on('dummyEventFromMain', callback),
-})
+const electronToRendererMessageNames = ['dummyEventFromMain'] as const
+const rendererToElectronMessageNames = ['dummyEvent'] as const
+
+const api = {
+  ...electronToRendererMessageNames.reduce(
+    (acc, messageName) => {
+      acc[messageName] = (callback) => ipcRenderer.on(messageName, callback)
+      return acc
+    },
+    {} as {
+      [key in (typeof electronToRendererMessageNames)[number]]: (
+        callback: (event: IpcRendererEvent, ...args: any[]) => void,
+      ) => void
+    },
+  ),
+  ...rendererToElectronMessageNames.reduce(
+    (acc, messageName) => {
+      acc[messageName] = () => ipcRenderer.invoke(messageName)
+      return acc
+    },
+    {} as {
+      [key in (typeof rendererToElectronMessageNames)[number]]: () => Promise<any>
+    },
+  ),
+} satisfies ElectronApi
+
+contextBridge.exposeInMainWorld('electronAPI', api)
