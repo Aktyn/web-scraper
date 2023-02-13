@@ -22,3 +22,7 @@ tsconfig.tsbuildinfo
 dist/
 lib/
 build/
+
+# Sqlite3 databases
+*.db
+*.db-journal

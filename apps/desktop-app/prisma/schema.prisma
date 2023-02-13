@@ -1,0 +1,45 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Tag {
+  id          Int        @id @default(autoincrement())
+  name        String     @unique
+  description String?
+  sites       SiteTags[]
+}
+
+model Site {
+  id       Int        @id @default(autoincrement())
+  url      String?    @unique
+  language String?
+  tags     SiteTags[]
+
+  Account Account?
+}
+
+model SiteTags {
+  tagId  Int
+  Tag    Tag  @relation(fields: [tagId], references: [id])
+  siteId Int
+  Site   Site @relation(fields: [siteId], references: [id])
+
+  @@id([tagId, siteId])
+}
+
+model Account {
+  id                        Int       @id @default(autoincrement())
+  loginOrEmail              String
+  password                  String
+  additionalCredentialsData String?
+  lastUsed                  DateTime?
+  active                    Boolean?  @default(true)
+
+  siteId Int  @unique
+  Site   Site @relation(fields: [siteId], references: [id])
+}

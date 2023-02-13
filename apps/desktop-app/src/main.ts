@@ -1,16 +1,26 @@
+import * as dotenv from 'dotenv'
+import * as dotenvExpand from 'dotenv-expand'
+
+const myEnv = dotenv.config()
+dotenvExpand.expand(myEnv)
+
+// eslint-disable-next-line import/order
 import path from 'path'
 
+// eslint-disable-next-line import/order
 import { ElectronToRendererMessage, RendererToElectronMessage } from '@web-scrapper/common'
 import { app, ipcMain } from 'electron'
 import isDev from 'electron-is-dev'
 
+import { getTags } from './database'
 import { ExtendedBrowserWindow } from './extendedBrowserWindow'
 
-// import './types/electronApiDeclaration'
+// eslint-disable-next-line no-console
+console.info('Local database path:', process.env.DATABASE_URL)
 
 function createWindow() {
   const mainWindow = new ExtendedBrowserWindow({
-    width: 1024,
+    width: 1280,
     height: 720,
     title: 'Web Scraper',
     webPreferences: {
@@ -28,6 +38,10 @@ function createWindow() {
   if (isDev) {
     mainWindow.webContents.openDevTools({ mode: 'bottom' })
   }
+
+  getTags().then((tags) => {
+    console.log('Tags:', tags)
+  })
 
   // Emit dummy event every second
   let tempCounter2 = 0
@@ -58,3 +72,13 @@ app.on('window-all-closed', () => {
     app.quit()
   }
 })
+
+// main()
+//   .then(async () => {
+//     await prisma.$disconnect()
+//   })
+//   .catch(async (e) => {
+//     console.error(e)
+//     await prisma.$disconnect()
+//     process.exit(1)
+//   })

@@ -11,17 +11,30 @@
     "url": "https://github.com/Aktyn/web-scraper/issues"
   },
   "homepage": "https://github.com/Aktyn/web-scrapers#readme",
-  "workspaces": [
-    "packages/*",
-    "apps/*"
-  ],
+  "workspaces": {
+    "nohoist": [
+      "**/@prisma",
+      "**/@prisma/**",
+      "**/@prisma/client",
+      "@prisma/client",
+      "dotenv",
+      "**/dotenv",
+      "**/dotenv/**",
+      "dotenv-expand",
+      "**/dotenv-expand",
+      "**/dotenv-expand/**"
+    ],
+    "packages": ["packages/*", "apps/*"]
+  },
   "scripts": {
     "build": "turbo run build",
     "dev": "turbo run dev",
+    "db:generate": "turbo run db:generate",
     "test": "turbo run test",
     "test:ci": "turbo run test:ci",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
-    "lint": "turbo run lint"
+    "lint": "turbo run lint",
+    "env": "turbo run env"
   },
   "dependencies": {},
   "devDependencies": {
