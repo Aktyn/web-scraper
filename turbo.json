@@ -12,7 +12,7 @@
       "dependsOn": ["^build"],
       "cache": false
     },
-    "db:reset": {
+    "db:generate:reset": {
       "dependsOn": ["^build"],
       "cache": false
     },
