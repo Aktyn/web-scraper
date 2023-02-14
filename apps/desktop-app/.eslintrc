@@ -1,8 +1,5 @@
 {
-  "plugins": [
-    "prettier",
-    "import"
-  ],
+  "plugins": ["prettier", "import"],
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
     "project": "tsconfig.json",
@@ -23,10 +20,7 @@
   },
   "settings": {
     "import/parsers": {
-      "@typescript-eslint/parser": [
-        ".ts",
-        ".tsx"
-      ]
+      "@typescript-eslint/parser": [".ts", ".tsx"]
     },
     "import/resolver": {
       "typescript": {}
@@ -61,71 +55,34 @@
       "error",
       {
         "selector": "variable",
-        "modifiers": [
-          "const",
-          "destructured",
-          "global"
-        ],
-        "format": [
-          "strictCamelCase"
-        ]
+        "modifiers": ["const", "destructured", "global"],
+        "format": ["strictCamelCase"]
       },
       {
         "selector": "variable",
-        "modifiers": [
-          "exported"
-        ],
-        "types": [
-          "boolean",
-          "string",
-          "number",
-          "array"
-        ],
-        "format": [
-          "UPPER_CASE"
-        ]
+        "modifiers": ["exported"],
+        "types": ["boolean", "string", "number", "array"],
+        "format": ["UPPER_CASE"]
       },
       {
         "selector": "function",
         // allow StrictPascalCase for decorators
-        "format": [
-          "strictCamelCase",
-          "StrictPascalCase"
-        ]
+        "format": ["strictCamelCase", "StrictPascalCase"]
       },
       {
-        "selector": [
-          "class",
-          "interface",
-          "typeAlias"
-        ],
-        "format": [
-          "StrictPascalCase"
-        ]
+        "selector": ["class", "interface", "typeAlias"],
+        "format": ["StrictPascalCase"]
       },
       {
         "selector": "typeParameter",
-        "format": [
-          "PascalCase"
-        ]
+        "format": ["PascalCase"]
       }
     ],
     "import/order": [
       "error",
       {
-        "pathGroupsExcludedImportTypes": [
-          "builtin"
-        ],
-        "groups": [
-          "builtin",
-          "external",
-          "internal",
-          "parent",
-          [
-            "sibling",
-            "index"
-          ]
-        ],
+        "pathGroupsExcludedImportTypes": ["builtin"],
+        "groups": ["builtin", "external", "internal", "parent", ["sibling", "index"]],
         "newlines-between": "always",
         "alphabetize": {
           "order": "asc",
@@ -133,17 +90,12 @@
         }
       }
     ],
-    'no-console': ['warn', { allow: ['warn', 'error'] }],
+    "no-console": ["warn", { "allow": ["warn", "error"] }],
     "@typescript-eslint/no-explicit-any": "error",
     "import/no-extraneous-dependencies": [
       "error",
       {
-        "devDependencies": [
-          "**/*.test.ts",
-          "**/*.spec.ts",
-          "**/*.test.tsx",
-          "src/test-utils/**"
-        ]
+        "devDependencies": ["**/*.test.ts", "**/*.spec.ts", "**/*.test.tsx", "src/test-utils/**"]
       }
     ],
     "@typescript-eslint/explicit-module-boundary-types": "off",
@@ -155,18 +107,11 @@
   },
   "overrides": [
     {
-      "files": [
-        "*.test.ts",
-        "*.spec.ts",
-        "**/test-utils/**"
-      ],
+      "files": ["*.test.ts", "*.spec.ts", "**/test-utils/**"],
       "rules": {
-        "@typescript-eslint/no-explicit-any": [
-          0
-        ],
-        "@typescript-eslint/no-non-null-assertion": [
-          0
-        ]
+        "@typescript-eslint/no-explicit-any": [0],
+        "@typescript-eslint/no-non-null-assertion": [0],
+        "import/no-extraneous-dependencies": [0]
       }
     }
   ]

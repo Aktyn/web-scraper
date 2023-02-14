@@ -1,7 +1,9 @@
-import * as tags from './tags'
+import prisma from './client'
+import * as siteTags from './siteTags'
 
 const Database = {
-  tags,
+  prisma,
+  siteTags,
 }
 
 export default Database

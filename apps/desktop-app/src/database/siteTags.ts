@@ -1,10 +1,8 @@
-import { PrismaClient } from '@prisma/client'
-
-const prisma = new PrismaClient()
+import Database from './index'
 
 export async function getSiteTags() {
   try {
-    return await prisma.siteTag.findMany({
+    return await Database.prisma.siteTag.findMany({
       select: {
         name: true,
         description: true,

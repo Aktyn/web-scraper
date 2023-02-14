@@ -47,8 +47,8 @@ function createWindow() {
   setInterval(() => {
     mainWindow.sendMessage(ElectronToRendererMessage.dummyEventFromMain, tempCounter2++)
 
-    Database.tags.getSiteTags().then((tags) => {
-      console.log('Tags:', tags)
+    Database.siteTags.getSiteTags().then((siteTags) => {
+      console.log('Tags:', siteTags)
     })
   }, 1000)
 }
