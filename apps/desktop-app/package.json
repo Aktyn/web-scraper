@@ -10,6 +10,7 @@
     "start": "electron ./dist/main.js",
     "dev": "cross-env NODE_ENV=dev nodemon --legacy-watch ./src/**/* --exec \"npm run build && npm run start\" -e ts",
     "db:generate": "prisma generate",
+    "db:reset": "cross-env npm run db:generate && rm ./external/main.db -f && touch ./external/main.db && prisma migrate resolve --applied 0_init && prisma db push",
     "db:format": "prisma format",
     "test": "vitest --watch=false",
     "test:watch": "vitest",

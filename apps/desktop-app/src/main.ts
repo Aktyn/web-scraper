@@ -12,11 +12,14 @@ import { ElectronToRendererMessage, RendererToElectronMessage } from '@web-scrap
 import { app, ipcMain } from 'electron'
 import isDev from 'electron-is-dev'
 
-import { getTags } from './database'
+import Database from './database'
 import { ExtendedBrowserWindow } from './extendedBrowserWindow'
 
 // eslint-disable-next-line no-console
-console.info('Local database path:', process.env.DATABASE_URL)
+console.info(
+  'Local database path:',
+  path.join(path.resolve('./prisma'), process.env.DATABASE_URL?.replace(/file:/i, '') ?? '.'),
+)
 
 function createWindow() {
   const mainWindow = new ExtendedBrowserWindow({
@@ -39,14 +42,14 @@ function createWindow() {
     mainWindow.webContents.openDevTools({ mode: 'bottom' })
   }
 
-  getTags().then((tags) => {
-    console.log('Tags:', tags)
-  })
-
   // Emit dummy event every second
   let tempCounter2 = 0
   setInterval(() => {
     mainWindow.sendMessage(ElectronToRendererMessage.dummyEventFromMain, tempCounter2++)
+
+    Database.tags.getSiteTags().then((tags) => {
+      console.log('Tags:', tags)
+    })
   }, 1000)
 }
 

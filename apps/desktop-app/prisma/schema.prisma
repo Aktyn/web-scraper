@@ -7,25 +7,25 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Tag {
+model SiteTag {
   id          Int        @id @default(autoincrement())
   name        String     @unique
   description String?
-  sites       SiteTags[]
+  sites       SiteTagsRelation[]
 }
 
 model Site {
   id       Int        @id @default(autoincrement())
   url      String?    @unique
   language String?
-  tags     SiteTags[]
+  tags     SiteTagsRelation[]
 
   Account Account?
 }
 
-model SiteTags {
+model SiteTagsRelation {
   tagId  Int
-  Tag    Tag  @relation(fields: [tagId], references: [id])
+  Tag    SiteTag  @relation(fields: [tagId], references: [id])
   siteId Int
   Site   Site @relation(fields: [siteId], references: [id])
 

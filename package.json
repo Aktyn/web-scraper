@@ -30,6 +30,7 @@
     "build": "turbo run build",
     "dev": "turbo run dev",
     "db:generate": "turbo run db:generate",
+    "db:reset": "turbo run db:reset",
     "test": "turbo run test",
     "test:ci": "turbo run test:ci",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",

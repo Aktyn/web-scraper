@@ -1,5 +1,5 @@
 -- CreateTable
-CREATE TABLE "Tag" (
+CREATE TABLE "SiteTag" (
     "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     "name" TEXT NOT NULL,
     "description" TEXT
@@ -13,13 +13,13 @@ CREATE TABLE "Site" (
 );
 
 -- CreateTable
-CREATE TABLE "SiteTags" (
+CREATE TABLE "SiteTagsRelation" (
     "tagId" INTEGER NOT NULL,
     "siteId" INTEGER NOT NULL,
 
     PRIMARY KEY ("tagId", "siteId"),
-    CONSTRAINT "SiteTags_tagId_fkey" FOREIGN KEY ("tagId") REFERENCES "Tag" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
-    CONSTRAINT "SiteTags_siteId_fkey" FOREIGN KEY ("siteId") REFERENCES "Site" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
+    CONSTRAINT "SiteTagsRelation_tagId_fkey" FOREIGN KEY ("tagId") REFERENCES "SiteTag" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
+    CONSTRAINT "SiteTagsRelation_siteId_fkey" FOREIGN KEY ("siteId") REFERENCES "Site" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
 -- CreateTable
@@ -35,7 +35,7 @@ CREATE TABLE "Account" (
 );
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Tag_name_key" ON "Tag"("name");
+CREATE UNIQUE INDEX "SiteTag_name_key" ON "SiteTag"("name");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Site_url_key" ON "Site"("url");
