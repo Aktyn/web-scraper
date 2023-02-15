@@ -26,9 +26,12 @@
     "dotenv-expand": "^10.0.0",
     "electron": "^23.0.0",
     "electron-is-dev": "^2.0.0",
+    "puppeteer": "^19.7.0",
+    "random-useragent": "^0.5.0",
     "sqlite3": "^5.1.4"
   },
   "devDependencies": {
+    "@types/random-useragent": "^0.3.1",
     "@typescript-eslint/eslint-plugin": "^5.52.0",
     "@typescript-eslint/parser": "^5.52.0",
     "@vitest/coverage-c8": "^0.28.5",

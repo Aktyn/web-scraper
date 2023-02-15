@@ -93,7 +93,7 @@
     "no-console": ["warn", { "allow": ["warn", "error"] }],
     "@typescript-eslint/no-explicit-any": "error",
     "import/no-extraneous-dependencies": [
-      "error",
+      "warn",
       {
         "devDependencies": ["**/*.test.ts", "**/*.spec.ts", "**/*.test.tsx", "src/test-utils/**"]
       }

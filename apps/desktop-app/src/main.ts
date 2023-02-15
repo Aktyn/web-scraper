@@ -12,12 +12,15 @@ import {
   ElectronToRendererMessage,
   RendererToElectronMessage,
   safePromise,
+  wait,
 } from '@web-scrapper/common'
 import { app, ipcMain } from 'electron'
 import isDev from 'electron-is-dev'
 
 import Database from './database'
 import { ExtendedBrowserWindow } from './extendedBrowserWindow'
+import { Scraper } from './scraper'
+import ScraperBrowser from './scraper/scraperBrowser'
 
 // eslint-disable-next-line no-console
 console.info(
@@ -55,6 +58,16 @@ function createWindow() {
   setInterval(() => {
     mainWindow.sendMessage(ElectronToRendererMessage.dummyEventFromMain, ++tempCounter2)
   }, 1000)
+
+  // Test scraper
+  ;(async () => {
+    const scraper = new Scraper()
+    await scraper.init()
+
+    await wait(30_000)
+    await scraper.destroy()
+    // await ScraperBrowser.destroy()
+  })()
 }
 
 app.whenReady().then(() => {
