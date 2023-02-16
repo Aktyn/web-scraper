@@ -62,7 +62,6 @@ export default class ScraperBrowser {
         product: 'chrome',
         userDataDir: '', //TODO
       }),
-      null,
     ).then(async (browser) => {
       if (!browser) {
         throw new Error('Error during browser initialization')

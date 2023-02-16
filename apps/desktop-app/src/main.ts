@@ -20,7 +20,6 @@ import isDev from 'electron-is-dev'
 import Database from './database'
 import { ExtendedBrowserWindow } from './extendedBrowserWindow'
 import { Scraper } from './scraper'
-import ScraperBrowser from './scraper/scraperBrowser'
 
 // eslint-disable-next-line no-console
 console.info(
@@ -30,9 +29,18 @@ console.info(
 
 function createWindow() {
   const mainWindow = new ExtendedBrowserWindow({
+    title: 'Web Scraper',
+    // icon: path.join(__dirname, 'assets/icon.png'), //TODO: add icon
     width: 1280,
     height: 720,
-    title: 'Web Scraper',
+    minWidth: 640,
+    minHeight: 360,
+    useContentSize: true,
+    center: true,
+    autoHideMenuBar: true,
+    backgroundColor: '#00838F',
+    roundedCorners: true,
+    darkTheme: true,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
     },

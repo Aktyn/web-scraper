@@ -55,7 +55,7 @@ export const App = () => {
       setTimeout(onViewLeavingTransitionEnd, Config.VIEW_TRANSITION_DURATION / 2)
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [],
+    [viewTransitionState],
   )
 
   const theme = useMemo(() => {
