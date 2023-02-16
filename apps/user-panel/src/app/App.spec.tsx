@@ -1,8 +1,26 @@
 import { render, screen } from '@testing-library/react'
 import { vi } from 'vitest'
-import App from './App'
+import { App } from './App'
 
 describe(App.name, () => {
+  //TODO
+
+  // useEffect(() => {
+  //   window.electronAPI.dummyEventFromMain((event, value) => {
+  //     // eslint-disable-next-line no-console
+  //     console.log('Event from electron:', event, value)
+  //     setValueFromElectron(value)
+  //     // event.sender.send('responseEvent', 1)
+  //   })
+  // }, [])
+  //
+  // const handleElectronCommunicationTest = async () => {
+  //   const response = await window.electronAPI.dummyEvent()
+  //   setResponseValue(response)
+  //   // eslint-disable-next-line no-console
+  //   console.log('Electron response:', response)
+  // }
+
   beforeAll(() => {
     Object.assign(window, {
       electronAPI: {

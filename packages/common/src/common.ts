@@ -1,30 +1,25 @@
-export const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
-
-export const waitFor = async (
-  condition: () => Promise<boolean>,
-  interval = 500,
-  timeout = 10000,
-) => {
-  const start = Date.now()
-  // eslint-disable-next-line no-constant-condition
-  while (true) {
-    await wait(interval)
-    if (await condition()) {
-      break
-    }
-    if (Date.now() - start > timeout) {
-      throw new Error('Timeout')
-    }
+export function pick<ObjectType, Key extends Extract<keyof ObjectType, string>>(
+  object: ObjectType,
+  ...keys: Key[]
+) {
+  const picked = {} as Pick<ObjectType, Key>
+  for (const key of keys) {
+    picked[key] = object[key]
   }
+  return picked
 }
 
-export async function safePromise<DataType, FallbackDataType>(
-  promise: Promise<DataType>,
-  fallbackData?: FallbackDataType,
+export function omit<ObjectType, Key extends Extract<keyof ObjectType, string>>(
+  object: ObjectType,
+  ...keys: Key[]
 ) {
-  try {
-    return await promise
-  } catch {
-    return fallbackData as FallbackDataType extends DataType ? DataType : FallbackDataType
+  const omitted = {} as Omit<ObjectType, Key>
+  const keysSet = new Set<Extract<keyof ObjectType, string>>(keys)
+  for (const objectKey in object) {
+    if (!keysSet.has(objectKey)) {
+      omitted[objectKey as unknown as Exclude<keyof ObjectType, Key>] =
+        object[objectKey as unknown as Exclude<keyof ObjectType, Key>]
+    }
   }
+  return omitted
 }

@@ -1,10 +1,10 @@
 import { describe, expect, it } from 'vitest'
 
-import { int } from './parsers'
+import { float, int, tryParseJSON } from './parsers'
 
 describe('int', () => {
   it('should return 0 when value is undefined', () => {
-    expect(int()).toEqual(0)
+    expect(int(undefined)).toEqual(0)
   })
 
   it('should return 0 when value is empty string', () => {
@@ -21,5 +21,33 @@ describe('int', () => {
 
   it('should return the number when value is a number with decimals', () => {
     expect(int('123.456')).toEqual(123)
+  })
+})
+
+describe('float', () => {
+  it('should return 0 when value is undefined', () => {
+    expect(float(undefined)).toEqual(0)
+  })
+
+  it('should return 0 when value is empty string', () => {
+    expect(float('')).toEqual(0)
+  })
+
+  it('should return 0 when value is not a number', () => {
+    expect(float('foo')).toEqual(0)
+  })
+
+  it('should return the number when value is a number', () => {
+    expect(float('123.456')).toEqual(123.456)
+  })
+})
+
+describe('tryParseJSON', () => {
+  it('should normally parse correct JSON string', () => {
+    expect(tryParseJSON('{"a": 5}')).toStrictEqual({ a: 5 })
+  })
+
+  it('should fallback to null in case of error', () => {
+    expect(tryParseJSON('{incorrect json}')).toBeNull()
   })
 })
