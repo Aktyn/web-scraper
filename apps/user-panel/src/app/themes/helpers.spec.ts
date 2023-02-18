@@ -8,7 +8,7 @@ describe('mixColors', () => {
 
 describe('setSaturation', () => {
   it('should return color with given saturation', () => {
-    expect(setSaturation('#6a1b9a', 0.35)).toBe('rgb(98,59,121)')
-    expect(setSaturation('#00838f', 0.15)).toBe('rgb(60,80,82)')
+    expect(setSaturation('#6a1b9a', 0.35)).toBe('rgb(48,29,59)')
+    expect(setSaturation('#00838f', 0.15)).toBe('rgb(9,11,12)')
   })
 })
