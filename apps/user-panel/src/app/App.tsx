@@ -2,11 +2,10 @@ import '@fontsource/roboto/300.css'
 import '@fontsource/roboto/400.css'
 import '@fontsource/roboto/500.css'
 import '@fontsource/roboto/700.css'
-import { Suspense, useCallback, useMemo, useState } from 'react'
+import { Suspense, useCallback, useState } from 'react'
 import { CssBaseline, ThemeProvider } from '@mui/material'
-import deepmerge from 'deepmerge'
 import { Config } from './config'
-import { type ViewName, ViewTransitionState, ViewContext } from './context/viewContext'
+import { ViewContext, type ViewName, ViewTransitionState } from './context/viewContext'
 import { useMounted } from './hooks/useMounted'
 import { Layout } from './layout/Layout'
 import Navigation from './navigation'
@@ -58,16 +57,8 @@ export const App = () => {
     [viewTransitionState],
   )
 
-  const theme = useMemo(() => {
-    if (!currentView.theme) {
-      return baseTheme
-    }
-
-    return deepmerge(baseTheme, currentView.theme)
-  }, [currentView.theme])
-
   return (
-    <ThemeProvider theme={theme}>
+    <ThemeProvider theme={currentView.theme ?? baseTheme}>
       <CssBaseline />
       <ViewContext.Provider
         value={{
@@ -76,7 +67,8 @@ export const App = () => {
           nextViewName,
           viewTransitionState,
           requestViewChange: handleViewChange,
-        }}>
+        }}
+      >
         <Layout>
           {/*TODO: better suspense fallback*/}
           <Suspense fallback={<div>Loading...</div>}>

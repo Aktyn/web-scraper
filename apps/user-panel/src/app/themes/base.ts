@@ -4,7 +4,7 @@ const retinaDisplayMediaQuery = '@media only screen and (-webkit-min-device-pixe
 
 export const baseTheme = createTheme({
   typography: {
-    fontFamily: ['Roboto', 'Helvetica', 'Arial', 'Courier'].join(','),
+    fontFamily: ['Roboto', 'Helvetica', 'Arial', 'Courier', 'sans-serif'].join(','),
   },
   components: {
     MuiCssBaseline: {
@@ -25,6 +25,13 @@ export const baseTheme = createTheme({
           '& ::-webkit-scrollbar-thumb': {
             borderRadius: 8,
           },
+        },
+      },
+    },
+    MuiTypography: {
+      styleOverrides: {
+        caption: {
+          lineHeight: 1,
         },
       },
     },

@@ -40,22 +40,29 @@ export const ViewTransition = memo(({ children: child, targets }: ViewTransition
     ])
 
     const translationLengthRem = 6
+    const leaving = view.viewTransitionState === ViewTransitionState.LEAVING
 
     anime.remove(animeTargets)
     anime({
       targets: animeTargets,
       translateX: {
         value: ['0rem', `${-normalizedVectorDifference[0] * translationLengthRem}rem`],
-        delay: anime.stagger(50, { start: 0, from: 'first' }),
+        delay: anime.stagger(50, {
+          start: 0,
+          from: 'first',
+        }),
       },
       translateY: {
         value: ['0rem', `${-normalizedVectorDifference[1] * translationLengthRem}rem`],
-        delay: anime.stagger(50, { start: 0, from: 'first' }),
+        delay: anime.stagger(50, {
+          start: 0,
+          from: 'first',
+        }),
       },
       opacity: [1, 0],
       easing: 'easeInBack',
       duration: Math.round(Config.VIEW_TRANSITION_DURATION / 2),
-      direction: view.viewTransitionState === ViewTransitionState.LEAVING ? 'normal' : 'reverse',
+      direction: leaving ? 'normal' : 'reverse',
     })
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [view.viewTransitionState])

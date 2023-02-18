@@ -4,7 +4,7 @@
   "tabWidth": 2,
   "semi": false,
   "trailingComma": "all",
-  "bracketSameLine": true,
+  "bracketSameLine": false,
   "endOfLine": "auto",
   "overrides": [
     {

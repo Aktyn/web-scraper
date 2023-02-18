@@ -6,31 +6,18 @@ const DashboardView = () => {
   const view = useView()
 
   return (
-    <ViewTransition targets={(element) => element.querySelectorAll('button')}>
-      <Stack alignItems="center" p={4} spacing={4}>
+    <Stack alignItems="center" p={4} spacing={4}>
+      <ViewTransition>
         <Button
           className="test1"
           variant="contained"
           color="primary"
-          onClick={() => view.requestViewChange('DATA_MANAGER')}>
+          onClick={() => view.requestViewChange('DATA_MANAGER')}
+        >
           Manage data
         </Button>
-        <Button
-          className="test1"
-          variant="contained"
-          color="primary"
-          onClick={() => view.requestViewChange('DATA_MANAGER')}>
-          Manage data
-        </Button>
-        <Button
-          className="test1"
-          variant="contained"
-          color="primary"
-          onClick={() => view.requestViewChange('DATA_MANAGER')}>
-          Manage data
-        </Button>
-      </Stack>
-    </ViewTransition>
+      </ViewTransition>
+    </Stack>
   )
 }
 export default DashboardView

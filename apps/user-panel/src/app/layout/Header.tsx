@@ -1,14 +1,16 @@
-import { darken, Stack } from '@mui/material'
+import { Stack } from '@mui/material'
+
+export const headerSize = '2rem'
 
 export const Header = () => {
   return (
     <Stack
       direction="row"
+      alignItems="center"
       justifyContent="center"
-      sx={{
-        backgroundColor: (theme) => darken(theme.palette.background.default, 0.2),
-        transition: (theme) => theme.transitions.create('background-color'),
-      }}>
+      height={headerSize}
+      gridArea="header"
+    >
       HEADER
     </Stack>
   )
