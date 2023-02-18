@@ -14,6 +14,7 @@ import {
 import { headerSize } from './Header'
 import { contentAreaBorderRadius } from './Layout'
 import { ReactComponent as LogoIcon } from '../components/icons/icon.svg'
+import { Config } from '../config'
 import type { ViewName } from '../context/viewContext'
 import { useView } from '../hooks/useView'
 
@@ -26,7 +27,9 @@ export const Menu = () => {
   const view = useView()
   const theme = useTheme()
 
-  const colorTransition = theme.transitions.create('color')
+  const colorTransition = theme.transitions.create('color', {
+    duration: Config.VIEW_TRANSITION_DURATION / 2,
+  })
   const scraperIconSize = `calc(${headerSize} + ${contentAreaBorderRadius} - 0.5rem)`
 
   return (
@@ -45,7 +48,9 @@ export const Menu = () => {
             width: scraperIconSize,
             height: scraperIconSize,
             fill: theme.palette.text.secondary,
-            transition: theme.transitions.create('fill'),
+            transition: theme.transitions.create('fill', {
+              duration: Config.VIEW_TRANSITION_DURATION / 2,
+            }),
           }}
         />
         <Typography

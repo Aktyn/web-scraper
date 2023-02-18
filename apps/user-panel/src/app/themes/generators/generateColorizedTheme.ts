@@ -1,8 +1,9 @@
 import { createTheme, lighten } from '@mui/material'
 import { common, red } from '@mui/material/colors'
 import deepmerge from 'deepmerge'
+import { Config } from '../../config'
 import { baseTheme } from '../base'
-import { mixColors } from '../helpers'
+import { mixColors, setSaturation } from '../helpers'
 
 type ColorSchema = {
   50: string
@@ -23,7 +24,7 @@ interface ColorizedThemeProps {
 }
 
 export function generateColorizedTheme({ primary, secondary }: ColorizedThemeProps) {
-  const backgroundDefault = primary[800]
+  const backgroundDefault = setSaturation(primary[800], Config.BACKGROUND_SATURATION)
   const textSecondary = mixColors(primary[50], primary[800], 0.4)
   const divider = lighten(backgroundDefault, 0.05)
 
@@ -33,7 +34,7 @@ export function generateColorizedTheme({ primary, secondary }: ColorizedThemePro
       palette: {
         mode: 'dark',
         primary: {
-          main: primary[600],
+          main: primary[200],
         },
         secondary: {
           main: secondary[600],
@@ -59,18 +60,15 @@ export function generateColorizedTheme({ primary, secondary }: ColorizedThemePro
                 width: 8,
                 height: 6,
               },
-              //TODO
-              // '& ::-webkit-scrollbar-track': {
-              //   backgroundColor: lighten(mainContainerBackground, 0.05),
-              //   borderRadius: 8,
-              // },
-              // '& ::-webkit-scrollbar-thumb': {
-              //   backgroundColor: lighten(mainContainerBackground, 0.15),
-              //   borderRadius: 8,
-              // },
-              // '& ::-webkit-scrollbar-thumb:hover': {
-              //   backgroundColor: lighten(mainContainerBackground, 0.25),
-              // },
+              '& ::-webkit-scrollbar-track': {
+                backgroundColor: lighten(backgroundDefault, 0.05),
+              },
+              '& ::-webkit-scrollbar-thumb': {
+                backgroundColor: lighten(backgroundDefault, 0.15),
+              },
+              '& ::-webkit-scrollbar-thumb:hover': {
+                backgroundColor: lighten(backgroundDefault, 0.25),
+              },
             },
           },
         },
@@ -81,6 +79,12 @@ export function generateColorizedTheme({ primary, secondary }: ColorizedThemePro
               style: {
                 '&:not([disabled])': {
                   color: common.white,
+                  '&:not(:hover)': {
+                    backgroundColor: primary[600],
+                  },
+                  '&:hover': {
+                    backgroundColor: primary[500],
+                  },
                 },
               },
             },

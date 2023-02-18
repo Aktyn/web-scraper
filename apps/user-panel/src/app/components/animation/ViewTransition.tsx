@@ -6,73 +6,97 @@ import { Config } from '../../config'
 import { ViewTransitionState } from '../../context/viewContext'
 import Navigation from '../../navigation'
 
+export enum TransitionType {
+  DEFAULT,
+  FADE,
+}
+
 interface ViewTransitionProps {
   children: ReactElement<{ ref?: RefObject<HTMLElement> }>
   targets?: string | ((element: HTMLElement) => anime.AnimeParams['targets'])
+  type?: TransitionType
 }
 
-export const ViewTransition = memo(({ children: child, targets }: ViewTransitionProps) => {
-  const targetRef = useRef<HTMLElement>(null)
-  const view = useView()
+export const ViewTransition = memo(
+  ({ children: child, targets, type = TransitionType.DEFAULT }: ViewTransitionProps) => {
+    const targetRef = useRef<HTMLElement>(null)
+    const view = useView()
 
-  useLayoutEffect(() => {
-    if (!targetRef.current || view.viewTransitionState === ViewTransitionState.IDLE) {
-      return
-    }
+    useLayoutEffect(() => {
+      if (!targetRef.current || view.viewTransitionState === ViewTransitionState.IDLE) {
+        return
+      }
 
-    const animeTargets =
-      typeof targets === 'function' ? targets(targetRef.current) : targets ?? targetRef.current
+      const animeTargets =
+        typeof targets === 'function' ? targets(targetRef.current) : targets ?? targetRef.current
 
-    if (!animeTargets) {
-      return
-    }
+      if (!animeTargets) {
+        return
+      }
 
-    //TODO: different transition types other than translate
+      const [startView, endView] =
+        view.viewTransitionState === ViewTransitionState.LEAVING
+          ? [Navigation[view.viewName], Navigation[view.nextViewName ?? 'DASHBOARD']]
+          : [Navigation[view.viewName], Navigation[view.previousViewName ?? 'DASHBOARD']]
 
-    const [startView, endView] =
-      view.viewTransitionState === ViewTransitionState.LEAVING
-        ? [Navigation[view.viewName], Navigation[view.nextViewName ?? 'DASHBOARD']]
-        : [Navigation[view.viewName], Navigation[view.previousViewName ?? 'DASHBOARD']]
+      const normalizedVectorDifference = normalize([
+        endView.gridPosition[0] - startView.gridPosition[0],
+        endView.gridPosition[1] - startView.gridPosition[1],
+      ])
 
-    const normalizedVectorDifference = normalize([
-      endView.gridPosition[0] - startView.gridPosition[0],
-      endView.gridPosition[1] - startView.gridPosition[1],
-    ])
+      const translationLengthRem = 6
+      const leaving = view.viewTransitionState === ViewTransitionState.LEAVING
 
-    const translationLengthRem = 6
-    const leaving = view.viewTransitionState === ViewTransitionState.LEAVING
+      anime.remove(animeTargets)
 
-    anime.remove(animeTargets)
-    anime({
-      targets: animeTargets,
-      translateX: {
-        value: ['0rem', `${-normalizedVectorDifference[0] * translationLengthRem}rem`],
-        delay: anime.stagger(50, {
-          start: 0,
-          from: 'first',
-        }),
-      },
-      translateY: {
-        value: ['0rem', `${-normalizedVectorDifference[1] * translationLengthRem}rem`],
-        delay: anime.stagger(50, {
-          start: 0,
-          from: 'first',
-        }),
-      },
-      opacity: [1, 0],
-      easing: 'easeInBack',
-      duration: Math.round(Config.VIEW_TRANSITION_DURATION / 2),
-      direction: leaving ? 'normal' : 'reverse',
-    })
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [view.viewTransitionState])
+      const commonAnimeParams: Partial<anime.AnimeParams> = {
+        targets: animeTargets,
+        easing: 'easeInBack',
+        duration: Math.round(Config.VIEW_TRANSITION_DURATION / 2),
+        direction: leaving ? 'normal' : 'reverse',
+      }
 
-  return isValidElement(child)
-    ? cloneElement(child, {
-        ref: targetRef,
-      })
-    : child
-})
+      switch (type) {
+        default:
+        case TransitionType.DEFAULT:
+          anime({
+            ...commonAnimeParams,
+            translateX: {
+              value: ['0rem', `${-normalizedVectorDifference[0] * translationLengthRem}rem`],
+              delay: anime.stagger(50, {
+                start: 0,
+                from: 'first',
+              }),
+            },
+            translateY: {
+              value: ['0rem', `${-normalizedVectorDifference[1] * translationLengthRem}rem`],
+              delay: anime.stagger(50, {
+                start: 0,
+                from: 'first',
+              }),
+            },
+            opacity: [1, 0],
+          })
+          break
+
+        case TransitionType.FADE:
+          anime({
+            ...commonAnimeParams,
+            easing: 'easeInQuad',
+            opacity: [1, 0],
+          })
+          break
+      }
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [type, view.viewTransitionState])
+
+    return isValidElement(child)
+      ? cloneElement(child, {
+          ref: targetRef,
+        })
+      : child
+  },
+)
 
 function normalize(vector: [number, number]) {
   const length = Math.sqrt(vector[0] ** 2 + vector[1] ** 2)

@@ -5,10 +5,16 @@ import { cyanMain, purpleMain } from './themes'
 
 type ViewComponentType = FunctionComponent
 
+export interface ViewSettingsSchema {
+  disableTopFadeEffect?: boolean
+  disableBottomFadeEffect?: boolean
+}
+
 interface NavigationEntry {
   component: LazyExoticComponent<ViewComponentType>
   theme?: Theme
   gridPosition: [number, number]
+  viewSettings?: ViewSettingsSchema
 }
 
 const Navigation = {
@@ -18,9 +24,12 @@ const Navigation = {
     gridPosition: [0, 0],
   } as NavigationEntry,
   DATA_MANAGER: {
-    component: lazy(() => import('./views/DataManagerView')),
+    component: lazy(() => import('./views/DataManager/DataManagerView')),
     theme: purpleMain,
     gridPosition: [0, 1],
+    viewSettings: {
+      disableTopFadeEffect: true,
+    },
   } as NavigationEntry,
 } as const
 

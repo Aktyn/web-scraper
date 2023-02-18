@@ -35,5 +35,15 @@ export const baseTheme = createTheme({
         },
       },
     },
+    MuiTab: {
+      styleOverrides: {
+        root: {
+          '&.Mui-selected': {
+            WebkitTextStrokeWidth: '0.5px',
+            WebkitTextStrokeColor: 'currentColor',
+          },
+        },
+      },
+    },
   },
 })

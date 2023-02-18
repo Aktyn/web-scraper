@@ -1,6 +1,4 @@
-import { Stack } from '@mui/material'
-import { ViewTransition } from '../components/animation/ViewTransition'
-import { Table, useTableColumns } from '../components/table'
+import { Table, useTableColumns } from '../../components/table'
 
 const mockData: { id: number; stringValue: string; numberValue: number }[] = new Array(100)
   .fill(0)
@@ -10,7 +8,7 @@ const mockData: { id: number; stringValue: string; numberValue: number }[] = new
     numberValue: index + 1,
   }))
 
-export const DataManagerView = () => {
+export const Accounts = () => {
   const columns = useTableColumns<(typeof mockData)[number]>([
     {
       id: 'id',
@@ -29,12 +27,5 @@ export const DataManagerView = () => {
     },
   ])
 
-  return (
-    <ViewTransition>
-      <Stack alignItems="center" p={4} spacing={4}>
-        <Table columns={columns} keyProperty="id" data={mockData} />
-      </Stack>
-    </ViewTransition>
-  )
+  return <Table columns={columns} keyProperty="id" data={mockData} />
 }
-export default DataManagerView

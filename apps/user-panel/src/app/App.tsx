@@ -67,6 +67,7 @@ export const App = () => {
           nextViewName,
           viewTransitionState,
           requestViewChange: handleViewChange,
+          viewSettings: currentView.viewSettings,
         }}
       >
         <Layout>

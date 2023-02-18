@@ -1,5 +1,6 @@
 import { createContext } from 'react'
 import type Navigation from '../navigation'
+import type { ViewSettingsSchema } from '../navigation'
 
 export enum ViewTransitionState {
   IDLE = 'idle',
@@ -19,4 +20,5 @@ export const ViewContext = createContext({
   nextViewName: null as ViewName | null,
   viewTransitionState: ViewTransitionState.IDLE,
   requestViewChange: noop as (viewName: ViewName) => void,
+  viewSettings: undefined as ViewSettingsSchema | undefined,
 })

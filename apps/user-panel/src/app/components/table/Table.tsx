@@ -1,4 +1,4 @@
-import { forwardRef, memo, type RefAttributes, useImperativeHandle } from 'react'
+import { type RefAttributes, useImperativeHandle } from 'react'
 import {
   Table as MuiTable,
   TableBody,
@@ -10,9 +10,7 @@ import {
 import type { Path } from '@web-scrapper/common'
 import { getDeepProperty } from './helpers'
 import type { useTableColumns } from './useTableColumns'
-
-const genericMemo: <T>(component: T) => T = memo
-const genericForwardRef: <T>(component: T) => T = forwardRef as never
+import { genericForwardRef, genericMemo } from '../../utils'
 
 interface TableProps<DataType extends object> {
   /** Property name with unique values for each row. Used as a key prop for react rows. */
@@ -22,8 +20,6 @@ interface TableProps<DataType extends object> {
 }
 
 export interface TableRef {
-  //TODO
-  // setPage?: React.Dispatch<React.SetStateAction<number>>;
   refresh?: () => void
 }
 
@@ -36,7 +32,6 @@ export const Table = genericMemo(
       useImperativeHandle(
         ref,
         () => ({
-          // setPage,
           refresh: () => {
             //TODO
           },
@@ -46,7 +41,7 @@ export const Table = genericMemo(
 
       return (
         <TableContainer>
-          <MuiTable>
+          <MuiTable stickyHeader>
             <TableHead>
               <TableRow>
                 {columns.definitions.map((columnDefinition) => (
@@ -66,20 +61,6 @@ export const Table = genericMemo(
                   ))}
                 </TableRow>
               ))}
-              {/*{rows.map((row) => (*/}
-              {/*  <TableRow*/}
-              {/*    key={row.name}*/}
-              {/*    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}*/}
-              {/*  >*/}
-              {/*    <TableCell component="th" scope="row">*/}
-              {/*      {row.name}*/}
-              {/*    </TableCell>*/}
-              {/*    <TableCell align="right">{row.calories}</TableCell>*/}
-              {/*    <TableCell align="right">{row.fat}</TableCell>*/}
-              {/*    <TableCell align="right">{row.carbs}</TableCell>*/}
-              {/*    <TableCell align="right">{row.protein}</TableCell>*/}
-              {/*  </TableRow>*/}
-              {/*))}*/}
             </TableBody>
           </MuiTable>
         </TableContainer>
