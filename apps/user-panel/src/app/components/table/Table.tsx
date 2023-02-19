@@ -40,7 +40,7 @@ export const Table = genericMemo(
       )
 
       return (
-        <TableContainer>
+        <TableContainer sx={{ maxHeight: '100%' }}>
           <MuiTable stickyHeader>
             <TableHead>
               <TableRow>
