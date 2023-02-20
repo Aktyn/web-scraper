@@ -46,9 +46,9 @@ export const Table = genericMemo(
         setFetchingData(true)
         cancellable(dataSource())
           .then((response) => {
-            console.log('Response:', response)
+            // console.log('Response:', response)
             if ('errorCode' in response) {
-              console.log('Error:', response)
+              // console.log('Error:', response)
               //TODO: handle error
               return
             }
