@@ -10,7 +10,7 @@
     "start": "electron ./dist/main.js",
     "dev": "cross-env NODE_ENV=dev nodemon --legacy-watch ./src/**/* --exec \"npm run build && npm run start\" -e ts",
     "db:generate": "prisma generate",
-    "db:generate:reset": "cross-env npm run db:generate && rm ./external/main.db -f && touch ./external/main.db && prisma migrate resolve --applied 0_init && prisma db push",
+    "db:generate:reset": "cross-env npm run db:generate && shx touch ./external/main.db && prisma migrate resolve --applied 0_init && prisma db push",
     "db:format": "prisma format",
     "db:studio": "prisma studio --port 5555",
     "test": "vitest --watch=false",
@@ -18,7 +18,7 @@
     "test:ci": "vitest --coverage --threads=false --watch=false --reporter=default --reporter=junit",
     "format": "prettier --write src/**/*{.ts,.tsx}",
     "lint": "eslint src/**/*.ts --fix",
-    "env": "cp ./example.env ./.env"
+    "env": "shx cp ./example.env ./.env"
   },
   "dependencies": {
     "@prisma/client": "^4.10.1",
@@ -44,6 +44,7 @@
     "eslint-plugin-prettier": "^4.2.1",
     "nodemon": "^2.0.20",
     "prisma": "^4.10.1",
+    "shx": "^0.3.4",
     "typescript": "^4.9.5",
     "vitest": "^0.28.5",
     "vitest-mock-extended": "^1.0.9"
