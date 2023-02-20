@@ -20,12 +20,12 @@ interface NavigationEntry {
 const Navigation = {
   DASHBOARD: {
     component: lazy(() => import('./views/DashboardView')),
-    theme: cyanMain,
+    theme: purpleMain,
     gridPosition: [0, 0],
   } as NavigationEntry,
   DATA_MANAGER: {
     component: lazy(() => import('./views/DataManager/DataManagerView')),
-    theme: purpleMain,
+    theme: cyanMain,
     gridPosition: [0, 1],
     viewSettings: {
       disableTopFadeEffect: true,

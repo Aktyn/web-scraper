@@ -1,25 +1,20 @@
+import path from 'path'
+
 import * as dotenv from 'dotenv'
+// eslint-disable-next-line import/order
 import * as dotenvExpand from 'dotenv-expand'
 
 const myEnv = dotenv.config()
 dotenvExpand.expand(myEnv)
 
 // eslint-disable-next-line import/order
-import path from 'path'
-
-// eslint-disable-next-line import/order
-import {
-  ElectronToRendererMessage,
-  RendererToElectronMessage,
-  safePromise,
-  wait,
-} from '@web-scrapper/common'
-import { app, ipcMain } from 'electron'
+import { ElectronToRendererMessage, safePromise } from '@web-scrapper/common'
+import { app } from 'electron'
 import isDev from 'electron-is-dev'
 
 import Database from './database'
 import { ExtendedBrowserWindow } from './extendedBrowserWindow'
-import { Scraper } from './scraper'
+import { registerRequestsHandler } from './requestHandler'
 
 // eslint-disable-next-line no-console
 console.info(
@@ -68,25 +63,19 @@ function createWindow() {
   }, 1000)
 
   // Test scraper
-  ;(async () => {
-    const scraper = new Scraper()
-    await scraper.init()
-
-    await wait(30_000)
-    await scraper.destroy()
-    // await ScraperBrowser.destroy()
-  })()
+  // ;(async () => {
+  //   const scraper = new Scraper()
+  //   await scraper.init()
+  //
+  //   await wait(30_000)
+  //   await scraper.destroy()
+  //   // await ScraperBrowser.destroy()
+  // })()
 }
 
 app.whenReady().then(() => {
   createWindow()
-
-  let tempCounter = 0
-  ipcMain.handle(RendererToElectronMessage.dummyEvent, () => {
-    // eslint-disable-next-line no-console
-    console.log('dummyEvent')
-    return ++tempCounter
-  })
+  registerRequestsHandler()
 
   app.on('activate', () => {
     if (ExtendedBrowserWindow.getAllWindows().length === 0) {

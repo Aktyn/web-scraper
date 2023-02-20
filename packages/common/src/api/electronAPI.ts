@@ -1,18 +1,20 @@
 /**
  * NOTE: ElectronToRendererMessage and RendererToElectronMessage keys must equal to its corresponding values and be written in camelCase
  */
+import type { Account } from './account'
+import type { PaginatedApiResponse } from './common'
 
 export enum ElectronToRendererMessage {
   dummyEventFromMain = 'dummyEventFromMain',
 }
 
 export enum RendererToElectronMessage {
-  dummyEvent = 'dummyEvent',
+  getAccounts = 'getAccounts',
 }
 
 export type ElectronApi = {
   [ElectronToRendererMessage.dummyEventFromMain]: (
     callback: (event: Event, value: number) => void,
   ) => void
-  [RendererToElectronMessage.dummyEvent]: () => Promise<number>
+  [RendererToElectronMessage.getAccounts]: () => Promise<PaginatedApiResponse<Account>>
 }

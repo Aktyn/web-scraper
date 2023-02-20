@@ -1,5 +1,3 @@
-// eslint-disable-next-line @typescript-eslint/naming-convention
-
 export const int = <T>(value: T) => parseInt(value as string) || 0
 export const float = <T>(value: T) => parseFloat(value as string) || 0
 
