@@ -31,6 +31,7 @@
     "dev": "turbo run dev",
     "db:generate": "turbo run db:generate",
     "db:generate:reset": "turbo run db:generate:reset",
+    "db:seed": "turbo run db:seed",
     "db:studio": "turbo run db:studio",
     "test": "turbo run test",
     "test:ci": "turbo run test:ci",

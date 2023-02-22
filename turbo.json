@@ -16,6 +16,10 @@
       "dependsOn": ["^build"],
       "cache": false
     },
+    "db:seed": {
+      "dependsOn": ["db:generate:reset"],
+      "cache": false
+    },
     "db:studio": {
       "cache": false
     },

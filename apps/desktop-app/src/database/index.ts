@@ -11,9 +11,10 @@ const Database = {
     extractCursor: <DataType, Property extends keyof DataType>(
       data: DataType[],
       propertyName: Property,
+      count: number,
     ): undefined | { [key in Property]: DataType[Property] } => {
       const last = data.at(-1)
-      if (!last) {
+      if (!last || data.length < count) {
         return undefined
       }
 

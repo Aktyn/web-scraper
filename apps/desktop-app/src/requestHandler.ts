@@ -1,11 +1,10 @@
 import {
   type ApiError,
   type ElectronApi,
-  type ElectronToRendererMessage,
   ErrorCode,
   RendererToElectronMessage,
 } from '@web-scrapper/common'
-import { ipcMain } from 'electron'
+import { ipcMain, type IpcMainInvokeEvent } from 'electron'
 
 import Database from './database'
 
@@ -14,9 +13,9 @@ const handleApiRequest = <ArgumentsType extends any[], ResponseType extends Prom
   name: string,
   requestFunc: (...args: ArgumentsType) => ResponseType,
 ) =>
-  (async (...args: ArgumentsType) => {
+  (async (event: IpcMainInvokeEvent, ...args: ArgumentsType) => {
     // eslint-disable-next-line no-console
-    console.log(`[API request][name: ${name}]`)
+    console.log(`[API request] [name: ${name}] [args: ${JSON.stringify(args)}]`)
     try {
       //TODO: delay response in dev environment to simulate network latency
       return await requestFunc(...args)
@@ -24,17 +23,25 @@ const handleApiRequest = <ArgumentsType extends any[], ResponseType extends Prom
       console.error(error)
       return { errorCode: typeof error === 'number' ? (error as ErrorCode) : ErrorCode.API_ERROR }
     }
-  }) as unknown as (...args: ArgumentsType) => ResponseType | Promise<ApiError>
+  }) as unknown as (
+    event: IpcMainInvokeEvent,
+    ...args: ArgumentsType
+  ) => ResponseType | Promise<ApiError>
 
 export function registerRequestsHandler() {
   const handler = {
     [RendererToElectronMessage.getAccounts]: handleApiRequest('getAccounts', (request) =>
       Database.account.getAccounts(request).then((accounts) => ({
         data: accounts,
-        cursor: Database.utils.extractCursor(accounts, 'id'),
+        cursor: Database.utils.extractCursor(accounts, 'id', request.count),
       })),
     ),
-  } satisfies Omit<ElectronApi, ElectronToRendererMessage>
+  } satisfies {
+    [key in RendererToElectronMessage]: (
+      event: IpcMainInvokeEvent,
+      ...args: Parameters<ElectronApi[key]>
+    ) => ReturnType<ElectronApi[key]>
+  }
 
   for (const channel in handler) {
     ipcMain.handle(channel, handler[channel as never])

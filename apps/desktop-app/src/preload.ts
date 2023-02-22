@@ -19,7 +19,7 @@ const api = {
   ),
   ...rendererToElectronMessageNames.reduce(
     (acc, messageName) => {
-      acc[messageName] = () => ipcRenderer.invoke(messageName)
+      acc[messageName] = (...args) => ipcRenderer.invoke(messageName, ...args)
       return acc
     },
     {} as {

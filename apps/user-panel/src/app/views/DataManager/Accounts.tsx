@@ -1,4 +1,3 @@
-import { useMemo } from 'react'
 import type { Account } from '@web-scrapper/common'
 import { Table, useTableColumns } from '../../components/table'
 
@@ -42,10 +41,5 @@ export const Accounts = () => {
     },
   ])
 
-  const dataSource = useMemo(() => {
-    console.log('hmm')
-    return window.electronAPI.getAccounts
-  }, [])
-
-  return <Table columns={columns} keyProperty="id" data={dataSource} />
+  return <Table columns={columns} keyProperty="id" data={window.electronAPI.getAccounts} />
 }
