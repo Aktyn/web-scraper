@@ -4,6 +4,7 @@ import '@fontsource/roboto/500.css'
 import '@fontsource/roboto/700.css'
 import { Suspense, useCallback, useState } from 'react'
 import { CssBaseline, ThemeProvider } from '@mui/material'
+import { FullViewLoader } from './components/common/loader/FullViewLoader'
 import { Config } from './config'
 import { ViewContext, type ViewName, ViewTransitionState } from './context/viewContext'
 import { useMounted } from './hooks/useMounted'
@@ -71,17 +72,14 @@ export const App = () => {
         }}
       >
         <Layout>
-          {/*TODO: better suspense fallback*/}
-          <Suspense fallback={<div>Loading...</div>}>
+          <Suspense fallback={<FullViewLoader />}>
             <currentView.component key={viewName} />
           </Suspense>
           {nextView && (
             // Preloads next view file
-            <div style={{ display: 'none' }}>
-              <Suspense fallback={null}>
-                <nextView.component key={nextViewName} />
-              </Suspense>
-            </div>
+            <Suspense fallback={null}>
+              <nextView.component key={nextViewName} doNotRender />
+            </Suspense>
           )}
         </Layout>
       </ViewContext.Provider>

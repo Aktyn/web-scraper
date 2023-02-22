@@ -1,4 +1,4 @@
-import { createTheme, lighten } from '@mui/material'
+import { alpha, createTheme, lighten, tableRowClasses } from '@mui/material'
 import { common, red } from '@mui/material/colors'
 import deepmerge from 'deepmerge'
 import { Config } from '../../config'
@@ -116,6 +116,30 @@ export function generateColorizedTheme({ primary, secondary }: ColorizedThemePro
             head: {
               fontWeight: 'bold',
               color: textSecondary,
+            },
+          },
+        },
+        MuiTableRow: {
+          styleOverrides: {
+            root: {
+              [`&.${tableRowClasses.hover}`]: {
+                transition: baseTheme.transitions.create('background-color'),
+              },
+              [`&.${tableRowClasses.hover}:hover`]: {
+                backgroundColor: divider,
+              },
+              '&:nth-of-type(even)': {
+                backgroundColor: alpha(common.white, 0.01),
+                [`&.${tableRowClasses.head}`]: {
+                  backgroundColor: 'inherit',
+                },
+              },
+              '&:nth-of-type(odd)': {
+                backgroundColor: alpha(common.black, 0.01),
+                [`&.${tableRowClasses.head}`]: {
+                  backgroundColor: 'inherit',
+                },
+              },
             },
           },
         },

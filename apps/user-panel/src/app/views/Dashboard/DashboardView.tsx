@@ -1,9 +1,14 @@
 import { Button, Stack } from '@mui/material'
-import { ViewTransition } from '../components/animation/ViewTransition'
-import { useView } from '../hooks/useView'
+import { ViewTransition } from '../../components/animation/ViewTransition'
+import { useView } from '../../hooks/useView'
+import type { ViewComponentProps } from '../helpers'
 
-const DashboardView = () => {
+const DashboardView = ({ doNotRender }: ViewComponentProps) => {
   const view = useView()
+
+  if (doNotRender) {
+    return null
+  }
 
   return (
     <Stack alignItems="center" p={4} spacing={4}>

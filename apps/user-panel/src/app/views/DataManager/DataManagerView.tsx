@@ -4,13 +4,14 @@ import { Sites } from './Sites'
 import { TransitionType, ViewTransition } from '../../components/animation/ViewTransition'
 import type { TabSchema } from '../../components/common/TabsView'
 import { TabsView } from '../../components/common/TabsView'
+import type { ViewComponentProps } from '../helpers'
 
 enum DataManagerTab {
   ACCOUNTS,
   SITES,
 }
 
-const DataManagerView = () => {
+const DataManagerView = ({ doNotRender }: ViewComponentProps) => {
   const tabs = useMemo<TabSchema<DataManagerTab>[]>(
     () => [
       {
@@ -26,6 +27,10 @@ const DataManagerView = () => {
     ],
     [],
   )
+
+  if (doNotRender) {
+    return null
+  }
 
   return (
     <ViewTransition type={TransitionType.FADE}>

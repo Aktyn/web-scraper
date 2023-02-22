@@ -3,7 +3,7 @@ import { lazy } from 'react'
 import type { Theme } from '@mui/material'
 import { cyanMain, purpleMain } from './themes'
 
-type ViewComponentType = FunctionComponent
+type ViewComponentType = FunctionComponent<{ doNotRender?: boolean }>
 
 export interface ViewSettingsSchema {
   disableTopFadeEffect?: boolean
@@ -19,7 +19,7 @@ interface NavigationEntry {
 
 const Navigation = {
   DASHBOARD: {
-    component: lazy(() => import('./views/DashboardView')),
+    component: lazy(() => import('./views/Dashboard/DashboardView')),
     theme: purpleMain,
     gridPosition: [0, 0],
   } as NavigationEntry,
@@ -38,5 +38,5 @@ export default Navigation
 /** Grid visualization of transition purposes **/
 /*-------------------------------
 | DASHBOARD     | ------------- |
-| ------------- | DATA_MANAGER  |
+| DATA_MANAGER  | ------------- |
 --------------------------------*/
