@@ -8,10 +8,10 @@ import Database from './index'
 describe('Database.siteTags', () => {
   beforeEach(() => {
     mockReset(databaseMock)
-    databaseMock.account.findMany.mockResolvedValue(mockData.accounts)
+    databaseMock.siteTag.findMany.mockResolvedValue(mockData.siteTags)
   })
 
-  it('should return array of existing accounts', async () => {
-    await expect(Database.accounts.getAccounts()).resolves.toEqual(mockData.accounts)
+  it('should return array of site tags', async () => {
+    await expect(Database.siteTag.getSiteTags()).resolves.toEqual(mockData.siteTags)
   })
 })

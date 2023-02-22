@@ -1,4 +1,5 @@
 import { type RefAttributes, useCallback, useEffect, useImperativeHandle, useState } from 'react'
+import { RefreshRounded } from '@mui/icons-material'
 import {
   Table as MuiTable,
   TableBody,
@@ -7,17 +8,20 @@ import {
   TableHead,
   TableRow,
 } from '@mui/material'
-import type { Path, PaginatedApiResponse } from '@web-scrapper/common'
+import type { PaginatedApiFunction, Path } from '@web-scrapper/common'
 import { getDeepProperty } from './helpers'
 import type { useTableColumns } from './useTableColumns'
+import { Config } from '../../config'
 import { useCancellablePromise } from '../../hooks/useCancellablePromise'
 import { genericForwardRef, genericMemo } from '../../utils'
+import { LoadingIconButton } from '../common/button/LoadingIconButton'
 
 interface TableProps<DataType extends object> {
   /** Property name with unique values for each row. Used as a key prop for react rows. */
-  keyProperty?: string & Path<DataType>
+  keyProperty: string & Path<DataType>
   columns: ReturnType<typeof useTableColumns<DataType>>
-  data: DataType[] | (() => Promise<PaginatedApiResponse<DataType>>)
+  // eslint-disable-next-line
+  data: DataType[] | PaginatedApiFunction<DataType, any>
 }
 
 export interface TableRef {
@@ -33,8 +37,11 @@ export const Table = genericMemo(
       const cancellable = useCancellablePromise()
 
       const [data, setData] = useState<DataType[]>([])
+      const [cursor, setCursor] = useState<{ [p: string]: unknown } | undefined>()
       //TODO: visualize fetching data
-      const [_fetchingData, setFetchingData] = useState(false)
+      const [fetchingData, setFetchingData] = useState(false)
+
+      const mainTableHeaderSize = 51
 
       const fetchDataChunk = useCallback(() => {
         if (typeof dataSource !== 'function') {
@@ -44,7 +51,7 @@ export const Table = genericMemo(
 
         //TODO: generic sorting and filtering (custom sorting and filtering can be done by overriding api request before sending as prop to Table component)
         setFetchingData(true)
-        cancellable(dataSource())
+        cancellable(dataSource({ count: Config.PAGINATION_PAGE_SIZE, cursor }))
           .then((response) => {
             // console.log('Response:', response)
             if ('errorCode' in response) {
@@ -52,25 +59,45 @@ export const Table = genericMemo(
               //TODO: handle error
               return
             }
-            setData((data) => [...data, ...response.data])
+            setData((data) => {
+              const lastDataItem = data.at(-1)
+              const lastResponseDataItem = response.data.at(-1)
+
+              if (
+                !response.data.length ||
+                (lastDataItem &&
+                  lastResponseDataItem &&
+                  getDeepProperty(lastDataItem, keyProperty) ===
+                    getDeepProperty(lastResponseDataItem, keyProperty))
+              ) {
+                return data
+              }
+
+              return [...data, ...response.data]
+            })
+            setCursor(response.cursor)
+            setFetchingData(false)
           })
           .catch((error) => !error && setFetchingData(false))
-      }, [cancellable, dataSource])
+      }, [cancellable, cursor, dataSource, keyProperty])
 
       useEffect(() => {
         fetchDataChunk()
         // eslint-disable-next-line react-hooks/exhaustive-deps
       }, [dataSource])
 
+      const refresh = useCallback(() => {
+        setCursor(undefined)
+        setData([])
+        fetchDataChunk()
+      }, [fetchDataChunk])
+
       useImperativeHandle(
         ref,
         () => ({
-          refresh: () => {
-            setData([])
-            fetchDataChunk()
-          },
+          refresh,
         }),
-        [fetchDataChunk],
+        [refresh],
       )
 
       return (
@@ -78,8 +105,19 @@ export const Table = genericMemo(
           <MuiTable stickyHeader>
             <TableHead>
               <TableRow>
+                <TableCell colSpan={columns.definitions.length} align="right" sx={{ p: 1 }}>
+                  <LoadingIconButton loading={fetchingData} onClick={refresh} size="small">
+                    <RefreshRounded />
+                  </LoadingIconButton>
+                </TableCell>
+              </TableRow>
+            </TableHead>
+            <TableHead>
+              <TableRow>
                 {columns.definitions.map((columnDefinition) => (
-                  <TableCell key={columnDefinition.id}>{columnDefinition.header}</TableCell>
+                  <TableCell key={columnDefinition.id} sx={{ top: mainTableHeaderSize }}>
+                    {columnDefinition.header}
+                  </TableCell>
                 ))}
               </TableRow>
             </TableHead>

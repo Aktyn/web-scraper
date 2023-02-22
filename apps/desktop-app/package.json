@@ -11,6 +11,7 @@
     "dev": "cross-env NODE_ENV=dev nodemon --legacy-watch ./src/**/* --exec \"npm run build && npm run start\" -e ts",
     "db:generate": "prisma generate",
     "db:generate:reset": "cross-env npm run db:generate && shx touch ./external/main.db && prisma migrate resolve --applied 0_init && prisma db push",
+    "db:migrate": "prisma migrate dev --name regular-migration",
     "db:format": "prisma format",
     "db:studio": "prisma studio --port 5555",
     "test": "vitest --watch=false",

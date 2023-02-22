@@ -73,13 +73,13 @@ export const App = () => {
         <Layout>
           {/*TODO: better suspense fallback*/}
           <Suspense fallback={<div>Loading...</div>}>
-            <currentView.component />
+            <currentView.component key={viewName} />
           </Suspense>
           {nextView && (
             // Preloads next view file
             <div style={{ display: 'none' }}>
               <Suspense fallback={null}>
-                <nextView.component />
+                <nextView.component key={nextViewName} />
               </Suspense>
             </div>
           )}

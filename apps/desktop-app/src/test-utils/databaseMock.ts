@@ -22,10 +22,19 @@ export const mockData = {
   accounts: [
     {
       id: 1,
-      loginOrEmail: 'Mock-username',
-      password: 'Mock-password',
+      loginOrEmail: 'Mock-username-1',
+      password: 'Mock-password-1',
       additionalCredentialsData: null,
       lastUsed: new Date('2023-02-19T23:40:10.302Z'),
+      active: true,
+      siteId: 1,
+    },
+    {
+      id: 2,
+      loginOrEmail: 'Mock-username-2',
+      password: 'Mock-password-2',
+      additionalCredentialsData: '{"value": "mock-data"}',
+      lastUsed: new Date('2023-02-22T23:40:10.302Z'),
       active: true,
       siteId: 1,
     },

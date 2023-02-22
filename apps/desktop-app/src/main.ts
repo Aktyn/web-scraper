@@ -52,10 +52,6 @@ function createWindow() {
     mainWindow.webContents.openDevTools({ mode: 'bottom' })
   }
 
-  Database.siteTags.getSiteTags().then((siteTags) => {
-    console.log('Tags:', siteTags)
-  })
-
   // Emit dummy event every second
   let tempCounter2 = 0
   setInterval(() => {

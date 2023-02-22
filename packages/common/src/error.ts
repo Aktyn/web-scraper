@@ -3,4 +3,5 @@ export enum ErrorCode {
   UNKNOWN_ERROR = 1,
 
   API_ERROR = 100,
+  DATABASE_ERROR = 101,
 }

@@ -11,16 +11,16 @@ model SiteTag {
   id          Int        @id @default(autoincrement())
   name        String     @unique
   description String?
-  sites       SiteTagsRelation[]
+  Sites       SiteTagsRelation[]
 }
 
 model Site {
   id       Int        @id @default(autoincrement())
   url      String?    @unique
   language String?
-  tags     SiteTagsRelation[]
+  Tags     SiteTagsRelation[]
 
-  Account Account?
+  Accounts Account[]
 }
 
 model SiteTagsRelation {
@@ -40,6 +40,6 @@ model Account {
   lastUsed                  DateTime?
   active                    Boolean?  @default(true)
 
-  siteId Int  @unique
+  siteId Int
   Site   Site @relation(fields: [siteId], references: [id])
 }

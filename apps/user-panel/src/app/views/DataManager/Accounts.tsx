@@ -1,13 +1,6 @@
+import { useMemo } from 'react'
 import type { Account } from '@web-scrapper/common'
 import { Table, useTableColumns } from '../../components/table'
-
-// const mockData: { id: number; stringValue: string; numberValue: number }[] = new Array(100)
-//   .fill(0)
-//   .map((_, index) => ({
-//     id: index + 1,
-//     stringValue: `mock-value-${index + 1}`,
-//     numberValue: index + 1,
-//   }))
 
 export const Accounts = () => {
   const columns = useTableColumns<Account>([
@@ -49,5 +42,10 @@ export const Accounts = () => {
     },
   ])
 
-  return <Table columns={columns} keyProperty="id" data={window.electronAPI.getAccounts} />
+  const dataSource = useMemo(() => {
+    console.log('hmm')
+    return window.electronAPI.getAccounts
+  }, [])
+
+  return <Table columns={columns} keyProperty="id" data={dataSource} />
 }
