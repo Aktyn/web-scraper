@@ -1,10 +1,9 @@
 import { memo, type PropsWithChildren } from 'react'
-import type { Theme } from '@mui/material'
 import { Box, darken, Stack } from '@mui/material'
 import { Footer } from './Footer'
 import { Header } from './Header'
 import { Menu } from './Menu'
-import { Config } from '../config'
+import { commonLayoutTransitions } from './helpers'
 import { ViewTransitionState } from '../context/viewContext'
 import { useView } from '../hooks/useView'
 
@@ -16,15 +15,12 @@ type LayoutProps = PropsWithChildren<object>
 export const Layout = memo<LayoutProps>(({ children }) => {
   const view = useView()
 
-  const backgroundColorTransition = (theme: Theme) =>
-    theme.transitions.create('background-color', { duration: Config.VIEW_TRANSITION_DURATION / 2 })
-
   return (
     <Box
       overflow="hidden"
       sx={{
         backgroundColor: (theme) => darken(theme.palette.background.default, 0.2),
-        transition: backgroundColorTransition,
+        transition: commonLayoutTransitions.backgroundColor,
 
         width: '100vw',
         height: '100vh',
@@ -43,7 +39,7 @@ export const Layout = memo<LayoutProps>(({ children }) => {
         gridArea="content"
         sx={{
           backgroundColor: (theme) => theme.palette.background.default,
-          transition: backgroundColorTransition,
+          transition: commonLayoutTransitions.backgroundColor,
           borderTopLeftRadius: contentAreaBorderRadius,
           borderBottomLeftRadius: contentAreaBorderRadius,
 
@@ -67,10 +63,7 @@ export const Layout = memo<LayoutProps>(({ children }) => {
                   : theme.palette.background.default
               } 100%)`,
             opacity: view.viewTransitionState !== ViewTransitionState.IDLE ? 0 : 1,
-            transition: (theme) =>
-              theme.transitions.create('opacity', {
-                duration: Config.VIEW_TRANSITION_DURATION / 2,
-              }),
+            transition: commonLayoutTransitions.opacity,
           },
         }}
       >
