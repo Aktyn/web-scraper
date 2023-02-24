@@ -12,6 +12,7 @@ import { ElectronToRendererMessage, safePromise } from '@web-scrapper/common'
 import { app } from 'electron'
 import isDev from 'electron-is-dev'
 
+import { EXTERNAL_DIRECTORY_PATH } from './common'
 import Database from './database'
 import { ExtendedBrowserWindow } from './extendedBrowserWindow'
 import { registerRequestsHandler } from './requestHandler'
@@ -25,7 +26,7 @@ console.info(
 function createWindow() {
   const mainWindow = new ExtendedBrowserWindow({
     title: 'Web Scraper',
-    // icon: path.join(__dirname, 'assets/icon.png'), //TODO: add icon
+    icon: path.join(EXTERNAL_DIRECTORY_PATH, 'icon.png'),
     width: 1280,
     height: 720,
     minWidth: 640,
