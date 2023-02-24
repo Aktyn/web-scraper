@@ -36,11 +36,9 @@ export function registerRequestsHandler() {
         cursor: Database.utils.extractCursor(accounts, 'id', request.count),
       })),
     ),
-  } satisfies {
-    [key in RendererToElectronMessage]: (
-      event: IpcMainInvokeEvent,
-      ...args: Parameters<ElectronApi[key]>
-    ) => ReturnType<ElectronApi[key]>
+    [RendererToElectronMessage.addAccount]: handleApiRequest('addRecord', () =>
+      Database.account.addAccount().then((result) => result),
+    ),
   }
 
   for (const channel in handler) {

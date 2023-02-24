@@ -10,6 +10,7 @@ export enum ElectronToRendererMessage {
 
 export enum RendererToElectronMessage {
   getAccounts = 'getAccounts',
+  addAccount = 'addAccount',
 }
 
 export type ElectronApi = {
@@ -17,4 +18,5 @@ export type ElectronApi = {
     callback: (event: Event, value: number) => void,
   ) => void
   [RendererToElectronMessage.getAccounts]: PaginatedApiFunction<Account, 'id'>
+  [RendererToElectronMessage.addAccount]: PaginatedApiFunction<Account, 'id'>
 }

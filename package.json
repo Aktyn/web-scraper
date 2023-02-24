@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "private": true,
   "author": "Aktyn",
+  "contributors": [
+    "dxdroni"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Aktyn/web-scraper.git"
@@ -24,7 +27,10 @@
       "**/dotenv-expand",
       "**/dotenv-expand/**"
     ],
-    "packages": ["packages/*", "apps/*"]
+    "packages": [
+      "packages/*",
+      "apps/*"
+    ]
   },
   "scripts": {
     "build": "turbo run build",

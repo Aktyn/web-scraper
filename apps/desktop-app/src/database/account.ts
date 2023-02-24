@@ -20,3 +20,9 @@ export function getAccounts(request: { count: number; cursor?: { id: number } })
     },
   })
 }
+
+export function addAccount() {
+  return Database.prisma.account.create({
+    data: { siteId: 1, password: 'asd', loginOrEmail: 'weq' },
+  })
+}

@@ -3,7 +3,7 @@ import type { ElectronApi } from '@web-scrapper/common'
 import { contextBridge, ipcRenderer, type IpcRendererEvent } from 'electron'
 
 const electronToRendererMessageNames = ['dummyEventFromMain'] as const
-const rendererToElectronMessageNames = ['getAccounts'] as const
+const rendererToElectronMessageNames = ['getAccounts', 'addAccount'] as const
 
 const api = {
   ...electronToRendererMessageNames.reduce(
@@ -26,6 +26,6 @@ const api = {
       [key in (typeof rendererToElectronMessageNames)[number]]: () => Promise<any>
     },
   ),
-} satisfies ElectronApi
+}
 
 contextBridge.exposeInMainWorld('electronAPI', api)

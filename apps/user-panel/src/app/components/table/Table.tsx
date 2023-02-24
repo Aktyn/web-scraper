@@ -6,7 +6,7 @@ import {
   useRef,
   useState,
 } from 'react'
-import { RefreshRounded } from '@mui/icons-material'
+import { AddRounded, RefreshRounded } from '@mui/icons-material'
 import {
   Table as MuiTable,
   TableBody,
@@ -68,9 +68,9 @@ export const Table = genericMemo(
             dataSource({ count: Config.PAGINATION_PAGE_SIZE, cursor: withCursor ?? undefined }),
           )
             .then((response) => {
-              // console.log('Response:', response)
+              console.log('Response:', response)
               if ('errorCode' in response) {
-                // console.log('Error:', response)
+                console.log('Error:', response)
                 //TODO: handle error
                 return
               }
@@ -149,12 +149,22 @@ export const Table = genericMemo(
         [refresh],
       )
 
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const addRecord = () => {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        window.electronAPI.addAccount()
+      }
+
       return (
         <TableContainer ref={tableContainerRef} sx={{ maxHeight: '100%' }}>
           <MuiTable stickyHeader>
             <TableHead>
               <TableRow>
                 <TableCell colSpan={columns.definitions.length} align="right" sx={{ p: 1 }}>
+                  <LoadingIconButton loading={fetchingData} onClick={addRecord} size="small">
+                    <AddRounded />
+                  </LoadingIconButton>
                   <LoadingIconButton loading={fetchingData} onClick={refresh} size="small">
                     <RefreshRounded />
                   </LoadingIconButton>
