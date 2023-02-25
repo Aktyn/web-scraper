@@ -1,4 +1,4 @@
-import { useEffect, useRef, type ReactNode } from 'react'
+import { type ReactNode, useCallback, useEffect, useRef } from 'react'
 import type { SvgIconComponent } from '@mui/icons-material'
 import {
   alpha,
@@ -7,6 +7,7 @@ import {
   ListItemButton,
   ListItemIcon,
   ListItemText,
+  listItemTextClasses,
   type SxProps,
   type Theme,
 } from '@mui/material'
@@ -50,13 +51,37 @@ export const MenuItem = ({ label, icon: Icon, viewName }: MenuItemProps) => {
     })
   }, [view.viewName, view.viewTransitionState, viewName])
 
+  const animateMenuItemText = useCallback((target: EventTarget, enable: boolean) => {
+    const targets = (target as HTMLElement).querySelector(`.${listItemTextClasses.root}`)
+
+    anime.remove(targets)
+    anime({
+      targets,
+      translateX: enable ? '-0.5rem' : '0rem',
+      easing: 'spring(0.7, 100, 10, 0)',
+    })
+  }, [])
+
   return (
     <ListItem ref={itemRef} disablePadding>
       <ListItemButton
         selected={selected}
         disableRipple={selected}
         disableTouchRipple={selected}
-        onClick={selected ? undefined : () => view.requestViewChange(viewName)}
+        onClick={
+          selected
+            ? undefined
+            : (event) => {
+                animateMenuItemText(event.currentTarget, false)
+                view.requestViewChange(viewName)
+              }
+        }
+        onMouseEnter={selected ? undefined : (event) => animateMenuItemText(event.target, true)}
+        onMouseLeave={
+          selected
+            ? undefined
+            : (event) => setTimeout(() => animateMenuItemText(event.target, false), 1)
+        }
         sx={{
           ...textColorStyle,
           position: 'relative',
