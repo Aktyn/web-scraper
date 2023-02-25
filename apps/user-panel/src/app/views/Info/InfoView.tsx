@@ -1,10 +1,12 @@
 import { useMemo } from 'react'
+import { AboutProject } from './AboutProject'
 import { Terms } from './Terms'
 import { type TabSchema, TabsView } from '../../components/common/TabsView'
 import type { ViewComponentProps } from '../helpers'
 
 enum InfoTab {
   TERMS,
+  ABOUT,
 }
 
 const InfoView = ({ doNotRender }: ViewComponentProps) => {
@@ -14,6 +16,11 @@ const InfoView = ({ doNotRender }: ViewComponentProps) => {
         value: InfoTab.TERMS,
         label: 'Terms',
         content: <Terms />,
+      },
+      {
+        value: InfoTab.ABOUT,
+        label: 'About project',
+        content: <AboutProject />,
       },
     ],
     [],

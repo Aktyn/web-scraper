@@ -29,13 +29,12 @@ export const Footer = memo(() => {
       <Typography
         variant="caption"
         color={textColor}
-        sx={{ transition: commonLayoutTransitions.color }}
+        sx={{ transition: commonLayoutTransitions.color, display: 'flex', alignItems: 'center' }}
       >
         &copy;&nbsp;2023&nbsp;Aktyn&ensp;|&ensp;
         <Link
           href="https://github.com/Aktyn"
           target="_blank"
-          fontWeight="bold"
           sx={{
             color: textColor,
             textDecoration: 'none',
@@ -49,8 +48,8 @@ export const Footer = memo(() => {
             },
           }}
         >
-          <span>GitHub</span>
           <LinkRounded fontSize="inherit" />
+          <span>GitHub</span>
         </Link>
       </Typography>
     </Stack>

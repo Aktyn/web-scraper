@@ -34,7 +34,7 @@ function createWindow() {
     useContentSize: true,
     center: true,
     autoHideMenuBar: true,
-    backgroundColor: '#00838F',
+    backgroundColor: '#0d3235',
     roundedCorners: true,
     darkTheme: true,
     webPreferences: {

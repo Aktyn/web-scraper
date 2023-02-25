@@ -7,7 +7,7 @@ import {
   useRef,
   useState,
 } from 'react'
-import { Box, Stack, Tab, tabClasses, Tabs, tabsClasses } from '@mui/material'
+import { Box, type BoxProps, Stack, Tab, tabClasses, Tabs, tabsClasses } from '@mui/material'
 import anime from 'animejs'
 import { usePersistentState } from '../../hooks/usePersistentState'
 import { genericForwardRef, genericMemo } from '../../utils'
@@ -23,6 +23,19 @@ interface TabsViewProps<ValueType> {
   name: string
   defaultTab?: ValueType
   tabs: TabSchema<ValueType>[]
+}
+
+const commonTabContentStyles: BoxProps['sx'] = {
+  // display: 'flex',
+  // alignItems: 'flex-start',
+  // justifyContent: 'flex-start',
+  position: 'absolute',
+  left: 0,
+  top: 0,
+  width: '100%',
+  height: '100%',
+  overflowY: 'auto',
+  overflowX: 'hidden',
 }
 
 export const TabsView = genericMemo(
@@ -58,7 +71,7 @@ export const TabsView = genericMemo(
 
         const direction = calculateDirection(previousTab, tab)
 
-        const tabContentTarget = contentContainerRef.current.querySelector('.tab-content')
+        const tabContentTarget = contentContainerRef.current.querySelector('.tab-content-1')
 
         anime.remove(tabContentTarget)
         anime({
@@ -70,8 +83,7 @@ export const TabsView = genericMemo(
           delay: tabSwitchIndex % 2 === 0 ? 100 : 0,
         })
 
-        const previousTabContentTarget =
-          contentContainerRef.current.querySelector('.previous-tab-content')
+        const previousTabContentTarget = contentContainerRef.current.querySelector('.tab-content-2')
 
         anime.remove(previousTabContentTarget)
         anime({
@@ -100,7 +112,7 @@ export const TabsView = genericMemo(
             const direction = calculateDirection(tab, newTab)
 
             const tabContentTarget = contentContainerRef.current.querySelector(
-              '.tab-content',
+              '.tab-content-1',
             ) as HTMLDivElement
             if (tabContentTarget) {
               tabContentTarget.style.transform =
@@ -108,7 +120,7 @@ export const TabsView = genericMemo(
             }
 
             const previousTabContentTarget = contentContainerRef.current.querySelector(
-              '.previous-tab-content',
+              '.tab-content-2',
             ) as HTMLDivElement
             if (previousTabContentTarget) {
               previousTabContentTarget.style.transform =
@@ -147,29 +159,18 @@ export const TabsView = genericMemo(
           </ViewTransition>
           <Stack ref={contentContainerRef} alignItems="stretch" flexGrow={1} position="relative">
             <Box
-              className="tab-content"
+              className="tab-content-1"
               sx={{
-                position: 'absolute',
-                left: 0,
-                top: 0,
-                width: '100%',
-                height: '100%',
-                overflow: 'auto',
+                ...commonTabContentStyles,
                 pointerEvents: tabSwitchIndex % 2 === 0 ? 'auto' : 'none',
               }}
             >
               {tabSwitchIndex % 2 === 0 ? selectedTab?.content : previousTabContent}
             </Box>
             <Box
-              className="previous-tab-content"
+              className="tab-content-2"
               sx={{
-                position: 'absolute',
-                left: 0,
-                top: 0,
-                width: '100%',
-                height: '100%',
-                overflowY: 'auto',
-                overflowX: 'hidden',
+                ...commonTabContentStyles,
                 pointerEvents: tabSwitchIndex % 2 !== 0 ? 'auto' : 'none',
               }}
             >
