@@ -149,13 +149,7 @@ export const Table = genericMemo(
       )
 
       return (
-        <TableContainer
-          ref={tableContainerRef}
-          // onScroll={(event) => {
-          //   setScrollTop((event.target as HTMLDivElement).scrollTop)
-          // }}
-          sx={{ maxHeight: '100%' }}
-        >
+        <TableContainer ref={tableContainerRef} sx={{ maxHeight: '100%' }}>
           <MuiTable stickyHeader>
             <TableHead>
               <TableRow>

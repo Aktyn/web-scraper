@@ -1,4 +1,4 @@
-import { DashboardRounded, StorageRounded } from '@mui/icons-material'
+import { DashboardRounded, InfoRounded, StorageRounded } from '@mui/icons-material'
 import { List, Stack, Typography, useTheme } from '@mui/material'
 import { headerSize } from './Header'
 import { contentAreaBorderRadius } from './Layout'
@@ -9,6 +9,7 @@ import { ReactComponent as LogoIcon } from '../components/icons/icon.svg'
 const menuEntries: MenuItemProps[] = [
   { label: 'Dashboard', icon: DashboardRounded, viewName: 'DASHBOARD' },
   { label: 'Data manager', icon: StorageRounded, viewName: 'DATA_MANAGER' },
+  { label: 'Info', icon: InfoRounded, viewName: 'INFO' },
 ]
 
 export const Menu = () => {

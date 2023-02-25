@@ -7,10 +7,11 @@ import {
   useRef,
   useState,
 } from 'react'
-import { Box, Stack, Tab, Tabs } from '@mui/material'
+import { Box, Stack, Tab, tabClasses, Tabs, tabsClasses } from '@mui/material'
 import anime from 'animejs'
 import { usePersistentState } from '../../hooks/usePersistentState'
 import { genericForwardRef, genericMemo } from '../../utils'
+import { TransitionType, ViewTransition } from '../animation/ViewTransition'
 
 export interface TabSchema<ValueType> {
   value: ValueType
@@ -128,11 +129,22 @@ export const TabsView = genericMemo(
           overflow="hidden"
           flexGrow={1}
         >
-          <Tabs value={tab} onChange={handleTabChange}>
-            {tabs.map((tab) => (
-              <Tab key={tab.value} label={tab.label} value={tab.value} />
-            ))}
-          </Tabs>
+          <ViewTransition
+            targets={(element) => element.querySelectorAll(`.${tabsClasses.indicator}`)}
+            type={TransitionType.SCALE_X}
+            delay={1}
+          >
+            <ViewTransition
+              targets={(element) => element.querySelectorAll(`.${tabClasses.root}`)}
+              type={TransitionType.MOVE_TOP}
+            >
+              <Tabs value={tab} onChange={handleTabChange}>
+                {tabs.map((tab) => (
+                  <Tab key={tab.value} label={tab.label} value={tab.value} />
+                ))}
+              </Tabs>
+            </ViewTransition>
+          </ViewTransition>
           <Stack ref={contentContainerRef} alignItems="stretch" flexGrow={1} position="relative">
             <Box
               className="tab-content"
@@ -156,7 +168,8 @@ export const TabsView = genericMemo(
                 top: 0,
                 width: '100%',
                 height: '100%',
-                overflow: 'auto',
+                overflowY: 'auto',
+                overflowX: 'hidden',
                 pointerEvents: tabSwitchIndex % 2 !== 0 ? 'auto' : 'none',
               }}
             >

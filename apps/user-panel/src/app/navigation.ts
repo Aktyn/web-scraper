@@ -1,7 +1,7 @@
 import type { FunctionComponent, LazyExoticComponent } from 'react'
 import { lazy } from 'react'
 import type { Theme } from '@mui/material'
-import { cyanMain, purpleMain } from './themes'
+import { mainThemes } from './themes'
 
 type ViewComponentType = FunctionComponent<{ doNotRender?: boolean }>
 
@@ -20,13 +20,21 @@ interface NavigationEntry {
 const Navigation = {
   DASHBOARD: {
     component: lazy(() => import('./views/Dashboard/DashboardView')),
-    theme: purpleMain,
+    theme: mainThemes.cyan,
     gridPosition: [0, 0],
   } as NavigationEntry,
   DATA_MANAGER: {
     component: lazy(() => import('./views/DataManager/DataManagerView')),
-    theme: cyanMain,
+    theme: mainThemes.blue,
     gridPosition: [0, 1],
+    viewSettings: {
+      disableTopFadeEffect: true,
+    },
+  } as NavigationEntry,
+  INFO: {
+    component: lazy(() => import('./views/Info/InfoView')),
+    theme: mainThemes.deepPurple,
+    gridPosition: [1, 1],
     viewSettings: {
       disableTopFadeEffect: true,
     },
@@ -38,5 +46,5 @@ export default Navigation
 /** Grid visualization of transition purposes **/
 /*-------------------------------
 | DASHBOARD     | ------------- |
-| DATA_MANAGER  | ------------- |
+| DATA_MANAGER  | INFO--------- |
 --------------------------------*/

@@ -1,7 +1,6 @@
 import { useMemo } from 'react'
 import { Accounts } from './Accounts'
 import { Sites } from './Sites'
-import { TransitionType, ViewTransition } from '../../components/animation/ViewTransition'
 import type { TabSchema } from '../../components/common/TabsView'
 import { TabsView } from '../../components/common/TabsView'
 import type { ViewComponentProps } from '../helpers'
@@ -32,10 +31,6 @@ const DataManagerView = ({ doNotRender }: ViewComponentProps) => {
     return null
   }
 
-  return (
-    <ViewTransition type={TransitionType.FADE}>
-      <TabsView name="data-manager" tabs={tabs} />
-    </ViewTransition>
-  )
+  return <TabsView name="data-manager" tabs={tabs} />
 }
 export default DataManagerView

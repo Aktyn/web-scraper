@@ -2,7 +2,7 @@ import { alpha, createTheme, lighten, tableRowClasses } from '@mui/material'
 import { common, red } from '@mui/material/colors'
 import deepmerge from 'deepmerge'
 import { Config } from '../../config'
-import { baseTheme } from '../base'
+import { baseTheme } from '../baseTheme'
 import { mixColors, setSaturation } from '../helpers'
 
 type ColorSchema = {

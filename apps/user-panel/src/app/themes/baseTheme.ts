@@ -35,6 +35,13 @@ export const baseTheme = createTheme({
         },
       },
     },
+    MuiTabs: {
+      styleOverrides: {
+        indicator: {
+          transition: `left 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, width 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms`,
+        },
+      },
+    },
     MuiTab: {
       styleOverrides: {
         root: {

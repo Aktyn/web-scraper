@@ -1,4 +1,6 @@
+import { Box } from '@mui/material'
 import type { Account } from '@web-scrapper/common'
+import { TransitionType, ViewTransition } from '../../components/animation/ViewTransition'
 import { Table, useTableColumns } from '../../components/table'
 
 export const Accounts = () => {
@@ -41,5 +43,11 @@ export const Accounts = () => {
     },
   ])
 
-  return <Table columns={columns} keyProperty="id" data={window.electronAPI.getAccounts} />
+  return (
+    <ViewTransition type={TransitionType.FADE}>
+      <Box sx={{ height: '100%' }}>
+        <Table columns={columns} keyProperty="id" data={window.electronAPI.getAccounts} />
+      </Box>
+    </ViewTransition>
+  )
 }

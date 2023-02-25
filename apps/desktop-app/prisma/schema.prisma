@@ -15,14 +15,14 @@ datasource db {
 }
 
 model Site {
-  id           Int                @id @default(autoincrement())
-  createdAt    DateTime           @default(now())
-  url          String?            @unique
-  language     String?
+  id               Int                @id @default(autoincrement())
+  createdAt        DateTime           @default(now())
+  url              String?            @unique
+  language         String?
   //
-  Tags         SiteTagsRelation[]
-  Accounts     Account[]
-  Instruction Instruction?
+  Tags             SiteTagsRelation[]
+  Accounts         Account[]
+  SiteInstructions SiteInstructions?
 }
 
 model SiteTag {
@@ -55,7 +55,7 @@ model Account {
   Site                      Site      @relation(fields: [siteId], references: [id])
 }
 
-model Instruction {
+model SiteInstructions {
   id         Int         @id @default(autoincrement())
   createdAt  DateTime    @default(now())
   //
@@ -67,14 +67,14 @@ model Instruction {
 }
 
 model Action {
-  id            Int          @id @default(autoincrement())
-  name          String
-  url           String?
+  id                 Int              @id @default(autoincrement())
+  name               String
+  url                String?
   //
-  instructionId Int
-  Instruction   Instruction  @relation(fields: [instructionId], references: [id])
+  siteInstructionsId Int
+  SiteInstructions   SiteInstructions @relation(fields: [siteInstructionsId], references: [id])
   //
-  ActionSteps   ActionStep[]
+  ActionSteps        ActionStep[]
 }
 
 model ActionStep {
@@ -90,15 +90,16 @@ model ActionStep {
 }
 
 model Procedure {
-  id            Int         @id @default(autoincrement())
-  type          String // enum value
-  startUrl      String
-  waitFor       String?
+  id                 Int              @id @default(autoincrement())
+  type               String // enum value
+  //consider adding "name" or "description" field
+  startUrl           String
+  waitFor            String?
   //
-  instructionId Int
-  Instruction   Instruction @relation(fields: [instructionId], references: [id])
-  flowStepId    Int
-  FlowStep      FlowStep    @relation(fields: [flowStepId], references: [id])
+  siteInstructionsId Int
+  SiteInstructions   SiteInstructions @relation(fields: [siteInstructionsId], references: [id])
+  flowStepId         Int
+  FlowStep           FlowStep         @relation(fields: [flowStepId], references: [id])
 }
 
 model FlowStep {
