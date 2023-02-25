@@ -22,7 +22,7 @@ model Site {
   //
   Tags         SiteTagsRelation[]
   Accounts     Account[]
-  Instructions Instruction[]
+  Instruction Instruction?
 }
 
 model SiteTag {
@@ -59,7 +59,7 @@ model Instruction {
   id         Int         @id @default(autoincrement())
   createdAt  DateTime    @default(now())
   //
-  siteId     Int
+  siteId     Int         @unique
   Site       Site        @relation(fields: [siteId], references: [id])
   //
   Procedures Procedure[]
