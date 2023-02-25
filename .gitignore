@@ -26,3 +26,4 @@ build/
 # Sqlite3 databases
 *.db
 *.db-journal
+erd.pdf

@@ -2,44 +2,116 @@ generator client {
   provider = "prisma-client-js"
 }
 
+generator erd {
+  provider                  = "prisma-erd-generator"
+  output                    = "../external/erd.pdf"
+  theme                     = "default"
+  includeRelationFromFields = true
+}
+
 datasource db {
   provider = "sqlite"
   url      = env("DATABASE_URL")
 }
 
+model Site {
+  id           Int                @id @default(autoincrement())
+  createdAt    DateTime           @default(now())
+  url          String?            @unique
+  language     String?
+  //
+  Tags         SiteTagsRelation[]
+  Accounts     Account[]
+  Instructions Instruction[]
+}
+
 model SiteTag {
-  id          Int        @id @default(autoincrement())
-  name        String     @unique
+  id          Int                @id @default(autoincrement())
+  name        String             @unique
   description String?
   Sites       SiteTagsRelation[]
 }
 
-model Site {
-  id       Int        @id @default(autoincrement())
-  url      String?    @unique
-  language String?
-  Tags     SiteTagsRelation[]
-
-  Accounts Account[]
-}
-
 model SiteTagsRelation {
   tagId  Int
-  Tag    SiteTag  @relation(fields: [tagId], references: [id])
+  Tag    SiteTag @relation(fields: [tagId], references: [id])
   siteId Int
-  Site   Site @relation(fields: [siteId], references: [id])
+  Site   Site    @relation(fields: [siteId], references: [id])
 
   @@id([tagId, siteId])
 }
 
 model Account {
   id                        Int       @id @default(autoincrement())
+  createdAt                 DateTime  @default(now())
   loginOrEmail              String
-  password                  String
+  password                  String // TODO: keep it encrypted; also encrypt loginOrEmail
   additionalCredentialsData String?
   lastUsed                  DateTime?
   active                    Boolean?  @default(true)
+  // TODO: email account relation
+  //
+  siteId                    Int
+  Site                      Site      @relation(fields: [siteId], references: [id])
+}
 
-  siteId Int
-  Site   Site @relation(fields: [siteId], references: [id])
+model Instruction {
+  id         Int         @id @default(autoincrement())
+  createdAt  DateTime    @default(now())
+  //
+  siteId     Int
+  Site       Site        @relation(fields: [siteId], references: [id])
+  //
+  Procedures Procedure[]
+  Actions    Action[]
+}
+
+model Action {
+  id            Int          @id @default(autoincrement())
+  name          String
+  url           String?
+  //
+  instructionId Int
+  Instruction   Instruction  @relation(fields: [instructionId], references: [id])
+  //
+  ActionSteps   ActionStep[]
+}
+
+model ActionStep {
+  id         Int     @id @default(autoincrement())
+  type       String // enum value
+  data       String? // Stringified JSON
+  orderIndex Int // used for preserving order of steps in action
+  //
+  actionId   Int
+  Action     Action  @relation(fields: [actionId], references: [id])
+
+  @@unique([actionId, orderIndex])
+}
+
+model Procedure {
+  id            Int         @id @default(autoincrement())
+  type          String // enum value
+  startUrl      String
+  waitFor       String?
+  //
+  instructionId Int
+  Instruction   Instruction @relation(fields: [instructionId], references: [id])
+  flowStepId    Int
+  FlowStep      FlowStep    @relation(fields: [flowStepId], references: [id])
+}
+
+model FlowStep {
+  id                  Int         @id @default(autoincrement())
+  actionName          String // "global.{GLOBAL_ACTION_TYPE (enum)}" or "action.{Action.name}"
+  globalReturnValues  String? // Stringified array of values or paths to html elements that will be used as arguments to global action function
+  //
+  onSuccessFlowStepId Int?
+  OnSuccessFlowStep   FlowStep?   @relation("NextFlowOnSuccess", fields: [onSuccessFlowStepId], references: [id])
+  onFailureFlowStepId Int?
+  OnFailureFlowStep   FlowStep?   @relation("NextFlowOnFailure", fields: [onFailureFlowStepId], references: [id])
+  //
+  Procedures          Procedure[]
+  OnSuccessFlowSteps  FlowStep[]  @relation("NextFlowOnSuccess")
+  OnFailureFlowSteps  FlowStep[]  @relation("NextFlowOnFailure")
 }
