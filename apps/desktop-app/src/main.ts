@@ -9,7 +9,7 @@ dotenvExpand.expand(myEnv)
 
 // eslint-disable-next-line import/order
 import { ElectronToRendererMessage, safePromise } from '@web-scrapper/common'
-import { app } from 'electron'
+import { app, shell } from 'electron'
 import isDev from 'electron-is-dev'
 
 import { EXTERNAL_DIRECTORY_PATH } from './common'
@@ -40,6 +40,11 @@ function createWindow() {
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
     },
+  })
+
+  mainWindow.webContents.setWindowOpenHandler((data) => {
+    shell.openExternal(data.url).catch(console.error)
+    return { action: 'deny' }
   })
 
   mainWindow
