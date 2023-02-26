@@ -1,5 +1,6 @@
 export interface Account {
   id: number
+  createdAt: Date
   loginOrEmail: string
   password: string
   additionalCredentialsData: string | null

@@ -11,6 +11,11 @@ export const Accounts = () => {
       accessor: 'id',
     },
     {
+      id: 'createdAt',
+      header: 'Created',
+      accessor: (row) => row.createdAt.toLocaleString(),
+    },
+    {
       id: 'loginOrEmail',
       header: 'Login or email',
       accessor: 'loginOrEmail',
@@ -23,7 +28,7 @@ export const Accounts = () => {
     {
       id: 'additionalCredentialsData',
       header: 'Additional credentials data',
-      accessor: (row) => row.additionalCredentialsData ?? '-',
+      accessor: (row) => row.additionalCredentialsData,
     },
     {
       id: 'lastUsed',
@@ -34,12 +39,12 @@ export const Accounts = () => {
     {
       id: 'active',
       header: 'Active',
-      accessor: (row) => (row.active ? 'Yes' : 'No'), //TODO: <BooleanValue value={row.active} />
+      accessor: 'active',
     },
     {
       id: 'siteId',
       header: 'Site',
-      accessor: 'siteId', //TODO: button opening details of site
+      accessor: 'siteId', //TODO: button opening site configuration details
     },
   ])
 

@@ -18,10 +18,11 @@ export const mockData = {
       name: 'Mock',
       description: 'Mocked site',
     },
-  ] as SiteTag[],
+  ] satisfies SiteTag[],
   accounts: [
     {
       id: 1,
+      createdAt: new Date('2023-02-19T23:40:10.302Z'),
       loginOrEmail: 'Mock-username-1',
       password: 'Mock-password-1',
       additionalCredentialsData: null,
@@ -31,6 +32,7 @@ export const mockData = {
     },
     {
       id: 2,
+      createdAt: new Date('2023-02-22T23:40:10.302Z'),
       loginOrEmail: 'Mock-username-2',
       password: 'Mock-password-2',
       additionalCredentialsData: '{"value": "mock-data"}',
@@ -38,5 +40,5 @@ export const mockData = {
       active: true,
       siteId: 1,
     },
-  ] as Account[],
+  ] satisfies Account[],
 }

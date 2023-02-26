@@ -16,6 +16,7 @@ import {
   TableRow,
 } from '@mui/material'
 import type { PaginatedApiFunction, Path } from '@web-scrapper/common'
+import { ValueCell } from './ValueCell'
 import { getDeepProperty } from './helpers'
 import type { useTableColumns } from './useTableColumns'
 import { Config } from '../../config'
@@ -173,11 +174,11 @@ export const Table = genericMemo(
               {data.map((row, rowIndex) => (
                 <TableRow key={keyProperty ? getDeepProperty(row, keyProperty) : rowIndex}>
                   {columns.definitions.map((columnDefinition) => (
-                    <TableCell key={columnDefinition.id}>
+                    <ValueCell key={columnDefinition.id}>
                       {typeof columnDefinition.accessor === 'function'
                         ? columnDefinition.accessor(row)
                         : getDeepProperty(row, columnDefinition.accessor)}
-                    </TableCell>
+                    </ValueCell>
                   ))}
                 </TableRow>
               ))}

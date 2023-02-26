@@ -9,6 +9,7 @@ export class Scraper {
   // private readonly options: Required<BotOptions<ParserData>>
 
   constructor() {
+    // eslint-disable-next-line no-console
     console.log('Scraper created')
     // this.options = {
     //   pageTimeout: options.pageTimeout ?? Config.PAGE_TIMEOUT,

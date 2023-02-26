@@ -7,12 +7,16 @@ export function getAccounts(request: { count: number; cursor?: { id: number } })
     cursor: request.cursor,
     select: {
       id: true,
+      createdAt: true,
       loginOrEmail: true,
       password: true,
       additionalCredentialsData: true,
       lastUsed: true,
       active: true,
       siteId: true,
+    },
+    orderBy: {
+      id: 'desc',
     },
   })
 }
