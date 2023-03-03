@@ -27,7 +27,7 @@ npm run dev
 
 ```bash
 # Reset the database to state with generated empty tables
-npm run db:generate:reset 
+npm run db:generate:reset
 
 # Open the database studio in the browser
 npm run db:studio
