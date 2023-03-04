@@ -11,6 +11,7 @@ import { useMounted } from './hooks/useMounted'
 import { Layout } from './layout/Layout'
 import Navigation from './navigation'
 import { baseTheme } from './themes'
+import { UserSettingsProvider } from './userSettings/UserSettingsProvider'
 
 export const App = () => {
   const mounted = useMounted()
@@ -71,17 +72,19 @@ export const App = () => {
           viewSettings: currentView.viewSettings,
         }}
       >
-        <Layout>
-          <Suspense fallback={<FullViewLoader />}>
-            <currentView.component key={viewName} />
-          </Suspense>
-          {nextView && (
-            // Preloads next view file
-            <Suspense fallback={null}>
-              <nextView.component key={nextViewName} doNotRender />
+        <UserSettingsProvider>
+          <Layout>
+            <Suspense fallback={<FullViewLoader />}>
+              <currentView.component key={viewName} />
             </Suspense>
-          )}
-        </Layout>
+            {nextView && (
+              // Preloads next view file
+              <Suspense fallback={null}>
+                <nextView.component key={nextViewName} doNotRender />
+              </Suspense>
+            )}
+          </Layout>
+        </UserSettingsProvider>
       </ViewContext.Provider>
     </ThemeProvider>
   )

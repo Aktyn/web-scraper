@@ -6,7 +6,9 @@ import {
 } from '@web-scrapper/common'
 import { ipcMain, type IpcMainInvokeEvent } from 'electron'
 
-import Database from './database'
+import Database from '../../database'
+
+import { parseDatabaseAccount } from './parsers/accountParser'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const handleApiRequest = <ArgumentsType extends any[], ResponseType extends Promise<any>>(
@@ -30,11 +32,13 @@ const handleApiRequest = <ArgumentsType extends any[], ResponseType extends Prom
 
 export function registerRequestsHandler() {
   const handler = {
-    [RendererToElectronMessage.getAccounts]: handleApiRequest('getAccounts', (request) =>
-      Database.account.getAccounts(request).then((accounts) => ({
-        data: accounts,
-        cursor: Database.utils.extractCursor(accounts, 'id', request.count),
-      })),
+    [RendererToElectronMessage.getAccounts]: handleApiRequest(
+      RendererToElectronMessage.getAccounts,
+      (request, password) =>
+        Database.account.getAccounts(request).then((accounts) => ({
+          data: accounts.map((account) => parseDatabaseAccount(account, password)),
+          cursor: Database.utils.extractCursor(accounts, 'id', request.count),
+        })),
     ),
   } satisfies {
     [key in RendererToElectronMessage]: (

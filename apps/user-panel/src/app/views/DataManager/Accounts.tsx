@@ -2,6 +2,7 @@ import { Box } from '@mui/material'
 import type { Account } from '@web-scrapper/common'
 import { TransitionType, ViewTransition } from '../../components/animation/ViewTransition'
 import { Table, useTableColumns } from '../../components/table'
+import { useEncryptedApiRequest } from '../../components/table/useEncryptedApiRequest'
 
 export const Accounts = () => {
   const columns = useTableColumns<Account>([
@@ -19,16 +20,19 @@ export const Accounts = () => {
       id: 'loginOrEmail',
       header: 'Login or email',
       accessor: 'loginOrEmail',
+      encrypted: true,
     },
     {
       id: 'password',
       header: 'Password',
       accessor: 'password',
+      encrypted: true,
     },
     {
       id: 'additionalCredentialsData',
       header: 'Additional credentials data',
       accessor: (row) => row.additionalCredentialsData,
+      encrypted: true,
     },
     {
       id: 'lastUsed',
@@ -48,10 +52,12 @@ export const Accounts = () => {
     },
   ])
 
+  const getAccountsRequest = useEncryptedApiRequest(window.electronAPI.getAccounts)
+
   return (
     <ViewTransition type={TransitionType.FADE}>
       <Box sx={{ height: '100%' }}>
-        <Table columns={columns} keyProperty="id" data={window.electronAPI.getAccounts} />
+        <Table columns={columns} keyProperty="id" data={getAccountsRequest} />
       </Box>
     </ViewTransition>
   )

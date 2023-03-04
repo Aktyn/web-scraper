@@ -7,6 +7,7 @@ export interface ColumnDefinition<DataType> {
   id: string
   header: ReactNode
   accessor: (string & Path<DataType>) | ((row: DataType) => string | ReactNode)
+  encrypted?: boolean
   // width?: number
   // sortable?: boolean
   // hideable?: boolean

@@ -4,7 +4,7 @@ import path from 'path'
 import { cacheable, safePromise, waitFor } from '@web-scrapper/common'
 import { type Browser, launch } from 'puppeteer'
 
-import { EXTERNAL_DIRECTORY_PATH } from '../common'
+import { EXTERNAL_DIRECTORY_PATH } from '../utils'
 
 import { ScraperPage } from './scraperPage'
 

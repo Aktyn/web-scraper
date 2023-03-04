@@ -12,10 +12,10 @@ import { ElectronToRendererMessage, safePromise } from '@web-scrapper/common'
 import { app, shell } from 'electron'
 import isDev from 'electron-is-dev'
 
-import { EXTERNAL_DIRECTORY_PATH } from './common'
+import { registerRequestsHandler } from './api/internal/requestHandler'
 import Database from './database'
 import { ExtendedBrowserWindow } from './extendedBrowserWindow'
-import { registerRequestsHandler } from './requestHandler'
+import { EXTERNAL_DIRECTORY_PATH } from './utils'
 
 // eslint-disable-next-line no-console
 console.info(

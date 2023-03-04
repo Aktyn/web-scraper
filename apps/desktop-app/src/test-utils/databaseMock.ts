@@ -3,6 +3,7 @@ import { vi } from 'vitest'
 import { type DeepMockProxy, mockDeep } from 'vitest-mock-extended'
 
 import prisma from '../database/client'
+import { encrypt } from '../utils'
 
 vi.mock('../database/client', () => ({
   __esModule: true,
@@ -10,6 +11,8 @@ vi.mock('../database/client', () => ({
 }))
 
 export const databaseMock = prisma as unknown as DeepMockProxy<PrismaClient>
+
+const mockPassword = 'mock-password'
 
 export const mockData = {
   siteTags: [
@@ -23,8 +26,8 @@ export const mockData = {
     {
       id: 1,
       createdAt: new Date('2023-02-19T23:40:10.302Z'),
-      loginOrEmail: 'Mock-username-1',
-      password: 'Mock-password-1',
+      loginOrEmail: encrypt('Mock-username-1', mockPassword, 'buffer'),
+      password: encrypt('Mock-password-1', mockPassword, 'buffer'),
       additionalCredentialsData: null,
       lastUsed: new Date('2023-02-19T23:40:10.302Z'),
       active: true,
@@ -33,9 +36,9 @@ export const mockData = {
     {
       id: 2,
       createdAt: new Date('2023-02-22T23:40:10.302Z'),
-      loginOrEmail: 'Mock-username-2',
-      password: 'Mock-password-2',
-      additionalCredentialsData: '{"value": "mock-data"}',
+      loginOrEmail: encrypt('Mock-username-2', mockPassword, 'buffer'),
+      password: encrypt('Mock-password-2', mockPassword, 'buffer'),
+      additionalCredentialsData: encrypt('{"value": "mock-data"}', mockPassword, 'buffer'),
       lastUsed: new Date('2023-02-22T23:40:10.302Z'),
       active: true,
       siteId: 1,

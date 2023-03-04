@@ -15,7 +15,7 @@ const menuEntries: MenuItemProps[] = [
 export const Menu = () => {
   const theme = useTheme()
 
-  const scraperIconSize = `calc(${headerSize} + ${contentAreaBorderRadius} - 0.5rem)`
+  const scraperIconSize = `calc(${headerSize} + ${contentAreaBorderRadius} - 1.5rem)`
 
   return (
     <Stack alignItems="center" gridArea="menu">

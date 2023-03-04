@@ -10,7 +10,7 @@ const DashboardView = ({ doNotRender }: ViewComponentProps) => {
   return (
     <Stack alignItems="center" p={4} spacing={4}>
       <ViewTransition>
-        <Button className="test1" variant="contained" color="primary">
+        <Button variant="contained" color="primary">
           NOOP
         </Button>
       </ViewTransition>

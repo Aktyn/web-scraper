@@ -1,5 +1,5 @@
-import { alpha, createTheme, lighten, tableRowClasses } from '@mui/material'
-import { common, red } from '@mui/material/colors'
+import { alpha, createTheme, darken, lighten, tableRowClasses } from '@mui/material'
+import { common, green, orange, red } from '@mui/material/colors'
 import deepmerge from 'deepmerge'
 import { Config } from '../../config'
 import { baseTheme } from '../baseTheme'
@@ -25,6 +25,7 @@ interface ColorizedThemeProps {
 
 export function generateColorizedTheme({ primary, secondary }: ColorizedThemeProps) {
   const backgroundDefault = setSaturation(primary[800], Config.BACKGROUND_SATURATION)
+  const textPrimary = primary[50]
   const textSecondary = mixColors(primary[50], primary[800], 0.4)
   const divider = lighten(backgroundDefault, 0.05)
 
@@ -41,14 +42,20 @@ export function generateColorizedTheme({ primary, secondary }: ColorizedThemePro
         },
         background: {
           default: backgroundDefault,
-          paper: primary[700],
+          paper: primary[900],
         },
         text: {
-          primary: primary[50],
+          primary: textPrimary,
           secondary: textSecondary,
         },
         error: {
           main: red[400],
+        },
+        warning: {
+          main: orange[200],
+        },
+        success: {
+          main: green[200],
         },
         divider,
       },
@@ -140,6 +147,17 @@ export function generateColorizedTheme({ primary, secondary }: ColorizedThemePro
                   backgroundColor: 'inherit',
                 },
               },
+            },
+          },
+        },
+        MuiTooltip: {
+          styleOverrides: {
+            tooltip: {
+              backgroundColor: alpha(darken(backgroundDefault, 0.2), 0.8),
+              border: `1px solid ${lighten(backgroundDefault, 0.1)}`,
+              color: textPrimary,
+              backdropFilter: 'blur(2px)',
+              boxShadow: '0 1px 2px #0004',
             },
           },
         },

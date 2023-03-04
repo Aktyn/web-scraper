@@ -33,7 +33,7 @@ interface TableProps<DataType extends object> {
 }
 
 export interface TableRef {
-  refresh?: () => void
+  refresh: () => void
 }
 
 export const Table = genericMemo(
@@ -99,11 +99,6 @@ export const Table = genericMemo(
       )
 
       useEffect(() => {
-        fetchDataChunk(null)
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-      }, [dataSource])
-
-      useEffect(() => {
         const container = tableContainerRef.current
         if (!container || !cursor || fetchingData) {
           return
@@ -141,6 +136,11 @@ export const Table = genericMemo(
         fetchDataChunk(null)
       }, [fetchDataChunk])
 
+      useEffect(() => {
+        refresh()
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+      }, [dataSource])
+
       useImperativeHandle(
         ref,
         () => ({
@@ -174,7 +174,7 @@ export const Table = genericMemo(
               {data.map((row, rowIndex) => (
                 <TableRow key={keyProperty ? getDeepProperty(row, keyProperty) : rowIndex}>
                   {columns.definitions.map((columnDefinition) => (
-                    <ValueCell key={columnDefinition.id}>
+                    <ValueCell key={columnDefinition.id} encrypted={!!columnDefinition.encrypted}>
                       {typeof columnDefinition.accessor === 'function'
                         ? columnDefinition.accessor(row)
                         : getDeepProperty(row, columnDefinition.accessor)}

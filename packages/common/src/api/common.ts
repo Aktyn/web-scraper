@@ -24,6 +24,11 @@ export type PaginatedApiFunction<DataType, IdProperty extends keyof DataType> = 
   request: PaginatedRequest<DataType, IdProperty>,
 ) => Promise<PaginatedApiResponse<DataType, IdProperty>>
 
+export type PaginatedApiFunctionWithEncryptedData<DataType, IdProperty extends keyof DataType> = (
+  request: PaginatedRequest<DataType, IdProperty>,
+  password: string | null,
+) => Promise<PaginatedApiResponse<DataType, IdProperty>>
+
 export type ApiResponse<DataType> =
   | ApiError
   | {

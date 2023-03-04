@@ -44,9 +44,9 @@ model SiteTagsRelation {
 model Account {
   id                        Int       @id @default(autoincrement())
   createdAt                 DateTime  @default(now())
-  loginOrEmail              String
-  password                  String // TODO: keep it encrypted; also encrypt loginOrEmail
-  additionalCredentialsData String?
+  loginOrEmail              Bytes // encrypted
+  password                  Bytes // encrypted
+  additionalCredentialsData Bytes? // encrypted
   lastUsed                  DateTime?
   active                    Boolean?  @default(true)
   // TODO: email account relation
