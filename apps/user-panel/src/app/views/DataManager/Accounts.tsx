@@ -14,7 +14,7 @@ export const Accounts = () => {
     {
       id: 'createdAt',
       header: 'Created',
-      accessor: (row) => row.createdAt.toLocaleString(),
+      accessor: 'createdAt',
     },
     {
       id: 'loginOrEmail',
@@ -31,14 +31,14 @@ export const Accounts = () => {
     {
       id: 'additionalCredentialsData',
       header: 'Additional credentials data',
-      accessor: (row) => row.additionalCredentialsData,
+      accessor: 'additionalCredentialsData',
       encrypted: true,
+      jsonString: true,
     },
     {
       id: 'lastUsed',
       header: 'Last used',
-      //TODO: custom parsing
-      accessor: (row) => row.lastUsed?.toLocaleString() ?? 'Never',
+      accessor: 'lastUsed',
     },
     {
       id: 'active',

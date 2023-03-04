@@ -1,5 +1,5 @@
 import { alpha, createTheme, darken, lighten, tableRowClasses } from '@mui/material'
-import { common, green, orange, red } from '@mui/material/colors'
+import { common, green, grey, orange, red } from '@mui/material/colors'
 import deepmerge from 'deepmerge'
 import { Config } from '../../config'
 import { baseTheme } from '../baseTheme'
@@ -48,8 +48,9 @@ export function generateColorizedTheme({ primary, secondary }: ColorizedThemePro
           primary: textPrimary,
           secondary: textSecondary,
         },
+        grey: grey,
         error: {
-          main: red[400],
+          main: red[200],
         },
         warning: {
           main: orange[200],

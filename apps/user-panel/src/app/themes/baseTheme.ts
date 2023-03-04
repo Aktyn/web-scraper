@@ -52,5 +52,12 @@ export const baseTheme = createTheme({
         },
       },
     },
+    MuiPopover: {
+      styleOverrides: {
+        paper: {
+          borderRadius: '1rem',
+        },
+      },
+    },
   },
 })

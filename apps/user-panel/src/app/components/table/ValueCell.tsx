@@ -1,42 +1,86 @@
-import type { PropsWithChildren } from 'react'
 import { useContext } from 'react'
 import { LockRounded } from '@mui/icons-material'
-import { TableCell, Tooltip, type TableCellProps } from '@mui/material'
+import { Box, TableCell, type TableCellProps, Tooltip } from '@mui/material'
 import { BooleanValue } from './BooleanValue'
 import { NoDataChip } from './NoDataChip'
 import { UserSettingsContext } from '../../context/userSettingsContext'
+import { JsonValue } from '../common/JsonValue'
 
-interface ValueCellProps extends TableCellProps {
+interface ValueCellProps extends Omit<TableCellProps, 'children'> {
+  children: unknown
   encrypted?: boolean
+  jsonString?: boolean
 }
 
 export const ValueCell = ({
   children,
   encrypted,
+  jsonString,
   ...tableCellProps
-}: PropsWithChildren<ValueCellProps>) => {
+}: ValueCellProps) => {
   const { dataEncryptionPassword } = useContext(UserSettingsContext)
-
-  const accessDenied = children === '' && encrypted && dataEncryptionPassword === null
 
   return (
     <TableCell {...tableCellProps}>
-      {children === undefined ? (
-        '-'
-      ) : children === null ? (
-        <NoDataChip />
-      ) : typeof children === 'boolean' ? (
-        <BooleanValue value={children} />
-      ) : accessDenied ? (
-        <Tooltip
-          title="Press the key icon in the top right corner to unlock this content"
-          disableInteractive
-        >
-          <LockRounded sx={{ color: 'text.secondary' }} />
-        </Tooltip>
-      ) : (
-        children
-      )}
+      <CellContent
+        accessDenied={encrypted && dataEncryptionPassword === null}
+        jsonString={jsonString}
+      >
+        {children}
+      </CellContent>
     </TableCell>
   )
 }
+
+interface CellContentProps {
+  children: unknown
+  accessDenied?: boolean
+  jsonString?: boolean
+}
+
+const CellContent = ({ children: value, accessDenied, jsonString }: CellContentProps) => {
+  if (accessDenied) {
+    return (
+      <Tooltip
+        title="Press the key icon in the top right corner to unlock this content"
+        disableInteractive
+      >
+        <LockRounded sx={{ color: 'text.secondary' }} />
+      </Tooltip>
+    )
+  }
+
+  if (value === undefined) {
+    return <Box component="span">-</Box>
+  }
+
+  if (value === null) {
+    return <NoDataChip />
+  }
+
+  switch (typeof value) {
+    case 'boolean':
+      return <BooleanValue value={value} />
+    case 'object':
+      if (value instanceof Date) {
+        return <>{value.toLocaleString(navigator.language, dateFormat)}</>
+      }
+      break
+    case 'string':
+      if (jsonString) {
+        return <JsonValue>{value}</JsonValue>
+      }
+      break
+  }
+
+  return <>{value}</>
+}
+
+const dateFormat: Intl.DateTimeFormatOptions = {
+  year: 'numeric',
+  month: 'numeric',
+  day: '2-digit',
+  hour: 'numeric',
+  minute: 'numeric',
+  second: 'numeric',
+} as const

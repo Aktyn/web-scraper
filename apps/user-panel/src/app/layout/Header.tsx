@@ -21,6 +21,8 @@ export const Header = () => {
       height={headerSize}
       gridArea="header"
     >
+      {/* TODO: toggle for compact table view */}
+
       <Tooltip
         title={`${dataEncryptionPassword ? 'Change' : 'Set'} data encryption password`}
         disableInteractive

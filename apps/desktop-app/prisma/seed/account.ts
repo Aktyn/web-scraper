@@ -3,13 +3,15 @@ import { encrypt } from '../../src/utils'
 
 export async function seedAccount(prisma: PrismaClient) {
   const password = 'mock-password'
+  const exampleJsonString =
+    '{"glossary":{"title":"example glossary","GlossDiv":{"title":"S","GlossList":{"GlossEntry":{"ID":"SGML","SortAs":"SGML","GlossTerm":"Standard Generalized Markup Language","Acronym":"SGML","Abbrev":"ISO 8879:1986","GlossDef":{"para":"A meta-markup language, used to create markup languages such as DocBook.","GlossSeeAlso":["GML","XML"]},"GlossSee":"markup"}}}}}'
 
   await prisma.account.create({
     data: {
       createdAt: new Date(1677089943375 - 2592000000),
       loginOrEmail: encrypt('Mock-login-1', password, 'buffer'),
       password: encrypt('mock-password-1', password, 'buffer'),
-      additionalCredentialsData: encrypt('{"mockData": "mockValue"}', password, 'buffer'),
+      additionalCredentialsData: encrypt(exampleJsonString, password, 'buffer'),
       lastUsed: new Date(1677089943375),
       active: true,
       siteId: 1,
