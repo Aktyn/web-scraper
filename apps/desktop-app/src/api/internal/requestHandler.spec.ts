@@ -1,3 +1,4 @@
+import { ErrorCode } from '@web-scrapper/common'
 import type { ElectronApi, RendererToElectronMessage } from '@web-scrapper/common'
 import { beforeEach, describe, expect, it } from 'vitest'
 import type { DeepMockProxy } from 'vitest-mock-extended'
@@ -34,7 +35,7 @@ describe('registerRequestsHandler', () => {
 
   it('should invoke ipcMain.handle for each defined handler', () => {
     registerRequestsHandler()
-    expect(ipcMainMock.handle).toBeCalledTimes(1)
+    expect(ipcMainMock.handle).toBeCalledTimes(3)
   })
 
   it('should return decrypted accounts', async () => {
@@ -71,6 +72,46 @@ describe('registerRequestsHandler', () => {
         password: '',
         additionalCredentialsData: account.additionalCredentialsData ? '' : null,
       })),
+    })
+  })
+
+  it('should return parsed user settings', async () => {
+    databaseMock.userData.findMany.mockResolvedValue(mockData.userData)
+
+    registerRequestsHandler()
+
+    const getUserSettings = handlers.get(
+      'getUserSettings',
+    ) as HandlersInterface[RendererToElectronMessage.getUserSettings]
+
+    expect(getUserSettings).toBeDefined()
+    await expect(getUserSettings(null as never)).resolves.toEqual({
+      tablesCompactMode: true,
+    })
+  })
+
+  it('should upsert given user settings', async () => {
+    databaseMock.userData.upsert.mockResolvedValue({
+      key: 'tableCompactMode',
+      value: "'false'",
+    })
+
+    registerRequestsHandler()
+
+    const setUserSetting = handlers.get(
+      'setUserSetting',
+    ) as HandlersInterface[RendererToElectronMessage.setUserSetting]
+
+    expect(setUserSetting).toBeDefined()
+
+    await expect(setUserSetting(null as never, 'tablesCompactMode', false)).resolves.toEqual({
+      errorCode: ErrorCode.NO_ERROR,
+    })
+
+    expect(databaseMock.userData.upsert).toBeCalledWith({
+      where: { key: 'tablesCompactMode' },
+      update: { value: 'false' },
+      create: { key: 'tablesCompactMode', value: 'false' },
     })
   })
 })

@@ -1,16 +1,33 @@
-import { useContext, useState } from 'react'
+import { useContext, useEffect, useRef, useState } from 'react'
 import { CheckCircleOutlineRounded, Visibility, VisibilityOff } from '@mui/icons-material'
 import { Button, IconButton, InputAdornment, Stack, TextField, Typography } from '@mui/material'
 import { UserDataContext } from '../context/userDataContext'
 
 export const EncryptionPasswordForm = ({ onSave }: { onSave?: () => void }) => {
+  const inputRef = useRef<HTMLInputElement>(null)
   const { dataEncryptionPassword, setDataEncryptionPassword } = useContext(UserDataContext)
 
   const [showPassword, setShowPassword] = useState(false)
   const [internalPassword, setInternalPassword] = useState(dataEncryptionPassword ?? '')
 
+  useEffect(() => {
+    inputRef.current?.querySelector('input')?.focus()
+  }, [])
+
   return (
-    <Stack alignItems="center" spacing={2} p={2} width="24rem" maxWidth="100%">
+    <Stack
+      component="form"
+      onSubmit={(event) => {
+        event.preventDefault()
+        setDataEncryptionPassword(internalPassword || null)
+        onSave?.()
+      }}
+      alignItems="center"
+      spacing={2}
+      p={2}
+      width="24rem"
+      maxWidth="100%"
+    >
       <Typography>
         Some data such as site account credentials must be encrypted with password so that no third
         party user can access it by stealing database file.
@@ -19,9 +36,11 @@ export const EncryptionPasswordForm = ({ onSave }: { onSave?: () => void }) => {
         value={internalPassword ?? ''}
         onChange={(event) => setInternalPassword(event.target.value)}
         variant="standard"
+        name="password"
         label="Password"
         type={showPassword ? 'text' : 'password'}
         InputProps={{
+          ref: inputRef,
           endAdornment: (
             <InputAdornment position="end">
               <IconButton
@@ -40,10 +59,7 @@ export const EncryptionPasswordForm = ({ onSave }: { onSave?: () => void }) => {
         color="primary"
         endIcon={<CheckCircleOutlineRounded />}
         disabled={internalPassword === (dataEncryptionPassword ?? '')}
-        onClick={() => {
-          setDataEncryptionPassword(internalPassword || null)
-          onSave?.()
-        }}
+        type="submit"
       >
         Save
       </Button>

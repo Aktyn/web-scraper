@@ -53,6 +53,13 @@ export const baseTheme = createTheme({
         },
       },
     },
+    MuiPaper: {
+      styleOverrides: {
+        root: {
+          backgroundImage: 'none',
+        },
+      },
+    },
     MuiPopover: {
       styleOverrides: {
         paper: {

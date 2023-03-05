@@ -1,16 +1,18 @@
 import { forwardRef, type PropsWithChildren, useImperativeHandle, useState } from 'react'
 import type { PopoverProps } from '@mui/material'
-import { Popover } from '@mui/material'
+import { alpha, lighten, Popover } from '@mui/material'
 
 export interface CustomPopoverRef {
   open: (anchorElement: HTMLButtonElement) => void
   close: () => void
 }
 
-type CustomPopoverProps = Omit<PopoverProps, 'open' | 'anchorEl' | 'onClose'>
+interface CustomPopoverProps extends Omit<PopoverProps, 'open' | 'anchorEl' | 'onClose'> {
+  glass?: boolean
+}
 
 export const CustomPopover = forwardRef<CustomPopoverRef, PropsWithChildren<CustomPopoverProps>>(
-  ({ children, ...popoverProps }, ref) => {
+  ({ children, glass, ...popoverProps }, ref) => {
     const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null)
 
     useImperativeHandle(
@@ -27,7 +29,21 @@ export const CustomPopover = forwardRef<CustomPopoverRef, PropsWithChildren<Cust
     //TODO: title, content entry animations
 
     return (
-      <Popover {...popoverProps} open={!!anchorEl} anchorEl={anchorEl} onClose={handleClose}>
+      <Popover
+        PaperProps={{
+          sx: {
+            border: (theme) => `1px solid ${lighten(theme.palette.background.paper, 0.2)}`,
+            backgroundColor: glass
+              ? (theme) => alpha(theme.palette.background.paper, 0.5)
+              : undefined,
+            backdropFilter: glass ? 'blur(4px)' : undefined,
+          },
+        }}
+        {...popoverProps}
+        open={!!anchorEl}
+        anchorEl={anchorEl}
+        onClose={handleClose}
+      >
         {children}
       </Popover>
     )

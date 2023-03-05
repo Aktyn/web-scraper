@@ -3,7 +3,7 @@ import type { ElectronApi } from '@web-scrapper/common'
 import { contextBridge, ipcRenderer, type IpcRendererEvent } from 'electron'
 
 const electronToRendererMessageNames = ['dummyEventFromMain'] as const
-const rendererToElectronMessageNames = ['getAccounts'] as const
+const rendererToElectronMessageNames = ['getAccounts', 'getUserSettings', 'setUserSetting'] as const
 
 const api = {
   ...electronToRendererMessageNames.reduce(

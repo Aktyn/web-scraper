@@ -74,12 +74,16 @@ export const IconToggle = <ValueType extends string | number>({
         height={`${sizeRem}rem`}
         width={`${sizeRem * 2}rem`}
         sx={{
-          backgroundColor: '#fff1',
           border: (theme) => `1px solid ${theme.palette.divider}`,
           borderRadius: `${sizeRem}rem`,
           overflow: 'visible',
           position: 'relative',
           cursor: 'pointer',
+          backgroundColor: '#fff1',
+          transition: (theme) => theme.transitions.create(['background-color', 'border-color']),
+          '&:hover': {
+            backgroundColor: (theme) => theme.palette.action.selected,
+          },
         }}
         onClick={() => onChange(value === options[0].value ? options[1].value : options[0].value)}
       >

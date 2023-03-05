@@ -116,3 +116,8 @@ model FlowStep {
   OnSuccessFlowSteps  FlowStep[]  @relation("NextFlowOnSuccess")
   OnFailureFlowSteps  FlowStep[]  @relation("NextFlowOnFailure")
 }
+
+model UserData {
+  key   String @id
+  value String
+}

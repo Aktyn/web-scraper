@@ -9,6 +9,7 @@ import { ipcMain, type IpcMainInvokeEvent } from 'electron'
 import Database from '../../database'
 
 import { parseDatabaseAccount } from './parsers/accountParser'
+import { parseUserSettings } from './parsers/userSettingsParser'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const handleApiRequest = <ArgumentsType extends any[], ResponseType extends Promise<any>>(
@@ -38,6 +39,17 @@ export function registerRequestsHandler() {
         Database.account.getAccounts(request).then((accounts) => ({
           data: accounts.map((account) => parseDatabaseAccount(account, password)),
           cursor: Database.utils.extractCursor(accounts, 'id', request.count),
+        })),
+    ),
+    [RendererToElectronMessage.getUserSettings]: handleApiRequest(
+      RendererToElectronMessage.getUserSettings,
+      () => Database.userData.getUserSettings().then(parseUserSettings),
+    ),
+    [RendererToElectronMessage.setUserSetting]: handleApiRequest(
+      RendererToElectronMessage.setUserSetting,
+      (key, value) =>
+        Database.userData.setUserSetting(key, value).then(() => ({
+          errorCode: ErrorCode.NO_ERROR,
         })),
     ),
   } satisfies {

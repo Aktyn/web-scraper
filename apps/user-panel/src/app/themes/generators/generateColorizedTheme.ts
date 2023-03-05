@@ -42,7 +42,7 @@ export function generateColorizedTheme({ primary, secondary }: ColorizedThemePro
         },
         background: {
           default: backgroundDefault,
-          paper: primary[900],
+          paper: setSaturation(primary[600], Config.BACKGROUND_SATURATION),
         },
         text: {
           primary: textPrimary,
