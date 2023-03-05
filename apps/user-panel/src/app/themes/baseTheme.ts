@@ -14,6 +14,7 @@ export const baseTheme = createTheme({
           [retinaDisplayMediaQuery]: {
             fontSize: '12px',
           },
+          overflow: 'hidden',
 
           '& ::-webkit-scrollbar': {
             width: 8,

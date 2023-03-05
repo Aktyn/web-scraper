@@ -3,7 +3,7 @@ import { LockRounded } from '@mui/icons-material'
 import { Box, TableCell, type TableCellProps, Tooltip } from '@mui/material'
 import { BooleanValue } from './BooleanValue'
 import { NoDataChip } from './NoDataChip'
-import { UserSettingsContext } from '../../context/userSettingsContext'
+import { UserDataContext } from '../../context/userDataContext'
 import { JsonValue } from '../common/JsonValue'
 
 interface ValueCellProps extends Omit<TableCellProps, 'children'> {
@@ -18,7 +18,7 @@ export const ValueCell = ({
   jsonString,
   ...tableCellProps
 }: ValueCellProps) => {
-  const { dataEncryptionPassword } = useContext(UserSettingsContext)
+  const { dataEncryptionPassword } = useContext(UserDataContext)
 
   return (
     <TableCell {...tableCellProps}>

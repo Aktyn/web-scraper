@@ -1,6 +1,7 @@
 import {
   type RefAttributes,
   useCallback,
+  useContext,
   useEffect,
   useImperativeHandle,
   useRef,
@@ -20,6 +21,7 @@ import { ValueCell } from './ValueCell'
 import { getDeepProperty } from './helpers'
 import type { useTableColumns } from './useTableColumns'
 import { Config } from '../../config'
+import { UserDataContext } from '../../context/userDataContext'
 import { useCancellablePromise } from '../../hooks/useCancellablePromise'
 import { genericForwardRef, genericMemo } from '../../utils'
 import { LoadingIconButton } from '../common/button/LoadingIconButton'
@@ -42,8 +44,10 @@ export const Table = genericMemo(
       { keyProperty, columns, data: dataSource }: TableProps<DataType> & RefAttributes<TableRef>,
       ref: RefAttributes<TableRef>['ref'],
     ) => {
-      const tableContainerRef = useRef<HTMLDivElement>(null)
       const cancellable = useCancellablePromise()
+      const tableContainerRef = useRef<HTMLDivElement>(null)
+
+      const { settings } = useContext(UserDataContext)
 
       const [data, setData] = useState<DataType[]>([])
       const [cursor, setCursor] = useState<{ [p: string]: unknown } | undefined | null>(null)
@@ -151,7 +155,7 @@ export const Table = genericMemo(
 
       return (
         <TableContainer ref={tableContainerRef} sx={{ maxHeight: '100%' }}>
-          <MuiTable stickyHeader>
+          <MuiTable stickyHeader size={settings.tablesCompactMode ? 'small' : 'medium'}>
             <TableHead>
               <TableRow>
                 <TableCell colSpan={columns.definitions.length} align="right" sx={{ p: 1 }}>

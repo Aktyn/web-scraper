@@ -1,10 +1,10 @@
 import { useContext, useState } from 'react'
 import { CheckCircleOutlineRounded, Visibility, VisibilityOff } from '@mui/icons-material'
 import { Button, IconButton, InputAdornment, Stack, TextField, Typography } from '@mui/material'
-import { UserSettingsContext } from '../context/userSettingsContext'
+import { UserDataContext } from '../context/userDataContext'
 
 export const EncryptionPasswordForm = ({ onSave }: { onSave?: () => void }) => {
-  const { dataEncryptionPassword, setDataEncryptionPassword } = useContext(UserSettingsContext)
+  const { dataEncryptionPassword, setDataEncryptionPassword } = useContext(UserDataContext)
 
   const [showPassword, setShowPassword] = useState(false)
   const [internalPassword, setInternalPassword] = useState(dataEncryptionPassword ?? '')

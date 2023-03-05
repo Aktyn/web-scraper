@@ -26,9 +26,6 @@ interface TabsViewProps<ValueType> {
 }
 
 const commonTabContentStyles: BoxProps['sx'] = {
-  // display: 'flex',
-  // alignItems: 'flex-start',
-  // justifyContent: 'flex-start',
   position: 'absolute',
   left: 0,
   top: 0,
@@ -90,7 +87,6 @@ export const TabsView = genericMemo(
           targets: previousTabContentTarget,
           translateX: tabSwitchIndex % 2 !== 0 ? '0%' : `${-100 * direction}%`,
           opacity: tabSwitchIndex % 2 !== 0 ? 1 : 0,
-          // easing: "spring(0.7, 100, 10, 0)",
           easing: 'easeInOutCirc',
           duration: 500,
           delay: tabSwitchIndex % 2 !== 0 ? 100 : 0,
