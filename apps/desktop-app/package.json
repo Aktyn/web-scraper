@@ -32,7 +32,7 @@
     "dotenv-expand": "^10.0.0",
     "electron": "^23.1.2",
     "electron-is-dev": "^2.0.0",
-    "puppeteer": "^19.7.2",
+    "puppeteer": "^19.7.3",
     "random-useragent": "^0.5.0",
     "sqlite3": "^5.1.4"
   },
