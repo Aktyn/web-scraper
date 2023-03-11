@@ -1,14 +1,28 @@
-import { Link } from '@mui/material'
+import { OpenInNewRounded } from '@mui/icons-material'
+import { Box, Link, Stack } from '@mui/material'
 import type { LinkProps } from '@mui/material'
 
-interface UrlProps extends LinkProps {
+interface UrlButtonProps extends LinkProps {
   children: string
+  maxWidth?: string | number
 }
 
-export const Url = ({ children: url, ...linkProps }: UrlProps) => {
+export const UrlButton = ({ children: url, maxWidth, ...linkProps }: UrlButtonProps) => {
   return (
-    <Link href={url} target="_blank" rel="noopener noreferrer" {...linkProps}>
-      {url}
-    </Link>
+    <Stack
+      component={Link}
+      href={url}
+      target="_blank"
+      rel="noopener noreferrer"
+      direction="row"
+      alignItems="center"
+      spacing={0.5}
+      {...linkProps}
+    >
+      <Box component="span" sx={{ maxWidth, overflow: 'hidden', textOverflow: 'ellipsis' }}>
+        {url}
+      </Box>
+      <OpenInNewRounded fontSize="inherit" />
+    </Stack>
   )
 }

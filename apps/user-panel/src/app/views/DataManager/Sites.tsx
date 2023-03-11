@@ -1,6 +1,7 @@
-import { Box, Chip, Link, Stack, Tooltip } from '@mui/material'
+import { Box, Chip, Stack, Tooltip } from '@mui/material'
 import type { Site } from '@web-scrapper/common'
 import { TransitionType, ViewTransition } from '../../components/animation/ViewTransition'
+import { UrlButton } from '../../components/common/button/UrlButton'
 import { Table, useTableColumns } from '../../components/table'
 
 export const Sites = () => {
@@ -18,15 +19,7 @@ export const Sites = () => {
     {
       id: 'url',
       header: 'URL',
-      accessor: (site) => (
-        <Link
-          href={site.url}
-          target="_blank"
-          sx={{ maxWidth: '4rem', overflow: 'hidden', textOverflow: 'ellipsis' }}
-        >
-          {site.url}
-        </Link>
-      ),
+      accessor: (site) => <UrlButton maxWidth="16rem">{site.url}</UrlButton>,
     },
     {
       id: 'language',
