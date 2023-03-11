@@ -1,5 +1,4 @@
-import { ErrorCode } from '@web-scrapper/common'
-import type { ElectronApi, RendererToElectronMessage } from '@web-scrapper/common'
+import { type ElectronApi, RendererToElectronMessage, ErrorCode } from '@web-scrapper/common'
 import { beforeEach, describe, expect, it } from 'vitest'
 import type { DeepMockProxy } from 'vitest-mock-extended'
 import { mockReset } from 'vitest-mock-extended'
@@ -35,44 +34,7 @@ describe('registerRequestsHandler', () => {
 
   it('should invoke ipcMain.handle for each defined handler', () => {
     registerRequestsHandler()
-    expect(ipcMainMock.handle).toBeCalledTimes(3)
-  })
-
-  it('should return decrypted accounts', async () => {
-    databaseMock.account.findMany.mockResolvedValue(mockData.accounts)
-
-    registerRequestsHandler()
-
-    const getAccounts = handlers.get(
-      'getAccounts',
-    ) as HandlersInterface[RendererToElectronMessage.getAccounts]
-
-    expect(getAccounts).toBeDefined()
-    await expect(getAccounts(null as never, { count: 20 }, 'mock-password')).resolves.toEqual({
-      cursor: undefined,
-      data: decryptedAccounts,
-    })
-  })
-
-  it('should return accounts with empty strings for encrypted fields when no password is provided', async () => {
-    databaseMock.account.findMany.mockResolvedValue(mockData.accounts)
-
-    registerRequestsHandler()
-
-    const getAccounts = handlers.get(
-      'getAccounts',
-    ) as HandlersInterface[RendererToElectronMessage.getAccounts]
-
-    expect(getAccounts).toBeDefined()
-    await expect(getAccounts(null as never, { count: 20 }, null)).resolves.toEqual({
-      cursor: undefined,
-      data: decryptedAccounts.map((account) => ({
-        ...account,
-        loginOrEmail: '',
-        password: '',
-        additionalCredentialsData: account.additionalCredentialsData ? '' : null,
-      })),
-    })
+    expect(ipcMainMock.handle).toBeCalledTimes(Object.values(RendererToElectronMessage).length)
   })
 
   it('should return parsed user settings', async () => {
@@ -112,6 +74,93 @@ describe('registerRequestsHandler', () => {
       where: { key: 'tablesCompactMode' },
       update: { value: 'false' },
       create: { key: 'tablesCompactMode', value: 'false' },
+    })
+  })
+
+  it('should return decrypted accounts', async () => {
+    databaseMock.account.findMany.mockResolvedValue(mockData.accounts)
+
+    registerRequestsHandler()
+
+    const getAccounts = handlers.get(
+      'getAccounts',
+    ) as HandlersInterface[RendererToElectronMessage.getAccounts]
+
+    expect(getAccounts).toBeDefined()
+    await expect(getAccounts(null as never, { count: 20 }, 'mock-password')).resolves.toEqual({
+      cursor: undefined,
+      data: decryptedAccounts,
+    })
+  })
+
+  it('should return accounts with empty strings for encrypted fields when no password is provided', async () => {
+    databaseMock.account.findMany.mockResolvedValue(mockData.accounts)
+
+    registerRequestsHandler()
+
+    const getAccounts = handlers.get(
+      'getAccounts',
+    ) as HandlersInterface[RendererToElectronMessage.getAccounts]
+
+    expect(getAccounts).toBeDefined()
+    await expect(getAccounts(null as never, { count: 20 }, null)).resolves.toEqual({
+      cursor: undefined,
+      data: decryptedAccounts.map((account) => ({
+        ...account,
+        loginOrEmail: '',
+        password: '',
+        additionalCredentialsData: account.additionalCredentialsData ? '' : null,
+      })),
+    })
+  })
+
+  it('should return sites with tags', async () => {
+    databaseMock.site.findMany.mockResolvedValue(
+      mockData.sites.map((site) => ({
+        ...site,
+        Tags: mockData.siteTagsRelations.reduce((acc, siteTagsRelation) => {
+          if (siteTagsRelation.siteId === site.id) {
+            const tag = mockData.siteTags.find((tag) => tag.id === siteTagsRelation.tagId)
+            if (tag) {
+              acc.push({
+                Tag: tag,
+              })
+            }
+          }
+          return acc
+        }, [] as { Tag: (typeof mockData.siteTags)[number] }[]),
+      })),
+    )
+
+    registerRequestsHandler()
+
+    const getSites = handlers.get(
+      'getSites',
+    ) as HandlersInterface[RendererToElectronMessage.getSites]
+
+    expect(getSites).toBeDefined()
+    await expect(getSites(null as never, { count: 20 })).resolves.toEqual({
+      cursor: undefined,
+      data: [
+        {
+          id: 1,
+          createdAt: new Date('2023-02-19T23:40:10.302Z'),
+          url: 'https://mocked-site.com',
+          language: 'en',
+          tags: [
+            {
+              id: 1,
+              name: 'Mock-1',
+              description: 'Mocked site 1',
+            },
+            {
+              id: 2,
+              name: 'Mock-2',
+              description: 'Mocked site 1',
+            },
+          ],
+        },
+      ],
     })
   })
 })

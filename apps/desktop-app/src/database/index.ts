@@ -1,12 +1,14 @@
 import * as account from './account'
 import prisma from './client'
+import * as site from './site'
 import * as siteTag from './siteTag'
 import * as userData from './userData'
 
 const Database = {
   prisma,
-  siteTag,
   account,
+  site,
+  siteTag,
   userData,
   disconnect: () => prisma.$disconnect(),
   utils: {

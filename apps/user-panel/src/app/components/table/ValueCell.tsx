@@ -1,4 +1,4 @@
-import { useContext } from 'react'
+import { useContext, useMemo } from 'react'
 import { LockRounded } from '@mui/icons-material'
 import { Box, TableCell, type TableCellProps, Tooltip } from '@mui/material'
 import { BooleanValue } from './BooleanValue'
@@ -19,13 +19,29 @@ export const ValueCell = ({
   ...tableCellProps
 }: ValueCellProps) => {
   const { dataEncryptionPassword } = useContext(UserDataContext)
+  const accessDenied = encrypted && dataEncryptionPassword === null
+
+  const tableCellSx = useMemo((): TableCellProps['sx'] => {
+    if (children === null || accessDenied || typeof children === 'boolean' || jsonString) {
+      return {
+        py: 0,
+      }
+    }
+
+    return {}
+  }, [accessDenied, children, jsonString])
 
   return (
-    <TableCell {...tableCellProps}>
-      <CellContent
-        accessDenied={encrypted && dataEncryptionPassword === null}
-        jsonString={jsonString}
-      >
+    <TableCell
+      {...tableCellProps}
+      sx={
+        {
+          ...tableCellSx,
+          ...(tableCellProps.sx ?? {}),
+        } as TableCellProps['sx']
+      }
+    >
+      <CellContent accessDenied={accessDenied} jsonString={jsonString}>
         {children}
       </CellContent>
     </TableCell>

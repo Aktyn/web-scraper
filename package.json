@@ -33,6 +33,7 @@
     "db:generate:reset": "turbo run db:generate:reset",
     "db:seed": "turbo run db:seed",
     "db:studio": "turbo run db:studio",
+    "db:reset:seed": "npm run db:generate:reset && npm run db:seed",
     "test": "turbo run test",
     "test:ci": "turbo run test:ci",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",

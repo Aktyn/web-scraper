@@ -1,9 +1,7 @@
-import '@fontsource/roboto/300.css'
-import '@fontsource/roboto/400.css'
-import '@fontsource/roboto/500.css'
-import '@fontsource/roboto/700.css'
+import '@fontsource/roboto-flex/variable.css'
 import { Suspense, useCallback, useState } from 'react'
 import { CssBaseline, ThemeProvider } from '@mui/material'
+import { SnackbarProvider } from 'notistack'
 import { FullViewLoader } from './components/common/loader/FullViewLoader'
 import { Config } from './config'
 import { ViewContext, type ViewName, ViewTransitionState } from './context/viewContext'
@@ -61,31 +59,42 @@ export const App = () => {
 
   return (
     <ThemeProvider theme={currentView.theme ?? baseTheme}>
-      <CssBaseline />
-      <ViewContext.Provider
-        value={{
-          viewName,
-          previousViewName,
-          nextViewName,
-          viewTransitionState,
-          requestViewChange: handleViewChange,
-          viewSettings: currentView.viewSettings,
-        }}
-      >
-        <UserDataProvider>
-          <Layout>
-            <Suspense fallback={<FullViewLoader />}>
-              <currentView.component key={viewName} />
-            </Suspense>
-            {nextView && (
-              // Preloads next view file
-              <Suspense fallback={null}>
-                <nextView.component key={nextViewName} doNotRender />
-              </Suspense>
-            )}
-          </Layout>
-        </UserDataProvider>
-      </ViewContext.Provider>
+      <CssBaseline>
+        <SnackbarProvider
+          maxSnack={10}
+          preventDuplicate
+          autoHideDuration={5000}
+          anchorOrigin={{
+            horizontal: 'center',
+            vertical: 'top',
+          }}
+        >
+          <ViewContext.Provider
+            value={{
+              viewName,
+              previousViewName,
+              nextViewName,
+              viewTransitionState,
+              requestViewChange: handleViewChange,
+              viewSettings: currentView.viewSettings,
+            }}
+          >
+            <UserDataProvider>
+              <Layout>
+                <Suspense fallback={<FullViewLoader />}>
+                  <currentView.component key={viewName} />
+                </Suspense>
+                {nextView && (
+                  // Preloads next view file
+                  <Suspense fallback={null}>
+                    <nextView.component key={nextViewName} doNotRender />
+                  </Suspense>
+                )}
+              </Layout>
+            </UserDataProvider>
+          </ViewContext.Provider>
+        </SnackbarProvider>
+      </CssBaseline>
     </ThemeProvider>
   )
 }

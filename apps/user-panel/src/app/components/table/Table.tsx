@@ -16,21 +16,28 @@ import {
   TableHead,
   TableRow,
 } from '@mui/material'
-import type { PaginatedApiFunction, Path } from '@web-scrapper/common'
+import {
+  type ExtractTypeByPath,
+  getDeepProperty,
+  type PaginatedApiFunction,
+  type Path,
+} from '@web-scrapper/common'
+import { useSnackbar } from 'notistack'
 import { ValueCell } from './ValueCell'
-import { getDeepProperty } from './helpers'
 import type { useTableColumns } from './useTableColumns'
 import { Config } from '../../config'
 import { UserDataContext } from '../../context/userDataContext'
 import { useCancellablePromise } from '../../hooks/useCancellablePromise'
-import { genericForwardRef, genericMemo } from '../../utils'
+import { errorMessages, genericForwardRef, genericMemo } from '../../utils'
 import { LoadingIconButton } from '../common/button/LoadingIconButton'
 
-interface TableProps<DataType extends object> {
+interface TableProps<DataType extends object, KeyPropertyType extends string & Path<DataType>> {
   /** Property name with unique values for each row. Used as a key prop for react rows. */
-  keyProperty: string & Path<DataType>
+  keyProperty: ExtractTypeByPath<DataType, KeyPropertyType> extends string | number
+    ? KeyPropertyType
+    : never
   columns: ReturnType<typeof useTableColumns<DataType>>
-  // eslint-disable-next-line
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   data: DataType[] | PaginatedApiFunction<DataType, any>
 }
 
@@ -40,18 +47,22 @@ export interface TableRef {
 
 export const Table = genericMemo(
   genericForwardRef(
-    <DataType extends object>(
-      { keyProperty, columns, data: dataSource }: TableProps<DataType> & RefAttributes<TableRef>,
+    <DataType extends object, KeyPropertyType extends string & Path<DataType>>(
+      {
+        keyProperty,
+        columns,
+        data: dataSource,
+      }: TableProps<DataType, KeyPropertyType> & RefAttributes<TableRef>,
       ref: RefAttributes<TableRef>['ref'],
     ) => {
       const cancellable = useCancellablePromise()
       const tableContainerRef = useRef<HTMLDivElement>(null)
 
+      const { enqueueSnackbar } = useSnackbar()
       const { settings } = useContext(UserDataContext)
 
       const [data, setData] = useState<DataType[]>([])
       const [cursor, setCursor] = useState<{ [p: string]: unknown } | undefined | null>(null)
-      // const [scrollTop, setScrollTop] = useState(0)
       //TODO: visualize fetching data
       const [fetchingData, setFetchingData] = useState(false)
 
@@ -72,10 +83,8 @@ export const Table = genericMemo(
             dataSource({ count: Config.PAGINATION_PAGE_SIZE, cursor: withCursor ?? undefined }),
           )
             .then((response) => {
-              // console.log('Response:', response)
               if ('errorCode' in response) {
-                // console.log('Error:', response)
-                //TODO: handle error
+                enqueueSnackbar({ variant: 'error', message: errorMessages[response.errorCode] })
                 return
               }
               setData((data) => {
@@ -99,7 +108,7 @@ export const Table = genericMemo(
             })
             .catch((error) => !error && setFetchingData(false))
         },
-        [cancellable, cursor, dataSource, keyProperty],
+        [cancellable, cursor, dataSource, enqueueSnackbar, keyProperty],
       )
 
       useEffect(() => {
@@ -176,7 +185,9 @@ export const Table = genericMemo(
             </TableHead>
             <TableBody>
               {data.map((row, rowIndex) => (
-                <TableRow key={keyProperty ? getDeepProperty(row, keyProperty) : rowIndex}>
+                <TableRow
+                  key={keyProperty ? (getDeepProperty(row, keyProperty) as never) : rowIndex}
+                >
                   {columns.definitions.map((columnDefinition) => (
                     <ValueCell
                       key={columnDefinition.id}

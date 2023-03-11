@@ -17,7 +17,7 @@ datasource db {
 model Site {
   id               Int                @id @default(autoincrement())
   createdAt        DateTime           @default(now())
-  url              String?            @unique
+  url              String             @unique
   language         String?
   //
   Tags             SiteTagsRelation[]

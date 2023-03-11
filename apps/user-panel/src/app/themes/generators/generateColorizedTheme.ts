@@ -32,6 +32,9 @@ export function generateColorizedTheme({ primary, secondary }: ColorizedThemePro
   return deepmerge(
     baseTheme,
     createTheme({
+      typography: {
+        fontFamily: ['"Roboto FlexVariable"', 'Roboto', 'Arial', 'sans-serif'].join(','),
+      },
       palette: {
         mode: 'dark',
         primary: {
@@ -77,6 +80,9 @@ export function generateColorizedTheme({ primary, secondary }: ColorizedThemePro
               '& ::-webkit-scrollbar-thumb:hover': {
                 backgroundColor: lighten(backgroundDefault, 0.25),
               },
+            },
+            '.notistack-MuiContent-error': {
+              backgroundColor: red[400],
             },
           },
         },
@@ -164,5 +170,6 @@ export function generateColorizedTheme({ primary, secondary }: ColorizedThemePro
         },
       },
     }),
+    { clone: true },
   )
 }

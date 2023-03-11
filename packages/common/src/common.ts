@@ -1,3 +1,5 @@
+import type { ExtractTypeByPath, Path } from './types'
+
 export function pick<ObjectType, Key extends Extract<keyof ObjectType, string>>(
   object: ObjectType,
   ...keys: Key[]
@@ -22,4 +24,18 @@ export function omit<ObjectType, Key extends Extract<keyof ObjectType, string>>(
     }
   }
   return omitted
+}
+
+export function getDeepProperty<DataType extends object, PathType extends string & Path<DataType>>(
+  obj: DataType,
+  path: PathType,
+  fallback: unknown = null,
+) {
+  const properties = path.split('.')
+  let value: object = obj
+  while (properties.length > 0) {
+    value = value[properties[0] as keyof typeof value]
+    properties.shift()
+  }
+  return (value ?? fallback) as ExtractTypeByPath<DataType, PathType>
 }

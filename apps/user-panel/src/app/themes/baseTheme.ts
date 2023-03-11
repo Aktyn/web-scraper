@@ -3,9 +3,6 @@ import { createTheme } from '@mui/material/styles'
 const retinaDisplayMediaQuery = '@media only screen and (-webkit-min-device-pixel-ratio: 2)'
 
 export const baseTheme = createTheme({
-  typography: {
-    fontFamily: ['Roboto', 'Helvetica', 'Arial', 'Courier', 'sans-serif'].join(','),
-  },
   components: {
     MuiCssBaseline: {
       styleOverrides: {

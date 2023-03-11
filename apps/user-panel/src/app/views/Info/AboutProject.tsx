@@ -2,7 +2,6 @@ import { LinkRounded } from '@mui/icons-material'
 import { Avatar, Link, Stack, Typography } from '@mui/material'
 import { InfoContentBase } from './InfoContentBase'
 import aktynLogo from '../../img/aktyn_logo.png'
-import droniLogo from '../../img/droni_logo.png'
 
 export const AboutProject = () => {
   return <InfoContentBase sections={aboutSections} />
@@ -57,19 +56,6 @@ const aboutSections = [
         name="Aktyn"
         logoIcon={aktynLogo}
         links={[{ name: 'GitHub', url: 'https://github.com/Aktyn' }]}
-      />
-    ),
-  },
-  {
-    title: 'Contributors',
-    content: (
-      <PersonInfo
-        name="dxdroni"
-        logoIcon={droniLogo}
-        links={[
-          { name: 'GitHub', url: 'https://github.com/xdroni' },
-          { name: 'YouTube', url: 'https://www.youtube.com/c/dxdroni' },
-        ]}
       />
     ),
   },

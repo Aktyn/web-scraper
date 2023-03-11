@@ -1,4 +1,11 @@
-import type { Account, PrismaClient, SiteTag, UserData } from '@prisma/client'
+import type {
+  Account,
+  PrismaClient,
+  Site,
+  SiteTag,
+  SiteTagsRelation,
+  UserData,
+} from '@prisma/client'
 import { vi } from 'vitest'
 import { type DeepMockProxy, mockDeep } from 'vitest-mock-extended'
 
@@ -18,10 +25,33 @@ export const mockData = {
   siteTags: [
     {
       id: 1,
-      name: 'Mock',
-      description: 'Mocked site',
+      name: 'Mock-1',
+      description: 'Mocked site 1',
+    },
+    {
+      id: 2,
+      name: 'Mock-2',
+      description: 'Mocked site 1',
     },
   ] satisfies SiteTag[],
+  siteTagsRelations: [
+    {
+      tagId: 1,
+      siteId: 1,
+    },
+    {
+      tagId: 2,
+      siteId: 1,
+    },
+  ] satisfies SiteTagsRelation[],
+  sites: [
+    {
+      id: 1,
+      createdAt: new Date('2023-02-19T23:40:10.302Z'),
+      url: 'https://mocked-site.com',
+      language: 'en',
+    },
+  ] satisfies Site[],
   accounts: [
     {
       id: 1,
