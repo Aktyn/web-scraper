@@ -1,10 +1,15 @@
+import { useCallback, useRef } from 'react'
 import { Box, Chip, Stack, Tooltip } from '@mui/material'
 import type { Site } from '@web-scrapper/common'
+import { SiteForm } from './SiteForm'
 import { TransitionType, ViewTransition } from '../../components/animation/ViewTransition'
+import type { CustomDrawerRef } from '../../components/common/CustomDrawer'
+import { CustomDrawer } from '../../components/common/CustomDrawer'
 import { UrlButton } from '../../components/common/button/UrlButton'
 import { Table, useTableColumns } from '../../components/table'
 
 export const Sites = () => {
+  const siteDrawerRef = useRef<CustomDrawerRef>(null)
   const columns = useTableColumns<Site>([
     {
       id: 'id',
@@ -57,11 +62,23 @@ export const Sites = () => {
     },
   ])
 
+  const handleAdd = useCallback(() => siteDrawerRef.current?.open(), [])
+
   return (
-    <ViewTransition type={TransitionType.FADE}>
-      <Box sx={{ height: '100%' }}>
-        <Table columns={columns} keyProperty="id" data={window.electronAPI.getSites} />
-      </Box>
-    </ViewTransition>
+    <>
+      <CustomDrawer ref={siteDrawerRef} title="Add site">
+        <SiteForm />
+      </CustomDrawer>
+      <ViewTransition type={TransitionType.FADE}>
+        <Box sx={{ height: '100%' }}>
+          <Table
+            columns={columns}
+            keyProperty="id"
+            data={window.electronAPI.getSites}
+            onAdd={handleAdd}
+          />
+        </Box>
+      </ViewTransition>
+    </>
   )
 }

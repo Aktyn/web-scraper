@@ -7,8 +7,10 @@ import {
   useRef,
   useState,
 } from 'react'
-import { RefreshRounded } from '@mui/icons-material'
+import { AddRounded, RefreshRounded } from '@mui/icons-material'
 import {
+  IconButton,
+  Stack,
   Table as MuiTable,
   TableBody,
   TableCell,
@@ -39,6 +41,7 @@ interface TableProps<DataType extends object, KeyPropertyType extends string & P
   columns: ReturnType<typeof useTableColumns<DataType>>
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   data: DataType[] | PaginatedApiFunction<DataType, any>
+  onAdd?: () => void
 }
 
 export interface TableRef {
@@ -52,6 +55,7 @@ export const Table = genericMemo(
         keyProperty,
         columns,
         data: dataSource,
+        onAdd,
       }: TableProps<DataType, KeyPropertyType> & RefAttributes<TableRef>,
       ref: RefAttributes<TableRef>['ref'],
     ) => {
@@ -168,9 +172,16 @@ export const Table = genericMemo(
             <TableHead>
               <TableRow>
                 <TableCell colSpan={columns.definitions.length} align="right" sx={{ p: 1 }}>
-                  <LoadingIconButton loading={fetchingData} onClick={refresh} size="small">
-                    <RefreshRounded />
-                  </LoadingIconButton>
+                  <Stack direction="row" alignItems="center" justifyContent="flex-end" gap={1}>
+                    <LoadingIconButton loading={fetchingData} onClick={refresh} size="small">
+                      <RefreshRounded />
+                    </LoadingIconButton>
+                    {onAdd && (
+                      <IconButton onClick={onAdd} size="small">
+                        <AddRounded />
+                      </IconButton>
+                    )}
+                  </Stack>
                 </TableCell>
               </TableRow>
             </TableHead>

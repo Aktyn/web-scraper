@@ -1,5 +1,5 @@
 import type { ThemeOptions } from '@mui/material'
-import { alpha, createTheme, darken, lighten, tableRowClasses } from '@mui/material'
+import { alpha, createTheme, darken, dividerClasses, lighten, tableRowClasses } from '@mui/material'
 import { common, green, grey, orange, red } from '@mui/material/colors'
 import deepmerge from 'deepmerge'
 import { Config } from '../../config'
@@ -26,9 +26,13 @@ interface ColorizedThemeProps {
 
 export function generateColorizedTheme({ primary, secondary }: ColorizedThemeProps) {
   const backgroundDefault = setSaturation(primary[800], Config.BACKGROUND_SATURATION)
+  const paperBackgroundDefault = setSaturation(primary[600], Config.BACKGROUND_SATURATION)
+
   const textPrimary = primary[50]
   const textSecondary = mixColors(primary[50], primary[800], 0.4)
+
   const divider = lighten(backgroundDefault, 0.05)
+  const paperDivider = lighten(paperBackgroundDefault, 0.1)
 
   return createTheme(
     deepmerge<ThemeOptions>(
@@ -44,7 +48,7 @@ export function generateColorizedTheme({ primary, secondary }: ColorizedThemePro
           },
           background: {
             default: backgroundDefault,
-            paper: setSaturation(primary[600], Config.BACKGROUND_SATURATION),
+            paper: paperBackgroundDefault,
           },
           text: {
             primary: textPrimary,
@@ -164,6 +168,15 @@ export function generateColorizedTheme({ primary, secondary }: ColorizedThemePro
                 color: textPrimary,
                 backdropFilter: 'blur(2px)',
                 boxShadow: '0 1px 2px #0004',
+              },
+            },
+          },
+          MuiPaper: {
+            styleOverrides: {
+              root: {
+                [`.${dividerClasses.root}`]: {
+                  borderColor: paperDivider,
+                },
               },
             },
           },

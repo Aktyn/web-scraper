@@ -1,4 +1,5 @@
 import '@fontsource/roboto-flex/variable.css'
+import { backdropClasses } from '@mui/material'
 import type { ThemeOptions } from '@mui/material'
 import { createTheme } from '@mui/material/styles'
 
@@ -66,6 +67,15 @@ export const baseThemeOptions: ThemeOptions = {
       styleOverrides: {
         paper: {
           borderRadius: '1rem',
+        },
+      },
+    },
+    MuiDrawer: {
+      styleOverrides: {
+        root: {
+          [`& > .${backdropClasses.root}`]: {
+            backdropFilter: 'blur(4px)',
+          },
         },
       },
     },
