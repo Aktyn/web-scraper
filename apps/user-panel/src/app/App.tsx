@@ -1,4 +1,3 @@
-import '@fontsource/roboto-flex/variable.css'
 import { Suspense, useCallback, useState } from 'react'
 import { CssBaseline, ThemeProvider } from '@mui/material'
 import { SnackbarProvider } from 'notistack'

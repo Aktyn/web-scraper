@@ -1,8 +1,13 @@
+import '@fontsource/roboto-flex/variable.css'
+import type { ThemeOptions } from '@mui/material'
 import { createTheme } from '@mui/material/styles'
 
 const retinaDisplayMediaQuery = '@media only screen and (-webkit-min-device-pixel-ratio: 2)'
 
-export const baseTheme = createTheme({
+export const baseThemeOptions: ThemeOptions = {
+  typography: {
+    fontFamily: ['"Roboto FlexVariable"', 'Roboto', 'Arial', 'sans-serif'].join(','),
+  },
   components: {
     MuiCssBaseline: {
       styleOverrides: {
@@ -64,5 +69,14 @@ export const baseTheme = createTheme({
         },
       },
     },
+    MuiLink: {
+      styleOverrides: {
+        root: {
+          textDecoration: 'none',
+        },
+      },
+    },
   },
-})
+}
+
+export const baseTheme = createTheme(baseThemeOptions)
