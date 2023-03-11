@@ -67,7 +67,6 @@ export const Table = genericMemo(
 
       const [data, setData] = useState<DataType[]>([])
       const [cursor, setCursor] = useState<{ [p: string]: unknown } | undefined | null>(null)
-      //TODO: visualize fetching data
       const [fetchingData, setFetchingData] = useState(false)
 
       const mainTableHeaderSize = 51

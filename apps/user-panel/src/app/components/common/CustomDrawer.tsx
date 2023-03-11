@@ -4,8 +4,10 @@ import {
   useState,
   type ReactNode,
   type PropsWithChildren,
+  useCallback,
 } from 'react'
-import { Divider, Drawer, type DrawerProps, Stack, Typography } from '@mui/material'
+import { CloseRounded } from '@mui/icons-material'
+import { Divider, Drawer, type DrawerProps, IconButton, Stack, Typography } from '@mui/material'
 
 export interface CustomDrawerRef {
   open: () => void
@@ -20,25 +22,35 @@ export const CustomDrawer = forwardRef<CustomDrawerRef, PropsWithChildren<Custom
   ({ children, title, ...drawerProps }, ref) => {
     const [open, setOpen] = useState(false)
 
+    const handleClose = useCallback(() => setOpen(false), [])
+
     useImperativeHandle(
       ref,
       () => ({
         open: () => setOpen(true),
-        close: () => setOpen(false),
+        close: handleClose,
       }),
-      [],
+      [handleClose],
     )
-
-    const handleClose = () => setOpen(false)
 
     return (
       <Drawer anchor="right" {...drawerProps} open={open} onClose={handleClose}>
         <Stack>
           {title && (
             <>
-              <Typography variant="h6" color="text.secondary" sx={{ p: 2 }}>
-                {title}
-              </Typography>
+              <Stack
+                direction="row"
+                alignItems="center"
+                justifyContent="space-between"
+                sx={{ p: 2 }}
+              >
+                <Typography variant="h6" color="text.secondary">
+                  {title}
+                </Typography>
+                <IconButton onClick={handleClose}>
+                  <CloseRounded />
+                </IconButton>
+              </Stack>
               <Divider />
             </>
           )}

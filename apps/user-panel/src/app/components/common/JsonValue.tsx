@@ -41,7 +41,7 @@ export const JsonValue = ({ children: value }: { children: string }) => {
             color="inherit"
             onClick={(event) => jsonPreviewPopoverRef.current?.open(event.currentTarget)}
           >
-            <OpenInFullRounded />
+            <OpenInFullRounded fontSize="small" />
           </IconButton>
         </Box>
       </Tooltip>

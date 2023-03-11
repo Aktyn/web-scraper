@@ -11,17 +11,12 @@ export interface ColumnDefinition<DataType> {
   jsonString?: boolean
   // width?: number
   // sortable?: boolean
-  // hideable?: boolean
-  // defaultHidden?: boolean
   // filter?: (props: FilterPropsBase<any>) => React.ReactElement<FilterPropsBase<any>>
-  // cellStyle?: React.CSSProperties | ((row: DataType) => React.CSSProperties)
 }
 
 export function useTableColumns<DataType extends object>(
   columnsDefinitions: ColumnDefinition<DataType>[],
 ) {
-  //
-
   return useMemo(
     () => ({
       definitions: columnsDefinitions,

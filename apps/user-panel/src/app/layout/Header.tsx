@@ -52,7 +52,6 @@ export const Header = () => {
           vertical: 'top',
           horizontal: 'right',
         }}
-        glass
       >
         <EncryptionPasswordForm onSave={encryptionPopoverRef.current?.close} />
       </CustomPopover>

@@ -180,6 +180,24 @@ export function generateColorizedTheme({ primary, secondary }: ColorizedThemePro
               },
             },
           },
+          MuiPopover: {
+            styleOverrides: {
+              paper: {
+                borderColor: lighten(paperBackgroundDefault, 0.2),
+                backgroundColor: alpha(paperBackgroundDefault, 0.5),
+                backdropFilter: 'blur(4px)',
+              },
+            },
+          },
+          MuiDrawer: {
+            styleOverrides: {
+              paper: {
+                borderColor: lighten(paperBackgroundDefault, 0.2),
+                backgroundColor: alpha(paperBackgroundDefault, 0.5),
+                backdropFilter: 'blur(4px)',
+              },
+            },
+          },
           MuiLink: {
             styleOverrides: {
               root: {
