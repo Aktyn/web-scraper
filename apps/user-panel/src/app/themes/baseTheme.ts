@@ -79,6 +79,12 @@ export const baseThemeOptions: ThemeOptions = {
           borderRadius: '1rem',
           border: '1px solid',
         },
+        paperAnchorRight: {
+          borderRight: 'none',
+          borderTopRightRadius: 0,
+          borderBottomRightRadius: 0,
+          marginRight: 0,
+        },
       },
     },
     MuiLink: {

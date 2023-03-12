@@ -1,19 +1,14 @@
-import { useCallback, useEffect, useRef } from 'react'
+import { useCallback, useRef } from 'react'
+import { useMounted } from './useMounted'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function useDebounce<T extends (...args: any[]) => never>(
+export function useDebounce<T extends (...args: any[]) => void>(
   func: T,
   delay = 0,
   deps?: unknown[],
 ) {
-  const isLoaded = useRef(true)
   const timeout = useRef<NodeJS.Timeout | null>(null)
-
-  useEffect(() => {
-    return () => {
-      isLoaded.current = false
-    }
-  }, [])
+  const mounted = useMounted()
 
   return useCallback(
     (...args: Parameters<typeof func>) => {
@@ -21,7 +16,7 @@ export function useDebounce<T extends (...args: any[]) => never>(
         window.clearTimeout(timeout.current)
       }
       timeout.current = setTimeout(() => {
-        if (isLoaded.current) {
+        if (mounted.current) {
           func(...args)
         }
       }, delay)

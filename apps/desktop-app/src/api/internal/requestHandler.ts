@@ -7,6 +7,7 @@ import {
 import { ipcMain, type IpcMainInvokeEvent } from 'electron'
 
 import Database from '../../database'
+import { getPagePreview } from '../../utils/puppeeterMisc'
 
 import { parseDatabaseAccount } from './parsers/accountParser'
 import { parseDatabaseSite } from './parsers/siteParser'
@@ -60,6 +61,10 @@ export function registerRequestsHandler() {
           data: sites.map(parseDatabaseSite),
           cursor: Database.utils.extractCursor(sites, 'id', request.count),
         })),
+    ),
+    [RendererToElectronMessage.getSitePreview]: handleApiRequest(
+      RendererToElectronMessage.getSitePreview,
+      (url) => getPagePreview(url).then((preview) => ({ imageBase64: preview })),
     ),
   } satisfies {
     [key in RendererToElectronMessage]: (

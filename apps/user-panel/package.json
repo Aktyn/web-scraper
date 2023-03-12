@@ -17,6 +17,7 @@
     "@emotion/react": "^11.10.6",
     "@emotion/styled": "^11.10.6",
     "@fontsource/roboto-flex": "^4.5.5",
+    "@hookform/resolvers": "^2.9.11",
     "@mui/icons-material": "^5.11.11",
     "@mui/material": "^5.11.12",
     "@testing-library/jest-dom": "^5.16.5",
@@ -31,9 +32,11 @@
     "prismjs": "^1.29.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-hook-form": "^7.43.5",
     "react-scripts": "^5.0.1",
     "shx": "^0.3.4",
-    "typescript": "^4.9.5"
+    "typescript": "^4.9.5",
+    "yup": "^1.0.2"
   },
   "devDependencies": {
     "@emotion/eslint-plugin": "^11.10.0",

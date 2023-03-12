@@ -35,7 +35,7 @@ export const CustomDrawer = forwardRef<CustomDrawerRef, PropsWithChildren<Custom
 
     return (
       <Drawer anchor="right" {...drawerProps} open={open} onClose={handleClose}>
-        <Stack>
+        <Stack height="100%" justifyContent="flex-start">
           {title && (
             <>
               <Stack

@@ -8,6 +8,7 @@ const rendererToElectronMessageNames = [
   'setUserSetting',
   'getAccounts',
   'getSites',
+  'getSitePreview',
 ] as const
 
 const api = {

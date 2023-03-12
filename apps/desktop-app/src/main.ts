@@ -16,6 +16,7 @@ import { registerRequestsHandler } from './api/internal/requestHandler'
 import Database from './database'
 import { ExtendedBrowserWindow } from './extendedBrowserWindow'
 import { EXTERNAL_DIRECTORY_PATH } from './utils'
+import { getPagePreview } from './utils/puppeeterMisc'
 
 // eslint-disable-next-line no-console
 console.info(

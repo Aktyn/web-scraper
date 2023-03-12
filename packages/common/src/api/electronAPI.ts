@@ -19,6 +19,7 @@ export enum RendererToElectronMessage {
   setUserSetting = 'setUserSetting',
   getAccounts = 'getAccounts',
   getSites = 'getSites',
+  getSitePreview = 'getSitePreview',
 }
 
 export type ElectronApi = {
@@ -33,4 +34,7 @@ export type ElectronApi = {
   ) => Promise<ApiError>
   [RendererToElectronMessage.getAccounts]: PaginatedApiFunctionWithEncryptedData<Account, 'id'>
   [RendererToElectronMessage.getSites]: PaginatedApiFunction<Site, 'id'>
+  [RendererToElectronMessage.getSitePreview]: (
+    url: string,
+  ) => Promise<{ imageBase64: string } | ApiError>
 }
