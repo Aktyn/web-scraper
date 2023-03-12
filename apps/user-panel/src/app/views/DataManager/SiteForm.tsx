@@ -15,9 +15,8 @@ export const SiteForm = () => {
     resolver: yupResolver(siteFormSchema),
   })
 
-  const onSubmit = useCallback((data: any) => {
+  const onSubmit = useCallback((_data: SiteFormType) => {
     //TODO: submit request to API
-    console.log(data)
   }, [])
 
   return (
