@@ -11,9 +11,14 @@ import { FormInput } from '../../components/form/FormInput'
 type SiteFormType = yup.InferType<typeof siteFormSchema>
 
 export const SiteForm = () => {
+  // const createSiteRequest = useApiRequest(window.electronAPI.setUserSetting)
+
   const form = useForm<SiteFormType>({
+    mode: 'onTouched',
     resolver: yupResolver(siteFormSchema),
   })
+
+  const url = form.watch('url')
 
   const onSubmit = useCallback((_data: SiteFormType) => {
     //TODO: submit request to API
@@ -34,7 +39,13 @@ export const SiteForm = () => {
       </Stack>
       <UrlPreview url={form.watch('url')} width={256} maxHeight={414} />
       <Stack direction="row" alignItems="center" justifyContent="center">
-        <Button variant="contained" color="primary" type="submit" endIcon={<SendRounded />}>
+        <Button
+          variant="contained"
+          color="primary"
+          type="submit"
+          endIcon={<SendRounded />}
+          disabled={!url}
+        >
           Submit
         </Button>
       </Stack>

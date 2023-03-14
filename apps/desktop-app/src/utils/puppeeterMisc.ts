@@ -2,7 +2,7 @@ import { safePromise, wait } from '@web-scrapper/common'
 import { launch } from 'puppeteer'
 
 export async function getPagePreview(url: string) {
-  //TODO: keep the browser open to speed up consecutive requests
+  //TODO: keep the browser open to speed up consecutive requests or use await ScraperBrowser.instance.waitUntilReady()
   const browser = await launch({
     args: ['--disable-infobars', '--no-default-browser-check'],
     ignoreDefaultArgs: ['--enable-automation', '--enable-blink-features=IdleDetection'],
