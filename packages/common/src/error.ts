@@ -4,4 +4,6 @@ export enum ErrorCode {
 
   API_ERROR = 100,
   DATABASE_ERROR = 101,
+  INCORRECT_DATA = 102,
+  ENTRY_ALREADY_EXISTS = 103,
 }

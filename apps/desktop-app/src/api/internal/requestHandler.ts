@@ -26,7 +26,13 @@ const handleApiRequest = <ArgumentsType extends any[], ResponseType extends Prom
       return await requestFunc(...args)
     } catch (error) {
       console.error(error)
-      return { errorCode: typeof error === 'number' ? (error as ErrorCode) : ErrorCode.API_ERROR }
+      if (typeof error === 'number') {
+        return { errorCode: error as ErrorCode }
+      }
+      return {
+        errorCode: ErrorCode.API_ERROR,
+        error: error instanceof Error || typeof error === 'string' ? error : null,
+      }
     }
   }) as unknown as (
     event: IpcMainInvokeEvent,
@@ -61,6 +67,10 @@ export function registerRequestsHandler() {
           data: sites.map(parseDatabaseSite),
           cursor: Database.utils.extractCursor(sites, 'id', request.count),
         })),
+    ),
+    [RendererToElectronMessage.createSite]: handleApiRequest(
+      RendererToElectronMessage.createSite,
+      (data) => Database.site.createSite(data).then(parseDatabaseSite),
     ),
     [RendererToElectronMessage.getSitePreview]: handleApiRequest(
       RendererToElectronMessage.getSitePreview,

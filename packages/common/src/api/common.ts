@@ -2,6 +2,7 @@ import type { ErrorCode } from '../error'
 
 export interface ApiError {
   errorCode: ErrorCode
+  error?: Error | string | null
 }
 
 export type PaginatedApiResponse<DataType, IdProperty extends keyof DataType> =

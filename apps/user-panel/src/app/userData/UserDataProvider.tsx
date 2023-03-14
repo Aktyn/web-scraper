@@ -23,7 +23,6 @@ export const UserDataProvider = ({ children }: PropsWithChildren) => {
   >(
     (key, value) => {
       setSettings((prev) => ({ ...prev, [key]: value }))
-
       setUserSettingsRequest.submit({}, key, value)
     },
     [setUserSettingsRequest],

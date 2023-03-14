@@ -61,7 +61,6 @@ export const App = () => {
       <CssBaseline>
         <SnackbarProvider
           maxSnack={10}
-          preventDuplicate
           autoHideDuration={5000}
           anchorOrigin={{
             horizontal: 'center',

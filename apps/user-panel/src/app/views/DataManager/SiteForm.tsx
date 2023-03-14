@@ -2,27 +2,36 @@ import { useCallback } from 'react'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { SendRounded } from '@mui/icons-material'
 import { Button, Stack } from '@mui/material'
+import { createSiteSchema, type CreateSiteSchema } from '@web-scrapper/common'
 import { useForm } from 'react-hook-form'
-import type * as yup from 'yup'
-import { siteFormSchema } from './siteFormSchema'
 import { UrlPreview } from '../../components/common/UrlPreview'
 import { FormInput } from '../../components/form/FormInput'
+import { useApiRequest } from '../../hooks/useApiRequest'
 
-type SiteFormType = yup.InferType<typeof siteFormSchema>
+export const SiteForm = ({ onSuccess }: { onSuccess: () => void }) => {
+  const createSiteRequest = useApiRequest(window.electronAPI.createSite)
 
-export const SiteForm = () => {
-  // const createSiteRequest = useApiRequest(window.electronAPI.setUserSetting)
-
-  const form = useForm<SiteFormType>({
+  const form = useForm<CreateSiteSchema>({
     mode: 'onTouched',
-    resolver: yupResolver(siteFormSchema),
+    resolver: yupResolver(createSiteSchema),
   })
 
   const url = form.watch('url')
 
-  const onSubmit = useCallback((_data: SiteFormType) => {
-    //TODO: submit request to API
-  }, [])
+  const onSubmit = useCallback(
+    (data: CreateSiteSchema) => {
+      createSiteRequest.submit(
+        {
+          onSuccess: (_, { enqueueSnackbar }) => {
+            enqueueSnackbar({ variant: 'success', message: 'Site created' })
+            onSuccess()
+          },
+        },
+        data,
+      )
+    },
+    [createSiteRequest, onSuccess],
+  )
 
   return (
     <Stack

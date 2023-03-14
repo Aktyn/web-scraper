@@ -30,7 +30,7 @@ import type { useTableColumns } from './useTableColumns'
 import { Config } from '../../config'
 import { UserDataContext } from '../../context/userDataContext'
 import { useCancellablePromise } from '../../hooks/useCancellablePromise'
-import { errorMessages, genericForwardRef, genericMemo } from '../../utils'
+import { errorHelpers, genericForwardRef, genericMemo } from '../../utils'
 import { LoadingIconButton } from '../common/button/LoadingIconButton'
 
 interface TableProps<DataType extends object, KeyPropertyType extends string & Path<DataType>> {
@@ -87,7 +87,7 @@ export const Table = genericMemo(
           )
             .then((response) => {
               if ('errorCode' in response) {
-                enqueueSnackbar({ variant: 'error', message: errorMessages[response.errorCode] })
+                enqueueSnackbar({ variant: 'error', message: errorHelpers[response.errorCode] })
                 return
               }
               setData((data) => {

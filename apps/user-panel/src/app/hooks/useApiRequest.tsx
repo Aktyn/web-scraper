@@ -1,8 +1,9 @@
 import { useCallback, useMemo, useState } from 'react'
+import { Stack, Typography } from '@mui/material'
 import { type ApiError, ErrorCode } from '@web-scrapper/common'
 import { useSnackbar } from 'notistack'
 import { useCancellablePromise } from './useCancellablePromise'
-import { errorMessages } from '../utils'
+import { errorHelpers, parseError } from '../utils'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyApiFunction = (...args: any[]) => Promise<ApiError | object>
@@ -18,7 +19,7 @@ export function useApiRequest<RequestFunctionType extends AnyApiFunction>(
   type DataType = Awaited<ReturnType<RequestFunctionType>> extends ApiError | infer T ? T : never
 
   type ConfigType = {
-    onSuccess?: (data: DataType) => void
+    onSuccess?: (data: DataType, extras: { enqueueSnackbar: typeof enqueueSnackbar }) => void
   }
 
   const submit = useCallback(
@@ -28,10 +29,30 @@ export function useApiRequest<RequestFunctionType extends AnyApiFunction>(
         .then((data) => {
           setSubmitting(false)
           if ('errorCode' in data && data.errorCode !== ErrorCode.NO_ERROR) {
-            enqueueSnackbar({ variant: 'error', message: errorMessages[data.errorCode] })
+            enqueueSnackbar({
+              variant: 'error',
+              message: (
+                <Stack alignItems="flex-start" gap={0}>
+                  <Typography variant="body2">{errorHelpers[data.errorCode]}</Typography>
+                  {data.error && (
+                    <Typography
+                      variant="caption"
+                      sx={{
+                        maxWidth: '16rem',
+                        maxHeight: '8rem',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                      }}
+                    >
+                      ({parseError(data.error)})
+                    </Typography>
+                  )}
+                </Stack>
+              ),
+            })
             return
           }
-          config.onSuccess?.(data as DataType)
+          config.onSuccess?.(data as DataType, { enqueueSnackbar })
         })
         .catch((error) => {
           if (error) {

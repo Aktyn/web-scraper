@@ -12,13 +12,12 @@ import {
   Typography,
 } from '@mui/material'
 import { common } from '@mui/material/colors'
+import { createSiteSchema } from '@web-scrapper/common'
 import RootPortal from './RootPortal'
 import { useCancellablePromise } from '../../hooks/useCancellablePromise'
 import { useDebounce } from '../../hooks/useDebounce'
 import { useStateToRef } from '../../hooks/useStateToRef'
-import { errorMessages } from '../../utils'
-import { siteFormSchema } from '../../views/DataManager/siteFormSchema'
-
+import { errorHelpers } from '../../utils'
 interface UrlPreviewProps {
   url: string
   width: number
@@ -52,7 +51,7 @@ export const UrlPreview = ({ url, width, maxHeight }: UrlPreviewProps) => {
 
           setLoading(false)
           if ('errorCode' in response) {
-            console.warn(errorMessages[response.errorCode])
+            console.warn(errorHelpers[response.errorCode])
             setImagePreviewSrc('')
             return
           }
@@ -67,7 +66,7 @@ export const UrlPreview = ({ url, width, maxHeight }: UrlPreviewProps) => {
   useEffect(() => {
     try {
       setMaximizePreview(false)
-      siteFormSchema.validateSyncAt('url', { url })
+      createSiteSchema.validateSyncAt('url', { url })
       loadPreviewDebounced(url)
     } catch {
       setImagePreviewSrc('')

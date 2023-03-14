@@ -16,7 +16,6 @@ import { registerRequestsHandler } from './api/internal/requestHandler'
 import Database from './database'
 import { ExtendedBrowserWindow } from './extendedBrowserWindow'
 import { EXTERNAL_DIRECTORY_PATH } from './utils'
-import { getPagePreview } from './utils/puppeeterMisc'
 
 // eslint-disable-next-line no-console
 console.info(
@@ -59,7 +58,7 @@ function createWindow() {
     mainWindow.webContents.openDevTools({ mode: 'bottom' })
   }
 
-  // Emit dummy event every second
+  // Emit dummy event every second TODO: remove this after creating first real use case
   let tempCounter2 = 0
   setInterval(() => {
     mainWindow.sendMessage(ElectronToRendererMessage.dummyEventFromMain, ++tempCounter2)

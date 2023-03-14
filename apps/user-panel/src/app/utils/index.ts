@@ -1,2 +1,2 @@
 export * from './common'
-export * from './errorMessages'
+export * from './error-helpers'
