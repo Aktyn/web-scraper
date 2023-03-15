@@ -14,6 +14,7 @@ export const UrlButton = ({ children: url, maxWidth, ...linkProps }: UrlButtonPr
       href={url}
       target="_blank"
       rel="noopener noreferrer"
+      display="inline-flex"
       direction="row"
       alignItems="center"
       spacing={0.5}

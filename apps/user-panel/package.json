@@ -19,7 +19,8 @@
     "@fontsource/roboto-flex": "^4.5.5",
     "@hookform/resolvers": "^2.9.11",
     "@mui/icons-material": "^5.11.11",
-    "@mui/material": "^5.11.12",
+    "@mui/lab": "^5.0.0-alpha.123",
+    "@mui/material": "^5.11.13",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^14.0.0",
     "@testing-library/user-event": "^14.4.3",
@@ -59,7 +60,7 @@
     "eslint-plugin-react-hooks": "^4.6.0",
     "jsdom": "^21.1.1",
     "react-refresh": "^0.11.0",
-    "vite-tsconfig-paths": "^4.0.5",
+    "vite-tsconfig-paths": "^4.0.7",
     "vitest": "^0.29.2"
   },
   "eslintConfig": {

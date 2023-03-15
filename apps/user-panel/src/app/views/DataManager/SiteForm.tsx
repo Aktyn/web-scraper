@@ -1,7 +1,8 @@
 import { useCallback } from 'react'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { SendRounded } from '@mui/icons-material'
-import { Button, Stack } from '@mui/material'
+import { LoadingButton } from '@mui/lab'
+import { Stack } from '@mui/material'
 import { createSiteSchema, type CreateSiteSchema } from '@web-scrapper/common'
 import { useForm } from 'react-hook-form'
 import { UrlPreview } from '../../components/common/UrlPreview'
@@ -48,15 +49,17 @@ export const SiteForm = ({ onSuccess }: { onSuccess: () => void }) => {
       </Stack>
       <UrlPreview url={form.watch('url')} width={256} maxHeight={414} />
       <Stack direction="row" alignItems="center" justifyContent="center">
-        <Button
-          variant="contained"
+        <LoadingButton
+          variant="outlined"
           color="primary"
           type="submit"
           endIcon={<SendRounded />}
           disabled={!url}
+          loading={createSiteRequest.submitting}
+          loadingPosition="end"
         >
           Submit
-        </Button>
+        </LoadingButton>
       </Stack>
     </Stack>
   )

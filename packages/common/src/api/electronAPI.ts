@@ -22,6 +22,7 @@ export enum RendererToElectronMessage {
 
   getSites = 'getSites',
   createSite = 'createSite',
+  deleteSite = 'deleteSite',
   getSitePreview = 'getSitePreview',
 }
 
@@ -38,6 +39,7 @@ export type ElectronApi = {
   [RendererToElectronMessage.getAccounts]: PaginatedApiFunctionWithEncryptedData<Account, 'id'>
   [RendererToElectronMessage.getSites]: PaginatedApiFunction<Site, 'id'>
   [RendererToElectronMessage.createSite]: (data: CreateSiteSchema) => Promise<Site | ApiError>
+  [RendererToElectronMessage.deleteSite]: (siteId: Site['id']) => Promise<ApiError>
   [RendererToElectronMessage.getSitePreview]: (
     url: string,
   ) => Promise<{ imageBase64: string } | ApiError>

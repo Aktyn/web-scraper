@@ -1,5 +1,5 @@
-import type { ReactNode } from 'react'
-import { useMemo } from 'react'
+import { type ReactNode, useMemo } from 'react'
+import type { TableCellProps } from '@mui/material'
 import type { Path } from '@web-scrapper/common'
 
 export interface ColumnDefinition<DataType> {
@@ -9,6 +9,7 @@ export interface ColumnDefinition<DataType> {
   accessor: (string & Path<DataType>) | ((row: DataType) => string | ReactNode)
   encrypted?: boolean
   jsonString?: boolean
+  cellSx?: TableCellProps['sx']
   // width?: number
   // sortable?: boolean
   // filter?: (props: FilterPropsBase<any>) => React.ReactElement<FilterPropsBase<any>>

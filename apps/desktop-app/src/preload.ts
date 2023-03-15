@@ -9,6 +9,7 @@ const rendererToElectronMessageNames = [
   'getAccounts',
   'getSites',
   'createSite',
+  'deleteSite',
   'getSitePreview',
 ] as const
 

@@ -49,3 +49,9 @@ export async function createSite(data: CreateSiteSchema) {
     },
   })
 }
+
+export function deleteSite(id: number) {
+  return Database.prisma.site.delete({
+    where: { id },
+  })
+}

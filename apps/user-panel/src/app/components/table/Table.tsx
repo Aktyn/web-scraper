@@ -7,7 +7,7 @@ import {
   useRef,
   useState,
 } from 'react'
-import { AddRounded, RefreshRounded } from '@mui/icons-material'
+import { AddRounded, DeleteRounded, RefreshRounded } from '@mui/icons-material'
 import {
   IconButton,
   Stack,
@@ -17,6 +17,8 @@ import {
   TableContainer,
   TableHead,
   TableRow,
+  Tooltip,
+  Typography,
 } from '@mui/material'
 import {
   type ExtractTypeByPath,
@@ -42,6 +44,7 @@ interface TableProps<DataType extends object, KeyPropertyType extends string & P
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   data: DataType[] | PaginatedApiFunction<DataType, any>
   onAdd?: () => void
+  onDelete?: (data: DataType) => void
 }
 
 export interface TableRef {
@@ -56,6 +59,7 @@ export const Table = genericMemo(
         columns,
         data: dataSource,
         onAdd,
+        onDelete,
       }: TableProps<DataType, KeyPropertyType> & RefAttributes<TableRef>,
       ref: RefAttributes<TableRef>['ref'],
     ) => {
@@ -70,6 +74,8 @@ export const Table = genericMemo(
       const [fetchingData, setFetchingData] = useState(false)
 
       const mainTableHeaderSize = 51
+      const hasActionsColumn = !!onDelete
+      const columnsCount = columns.definitions.length + (hasActionsColumn ? 1 : 0)
 
       const fetchDataChunk = useCallback(
         (withCursor = cursor) => {
@@ -170,7 +176,7 @@ export const Table = genericMemo(
           <MuiTable stickyHeader size={settings.tablesCompactMode ? 'small' : 'medium'}>
             <TableHead>
               <TableRow>
-                <TableCell colSpan={columns.definitions.length} align="right" sx={{ p: 1 }}>
+                <TableCell colSpan={columnsCount} align="right" sx={{ p: 1 }}>
                   <Stack direction="row" alignItems="center" justifyContent="flex-end" gap={1}>
                     <LoadingIconButton loading={fetchingData} onClick={refresh} size="small">
                       <RefreshRounded />
@@ -191,26 +197,47 @@ export const Table = genericMemo(
                     {columnDefinition.header}
                   </TableCell>
                 ))}
+                {hasActionsColumn && <TableCell sx={{ top: mainTableHeaderSize }} />}
               </TableRow>
             </TableHead>
             <TableBody>
-              {data.map((row, rowIndex) => (
-                <TableRow
-                  key={keyProperty ? (getDeepProperty(row, keyProperty) as never) : rowIndex}
-                >
-                  {columns.definitions.map((columnDefinition) => (
-                    <ValueCell
-                      key={columnDefinition.id}
-                      encrypted={!!columnDefinition.encrypted}
-                      jsonString={!!columnDefinition.jsonString}
-                    >
-                      {typeof columnDefinition.accessor === 'function'
-                        ? columnDefinition.accessor(row)
-                        : getDeepProperty(row, columnDefinition.accessor)}
-                    </ValueCell>
-                  ))}
+              {data.length ? (
+                data.map((row, rowIndex) => (
+                  <TableRow
+                    key={keyProperty ? (getDeepProperty(row, keyProperty) as never) : rowIndex}
+                  >
+                    {columns.definitions.map((columnDefinition) => (
+                      <ValueCell
+                        key={columnDefinition.id}
+                        encrypted={!!columnDefinition.encrypted}
+                        jsonString={!!columnDefinition.jsonString}
+                        sx={columnDefinition.cellSx}
+                      >
+                        {typeof columnDefinition.accessor === 'function'
+                          ? columnDefinition.accessor(row)
+                          : getDeepProperty(row, columnDefinition.accessor)}
+                      </ValueCell>
+                    ))}
+                    {hasActionsColumn && (
+                      <TableCell width="2.5rem" sx={{ top: mainTableHeaderSize, py: 0 }}>
+                        <Tooltip title="Delete" disableInteractive>
+                          <IconButton size="small" onClick={() => onDelete(row)}>
+                            <DeleteRounded />
+                          </IconButton>
+                        </Tooltip>
+                      </TableCell>
+                    )}
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={columnsCount} align="center" sx={{ py: 2 }}>
+                    <Typography variant="body1" fontWeight={700} color="text.secondary">
+                      No data
+                    </Typography>
+                  </TableCell>
                 </TableRow>
-              ))}
+              )}
             </TableBody>
           </MuiTable>
         </TableContainer>

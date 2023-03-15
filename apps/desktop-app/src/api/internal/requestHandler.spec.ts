@@ -188,6 +188,21 @@ describe('registerRequestsHandler', () => {
       tags: [],
     })
   })
+
+  it('should delete site with given id', async () => {
+    databaseMock.site.delete.mockResolvedValue(mockData.sites[0])
+
+    registerRequestsHandler()
+
+    const deleteSite = handlers.get(
+      'deleteSite',
+    ) as HandlersInterface[RendererToElectronMessage.deleteSite]
+
+    expect(deleteSite).toBeDefined()
+    await expect(deleteSite(null as never, 1)).resolves.toEqual({
+      errorCode: ErrorCode.NO_ERROR,
+    })
+  })
 })
 
 const decryptedAccounts = [

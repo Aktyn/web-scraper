@@ -11,6 +11,7 @@ describe('Database.site', () => {
     mockReset(databaseMock)
     databaseMock.site.findMany.mockResolvedValue(mockData.sites)
     databaseMock.site.create.mockResolvedValue(mockData.sites[0])
+    databaseMock.site.delete.mockResolvedValue(mockData.sites[0])
   })
 
   it('should return array of existing sites', async () => {
@@ -27,5 +28,9 @@ describe('Database.site', () => {
     await expect(
       Database.site.createSite({ url: 'https://example', language: 'PL' }).catch((code) => code),
     ).resolves.toBe(ErrorCode.INCORRECT_DATA)
+  })
+
+  it('should delete site with given in', async () => {
+    await expect(Database.site.deleteSite(1)).resolves.toEqual(mockData.sites[0])
   })
 })

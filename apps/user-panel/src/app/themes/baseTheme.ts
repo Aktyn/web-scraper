@@ -1,8 +1,15 @@
 import '@fontsource/roboto-flex/variable.css'
-import type { ThemeOptions } from '@mui/material'
+import type { CSSInterpolation, ThemeOptions } from '@mui/material'
 import { createTheme } from '@mui/material/styles'
+// noinspection ES6UnusedImports
+import {} from '@mui/lab/themeAugmentation'
 
 const retinaDisplayMediaQuery = '@media only screen and (-webkit-min-device-pixel-ratio: 2)'
+
+const customPaper: CSSInterpolation = {
+  borderRadius: '1rem',
+  border: '1px solid',
+}
 
 export const baseThemeOptions: ThemeOptions = {
   typography: {
@@ -64,27 +71,23 @@ export const baseThemeOptions: ThemeOptions = {
     },
     MuiPopover: {
       styleOverrides: {
-        paper: {
-          borderRadius: '1rem',
-          border: '1px solid',
-        },
+        paper: customPaper,
       },
     },
     MuiDrawer: {
       styleOverrides: {
-        paper: {
-          minWidth: '16rem',
-          margin: '1rem',
-          height: 'calc(100% - 2rem)',
-          borderRadius: '1rem',
-          border: '1px solid',
-        },
+        paper: { ...customPaper, minWidth: '16rem', margin: '1rem', height: 'calc(100% - 2rem)' },
         paperAnchorRight: {
           borderRight: 'none',
           borderTopRightRadius: 0,
           borderBottomRightRadius: 0,
           marginRight: 0,
         },
+      },
+    },
+    MuiDialog: {
+      styleOverrides: {
+        paper: customPaper,
       },
     },
     MuiLink: {

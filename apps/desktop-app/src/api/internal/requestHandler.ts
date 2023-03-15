@@ -39,6 +39,10 @@ const handleApiRequest = <ArgumentsType extends any[], ResponseType extends Prom
     ...args: ArgumentsType
   ) => ResponseType | Promise<ApiError>
 
+const successResponse: ApiError = {
+  errorCode: ErrorCode.NO_ERROR,
+}
+
 export function registerRequestsHandler() {
   const handler = {
     [RendererToElectronMessage.getUserSettings]: handleApiRequest(
@@ -47,10 +51,7 @@ export function registerRequestsHandler() {
     ),
     [RendererToElectronMessage.setUserSetting]: handleApiRequest(
       RendererToElectronMessage.setUserSetting,
-      (key, value) =>
-        Database.userData.setUserSetting(key, value).then(() => ({
-          errorCode: ErrorCode.NO_ERROR,
-        })),
+      (key, value) => Database.userData.setUserSetting(key, value).then(() => successResponse),
     ),
     [RendererToElectronMessage.getAccounts]: handleApiRequest(
       RendererToElectronMessage.getAccounts,
@@ -71,6 +72,10 @@ export function registerRequestsHandler() {
     [RendererToElectronMessage.createSite]: handleApiRequest(
       RendererToElectronMessage.createSite,
       (data) => Database.site.createSite(data).then(parseDatabaseSite),
+    ),
+    [RendererToElectronMessage.deleteSite]: handleApiRequest(
+      RendererToElectronMessage.deleteSite,
+      (id) => Database.site.deleteSite(id).then(() => successResponse),
     ),
     [RendererToElectronMessage.getSitePreview]: handleApiRequest(
       RendererToElectronMessage.getSitePreview,

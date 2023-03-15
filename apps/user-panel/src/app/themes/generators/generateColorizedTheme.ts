@@ -1,10 +1,10 @@
-import type { ThemeOptions } from '@mui/material'
+import type { CSSInterpolation, ThemeOptions } from '@mui/material'
 import { alpha, createTheme, darken, dividerClasses, lighten, tableRowClasses } from '@mui/material'
 import { common, green, grey, orange, red } from '@mui/material/colors'
 import deepmerge from 'deepmerge'
 import { Config } from '../../config'
 import { baseTheme, baseThemeOptions } from '../baseTheme'
-import { mixColors, setSaturation } from '../helpers'
+import { generateComplementaryColor, mixColors, setSaturation } from '../helpers'
 
 type ColorSchema = {
   50: string
@@ -19,12 +19,23 @@ type ColorSchema = {
   900: string
 }
 
-interface ColorizedThemeProps {
-  primary: ColorSchema
-  secondary: ColorSchema
+function convertPrimaryToSecondary(schema: Readonly<ColorSchema>) {
+  const converted = {} as { [_: string]: string }
+  for (const key in schema) {
+    converted[key] = generateComplementaryColor(schema[key as never])
+  }
+  return converted as ColorSchema
 }
 
-export function generateColorizedTheme({ primary, secondary }: ColorizedThemeProps) {
+interface ColorizedThemeProps {
+  primary: ColorSchema
+  secondary?: ColorSchema
+}
+
+export function generateColorizedTheme({
+  primary,
+  secondary = convertPrimaryToSecondary(primary),
+}: ColorizedThemeProps) {
   const backgroundDefault = setSaturation(primary[800], Config.BACKGROUND_SATURATION)
   const paperBackgroundDefault = setSaturation(primary[600], Config.BACKGROUND_SATURATION)
 
@@ -33,6 +44,12 @@ export function generateColorizedTheme({ primary, secondary }: ColorizedThemePro
 
   const divider = lighten(backgroundDefault, 0.05)
   const paperDivider = lighten(paperBackgroundDefault, 0.1)
+
+  const glassmorphicPaper: CSSInterpolation = {
+    borderColor: lighten(paperBackgroundDefault, 0.2),
+    backgroundColor: alpha(paperBackgroundDefault, 0.5),
+    backdropFilter: 'blur(4px)',
+  }
 
   return createTheme(
     deepmerge<ThemeOptions>(
@@ -44,7 +61,7 @@ export function generateColorizedTheme({ primary, secondary }: ColorizedThemePro
             main: primary[200],
           },
           secondary: {
-            main: secondary[600],
+            main: secondary[200],
           },
           background: {
             default: backgroundDefault,
@@ -182,20 +199,17 @@ export function generateColorizedTheme({ primary, secondary }: ColorizedThemePro
           },
           MuiPopover: {
             styleOverrides: {
-              paper: {
-                borderColor: lighten(paperBackgroundDefault, 0.2),
-                backgroundColor: alpha(paperBackgroundDefault, 0.5),
-                backdropFilter: 'blur(4px)',
-              },
+              paper: glassmorphicPaper,
             },
           },
           MuiDrawer: {
             styleOverrides: {
-              paper: {
-                borderColor: lighten(paperBackgroundDefault, 0.2),
-                backgroundColor: alpha(paperBackgroundDefault, 0.5),
-                backdropFilter: 'blur(4px)',
-              },
+              paper: glassmorphicPaper,
+            },
+          },
+          MuiDialog: {
+            styleOverrides: {
+              paper: glassmorphicPaper,
             },
           },
           MuiLink: {
