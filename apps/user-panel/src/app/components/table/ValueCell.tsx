@@ -4,6 +4,7 @@ import { Box, TableCell, type TableCellProps, Tooltip } from '@mui/material'
 import { BooleanValue } from './BooleanValue'
 import { NoDataChip } from './NoDataChip'
 import { UserDataContext } from '../../context/userDataContext'
+import { formatDate } from '../../utils'
 import { JsonValue } from '../common/JsonValue'
 
 interface ValueCellProps extends Omit<TableCellProps, 'children'> {
@@ -79,7 +80,7 @@ const CellContent = ({ children: value, accessDenied, jsonString }: CellContentP
       return <BooleanValue value={value} />
     case 'object':
       if (value instanceof Date) {
-        return <>{value.toLocaleString(navigator.language, dateFormat)}</>
+        return <>{formatDate(value)}</>
       }
       break
     case 'string':
@@ -91,12 +92,3 @@ const CellContent = ({ children: value, accessDenied, jsonString }: CellContentP
 
   return <>{value}</>
 }
-
-const dateFormat: Intl.DateTimeFormatOptions = {
-  year: 'numeric',
-  month: 'numeric',
-  day: '2-digit',
-  hour: 'numeric',
-  minute: 'numeric',
-  second: 'numeric',
-} as const

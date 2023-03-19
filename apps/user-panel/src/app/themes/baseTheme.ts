@@ -1,4 +1,5 @@
 import '@fontsource/roboto-flex/variable.css'
+import { drawerClasses } from '@mui/material'
 import type { CSSInterpolation, ThemeOptions } from '@mui/material'
 import { createTheme } from '@mui/material/styles'
 // noinspection ES6UnusedImports
@@ -9,6 +10,7 @@ const retinaDisplayMediaQuery = '@media only screen and (-webkit-min-device-pixe
 const customPaper: CSSInterpolation = {
   borderRadius: '1rem',
   border: '1px solid',
+  overflow: 'hidden',
 }
 
 export const baseThemeOptions: ThemeOptions = {
@@ -45,6 +47,13 @@ export const baseThemeOptions: ThemeOptions = {
         },
       },
     },
+    MuiButton: {
+      styleOverrides: {
+        root: {
+          borderRadius: '2rem',
+        },
+      },
+    },
     MuiTabs: {
       styleOverrides: {
         indicator: {
@@ -76,12 +85,25 @@ export const baseThemeOptions: ThemeOptions = {
     },
     MuiDrawer: {
       styleOverrides: {
-        paper: { ...customPaper, minWidth: '16rem', margin: '1rem', height: 'calc(100% - 2rem)' },
-        paperAnchorRight: {
-          borderRight: 'none',
-          borderTopRightRadius: 0,
-          borderBottomRightRadius: 0,
-          marginRight: 0,
+        root: {
+          display: 'flex',
+          flexDirection: 'row-reverse',
+          alignItems: 'stretch',
+          [`& > .${drawerClasses.paper}`]: {
+            ...customPaper,
+            flexGrow: 0,
+            minWidth: '16rem',
+            marginBlock: '1rem',
+            height: 'calc(100% - 2rem)',
+            position: 'static',
+          },
+          [`& > .${drawerClasses.paperAnchorRight}`]: {
+            borderRight: 'none',
+            borderTopRightRadius: 0,
+            borderBottomRightRadius: 0,
+            marginRight: 0,
+            marginLeft: '1rem',
+          },
         },
       },
     },

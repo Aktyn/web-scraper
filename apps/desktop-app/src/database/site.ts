@@ -1,13 +1,24 @@
-import type { Site } from '@prisma/client'
-import { ErrorCode, type UpsertSiteSchema, upsertSiteSchema } from '@web-scrapper/common'
+import type { Site as DatabaseSite } from '@prisma/client'
+import {
+  ErrorCode,
+  type PaginatedRequest,
+  type Site,
+  type UpsertSiteSchema,
+  upsertSiteSchema,
+} from '@web-scrapper/common'
 
 import Database from './index'
 
-export function getSites(request: { count: number; cursor?: { id: number } }) {
+export function getSites(request: PaginatedRequest<Site, 'id'>) {
   return Database.prisma.site.findMany({
     take: request.count,
     skip: request.cursor ? 1 : 0,
     cursor: request.cursor,
+    where: request.filters?.length
+      ? {
+          AND: request.filters,
+        }
+      : undefined,
     include: {
       Tags: {
         include: {
@@ -21,6 +32,27 @@ export function getSites(request: { count: number; cursor?: { id: number } }) {
   })
 }
 
+export async function getSite(id: DatabaseSite['id']) {
+  const site = await Database.prisma.site.findUnique({
+    where: {
+      id,
+    },
+    include: {
+      Tags: {
+        include: {
+          Tag: true,
+        },
+      },
+    },
+  })
+
+  if (!site) {
+    throw ErrorCode.NOT_FOUND
+  }
+
+  return site
+}
+
 function validateUpsertSchema(data: UpsertSiteSchema) {
   try {
     upsertSiteSchema.validateSync(data)
@@ -29,7 +61,7 @@ function validateUpsertSchema(data: UpsertSiteSchema) {
   }
 }
 
-async function throwIfUrlExists(url: string, omitId?: Site['id']) {
+async function throwIfUrlExists(url: string, omitId?: DatabaseSite['id']) {
   if (omitId) {
     if (
       await Database.prisma.site.findFirst({

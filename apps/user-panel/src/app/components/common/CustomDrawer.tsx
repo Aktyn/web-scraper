@@ -1,13 +1,15 @@
 import {
   forwardRef,
+  type PropsWithChildren,
+  type ReactNode,
+  useCallback,
+  useDeferredValue,
   useImperativeHandle,
   useState,
-  type ReactNode,
-  type PropsWithChildren,
-  useCallback,
 } from 'react'
-import { CloseRounded } from '@mui/icons-material'
-import { Divider, Drawer, type DrawerProps, IconButton, Stack, Typography } from '@mui/material'
+import { Drawer, type DrawerProps, Stack } from '@mui/material'
+import { CustomDrawerHeader } from './CustomDrawerHeader'
+import { DrawerContext } from '../../context/drawerContext'
 
 export interface CustomDrawerRef {
   open: () => void
@@ -21,6 +23,7 @@ interface CustomDrawerProps extends Omit<DrawerProps, 'open' | 'onClose' | 'titl
 export const CustomDrawer = forwardRef<CustomDrawerRef, PropsWithChildren<CustomDrawerProps>>(
   ({ children, title, ...drawerProps }, ref) => {
     const [open, setOpen] = useState(false)
+    const deferredOpen = useDeferredValue(open)
 
     const handleClose = useCallback(() => setOpen(false), [])
 
@@ -36,25 +39,10 @@ export const CustomDrawer = forwardRef<CustomDrawerRef, PropsWithChildren<Custom
     return (
       <Drawer anchor="right" {...drawerProps} open={open} onClose={handleClose}>
         <Stack height="100%" justifyContent="flex-start">
-          {title && (
-            <>
-              <Stack
-                direction="row"
-                alignItems="center"
-                justifyContent="space-between"
-                sx={{ p: 2 }}
-              >
-                <Typography variant="h6" color="text.secondary">
-                  {title}
-                </Typography>
-                <IconButton onClick={handleClose}>
-                  <CloseRounded />
-                </IconButton>
-              </Stack>
-              <Divider />
-            </>
-          )}
-          {children}
+          <CustomDrawerHeader title={title} onClose={handleClose} />
+          <DrawerContext.Provider value={{ open, deferredOpen, anchor: 'right' }}>
+            {children}
+          </DrawerContext.Provider>
         </Stack>
       </Drawer>
     )

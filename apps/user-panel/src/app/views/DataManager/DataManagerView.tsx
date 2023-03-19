@@ -6,22 +6,22 @@ import { TabsView } from '../../components/common/TabsView'
 import type { ViewComponentProps } from '../helpers'
 
 enum DataManagerTab {
-  ACCOUNTS,
   SITES,
+  ACCOUNTS,
 }
 
 const DataManagerView = ({ doNotRender }: ViewComponentProps) => {
   const tabs = useMemo<TabSchema<DataManagerTab>[]>(
     () => [
       {
-        value: DataManagerTab.ACCOUNTS,
-        label: 'Accounts',
-        content: <Accounts />,
-      },
-      {
         value: DataManagerTab.SITES,
         label: 'Sites',
         content: <Sites />,
+      },
+      {
+        value: DataManagerTab.ACCOUNTS,
+        label: 'Accounts',
+        content: <Accounts />,
       },
     ],
     [],

@@ -1,5 +1,13 @@
 import type { CSSInterpolation, ThemeOptions } from '@mui/material'
-import { alpha, createTheme, darken, dividerClasses, lighten, tableRowClasses } from '@mui/material'
+import {
+  alpha,
+  createTheme,
+  darken,
+  dividerClasses,
+  drawerClasses,
+  lighten,
+  tableRowClasses,
+} from '@mui/material'
 import { common, green, grey, orange, red } from '@mui/material/colors'
 import deepmerge from 'deepmerge'
 import { Config } from '../../config'
@@ -204,7 +212,9 @@ export function generateColorizedTheme({
           },
           MuiDrawer: {
             styleOverrides: {
-              paper: glassmorphicPaper,
+              root: {
+                [`& > .${drawerClasses.paper}`]: glassmorphicPaper,
+              },
             },
           },
           MuiDialog: {

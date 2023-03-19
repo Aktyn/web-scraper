@@ -1,10 +1,37 @@
-import { Box } from '@mui/material'
-import type { Account } from '@web-scrapper/common'
+import { useCallback, useRef, useState } from 'react'
+import { VisibilityRounded } from '@mui/icons-material'
+import { Box, IconButton, Tooltip } from '@mui/material'
+import type { Account, Site } from '@web-scrapper/common'
+import { SiteForm } from './SiteForm'
 import { TransitionType, ViewTransition } from '../../components/animation/ViewTransition'
+import { CopyableLabel } from '../../components/common/CopyableLabel'
+import type { CustomDrawerRef } from '../../components/common/CustomDrawer'
+import { CustomDrawer } from '../../components/common/CustomDrawer'
 import { Table, useTableColumns } from '../../components/table'
 import { useEncryptedApiRequest } from '../../components/table/useEncryptedApiRequest'
+import { useApiRequest } from '../../hooks/useApiRequest'
 
 export const Accounts = () => {
+  const siteDrawerRef = useRef<CustomDrawerRef>(null)
+  const getSiteRequest = useApiRequest(window.electronAPI.getSite)
+
+  const [showSite, setShowSite] = useState<Site | null>(null)
+
+  const handleShowSite = useCallback(
+    (siteId: Site['id']) => {
+      getSiteRequest.submit(
+        {
+          onSuccess: (site) => {
+            setShowSite(site)
+            siteDrawerRef.current?.open()
+          },
+        },
+        siteId,
+      )
+    },
+    [getSiteRequest],
+  )
+
   const columns = useTableColumns<Account>([
     {
       id: 'id',
@@ -19,13 +46,13 @@ export const Accounts = () => {
     {
       id: 'loginOrEmail',
       header: 'Login or email',
-      accessor: 'loginOrEmail',
+      accessor: (row) => <CopyableLabel>{row.loginOrEmail}</CopyableLabel>,
       encrypted: true,
     },
     {
       id: 'password',
       header: 'Password',
-      accessor: 'password',
+      accessor: (row) => <CopyableLabel>{row.password}</CopyableLabel>,
       encrypted: true,
     },
     {
@@ -48,17 +75,35 @@ export const Accounts = () => {
     {
       id: 'siteId',
       header: 'Site',
-      accessor: 'siteId', //TODO: button opening site configuration details
+      accessor: (account) => (
+        <Tooltip title="Show details" disableInteractive>
+          <IconButton size="small" onClick={() => handleShowSite(account.siteId)}>
+            <VisibilityRounded />
+          </IconButton>
+        </Tooltip>
+      ),
+      cellSx: {
+        py: 0,
+      },
     },
   ])
 
   const getAccountsRequest = useEncryptedApiRequest(window.electronAPI.getAccounts)
 
+  const finalizeSiteActionSuccess = useCallback(() => {
+    siteDrawerRef.current?.close()
+  }, [])
+
   return (
-    <ViewTransition type={TransitionType.FADE}>
-      <Box sx={{ height: '100%' }}>
-        <Table columns={columns} keyProperty="id" data={getAccountsRequest} />
-      </Box>
-    </ViewTransition>
+    <>
+      <CustomDrawer ref={siteDrawerRef} title="Site details">
+        <SiteForm site={showSite} onSuccess={finalizeSiteActionSuccess} />
+      </CustomDrawer>
+      <ViewTransition type={TransitionType.FADE}>
+        <Box sx={{ height: '100%' }}>
+          <Table columns={columns} keyProperty="id" data={getAccountsRequest} />
+        </Box>
+      </ViewTransition>
+    </>
   )
 }

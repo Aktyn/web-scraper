@@ -61,7 +61,6 @@ export const Sites = () => {
                   sx={{ fontWeight: 'bold', color: 'text.primary' }}
                   variant="filled"
                   size="small"
-                  //TODO: colorize tags
                   color="default"
                 />
               </Tooltip>

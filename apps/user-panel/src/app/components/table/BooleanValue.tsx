@@ -4,7 +4,7 @@ import { lightGreen, red } from '@mui/material/colors'
 
 export const BooleanValue = ({ value }: { value: boolean }) => {
   return (
-    <Box sx={{ color: value ? lightGreen[200] : red[200] }}>
+    <Box sx={{ display: 'flex', color: value ? lightGreen[200] : red[200] }}>
       {value ? <CheckRounded color="inherit" /> : <CloseRounded color="inherit" />}
     </Box>
   )

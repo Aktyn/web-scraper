@@ -13,7 +13,7 @@ import {
 } from '@mui/material'
 import { common } from '@mui/material/colors'
 import { upsertSiteSchema } from '@web-scrapper/common'
-import RootPortal from './RootPortal'
+import { RootPortal } from './portal/RootPortal'
 import { useCancellablePromise } from '../../hooks/useCancellablePromise'
 import { useDebounce } from '../../hooks/useDebounce'
 import { useStateToRef } from '../../hooks/useStateToRef'

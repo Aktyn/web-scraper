@@ -6,8 +6,11 @@ const electronToRendererMessageNames = ['dummyEventFromMain'] as const
 const rendererToElectronMessageNames = [
   'getUserSettings',
   'setUserSetting',
+
   'getAccounts',
+
   'getSites',
+  'getSite',
   'createSite',
   'deleteSite',
   'updateSite',

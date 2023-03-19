@@ -1,4 +1,5 @@
-import { type ReactNode, useMemo } from 'react'
+import { useMemo } from 'react'
+import type { DependencyList, ReactNode } from 'react'
 import type { TableCellProps } from '@mui/material'
 import type { Path } from '@web-scrapper/common'
 
@@ -17,12 +18,13 @@ export interface ColumnDefinition<DataType> {
 
 export function useTableColumns<DataType extends object>(
   columnsDefinitions: ColumnDefinition<DataType>[],
+  deps: DependencyList = [],
 ) {
   return useMemo(
     () => ({
       definitions: columnsDefinitions,
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [],
+    deps,
   )
 }

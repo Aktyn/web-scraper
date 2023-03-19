@@ -21,6 +21,7 @@ export enum RendererToElectronMessage {
   getAccounts = 'getAccounts',
 
   getSites = 'getSites',
+  getSite = 'getSite',
   createSite = 'createSite',
   deleteSite = 'deleteSite',
   updateSite = 'updateSite',
@@ -37,8 +38,13 @@ export type ElectronApi = {
     key: KeyType,
     value: UserSettings[KeyType],
   ) => Promise<ApiError>
-  [RendererToElectronMessage.getAccounts]: PaginatedApiFunctionWithEncryptedData<Account, 'id'>
+  [RendererToElectronMessage.getAccounts]: PaginatedApiFunctionWithEncryptedData<
+    Account,
+    'id',
+    'loginOrEmail' | 'password' | 'additionalCredentialsData'
+  >
   [RendererToElectronMessage.getSites]: PaginatedApiFunction<Site, 'id'>
+  [RendererToElectronMessage.getSite]: (siteId: Site['id']) => Promise<Site | ApiError>
   [RendererToElectronMessage.createSite]: (data: UpsertSiteSchema) => Promise<Site | ApiError>
   [RendererToElectronMessage.deleteSite]: (siteId: Site['id']) => Promise<ApiError>
   [RendererToElectronMessage.updateSite]: (

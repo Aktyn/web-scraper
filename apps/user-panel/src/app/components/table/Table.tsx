@@ -86,12 +86,13 @@ export const Table = genericMemo(
             return
           }
 
-          //TODO: generic sorting and filtering (custom sorting and filtering can be done by overriding api request before sending as prop to Table component)
-          // eslint-disable-next-line no-console
-          console.log('Fetching data')
           setFetchingData(true)
           cancellable(
-            dataSource({ count: Config.PAGINATION_PAGE_SIZE, cursor: withCursor ?? undefined }),
+            dataSource({
+              count: Config.PAGINATION_PAGE_SIZE,
+              cursor: withCursor ?? undefined,
+              filters: [],
+            }),
           )
             .then((response) => {
               if ('errorCode' in response) {

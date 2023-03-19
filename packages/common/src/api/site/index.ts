@@ -18,6 +18,16 @@ export const upsertSiteSchema = yup
   .object({
     url: yup.string().url().default('').required(),
     language: yup.string().nullable().default(null).notRequired(),
+    siteTags: yup
+      .array()
+      .of(
+        yup.object({
+          name: yup.string().default('').required(),
+          description: yup.string().nullable().default(null).notRequired(),
+        }),
+      )
+      .default([])
+      .required(),
   })
   .required()
 

@@ -164,6 +164,27 @@ describe('registerRequestsHandler', () => {
     })
   })
 
+  it('should return site with given id', async () => {
+    databaseMock.site.findUnique.mockResolvedValue({
+      ...mockData.sites[0],
+      //@ts-expect-error - incomplete mock types
+      Tags: [],
+    })
+
+    registerRequestsHandler()
+
+    const getSite = handlers.get('getSite') as HandlersInterface[RendererToElectronMessage.getSite]
+
+    expect(getSite).toBeDefined()
+    await expect(getSite(null as never, 1)).resolves.toEqual({
+      id: 1,
+      createdAt: new Date('2023-02-19T23:40:10.302Z'),
+      url: 'https://mocked-site.com',
+      language: 'en',
+      tags: [],
+    })
+  })
+
   it('should return created site', async () => {
     databaseMock.site.create.mockResolvedValue({
       ...mockData.sites[0],

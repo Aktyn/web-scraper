@@ -12,6 +12,8 @@ describe('Database.account', () => {
   })
 
   it('should return array of existing accounts', async () => {
-    await expect(Database.account.getAccounts({ count: 20 })).resolves.toEqual(mockData.accounts)
+    await expect(Database.account.getAccounts({ count: 20, filters: [] })).resolves.toEqual(
+      mockData.accounts,
+    )
   })
 })

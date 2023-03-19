@@ -10,6 +10,7 @@ describe('Database.site', () => {
   beforeEach(() => {
     mockReset(databaseMock)
     databaseMock.site.findMany.mockResolvedValue(mockData.sites)
+    databaseMock.site.findUnique.mockResolvedValue(mockData.sites[0])
     databaseMock.site.create.mockResolvedValue(mockData.sites[0])
     databaseMock.site.delete.mockResolvedValue(mockData.sites[0])
     databaseMock.site.update.mockResolvedValue(mockData.sites[0])
@@ -17,6 +18,10 @@ describe('Database.site', () => {
 
   it('should return array of existing sites', async () => {
     await expect(Database.site.getSites({ count: 20 })).resolves.toEqual(mockData.sites)
+  })
+
+  it('should return site with given id', async () => {
+    await expect(Database.site.getSite(1)).resolves.toEqual(mockData.sites[0])
   })
 
   it('should create site and return it', async () => {

@@ -8,6 +8,7 @@ export const errorHelpers: { [key in ErrorCode]: string } = {
   [ErrorCode.DATABASE_ERROR]: 'Database error',
   [ErrorCode.INCORRECT_DATA]: 'Incorrect data',
   [ErrorCode.ENTRY_ALREADY_EXISTS]: 'Entry already exists',
+  [ErrorCode.NOT_FOUND]: 'Not found',
 }
 
 export function parseError(error: ApiError['error']) {

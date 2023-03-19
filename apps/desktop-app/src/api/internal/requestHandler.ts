@@ -69,6 +69,9 @@ export function registerRequestsHandler() {
           cursor: Database.utils.extractCursor(sites, 'id', request.count),
         })),
     ),
+    [RendererToElectronMessage.getSite]: handleApiRequest(RendererToElectronMessage.getSite, (id) =>
+      Database.site.getSite(id).then(parseDatabaseSite),
+    ),
     [RendererToElectronMessage.createSite]: handleApiRequest(
       RendererToElectronMessage.createSite,
       (data) => Database.site.createSite(data).then(parseDatabaseSite),

@@ -14,19 +14,36 @@ export type PaginatedApiResponse<DataType, IdProperty extends keyof DataType> =
       }
     }
 
-export type PaginatedRequest<DataType, IdProperty extends keyof DataType> = {
+type DataFilter<DataType> = Partial<{
+  [key in keyof DataType]: DataType[key]
+}>
+
+export type PaginatedRequest<
+  DataType,
+  IdProperty extends keyof DataType,
+  OmitInFilters extends keyof DataType = never,
+> = {
   count: number
   cursor?: {
     [key in IdProperty]: DataType[IdProperty]
   }
+  filters?: DataFilter<Omit<DataType, OmitInFilters>>[]
 }
 
-export type PaginatedApiFunction<DataType, IdProperty extends keyof DataType> = (
-  request: PaginatedRequest<DataType, IdProperty>,
+export type PaginatedApiFunction<
+  DataType,
+  IdProperty extends keyof DataType,
+  OmitInFilters extends keyof DataType = never,
+> = (
+  request: PaginatedRequest<DataType, IdProperty, OmitInFilters>,
 ) => Promise<PaginatedApiResponse<DataType, IdProperty>>
 
-export type PaginatedApiFunctionWithEncryptedData<DataType, IdProperty extends keyof DataType> = (
-  request: PaginatedRequest<DataType, IdProperty>,
+export type PaginatedApiFunctionWithEncryptedData<
+  DataType,
+  IdProperty extends keyof DataType,
+  OmitInFilters extends keyof DataType = never,
+> = (
+  request: PaginatedRequest<DataType, IdProperty, OmitInFilters>,
   password: string | null,
 ) => Promise<PaginatedApiResponse<DataType, IdProperty>>
 
