@@ -25,20 +25,23 @@ describe('Database.site', () => {
   })
 
   it('should create site and return it', async () => {
+    databaseMock.site.findUnique.mockResolvedValue(null)
     await expect(
-      Database.site.createSite({ url: 'https://example.com', language: 'PL' }),
+      Database.site.createSite({ url: 'https://example.com', language: 'PL', siteTags: [] }),
     ).resolves.toEqual(mockData.sites[0])
   })
 
   it('should throw error when given url is incorrect', async () => {
     await expect(
-      Database.site.createSite({ url: 'https://example', language: 'PL' }).catch((code) => code),
+      Database.site
+        .createSite({ url: 'https://example', language: 'PL', siteTags: [] })
+        .catch((code) => code),
     ).resolves.toBe(ErrorCode.INCORRECT_DATA)
   })
 
   it('should update site and return it', async () => {
     await expect(
-      Database.site.updateSite(1, { url: 'https://example.com', language: 'PL' }),
+      Database.site.updateSite(1, { url: 'https://example.com', language: 'PL', siteTags: [] }),
     ).resolves.toEqual(mockData.sites[0])
   })
 

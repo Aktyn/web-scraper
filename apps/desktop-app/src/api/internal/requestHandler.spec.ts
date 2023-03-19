@@ -200,7 +200,7 @@ describe('registerRequestsHandler', () => {
 
     expect(createSite).toBeDefined()
     await expect(
-      createSite(null as never, { url: 'https://mocked-site.com', language: 'en' }),
+      createSite(null as never, { url: 'https://mocked-site.com', language: 'en', siteTags: [] }),
     ).resolves.toEqual({
       id: 1,
       createdAt: new Date('2023-02-19T23:40:10.302Z'),
@@ -240,7 +240,11 @@ describe('registerRequestsHandler', () => {
 
     expect(updateSite).toBeDefined()
     await expect(
-      updateSite(null as never, 1, { url: 'https://mocked-site.com', language: 'en' }),
+      updateSite(null as never, 1, {
+        url: 'https://mocked-site.com',
+        language: 'en',
+        siteTags: [],
+      }),
     ).resolves.toEqual({
       id: 1,
       createdAt: new Date('2023-02-19T23:40:10.302Z'),
