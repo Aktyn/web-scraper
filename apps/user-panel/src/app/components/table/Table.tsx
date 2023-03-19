@@ -7,7 +7,7 @@ import {
   useRef,
   useState,
 } from 'react'
-import { AddRounded, DeleteRounded, RefreshRounded } from '@mui/icons-material'
+import { AddRounded, DeleteRounded, EditRounded, RefreshRounded } from '@mui/icons-material'
 import {
   IconButton,
   Stack,
@@ -44,6 +44,7 @@ interface TableProps<DataType extends object, KeyPropertyType extends string & P
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   data: DataType[] | PaginatedApiFunction<DataType, any>
   onAdd?: () => void
+  onEdit?: (data: DataType) => void
   onDelete?: (data: DataType) => void
 }
 
@@ -59,6 +60,7 @@ export const Table = genericMemo(
         columns,
         data: dataSource,
         onAdd,
+        onEdit,
         onDelete,
       }: TableProps<DataType, KeyPropertyType> & RefAttributes<TableRef>,
       ref: RefAttributes<TableRef>['ref'],
@@ -74,7 +76,7 @@ export const Table = genericMemo(
       const [fetchingData, setFetchingData] = useState(false)
 
       const mainTableHeaderSize = 51
-      const hasActionsColumn = !!onDelete
+      const hasActionsColumn = !!onDelete || !!onEdit
       const columnsCount = columns.definitions.length + (hasActionsColumn ? 1 : 0)
 
       const fetchDataChunk = useCallback(
@@ -220,11 +222,27 @@ export const Table = genericMemo(
                     ))}
                     {hasActionsColumn && (
                       <TableCell width="2.5rem" sx={{ top: mainTableHeaderSize, py: 0 }}>
-                        <Tooltip title="Delete" disableInteractive>
-                          <IconButton size="small" onClick={() => onDelete(row)}>
-                            <DeleteRounded />
-                          </IconButton>
-                        </Tooltip>
+                        <Stack
+                          direction="row"
+                          alignItems="center"
+                          justifyContent="end-start"
+                          gap={1}
+                        >
+                          {onEdit && (
+                            <Tooltip title="Edit" disableInteractive>
+                              <IconButton size="small" onClick={() => onEdit(row)}>
+                                <EditRounded />
+                              </IconButton>
+                            </Tooltip>
+                          )}
+                          {onDelete && (
+                            <Tooltip title="Delete" disableInteractive>
+                              <IconButton size="small" onClick={() => onDelete(row)}>
+                                <DeleteRounded />
+                              </IconButton>
+                            </Tooltip>
+                          )}
+                        </Stack>
                       </TableCell>
                     )}
                   </TableRow>

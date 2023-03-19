@@ -12,12 +12,13 @@ import {
   Typography,
 } from '@mui/material'
 import { common } from '@mui/material/colors'
-import { createSiteSchema } from '@web-scrapper/common'
+import { upsertSiteSchema } from '@web-scrapper/common'
 import RootPortal from './RootPortal'
 import { useCancellablePromise } from '../../hooks/useCancellablePromise'
 import { useDebounce } from '../../hooks/useDebounce'
 import { useStateToRef } from '../../hooks/useStateToRef'
 import { errorHelpers } from '../../utils'
+
 interface UrlPreviewProps {
   url: string
   width: number
@@ -66,7 +67,7 @@ export const UrlPreview = ({ url, width, maxHeight }: UrlPreviewProps) => {
   useEffect(() => {
     try {
       setMaximizePreview(false)
-      createSiteSchema.validateSyncAt('url', { url })
+      upsertSiteSchema.validateSyncAt('url', { url })
       loadPreviewDebounced(url)
     } catch {
       setImagePreviewSrc('')

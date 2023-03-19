@@ -25,7 +25,7 @@ const handleApiRequest = <ArgumentsType extends any[], ResponseType extends Prom
       //TODO: delay response in dev environment to simulate network latency
       return await requestFunc(...args)
     } catch (error) {
-      console.error(error)
+      console.error('Request function error:', error)
       if (typeof error === 'number') {
         return { errorCode: error as ErrorCode }
       }
@@ -76,6 +76,10 @@ export function registerRequestsHandler() {
     [RendererToElectronMessage.deleteSite]: handleApiRequest(
       RendererToElectronMessage.deleteSite,
       (id) => Database.site.deleteSite(id).then(() => successResponse),
+    ),
+    [RendererToElectronMessage.updateSite]: handleApiRequest(
+      RendererToElectronMessage.updateSite,
+      (id, data) => Database.site.updateSite(id, data).then(parseDatabaseSite),
     ),
     [RendererToElectronMessage.getSitePreview]: handleApiRequest(
       RendererToElectronMessage.getSitePreview,

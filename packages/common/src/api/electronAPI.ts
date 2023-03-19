@@ -7,7 +7,7 @@ import type {
   PaginatedApiFunction,
   PaginatedApiFunctionWithEncryptedData,
 } from './common'
-import type { CreateSiteSchema, Site } from './site'
+import type { Site, UpsertSiteSchema } from './site'
 import type { UserSettings } from './user'
 
 export enum ElectronToRendererMessage {
@@ -23,6 +23,7 @@ export enum RendererToElectronMessage {
   getSites = 'getSites',
   createSite = 'createSite',
   deleteSite = 'deleteSite',
+  updateSite = 'updateSite',
   getSitePreview = 'getSitePreview',
 }
 
@@ -38,8 +39,12 @@ export type ElectronApi = {
   ) => Promise<ApiError>
   [RendererToElectronMessage.getAccounts]: PaginatedApiFunctionWithEncryptedData<Account, 'id'>
   [RendererToElectronMessage.getSites]: PaginatedApiFunction<Site, 'id'>
-  [RendererToElectronMessage.createSite]: (data: CreateSiteSchema) => Promise<Site | ApiError>
+  [RendererToElectronMessage.createSite]: (data: UpsertSiteSchema) => Promise<Site | ApiError>
   [RendererToElectronMessage.deleteSite]: (siteId: Site['id']) => Promise<ApiError>
+  [RendererToElectronMessage.updateSite]: (
+    siteId: Site['id'],
+    data: UpsertSiteSchema,
+  ) => Promise<Site | ApiError>
   [RendererToElectronMessage.getSitePreview]: (
     url: string,
   ) => Promise<{ imageBase64: string } | ApiError>

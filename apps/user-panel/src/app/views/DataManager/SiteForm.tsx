@@ -3,35 +3,61 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import { SendRounded } from '@mui/icons-material'
 import { LoadingButton } from '@mui/lab'
 import { Stack } from '@mui/material'
-import { createSiteSchema, type CreateSiteSchema } from '@web-scrapper/common'
+import { upsertSiteSchema, type UpsertSiteSchema, type Site } from '@web-scrapper/common'
 import { useForm } from 'react-hook-form'
 import { UrlPreview } from '../../components/common/UrlPreview'
 import { FormInput } from '../../components/form/FormInput'
 import { useApiRequest } from '../../hooks/useApiRequest'
 
-export const SiteForm = ({ onSuccess }: { onSuccess: () => void }) => {
-  const createSiteRequest = useApiRequest(window.electronAPI.createSite)
+interface SiteFormProps {
+  site?: Site | null
+  onSuccess: () => void
+}
 
-  const form = useForm<CreateSiteSchema>({
+export const SiteForm = ({ site, onSuccess }: SiteFormProps) => {
+  const createSiteRequest = useApiRequest(window.electronAPI.createSite)
+  const updateSiteRequest = useApiRequest(window.electronAPI.updateSite)
+
+  const form = useForm<UpsertSiteSchema>({
     mode: 'onTouched',
-    resolver: yupResolver(createSiteSchema),
+    resolver: yupResolver(upsertSiteSchema),
+    defaultValues: site
+      ? {
+          url: site.url,
+          language: site.language,
+        }
+      : undefined,
   })
 
   const url = form.watch('url')
+  const siteId = site?.id
 
   const onSubmit = useCallback(
-    (data: CreateSiteSchema) => {
-      createSiteRequest.submit(
-        {
-          onSuccess: (_, { enqueueSnackbar }) => {
-            enqueueSnackbar({ variant: 'success', message: 'Site created' })
-            onSuccess()
+    (data: UpsertSiteSchema) => {
+      if (siteId) {
+        updateSiteRequest.submit(
+          {
+            onSuccess: (_, { enqueueSnackbar }) => {
+              enqueueSnackbar({ variant: 'success', message: 'Site updated' })
+              onSuccess()
+            },
           },
-        },
-        data,
-      )
+          siteId,
+          data,
+        )
+      } else {
+        createSiteRequest.submit(
+          {
+            onSuccess: (_, { enqueueSnackbar }) => {
+              enqueueSnackbar({ variant: 'success', message: 'Site created' })
+              onSuccess()
+            },
+          },
+          data,
+        )
+      }
     },
-    [createSiteRequest, onSuccess],
+    [createSiteRequest, updateSiteRequest, onSuccess, siteId],
   )
 
   return (
@@ -55,7 +81,7 @@ export const SiteForm = ({ onSuccess }: { onSuccess: () => void }) => {
           type="submit"
           endIcon={<SendRounded />}
           disabled={!url}
-          loading={createSiteRequest.submitting}
+          loading={createSiteRequest.submitting || updateSiteRequest.submitting}
           loadingPosition="end"
         >
           Submit

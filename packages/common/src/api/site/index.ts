@@ -14,11 +14,11 @@ export interface SiteTag {
   description: string | null
 }
 
-export const createSiteSchema = yup
+export const upsertSiteSchema = yup
   .object({
     url: yup.string().url().default('').required(),
     language: yup.string().nullable().default(null).notRequired(),
   })
   .required()
 
-export type CreateSiteSchema = yup.InferType<typeof createSiteSchema>
+export type UpsertSiteSchema = yup.InferType<typeof upsertSiteSchema>

@@ -203,6 +203,31 @@ describe('registerRequestsHandler', () => {
       errorCode: ErrorCode.NO_ERROR,
     })
   })
+
+  it('should update site and return it', async () => {
+    databaseMock.site.update.mockResolvedValue({
+      ...mockData.sites[0],
+      //@ts-expect-error - incomplete mock types
+      Tags: [],
+    })
+
+    registerRequestsHandler()
+
+    const updateSite = handlers.get(
+      'updateSite',
+    ) as HandlersInterface[RendererToElectronMessage.updateSite]
+
+    expect(updateSite).toBeDefined()
+    await expect(
+      updateSite(null as never, 1, { url: 'https://mocked-site.com', language: 'en' }),
+    ).resolves.toEqual({
+      id: 1,
+      createdAt: new Date('2023-02-19T23:40:10.302Z'),
+      url: 'https://mocked-site.com',
+      language: 'en',
+      tags: [],
+    })
+  })
 })
 
 const decryptedAccounts = [

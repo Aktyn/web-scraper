@@ -72,10 +72,14 @@ export const Sites = () => {
   ])
 
   const [siteToDelete, setSiteToDelete] = useState<Site | null>(null)
+  const [siteToEdit, setSiteToEdit] = useState<Site | null>(null)
   const [openSiteDeleteDialog, setOpenSiteDeleteDialog] = useState(false)
 
-  const handleAdd = useCallback(() => siteDrawerRef.current?.open(), [])
-  const handleAddSuccess = useCallback(() => {
+  const handleAdd = useCallback(() => {
+    setSiteToEdit(null)
+    siteDrawerRef.current?.open()
+  }, [])
+  const finalizeSiteActionSuccess = useCallback(() => {
     siteDrawerRef.current?.close()
     tableRef.current?.refresh()
   }, [])
@@ -84,7 +88,6 @@ export const Sites = () => {
     setSiteToDelete(site)
     setOpenSiteDeleteDialog(true)
   }, [])
-
   const handleDeleteConfirm = useCallback(() => {
     if (!siteToDelete) {
       return
@@ -101,10 +104,15 @@ export const Sites = () => {
     )
   }, [deleteSiteRequest, siteToDelete])
 
+  const handleEdit = useCallback((site: Site) => {
+    setSiteToEdit(site)
+    siteDrawerRef.current?.open()
+  }, [])
+
   return (
     <>
-      <CustomDrawer ref={siteDrawerRef} title="Add site">
-        <SiteForm onSuccess={handleAddSuccess} />
+      <CustomDrawer ref={siteDrawerRef} title={siteToEdit ? 'Update site' : 'Add site'}>
+        <SiteForm site={siteToEdit} onSuccess={finalizeSiteActionSuccess} />
       </CustomDrawer>
       <ConfirmationDialog
         open={openSiteDeleteDialog}
@@ -125,6 +133,7 @@ export const Sites = () => {
             keyProperty="id"
             data={window.electronAPI.getSites}
             onAdd={handleAdd}
+            onEdit={handleEdit}
             onDelete={handleDelete}
           />
         </Box>
