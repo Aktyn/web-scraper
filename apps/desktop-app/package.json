@@ -30,7 +30,7 @@
     "@web-scrapper/common": "^1.0.0",
     "dotenv": "^16.0.3",
     "dotenv-expand": "^10.0.0",
-    "electron": "^23.1.2",
+    "electron": "^23.1.4",
     "electron-is-dev": "^2.0.0",
     "puppeteer": "^19.7.3",
     "random-useragent": "^0.5.0",
