@@ -22,11 +22,10 @@
     "allowSyntheticDefaultImports": true,
     "strict": true,
     "strictNullChecks": true,
-    "importsNotUsedAsValues": "error",
+    "verbatimModuleSyntax": true,
     "forceConsistentCasingInFileNames": true,
     "noFallthroughCasesInSwitch": true,
     "resolveJsonModule": true,
-    "isolatedModules": true,
     "lib": [
       "ES2021"
     ]

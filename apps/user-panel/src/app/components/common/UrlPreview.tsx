@@ -83,8 +83,10 @@ export const UrlPreview = ({ url, width, maxHeight }: UrlPreviewProps) => {
         justifyContent="flex-start"
         flexGrow={1}
         width={`${width}px`}
+        minHeight="4rem"
         maxHeight={`${maxHeight}px`}
         position="relative"
+        overflow="hidden"
       >
         <Box
           sx={{

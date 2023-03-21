@@ -38,12 +38,13 @@
     "test:ci": "turbo run test:ci",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "lint": "turbo run lint",
-    "env": "turbo run env"
+    "env": "turbo run env",
+    "typecheck": "turbo run typecheck"
   },
   "dependencies": {},
   "devDependencies": {
-    "prettier": "^2.8.4",
-    "turbo": "^1.8.3"
+    "prettier": "^2.8.6",
+    "turbo": "^1.8.5"
   },
   "engines": {
     "npm": ">=7.0.0",

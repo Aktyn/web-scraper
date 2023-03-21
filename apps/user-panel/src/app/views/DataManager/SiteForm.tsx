@@ -102,6 +102,7 @@ export const SiteForm = ({ site, onSuccess }: SiteFormProps) => {
         justifyContent="space-between"
         p={2}
         spacing={2}
+        overflow="auto"
         onSubmit={form.handleSubmit(onSubmit)}
       >
         <Stack spacing={2}>
