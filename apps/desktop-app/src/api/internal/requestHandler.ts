@@ -3,14 +3,16 @@ import {
   type ElectronApi,
   ErrorCode,
   RendererToElectronMessage,
+  wait,
 } from '@web-scrapper/common'
 import { ipcMain, type IpcMainInvokeEvent } from 'electron'
+import isDev from 'electron-is-dev'
 
 import Database from '../../database'
 import { getPagePreview } from '../../utils/puppeeterMisc'
 
 import { parseDatabaseAccount } from './parsers/accountParser'
-import { parseDatabaseSite } from './parsers/siteParser'
+import { parseDatabaseSite, parseDatabaseSiteTag } from './parsers/siteParser'
 import { parseUserSettings } from './parsers/userSettingsParser'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -22,7 +24,9 @@ const handleApiRequest = <ArgumentsType extends any[], ResponseType extends Prom
     // eslint-disable-next-line no-console
     console.log(`[API request] [name: ${name}] [args: ${JSON.stringify(args)}]`)
     try {
-      //TODO: delay response in dev environment to simulate network latency
+      if (isDev) {
+        await wait(400)
+      }
       return await requestFunc(...args)
     } catch (error) {
       console.error('Request function error:', error)
@@ -53,6 +57,7 @@ export function registerRequestsHandler() {
       RendererToElectronMessage.setUserSetting,
       (key, value) => Database.userData.setUserSetting(key, value).then(() => successResponse),
     ),
+
     [RendererToElectronMessage.getAccounts]: handleApiRequest(
       RendererToElectronMessage.getAccounts,
       (request, password) =>
@@ -61,6 +66,28 @@ export function registerRequestsHandler() {
           cursor: Database.utils.extractCursor(accounts, 'id', request.count),
         })),
     ),
+
+    [RendererToElectronMessage.getSiteTags]: handleApiRequest(
+      RendererToElectronMessage.getSiteTags,
+      (request) =>
+        Database.siteTag.getSiteTags(request).then((tags) => ({
+          data: tags.map(parseDatabaseSiteTag),
+          cursor: Database.utils.extractCursor(tags, 'id', request.count),
+        })),
+    ),
+    [RendererToElectronMessage.deleteSiteTag]: handleApiRequest(
+      RendererToElectronMessage.deleteSiteTag,
+      (id) => Database.siteTag.deleteSiteTag(id).then(() => successResponse),
+    ),
+    [RendererToElectronMessage.updateSiteTag]: handleApiRequest(
+      RendererToElectronMessage.updateSiteTag,
+      (id, data) => Database.siteTag.updateSiteTag(id, data).then(parseDatabaseSiteTag),
+    ),
+    [RendererToElectronMessage.createSiteTag]: handleApiRequest(
+      RendererToElectronMessage.createSiteTag,
+      (data) => Database.siteTag.createSiteTag(data).then(parseDatabaseSiteTag),
+    ),
+
     [RendererToElectronMessage.getSites]: handleApiRequest(
       RendererToElectronMessage.getSites,
       (request) =>

@@ -10,9 +10,19 @@ interface CustomDrawerHeaderProps {
 export const CustomDrawerHeader = ({ title, onClose }: CustomDrawerHeaderProps) => {
   return (
     <>
-      <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ p: 2 }}>
+      <Stack
+        direction="row"
+        alignItems="center"
+        justifyContent="space-between"
+        gap={2}
+        sx={{ p: 2 }}
+      >
         {title ? (
-          <Typography variant="h6" color="text.secondary">
+          <Typography
+            variant="h6"
+            color="text.secondary"
+            sx={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}
+          >
             {title}
           </Typography>
         ) : (

@@ -14,6 +14,13 @@ export interface SiteTag {
   description: string | null
 }
 
+export const upsertSiteTagSchema = yup.object({
+  name: yup.string().max(8).default('').required(),
+  description: yup.string().nullable().default(null).notRequired(),
+})
+
+export type UpsertSiteTagSchema = yup.InferType<typeof upsertSiteTagSchema>
+
 export const upsertSiteSchema = yup
   .object({
     url: yup.string().url().default('').required(),
@@ -21,10 +28,11 @@ export const upsertSiteSchema = yup
     siteTags: yup
       .array()
       .of(
-        yup.object({
-          name: yup.string().default('').required(),
-          description: yup.string().nullable().default(null).notRequired(),
-        }),
+        upsertSiteTagSchema.concat(
+          yup.object({
+            id: yup.number().default(0).required(),
+          }),
+        ),
       )
       .default([])
       .required(),

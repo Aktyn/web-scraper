@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { yupResolver } from '@hookform/resolvers/yup'
 import {
   AddRounded,
@@ -17,9 +17,11 @@ import {
   Tooltip,
   Typography,
 } from '@mui/material'
-import { pick, type Site, upsertSiteSchema, type UpsertSiteSchema } from '@web-scrapper/common'
+import { type Site, upsertSiteSchema, type UpsertSiteSchema } from '@web-scrapper/common'
+import anime from 'animejs'
 import { useFieldArray, useForm } from 'react-hook-form'
 import { SiteAccounts } from './SiteAccounts'
+import { SiteTagForm } from './SiteTagForm'
 import { NestedDrawer } from '../../components/common/NestedDrawer'
 import { UrlPreview } from '../../components/common/UrlPreview'
 import { DrawerToggle } from '../../components/common/button/DrawerToggle'
@@ -33,6 +35,8 @@ interface SiteFormProps {
 }
 
 export const SiteForm = ({ site, onSuccess }: SiteFormProps) => {
+  const addIconRef = useRef<SVGSVGElement>(null)
+
   const createSiteRequest = useApiRequest(window.electronAPI.createSite)
   const updateSiteRequest = useApiRequest(window.electronAPI.updateSite)
 
@@ -43,16 +47,18 @@ export const SiteForm = ({ site, onSuccess }: SiteFormProps) => {
       ? {
           url: site.url,
           language: site.language,
-          siteTags: site.tags.map((tag) => pick(tag, 'name', 'description')),
+          siteTags: site.tags, //TODO: remove .map((tag) => pick(tag, 'name', 'description')),
         }
       : undefined,
   })
   const siteTagsFields = useFieldArray({
     control: form.control,
     name: 'siteTags',
+    keyName: 'fieldKey',
   })
 
   const [showSiteAccounts, setShowSiteAccounts] = useState(false)
+  const [openSiteTagForm, setOpenSiteTagForm] = useState(false)
 
   const url = form.watch('url')
   const siteId = site?.id
@@ -68,7 +74,7 @@ export const SiteForm = ({ site, onSuccess }: SiteFormProps) => {
             },
           },
           siteId,
-          data,
+          { ...data, language: data.language || null },
         )
       } else {
         createSiteRequest.submit(
@@ -85,8 +91,32 @@ export const SiteForm = ({ site, onSuccess }: SiteFormProps) => {
     [createSiteRequest, updateSiteRequest, onSuccess, siteId],
   )
 
+  useEffect(() => {
+    anime({
+      targets: addIconRef.current,
+      rotate: openSiteTagForm ? -45 : 0,
+      easing: 'spring(0.7, 100, 10, 0)',
+    })
+  }, [openSiteTagForm])
+
+  const tagsIds = useMemo(
+    () => siteTagsFields.fields.map((field) => field.id),
+    [siteTagsFields.fields],
+  )
+
   return (
     <>
+      <NestedDrawer
+        title="Assign tags to site"
+        onClose={() => setOpenSiteTagForm(false)}
+        open={openSiteTagForm}
+      >
+        <SiteTagForm
+          siteUrl={url}
+          assignedTagsIds={tagsIds}
+          onAssign={(tag) => siteTagsFields.append(tag)}
+        />
+      </NestedDrawer>
       {site && (
         <NestedDrawer
           title="Site accounts"
@@ -98,11 +128,11 @@ export const SiteForm = ({ site, onSuccess }: SiteFormProps) => {
       )}
       <Stack
         flexGrow={1}
-        component="form"
         justifyContent="space-between"
         p={2}
         spacing={2}
         overflow="auto"
+        component="form"
         onSubmit={form.handleSubmit(onSubmit)}
       >
         <Stack spacing={2}>
@@ -155,7 +185,7 @@ export const SiteForm = ({ site, onSuccess }: SiteFormProps) => {
           >
             {siteTagsFields.fields.length ? (
               siteTagsFields.fields.map((field, index) => (
-                <Tooltip key={field.id} title={field.description} disableInteractive>
+                <Tooltip key={field.fieldKey} title={field.description} disableInteractive>
                   <Chip
                     label={field.name}
                     sx={{ fontWeight: 'bold', color: 'text.primary' }}
@@ -172,8 +202,13 @@ export const SiteForm = ({ site, onSuccess }: SiteFormProps) => {
               </Typography>
             )}
             <Tooltip title="Assign existing tag or create new one" disableInteractive>
-              <IconButton size="small">
-                <AddRounded />
+              <IconButton
+                size="small"
+                onClick={() => {
+                  setOpenSiteTagForm((open) => !open)
+                }}
+              >
+                <AddRounded ref={addIconRef} />
               </IconButton>
             </Tooltip>
           </Stack>

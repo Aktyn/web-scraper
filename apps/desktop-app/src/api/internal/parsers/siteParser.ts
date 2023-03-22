@@ -18,3 +18,7 @@ function parseDatabaseSiteTagRelation(
 ): SiteTag {
   return siteTagRelation.Tag
 }
+
+export function parseDatabaseSiteTag(siteTag: DatabaseSiteTag): SiteTag {
+  return siteTag
+}

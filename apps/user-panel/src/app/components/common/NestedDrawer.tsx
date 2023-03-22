@@ -34,7 +34,7 @@ export const NestedDrawer = ({
         mountOnEnter
         unmountOnExit
       >
-        <Paper square className={drawerClasses.paper} elevation={16}>
+        <Paper square className={drawerClasses.paper} elevation={16} sx={{ ml: '1rem' }}>
           <Stack height="100%" justifyContent="flex-start">
             <CustomDrawerHeader title={title} onClose={onClose} />
             {children}

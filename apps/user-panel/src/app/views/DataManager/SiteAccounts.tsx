@@ -47,8 +47,8 @@ export const SiteAccounts = ({ site }: SiteAccountsProps) => {
   )
 
   return (
-    <Stack flexGrow={1} pt={2} overflow="auto">
-      <UrlButton width="100%" maxWidth="16rem" justifyContent="center" p={2} pt={0} mx="auto">
+    <Stack flexGrow={1} overflow="auto">
+      <UrlButton width="100%" maxWidth="16rem" justifyContent="center" p={1} mx="auto">
         {site.url}
       </UrlButton>
       <Divider />

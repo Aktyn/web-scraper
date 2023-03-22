@@ -14,8 +14,25 @@ export type PaginatedApiResponse<DataType, IdProperty extends keyof DataType> =
       }
     }
 
+// Note: this should be compatible with prisma type of the same name
+type StringFilter = {
+  equals?: string
+  in?: string | string[]
+  notIn?: string | string[]
+  lt?: string
+  lte?: string
+  gt?: string
+  gte?: string
+  contains?: string
+  startsWith?: string
+  endsWith?: string
+  // not?: NestedStringFilter | string //TODO: support for not operator
+}
+
+type TypedFilter<ValueType> = ValueType extends string ? StringFilter : never
+
 type DataFilter<DataType> = Partial<{
-  [key in keyof DataType]: DataType[key]
+  [key in keyof DataType]: DataType[key] | TypedFilter<DataType[key]>
 }>
 
 export type PaginatedRequest<

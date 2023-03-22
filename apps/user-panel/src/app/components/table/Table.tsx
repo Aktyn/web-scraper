@@ -1,4 +1,5 @@
 import {
+  type ReactNode,
   type RefAttributes,
   useCallback,
   useContext,
@@ -41,6 +42,7 @@ interface TableProps<DataType extends object, KeyPropertyType extends string & P
     ? KeyPropertyType
     : never
   columns: ReturnType<typeof useTableColumns<DataType>>
+  headerContent?: ReactNode
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   data: DataType[] | PaginatedApiFunction<DataType, any>
   onAdd?: () => void
@@ -58,6 +60,7 @@ export const Table = genericMemo(
       {
         keyProperty,
         columns,
+        headerContent,
         data: dataSource,
         onAdd,
         onEdit,
@@ -80,7 +83,7 @@ export const Table = genericMemo(
       const columnsCount = columns.definitions.length + (hasActionsColumn ? 1 : 0)
 
       const fetchDataChunk = useCallback(
-        (withCursor = cursor) => {
+        (withCursor = cursor, replace = false) => {
           if (typeof dataSource !== 'function') {
             setData(dataSource)
             return
@@ -100,6 +103,10 @@ export const Table = genericMemo(
                 return
               }
               setData((data) => {
+                if (replace) {
+                  return response.data
+                }
+
                 const lastDataItem = data.at(-1)
                 const lastResponseDataItem = response.data.at(-1)
 
@@ -157,8 +164,7 @@ export const Table = genericMemo(
 
       const refresh = useCallback(() => {
         setCursor(undefined)
-        setData([])
-        fetchDataChunk(null)
+        fetchDataChunk(null, true)
       }, [fetchDataChunk])
 
       useEffect(() => {
@@ -180,15 +186,24 @@ export const Table = genericMemo(
             <TableHead>
               <TableRow>
                 <TableCell colSpan={columnsCount} align="right" sx={{ p: 1 }}>
-                  <Stack direction="row" alignItems="center" justifyContent="flex-end" gap={1}>
-                    <LoadingIconButton loading={fetchingData} onClick={refresh} size="small">
-                      <RefreshRounded />
-                    </LoadingIconButton>
-                    {onAdd && (
-                      <IconButton onClick={onAdd} size="small">
-                        <AddRounded />
-                      </IconButton>
-                    )}
+                  <Stack direction="row" alignItems="center" justifyContent="space-between" gap={1}>
+                    {headerContent}
+                    <Stack
+                      direction="row"
+                      alignItems="center"
+                      justifyContent="flex-end"
+                      gap={1}
+                      ml="auto"
+                    >
+                      <LoadingIconButton loading={fetchingData} onClick={refresh} size="small">
+                        <RefreshRounded />
+                      </LoadingIconButton>
+                      {onAdd && (
+                        <IconButton onClick={onAdd} size="small">
+                          <AddRounded />
+                        </IconButton>
+                      )}
+                    </Stack>
                   </Stack>
                 </TableCell>
               </TableRow>

@@ -10,3 +10,8 @@ vi.mock('electron', () => ({
     handle: vi.fn(),
   },
 }))
+
+vi.mock('electron-is-dev', () => ({
+  __esModule: true,
+  default: true,
+}))

@@ -96,6 +96,11 @@ export async function createSite(data: UpsertSiteSchema) {
     data: {
       url: data.url.toLowerCase(),
       language: data.language,
+      Tags: {
+        create: data.siteTags.map((siteTag) => ({
+          tagId: siteTag.id,
+        })),
+      },
     },
     include: {
       Tags: {
@@ -111,11 +116,22 @@ export async function updateSite(id: number, data: UpsertSiteSchema) {
   validateUpsertSchema(data)
   await throwIfUrlExists(data.url, id)
 
+  await Database.prisma.siteTagsRelation.deleteMany({
+    where: {
+      siteId: id,
+    },
+  })
+
   return Database.prisma.site.update({
     where: { id },
     data: {
       url: data.url.toLowerCase(),
       language: data.language,
+      Tags: {
+        create: data.siteTags.map((siteTag) => ({
+          tagId: siteTag.id,
+        })),
+      },
     },
     include: {
       Tags: {

@@ -1,5 +1,6 @@
 import { useMemo } from 'react'
 import { Accounts } from './Accounts'
+import { SiteTags } from './SiteTags'
 import { Sites } from './Sites'
 import type { TabSchema } from '../../components/common/TabsView'
 import { TabsView } from '../../components/common/TabsView'
@@ -8,6 +9,7 @@ import type { ViewComponentProps } from '../helpers'
 enum DataManagerTab {
   SITES,
   ACCOUNTS,
+  SITE_TAGS,
 }
 
 const DataManagerView = ({ doNotRender }: ViewComponentProps) => {
@@ -22,6 +24,11 @@ const DataManagerView = ({ doNotRender }: ViewComponentProps) => {
         value: DataManagerTab.ACCOUNTS,
         label: 'Accounts',
         content: <Accounts />,
+      },
+      {
+        value: DataManagerTab.SITE_TAGS,
+        label: 'Site tags',
+        content: <SiteTags />,
       },
     ],
     [],

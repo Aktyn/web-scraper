@@ -50,9 +50,22 @@ export const baseThemeOptions: ThemeOptions = {
     MuiButton: {
       styleOverrides: {
         root: {
+          lineHeight: 1,
           borderRadius: '2rem',
         },
       },
+    },
+    MuiInputBase: {
+      variants: [
+        {
+          props: { readOnly: true },
+          style: {
+            '&::before, &::after': {
+              borderBottom: 'none !important',
+            },
+          },
+        },
+      ],
     },
     MuiTabs: {
       styleOverrides: {

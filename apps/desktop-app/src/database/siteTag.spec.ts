@@ -12,6 +12,6 @@ describe('Database.siteTags', () => {
   })
 
   it('should return array of site tags', async () => {
-    await expect(Database.siteTag.getSiteTags()).resolves.toEqual(mockData.siteTags)
+    await expect(Database.siteTag.getSiteTags({ count: 20 })).resolves.toEqual(mockData.siteTags)
   })
 })

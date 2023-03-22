@@ -93,6 +93,89 @@ describe('registerRequestsHandler', () => {
     })
   })
 
+  it('should return site tags', async () => {
+    databaseMock.siteTag.findMany.mockResolvedValue(mockData.siteTags)
+
+    registerRequestsHandler()
+
+    const getSiteTags = handlers.get(
+      'getSiteTags',
+    ) as HandlersInterface[RendererToElectronMessage.getSiteTags]
+
+    expect(getSiteTags).toBeDefined()
+    await expect(getSiteTags(null as never, { count: 20 })).resolves.toEqual({
+      cursor: undefined,
+      data: [
+        {
+          id: 1,
+          name: 'Mock-1',
+          description: 'Mocked site 1',
+        },
+        {
+          id: 2,
+          name: 'Mock-2',
+          description: 'Mocked site 1',
+        },
+      ],
+    })
+  })
+
+  it('should delete site tag with given id', async () => {
+    databaseMock.siteTag.delete.mockResolvedValue(mockData.siteTags[0])
+
+    registerRequestsHandler()
+
+    const deleteSiteTag = handlers.get(
+      'deleteSiteTag',
+    ) as HandlersInterface[RendererToElectronMessage.deleteSiteTag]
+
+    expect(deleteSiteTag).toBeDefined()
+    await expect(deleteSiteTag(null as never, 1)).resolves.toEqual({
+      errorCode: ErrorCode.NO_ERROR,
+    })
+  })
+
+  it('should update site tag and return it', async () => {
+    databaseMock.siteTag.update.mockResolvedValue(mockData.siteTags[0])
+
+    registerRequestsHandler()
+
+    const updateSiteTag = handlers.get(
+      'updateSiteTag',
+    ) as HandlersInterface[RendererToElectronMessage.updateSiteTag]
+
+    expect(updateSiteTag).toBeDefined()
+    await expect(
+      updateSiteTag(null as never, 1, {
+        name: 'Mock-1',
+        description: 'Mocked site 1',
+      }),
+    ).resolves.toEqual({
+      id: 1,
+      name: 'Mock-1',
+      description: 'Mocked site 1',
+    })
+  })
+
+  it('should return created site tag', async () => {
+    databaseMock.siteTag.create.mockResolvedValue(mockData.siteTags[0])
+
+    registerRequestsHandler()
+
+    const createSiteTag = handlers.get(
+      'createSiteTag',
+    ) as HandlersInterface[RendererToElectronMessage.createSiteTag]
+
+    expect(createSiteTag).toBeDefined()
+    await expect(
+      createSiteTag(null as never, { name: 'Mock-1', description: 'Mocked site 1' }),
+    ).resolves.toEqual({
+      id: 1,
+      name: 'Mock-1',
+      description: 'Mocked site 1',
+    })
+  })
+
   it('should return accounts with empty strings for encrypted fields when no password is provided', async () => {
     databaseMock.account.findMany.mockResolvedValue(mockData.accounts)
 
