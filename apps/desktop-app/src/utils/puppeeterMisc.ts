@@ -1,4 +1,4 @@
-import { safePromise, wait } from '@web-scrapper/common'
+import { safePromise, wait } from '@web-scraper/common'
 import { launch } from 'puppeteer'
 
 export async function getPagePreview(url: string) {

@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { ErrorRounded, OpenInFullRounded } from '@mui/icons-material'
 import { Box, IconButton, Stack, Tooltip, Typography } from '@mui/material'
-import { tryParseJSON } from '@web-scrapper/common'
+import { tryParseJSON } from '@web-scraper/common'
 import * as prism from 'prismjs'
 import { CustomPopover, type CustomPopoverRef } from './CustomPopover'
 

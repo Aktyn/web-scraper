@@ -1,4 +1,4 @@
-import type { ElectronApi, ElectronToRendererMessage } from '@web-scrapper/common'
+import type { ElectronApi, ElectronToRendererMessage } from '@web-scraper/common'
 import { BrowserWindow } from 'electron'
 
 export class ExtendedBrowserWindow extends BrowserWindow {

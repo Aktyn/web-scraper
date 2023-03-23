@@ -1,4 +1,4 @@
-import { ErrorCode } from '@web-scrapper/common'
+import { ErrorCode } from '@web-scraper/common'
 import { beforeEach, describe, expect, it } from 'vitest'
 import { mockReset } from 'vitest-mock-extended'
 

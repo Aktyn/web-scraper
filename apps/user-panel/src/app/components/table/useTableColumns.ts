@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
 import type { DependencyList, ReactNode } from 'react'
 import type { TableCellProps } from '@mui/material'
-import type { Path } from '@web-scrapper/common'
+import type { Path } from '@web-scraper/common'
 
 export interface ColumnDefinition<DataType> {
   /** Unique key for the column */

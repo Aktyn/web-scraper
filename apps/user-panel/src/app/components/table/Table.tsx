@@ -26,7 +26,7 @@ import {
   getDeepProperty,
   type PaginatedApiFunction,
   type Path,
-} from '@web-scrapper/common'
+} from '@web-scraper/common'
 import { useSnackbar } from 'notistack'
 import { ValueCell } from './ValueCell'
 import type { useTableColumns } from './useTableColumns'

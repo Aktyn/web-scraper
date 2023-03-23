@@ -1,6 +1,6 @@
 import { useCallback, useRef, useState } from 'react'
 import { Box, Chip, Stack, Tooltip } from '@mui/material'
-import type { Site } from '@web-scrapper/common'
+import type { Site } from '@web-scraper/common'
 import { SiteForm } from './SiteForm'
 import { TransitionType, ViewTransition } from '../../components/animation/ViewTransition'
 import { ConfirmationDialog } from '../../components/common/ConfirmationDialog'

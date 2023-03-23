@@ -4,7 +4,7 @@ import {
   ErrorCode,
   RendererToElectronMessage,
   wait,
-} from '@web-scrapper/common'
+} from '@web-scraper/common'
 import { ipcMain, type IpcMainInvokeEvent } from 'electron'
 import isDev from 'electron-is-dev'
 

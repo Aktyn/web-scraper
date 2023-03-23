@@ -1,7 +1,7 @@
 import { useCallback, useRef, useState } from 'react'
 import { VisibilityRounded } from '@mui/icons-material'
 import { Box, IconButton, Tooltip } from '@mui/material'
-import type { Account, Site } from '@web-scrapper/common'
+import type { Account, Site } from '@web-scraper/common'
 import { SiteForm } from './SiteForm'
 import { TransitionType, ViewTransition } from '../../components/animation/ViewTransition'
 import { CopyableLabel } from '../../components/common/CopyableLabel'

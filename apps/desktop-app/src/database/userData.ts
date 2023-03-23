@@ -1,4 +1,4 @@
-import type { UserSettings } from '@web-scrapper/common'
+import type { UserSettings } from '@web-scraper/common'
 
 import Database from './index'
 

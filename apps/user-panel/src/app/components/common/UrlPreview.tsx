@@ -12,7 +12,7 @@ import {
   Typography,
 } from '@mui/material'
 import { common } from '@mui/material/colors'
-import { upsertSiteSchema } from '@web-scrapper/common'
+import { upsertSiteSchema } from '@web-scraper/common'
 import { RootPortal } from './portal/RootPortal'
 import { useCancellablePromise } from '../../hooks/useCancellablePromise'
 import { useDebounce } from '../../hooks/useDebounce'

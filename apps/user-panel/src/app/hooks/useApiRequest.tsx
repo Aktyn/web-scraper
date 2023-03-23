@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useState } from 'react'
 import { Stack, Typography } from '@mui/material'
-import { type ApiError, ErrorCode } from '@web-scrapper/common'
+import { type ApiError, ErrorCode } from '@web-scraper/common'
 import { useSnackbar } from 'notistack'
 import { useCancellablePromise } from './useCancellablePromise'
 import { errorHelpers, parseError } from '../utils'

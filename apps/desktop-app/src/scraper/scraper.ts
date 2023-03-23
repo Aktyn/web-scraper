@@ -1,4 +1,4 @@
-import { wait } from '@web-scrapper/common'
+import { wait } from '@web-scraper/common'
 
 import ScraperBrowser from './scraperBrowser'
 import type { ScraperPage } from './scraperPage'
@@ -29,7 +29,7 @@ export class Scraper {
     await ScraperBrowser.instance.waitUntilReady()
 
     if (this.page) {
-      console.error('Scrapper page is already initialized')
+      console.error('Scraper page is already initialized')
       return
     }
 

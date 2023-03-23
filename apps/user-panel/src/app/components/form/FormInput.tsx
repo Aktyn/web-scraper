@@ -1,5 +1,5 @@
 import { TextField, type TextFieldProps } from '@mui/material'
-import { getDeepProperty } from '@web-scrapper/common'
+import { getDeepProperty } from '@web-scraper/common'
 import type { FieldPath, GlobalError, UseFormRegisterReturn, UseFormReturn } from 'react-hook-form'
 
 interface FormInputProps<FormSchema extends object>

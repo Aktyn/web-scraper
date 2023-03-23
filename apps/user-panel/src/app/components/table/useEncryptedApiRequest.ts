@@ -2,7 +2,7 @@ import { useCallback, useContext } from 'react'
 import type {
   PaginatedApiFunction,
   PaginatedApiFunctionWithEncryptedData,
-} from '@web-scrapper/common'
+} from '@web-scraper/common'
 import { UserDataContext } from '../../context/userDataContext'
 
 export function useEncryptedApiRequest<DataType, IdProperty extends keyof DataType>(

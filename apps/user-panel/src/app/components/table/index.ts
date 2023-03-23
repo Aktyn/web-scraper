@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react'
-import type { Path } from '@web-scrapper/common'
+import type { Path } from '@web-scraper/common'
 import type { ColumnDefinition } from './useTableColumns'
 
 export { Table, type TableRef } from './Table'

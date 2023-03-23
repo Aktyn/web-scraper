@@ -5,7 +5,7 @@ import {
   type SiteTag,
   upsertSiteTagSchema,
   type UpsertSiteTagSchema,
-} from '@web-scrapper/common'
+} from '@web-scraper/common'
 
 import Database from './index'
 

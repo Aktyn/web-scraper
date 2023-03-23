@@ -1,4 +1,4 @@
-import type { ElectronApi } from '@web-scrapper/common'
+import type { ElectronApi } from '@web-scraper/common'
 
 declare global {
   interface Window {

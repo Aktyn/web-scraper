@@ -2,7 +2,7 @@ import type {
   SiteTag as DatabaseSiteTag,
   SiteTagsRelation as DatabaseSiteTagsRelation,
 } from '@prisma/client'
-import { pick, type Site, type SiteTag } from '@web-scrapper/common'
+import { pick, type Site, type SiteTag } from '@web-scraper/common'
 
 import type { getSites } from '../../../database/site'
 

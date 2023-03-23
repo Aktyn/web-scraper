@@ -1,5 +1,5 @@
 import type { Account as DatabaseAccount } from '@prisma/client'
-import type { Account } from '@web-scrapper/common'
+import type { Account } from '@web-scraper/common'
 
 import { decrypt } from '../../../utils'
 

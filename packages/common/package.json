@@ -1,5 +1,5 @@
 {
-  "name": "@web-scrapper/common",
+  "name": "@web-scraper/common",
   "version": "1.0.0",
   "description": "",
   "main": "lib/index.js",

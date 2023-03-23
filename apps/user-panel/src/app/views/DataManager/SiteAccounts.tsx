@@ -1,6 +1,6 @@
 import { useCallback } from 'react'
 import { Divider, Stack } from '@mui/material'
-import type { Account, PaginatedApiFunction, Site } from '@web-scrapper/common'
+import type { Account, PaginatedApiFunction, Site } from '@web-scraper/common'
 import { CopyableLabel } from 'src/app/components/common/CopyableLabel'
 import { UrlButton } from '../../components/common/button/UrlButton'
 import { Table, useTableColumns } from '../../components/table'

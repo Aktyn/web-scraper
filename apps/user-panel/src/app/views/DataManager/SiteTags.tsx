@@ -1,6 +1,6 @@
 import { useCallback, useRef, useState } from 'react'
 import { Box } from '@mui/material'
-import type { SiteTag } from '@web-scrapper/common'
+import type { SiteTag } from '@web-scraper/common'
 import { SiteTagForm } from './SiteTagForm'
 import { TransitionType, ViewTransition } from '../../components/animation/ViewTransition'
 import { ConfirmationDialog } from '../../components/common/ConfirmationDialog'

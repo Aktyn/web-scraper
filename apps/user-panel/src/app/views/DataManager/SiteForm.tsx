@@ -17,7 +17,7 @@ import {
   Tooltip,
   Typography,
 } from '@mui/material'
-import { type Site, upsertSiteSchema, type UpsertSiteSchema } from '@web-scrapper/common'
+import { type Site, upsertSiteSchema, type UpsertSiteSchema } from '@web-scraper/common'
 import anime from 'animejs'
 import { useFieldArray, useForm } from 'react-hook-form'
 import { SiteAccounts } from './SiteAccounts'

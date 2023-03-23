@@ -1,5 +1,5 @@
 import type { UserData as DatabaseUserData } from '@prisma/client'
-import type { UserSettings } from '@web-scrapper/common'
+import type { UserSettings } from '@web-scraper/common'
 
 export function parseUserSettings(userData: DatabaseUserData[]): UserSettings {
   return userData.reduce((acc, { key, value }) => {

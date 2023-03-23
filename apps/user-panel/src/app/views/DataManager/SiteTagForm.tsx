@@ -8,7 +8,7 @@ import {
   type SiteTag,
   upsertSiteTagSchema,
   type UpsertSiteTagSchema,
-} from '@web-scrapper/common'
+} from '@web-scraper/common'
 import { useForm } from 'react-hook-form'
 import { UrlButton } from '../../components/common/button/UrlButton'
 import { SearchInput } from '../../components/common/input/SearchInput'

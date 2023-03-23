@@ -1,4 +1,4 @@
-import type { ElectronApi, RendererToElectronMessage } from '@web-scrapper/common'
+import type { ElectronApi, RendererToElectronMessage } from '@web-scraper/common'
 
 import Database from './index'
 

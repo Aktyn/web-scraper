@@ -1,4 +1,4 @@
-import { type ElectronApi, RendererToElectronMessage, ErrorCode } from '@web-scrapper/common'
+import { type ElectronApi, RendererToElectronMessage, ErrorCode } from '@web-scraper/common'
 import { beforeEach, describe, expect, it } from 'vitest'
 import type { DeepMockProxy } from 'vitest-mock-extended'
 import { mockReset } from 'vitest-mock-extended'

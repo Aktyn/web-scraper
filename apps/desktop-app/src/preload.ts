@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import type { ElectronApi } from '@web-scrapper/common'
+import type { ElectronApi } from '@web-scraper/common'
 import { contextBridge, ipcRenderer, type IpcRendererEvent } from 'electron'
 
 const electronToRendererMessageNames = ['dummyEventFromMain'] as const

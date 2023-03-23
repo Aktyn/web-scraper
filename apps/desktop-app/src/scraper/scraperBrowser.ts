@@ -1,7 +1,7 @@
 import * as fs from 'fs'
 import path from 'path'
 
-import { cacheable, safePromise, waitFor } from '@web-scrapper/common'
+import { cacheable, safePromise, waitFor } from '@web-scraper/common'
 import { type Browser, launch } from 'puppeteer'
 
 import { EXTERNAL_DIRECTORY_PATH } from '../utils'

@@ -1,5 +1,5 @@
 import { type PropsWithChildren, useCallback, useEffect, useState } from 'react'
-import type { UserSettings } from '@web-scrapper/common'
+import type { UserSettings } from '@web-scraper/common'
 import { defaultUserSettings, UserDataContext } from '../context/userDataContext'
 import { useApiRequest } from '../hooks/useApiRequest'
 

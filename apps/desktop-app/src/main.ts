@@ -8,7 +8,7 @@ const myEnv = dotenv.config()
 dotenvExpand.expand(myEnv)
 
 // eslint-disable-next-line import/order
-import { ElectronToRendererMessage, safePromise } from '@web-scrapper/common'
+import { ElectronToRendererMessage, safePromise } from '@web-scraper/common'
 import { app, shell } from 'electron'
 import isDev from 'electron-is-dev'
 

@@ -1,5 +1,5 @@
 import { createContext, type Dispatch, type SetStateAction } from 'react'
-import type { UserSettings } from '@web-scrapper/common'
+import type { UserSettings } from '@web-scraper/common'
 
 const noop = () => {
   // do nothing

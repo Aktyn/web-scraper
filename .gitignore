@@ -20,6 +20,7 @@ npm-debug.log*
 tsconfig.tsbuildinfo
 
 dist/
+release/
 lib/
 build/
 

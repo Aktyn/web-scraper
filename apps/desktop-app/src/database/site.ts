@@ -5,7 +5,7 @@ import {
   type Site,
   type UpsertSiteSchema,
   upsertSiteSchema,
-} from '@web-scrapper/common'
+} from '@web-scraper/common'
 
 import Database from './index'
 
