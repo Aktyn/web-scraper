@@ -8,36 +8,36 @@
 
 ```bash
 # Install and build the project
-npm install
-npm run env
-npm run build
-npm run db:generate:reset
-npm run db:seed # optionally
+yarn install
+yarn run env
+yarn run build
+yarn run db:generate:reset
+yarn run db:seed # optionally
 ```
 
 ## Running the project
 
 ```bash
-npm run start
+yarn run start
 # or
-npm run dev
+yarn run dev
 ```
 
 ## Database management
 
 ```bash
 # Reset the database to state with generated empty tables
-npm run db:generate:reset
+yarn run db:generate:reset
 
 # Open the database studio in the browser
-npm run db:studio
+yarn run db:studio
 
 # Seed the database with test data
-npm run db:seed
+yarn run db:seed
 ```
 
 ## Running tests
 
 ```bash
-npm run test
+yarn run test
 ```

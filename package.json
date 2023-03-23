@@ -2,7 +2,7 @@
   "name": "web-scraper",
   "version": "1.0.0",
   "private": true,
-  "author": "Aktyn",
+  "author": "Radosław Krajewski (Aktyn) <aktyn3@gmail.com>",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Aktyn/web-scraper.git"
@@ -33,7 +33,7 @@
     "db:generate:reset": "turbo run db:generate:reset",
     "db:seed": "turbo run db:seed",
     "db:studio": "turbo run db:studio",
-    "db:reset:seed": "npm run db:generate:reset && npm run db:seed",
+    "db:reset:seed": "yarn run db:generate:reset && yarn run db:seed",
     "test": "turbo run test",
     "test:ci": "turbo run test:ci",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
@@ -48,7 +48,7 @@
   },
   "engines": {
     "npm": ">=7.0.0",
-    "node": ">=14.0.0"
+    "node": ">=16.0.0"
   },
-  "packageManager": "npm@8.19.2"
+  "packageManager": "yarn@1.22.19"
 }

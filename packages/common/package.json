@@ -7,7 +7,7 @@
   "private": true,
   "scripts": {
     "build": "tsc -p ./tsconfig.json",
-    "dev": "nodemon --watch ./src --exec \"npm run build\" -e ts",
+    "dev": "nodemon --watch ./src --exec \"yarn run build\" -e ts",
     "test": "vitest --watch=false",
     "test:watch": "vitest",
     "test:ci": "vitest --coverage --threads=false --watch=false --reporter=default --reporter=junit",
