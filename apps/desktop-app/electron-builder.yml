@@ -1,0 +1,33 @@
+productName: "Web Scraper"
+appId: "aktyn.web-scraper"
+executableName: "WebScraper"
+copyright: "Copyright © 2023 Radosław Krajewski (Aktyn)"
+
+win:
+  target:
+    - target: "portable"
+      arch:
+        - "x64"
+  icon: "icon.ico"
+  publisherName: "Radosław Krajewski (Aktyn)"
+
+nsis:
+  perMachine: false
+  oneClick: false
+  allowToChangeInstallationDirectory: false
+
+files:
+  - "dist/"
+  - "package.json"
+
+extraResources:
+  - "external/main.db"
+  - "../../node_modules/@prisma/**/*"
+
+asar: true
+asarUnpack: "**\\*.{node,dll}"
+nodeGypRebuild: false
+npmRebuild: false
+
+#directories:
+#  output: "release"

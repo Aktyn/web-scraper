@@ -1,7 +1,5 @@
 {
-  "include": [
-    "./src"
-  ],
+  "include": ["./src"],
   "compilerOptions": {
     "outDir": "./lib",
     "baseUrl": "./src",
@@ -26,8 +24,7 @@
     "forceConsistentCasingInFileNames": true,
     "noFallthroughCasesInSwitch": true,
     "resolveJsonModule": true,
-    "lib": [
-      "ES2021"
-    ]
+    "lib": ["ES2021"],
+    "types": ["node"]
   }
 }
