@@ -25,6 +25,7 @@ linux:
   artifactName: "${productName}-${version}.${ext}"
 
 files:
+  - "user-panel-build/**/*"
   - "dist/"
   - "package.json"
 

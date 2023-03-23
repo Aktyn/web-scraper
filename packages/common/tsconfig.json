@@ -24,7 +24,6 @@
     "forceConsistentCasingInFileNames": true,
     "noFallthroughCasesInSwitch": true,
     "resolveJsonModule": true,
-    "lib": ["ES2021"],
-    "types": ["node"]
+    "lib": ["ES2021"]
   }
 }

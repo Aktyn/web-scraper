@@ -2,16 +2,16 @@ generator client {
   provider = "prisma-client-js"
 }
 
-// generator erd {
-//   provider                  = "prisma-erd-generator"
-//   output                    = "../external/erd.pdf"
-//   theme                     = "default"
-//   includeRelationFromFields = true
-// }
+generator erd {
+  provider                  = "prisma-erd-generator"
+  output                    = "../external/erd.pdf"
+  theme                     = "default"
+  includeRelationFromFields = true
+}
 
 datasource db {
   provider = "sqlite"
-  url      = "file:../external/main.db"
+  url      = env("DATABASE_URL")
 }
 
 model Site {

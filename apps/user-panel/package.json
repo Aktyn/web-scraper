@@ -2,6 +2,7 @@
   "name": "@web-scraper/user-panel",
   "version": "0.1.0",
   "private": true,
+  "homepage": "./",
   "scripts": {
     "build": "cross-env yarn run typecheck && react-scripts build",
     "dev": "cross-env BROWSER=none react-scripts start",
@@ -73,14 +74,10 @@
   },
   "browserslist": {
     "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
+      "last 1 electron version"
     ],
     "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
+      "last 1 electron version"
     ]
   },
   "sideEffects": false

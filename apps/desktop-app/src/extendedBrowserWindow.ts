@@ -1,4 +1,5 @@
 import type { ElectronApi, ElectronToRendererMessage } from '@web-scraper/common'
+// eslint-disable-next-line import/no-extraneous-dependencies
 import { BrowserWindow } from 'electron'
 
 export class ExtendedBrowserWindow extends BrowserWindow {

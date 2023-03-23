@@ -5,6 +5,7 @@ import {
   RendererToElectronMessage,
   wait,
 } from '@web-scraper/common'
+// eslint-disable-next-line import/no-extraneous-dependencies
 import { ipcMain, type IpcMainInvokeEvent } from 'electron'
 import isDev from 'electron-is-dev'
 

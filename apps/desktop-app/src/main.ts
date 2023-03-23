@@ -9,6 +9,7 @@ dotenvExpand.expand(myEnv)
 
 // eslint-disable-next-line import/order
 import { ElectronToRendererMessage, safePromise } from '@web-scraper/common'
+// eslint-disable-next-line import/no-extraneous-dependencies
 import { app, shell } from 'electron'
 import isDev from 'electron-is-dev'
 
@@ -50,7 +51,9 @@ function createWindow() {
   mainWindow
     .loadURL(
       //TODO: update path to file:// according to project structure after build electron app
-      isDev ? 'http://localhost:3000' : `file://${path.join(__dirname, '../build/index.html')}`,
+      isDev
+        ? 'http://localhost:3000'
+        : `file://${path.join(__dirname, '../user-panel-build/index.html')}`,
     )
     .catch(console.error)
 

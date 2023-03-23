@@ -23,6 +23,7 @@ dist/
 release/
 lib/
 build/
+user-panel-build/
 
 # Sqlite3 databases
 *.db
