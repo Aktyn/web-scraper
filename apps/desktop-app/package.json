@@ -7,7 +7,7 @@
   "author": "Radosław Krajewski (Aktyn) <aktyn3@gmail.com>",
   "homepage": "https://github.com/Aktyn/web-scrapers#readme",
   "scripts": {
-    "dist": "cross-env yarn run build && electron-builder -l && electron-builder -w",
+    "dist": "cross-env yarn run build && electron-builder --linux && electron-builder --windows --x64",
     "electron:pack": "cross-env DEBUG=electron-builder yarn run build && electron-builder --config electron-builder.yml --dir",
     "electron:rebuild": "yarn rebuild --runtime=electron --target=23.1.4 --disturl=https://atom.io/download/atom-shell --abi=114",
     "electron:installDeps": "electron-builder install-app-deps --arch=x64",
