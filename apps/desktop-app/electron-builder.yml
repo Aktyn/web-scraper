@@ -20,17 +20,17 @@ linux:
   category: Development
   target:
     - "AppImage"
-    - "deb"
+#    - "deb"
   executableName: "Web Scraper"
   artifactName: "${productName}-${version}.${ext}"
 
 files:
   - "user-panel-build/**/*"
   - "dist/"
+  - "external/"
   - "package.json"
 
 extraResources:
-  - "external/main.db"
   - "node_modules/.prisma/**/*"
   - "node_modules/@prisma/client/**/*"
 

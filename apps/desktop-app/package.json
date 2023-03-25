@@ -7,8 +7,8 @@
   "author": "Radosław Krajewski (Aktyn) <aktyn3@gmail.com>",
   "homepage": "https://github.com/Aktyn/web-scrapers#readme",
   "scripts": {
+    "dist": "cross-env yarn run build && electron-builder -l && electron-builder -w",
     "electron:pack": "cross-env DEBUG=electron-builder yarn run build && electron-builder --config electron-builder.yml --dir",
-    "electron:dist": "cross-env yarn run build && electron-builder",
     "electron:rebuild": "yarn rebuild --runtime=electron --target=23.1.4 --disturl=https://atom.io/download/atom-shell --abi=114",
     "electron:installDeps": "electron-builder install-app-deps --arch=x64",
     "build": "tsc -p ./tsconfig.json",
@@ -16,7 +16,7 @@
     "start": "electron ./dist/main.js",
     "dev": "cross-env NODE_ENV=dev nodemon --legacy-watch ./src/**/* --exec \"yarn run build && yarn run start\" -e ts",
     "db:generate": "prisma generate",
-    "db:generate:reset": "cross-env yarn run db:generate && shx rm -f ./external/main.db && shx touch ./external/main.db && prisma migrate resolve --applied 0_init && prisma db push",
+    "db:generate:reset": "cross-env yarn run db:generate && shx rm -f ./external/data.db && shx touch ./external/data.db && prisma migrate resolve --applied 0_init && prisma db push",
     "db:migrate": "prisma migrate dev --name database_structure_changes",
     "db:format": "prisma format",
     "db:seed": "prisma db seed",

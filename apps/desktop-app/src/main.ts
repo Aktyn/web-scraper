@@ -1,4 +1,5 @@
 import path from 'path'
+import url from 'url'
 
 import * as dotenv from 'dotenv'
 // eslint-disable-next-line import/order
@@ -17,12 +18,6 @@ import { registerRequestsHandler } from './api/internal/requestHandler'
 import Database from './database'
 import { ExtendedBrowserWindow } from './extendedBrowserWindow'
 import { EXTERNAL_DIRECTORY_PATH } from './utils'
-
-// eslint-disable-next-line no-console
-console.info(
-  'Local database path:',
-  path.join(path.resolve('./prisma'), process.env.DATABASE_URL?.replace(/file:/i, '') ?? '.'),
-)
 
 function createWindow() {
   const mainWindow = new ExtendedBrowserWindow({
@@ -50,10 +45,9 @@ function createWindow() {
 
   mainWindow
     .loadURL(
-      //TODO: update path to file:// according to project structure after build electron app
       isDev
         ? 'http://localhost:3000'
-        : `file://${path.join(__dirname, '../user-panel-build/index.html')}`,
+        : url.pathToFileURL(path.join(__dirname, '../user-panel-build/index.html')).href,
     )
     .catch(console.error)
 
