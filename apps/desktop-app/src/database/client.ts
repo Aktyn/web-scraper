@@ -26,7 +26,9 @@ const databaseFilePath = (() => {
   }
 })()
 
-const databaseUrl = url.pathToFileURL(databaseFilePath).href
+const databaseUrl = url
+  .pathToFileURL(databaseFilePath)
+  .href.replace(/^file:(\/)+([a-z]:)/i, 'file:$2')
 
 // eslint-disable-next-line no-console
 console.info('Database URL:', databaseUrl)
