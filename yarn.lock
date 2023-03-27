@@ -9564,10 +9564,10 @@ pretty-format@^29.0.0, pretty-format@^29.5.0:
     ansi-styles "^5.0.0"
     react-is "^18.0.0"
 
-prisma-erd-generator@^1.2.5:
-  version "1.3.1"
-  resolved "https://registry.yarnpkg.com/prisma-erd-generator/-/prisma-erd-generator-1.3.1.tgz#2b8089113b805e0aa53813700ba0cba663626110"
-  integrity sha512-pqXAwm7rMOKu6Pg1S6u/1IdSrRkCcJgRGb8WzUU+s8hhvD+2uSLZJqUArSgwt8aNqrTPKsWcv58vJ6t7PEl56g==
+prisma-erd-generator@^1.4.2:
+  version "1.4.2"
+  resolved "https://registry.yarnpkg.com/prisma-erd-generator/-/prisma-erd-generator-1.4.2.tgz#812ff66b4c120d0d1e87c9d9d6bf4cd65177039f"
+  integrity sha512-5+3nrXUIa3rRnRWR6Z2gzpD1zbuzTOfSPdEEVbSmwpbNbKqxGinTzNJ1euC8jxdvk9FV368IvZu0f5t/ntoXpw==
   dependencies:
     "@mermaid-js/mermaid-cli" "^10.0.2"
     "@prisma/client" "^4.11.0"
