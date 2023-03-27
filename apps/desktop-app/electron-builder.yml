@@ -20,7 +20,6 @@ linux:
   category: Development
   target:
     - "AppImage"
-#    - "deb"
   executableName: "Web Scraper"
   artifactName: "${productName}-${version}.${ext}"
 
