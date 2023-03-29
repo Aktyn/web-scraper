@@ -40,14 +40,14 @@ export const SiteForm = ({ site, onSuccess }: SiteFormProps) => {
   const createSiteRequest = useApiRequest(window.electronAPI.createSite)
   const updateSiteRequest = useApiRequest(window.electronAPI.updateSite)
 
-  const form = useForm<UpsertSiteSchema>({
+  const form = useForm({
     mode: 'onTouched',
     resolver: yupResolver(upsertSiteSchema),
     defaultValues: site
       ? {
           url: site.url,
           language: site.language,
-          siteTags: site.tags, //TODO: remove .map((tag) => pick(tag, 'name', 'description')),
+          siteTags: site.tags,
         }
       : undefined,
   })

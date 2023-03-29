@@ -1,9 +1,7 @@
 import { memo, type ReactNode, useState } from 'react'
 import { LoadingButton } from '@mui/lab'
 import {
-  Box,
   Button,
-  CircularProgress,
   Dialog,
   DialogActions,
   DialogContent,
@@ -13,6 +11,7 @@ import {
   Stack,
   Typography,
 } from '@mui/material'
+import { CircularCountdown } from './CircularCountdown'
 import { useInterval } from '../../hooks/useInterval'
 
 type ConfirmationDialogProps = Omit<DialogProps, 'onClose'> & {
@@ -92,36 +91,24 @@ const AutoCloseCountdown = memo(({ duration, onClose }: AutoCloseCountdownProps)
       }
       setNow(now)
     },
-    16,
+    1000,
     [onClose, start],
   )
 
-  const progress = Math.max(0, 1 - (Math.floor((now - start) / 1000 + 1) * 1000) / duration)
+  const progress = Math.min(
+    1,
+    Math.max(0, 1 - (Math.ceil((now - start) / 1000 - 1) * 1000) / Math.max(1, duration - 1000)),
+  )
 
   return (
     <Stack direction="row" alignItems="center" gap={1}>
       <Typography variant="caption" color="text.secondary">
         Auto close in
       </Typography>
-      <Box sx={{ position: 'relative', display: 'inline-flex' }}>
-        <CircularProgress variant="determinate" size={20} value={progress * 100} />
-        <Box
-          sx={{
-            top: 0,
-            left: 0,
-            bottom: 0,
-            right: 0,
-            position: 'absolute',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
-        >
-          <Typography variant="caption" component="span" textAlign="center" color="text.secondary">
-            {Math.max(0, Math.floor((duration - (now - start)) / 1000))}
-          </Typography>
-        </Box>
-      </Box>
+      <CircularCountdown
+        progress={progress}
+        label={Math.max(0, Math.round((duration - (now - start)) / 1000))}
+      />
     </Stack>
   )
 })

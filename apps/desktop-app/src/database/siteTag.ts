@@ -90,3 +90,13 @@ export function deleteSiteTag(id: number) {
     where: { id },
   })
 }
+
+export function deleteLooseSiteTags() {
+  return Database.prisma.siteTag.deleteMany({
+    where: {
+      Sites: {
+        none: {},
+      },
+    },
+  })
+}

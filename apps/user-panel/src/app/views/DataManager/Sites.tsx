@@ -1,5 +1,5 @@
 import { useCallback, useRef, useState } from 'react'
-import { Box, Chip, Stack, Tooltip } from '@mui/material'
+import { Box } from '@mui/material'
 import type { Site } from '@web-scraper/common'
 import { SiteForm } from './SiteForm'
 import { TransitionType, ViewTransition } from '../../components/animation/ViewTransition'
@@ -8,6 +8,7 @@ import type { CustomDrawerRef } from '../../components/common/CustomDrawer'
 import { CustomDrawer } from '../../components/common/CustomDrawer'
 import { UrlButton } from '../../components/common/button/UrlButton'
 import { Table, type TableRef, useTableColumns } from '../../components/table'
+import { TagsCellValue } from '../../components/table/TagsCellValue'
 import { useApiRequest } from '../../hooks/useApiRequest'
 
 export const Sites = () => {
@@ -42,31 +43,7 @@ export const Sites = () => {
       cellSx: {
         py: 0,
       },
-      accessor: (site) =>
-        site.tags.length === 0 ? undefined : (
-          <Stack
-            direction="row"
-            alignItems="center"
-            gap={1}
-            sx={{
-              maxWidth: '16rem',
-              overflowX: 'auto',
-              //TODO: button opening popup with list of all tags when their number exceeds certain amount
-            }}
-          >
-            {site.tags.map((tag) => (
-              <Tooltip key={tag.id} title={tag.description} disableInteractive>
-                <Chip
-                  label={tag.name}
-                  sx={{ fontWeight: 'bold', color: 'text.primary' }}
-                  variant="filled"
-                  size="small"
-                  color="default"
-                />
-              </Tooltip>
-            ))}
-          </Stack>
-        ),
+      accessor: (site) => <TagsCellValue tags={site.tags} />,
     },
   ])
 

@@ -1,7 +1,4 @@
-/**
- * NOTE: ElectronToRendererMessage and RendererToElectronMessage keys must equal to its corresponding values and be written in camelCase
- */
-import type { Account } from './account'
+import type { Account, UpsertAccountSchema } from './account'
 import type {
   ApiError,
   PaginatedApiFunction,
@@ -10,6 +7,9 @@ import type {
 import type { Site, SiteTag, UpsertSiteSchema, UpsertSiteTagSchema } from './site'
 import type { UserSettings } from './user'
 
+/**
+ * NOTE: ElectronToRendererMessage and RendererToElectronMessage keys must equal to its corresponding values and be written in camelCase
+ */
 export enum ElectronToRendererMessage {
   dummyEventFromMain = 'dummyEventFromMain',
 }
@@ -19,11 +19,15 @@ export enum RendererToElectronMessage {
   setUserSetting = 'setUserSetting',
 
   getAccounts = 'getAccounts',
+  createAccount = 'createAccount',
+  deleteAccount = 'deleteAccount',
+  updateAccount = 'updateAccount',
 
   getSiteTags = 'getSiteTags',
   deleteSiteTag = 'deleteSiteTag',
   updateSiteTag = 'updateSiteTag',
   createSiteTag = 'createSiteTag',
+  deleteLooseSiteTags = 'deleteLooseSiteTags',
 
   getSites = 'getSites',
   getSite = 'getSite',
@@ -49,6 +53,16 @@ export type ElectronApi = {
     'id',
     'loginOrEmail' | 'password' | 'additionalCredentialsData'
   >
+  [RendererToElectronMessage.createAccount]: (
+    data: UpsertAccountSchema,
+    password: string,
+  ) => Promise<Account | ApiError>
+  [RendererToElectronMessage.deleteAccount]: (accountId: Account['id']) => Promise<ApiError>
+  [RendererToElectronMessage.updateAccount]: (
+    accountId: Account['id'],
+    data: UpsertAccountSchema,
+    password: string,
+  ) => Promise<Account | ApiError>
 
   [RendererToElectronMessage.getSiteTags]: PaginatedApiFunction<SiteTag, 'id'>
   [RendererToElectronMessage.deleteSiteTag]: (siteTagId: SiteTag['id']) => Promise<ApiError>
@@ -59,6 +73,9 @@ export type ElectronApi = {
   [RendererToElectronMessage.createSiteTag]: (
     data: UpsertSiteTagSchema,
   ) => Promise<SiteTag | ApiError>
+  [RendererToElectronMessage.deleteLooseSiteTags]: () => Promise<
+    { deletedCount: number } | ApiError
+  >
 
   [RendererToElectronMessage.getSites]: PaginatedApiFunction<Site, 'id'>
   [RendererToElectronMessage.getSite]: (siteId: Site['id']) => Promise<Site | ApiError>

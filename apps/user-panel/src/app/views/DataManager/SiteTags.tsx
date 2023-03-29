@@ -1,11 +1,13 @@
 import { useCallback, useRef, useState } from 'react'
-import { Box } from '@mui/material'
+import { DeleteSweepRounded } from '@mui/icons-material'
+import { Box, Tooltip } from '@mui/material'
 import type { SiteTag } from '@web-scraper/common'
 import { SiteTagForm } from './SiteTagForm'
 import { TransitionType, ViewTransition } from '../../components/animation/ViewTransition'
 import { ConfirmationDialog } from '../../components/common/ConfirmationDialog'
 import type { CustomDrawerRef } from '../../components/common/CustomDrawer'
 import { CustomDrawer } from '../../components/common/CustomDrawer'
+import { ConfirmableButton } from '../../components/common/button/ConfirmableButton'
 import { Table, type TableRef, useTableColumns } from '../../components/table'
 import { useApiRequest } from '../../hooks/useApiRequest'
 
@@ -14,6 +16,7 @@ export const SiteTags = () => {
   const siteTagDrawerRef = useRef<CustomDrawerRef>(null)
 
   const deleteSiteTagRequest = useApiRequest(window.electronAPI.deleteSiteTag)
+  const deleteLooseTagsRequest = useApiRequest(window.electronAPI.deleteLooseSiteTags)
   const columns = useTableColumns<SiteTag>([
     {
       id: 'id',
@@ -66,6 +69,22 @@ export const SiteTags = () => {
     siteTagDrawerRef.current?.open()
   }, [])
 
+  const handleRemoveLooseTags = useCallback(() => {
+    deleteLooseTagsRequest.submit({
+      onSuccess: (res, { enqueueSnackbar }) => {
+        if (res.deletedCount > 0) {
+          tableRef.current?.refresh()
+        }
+        enqueueSnackbar({
+          variant: res.deletedCount ? 'success' : 'info',
+          message: res.deletedCount
+            ? `Removed ${res.deletedCount} loose tags`
+            : 'There are no loose tags to remove',
+        })
+      },
+    })
+  }, [deleteLooseTagsRequest])
+
   return (
     <>
       <CustomDrawer ref={siteTagDrawerRef} title="Update site tag">
@@ -86,6 +105,21 @@ export const SiteTags = () => {
           <Table
             ref={tableRef}
             columns={columns}
+            headerContent={
+              <Tooltip title="Remove all tags that are not assigned to any site" disableInteractive>
+                <Box>
+                  <ConfirmableButton
+                    variant="outlined"
+                    color="primary"
+                    size="small"
+                    endIcon={<DeleteSweepRounded />}
+                    onConfirm={handleRemoveLooseTags}
+                  >
+                    Remove loose tags
+                  </ConfirmableButton>
+                </Box>
+              </Tooltip>
+            }
             keyProperty="id"
             data={window.electronAPI.getSiteTags}
             onEdit={handleEdit}

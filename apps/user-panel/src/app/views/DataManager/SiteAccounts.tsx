@@ -25,11 +25,6 @@ export const SiteAccounts = ({ site }: SiteAccountsProps) => {
       encrypted: true,
     },
     {
-      id: 'lastUsed',
-      header: 'Last used',
-      accessor: 'lastUsed',
-    },
-    {
       id: 'active',
       header: 'Active',
       accessor: 'active',

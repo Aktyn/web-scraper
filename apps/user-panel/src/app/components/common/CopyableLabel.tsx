@@ -1,11 +1,15 @@
 import { memo, useCallback, useRef } from 'react'
 import { ContentCopyRounded } from '@mui/icons-material'
-import { Box, IconButton, Stack, Tooltip, useTheme } from '@mui/material'
+import { Box, IconButton, Stack, type StackProps, Tooltip, useTheme } from '@mui/material'
 import anime from 'animejs'
 import { useCancellablePromise } from '../../hooks/useCancellablePromise'
 import { copyToClipboard } from '../../utils'
 
-export const CopyableLabel = memo(({ children }: { children: string }) => {
+interface CopyableLabelProps extends StackProps {
+  children: string
+}
+
+export const CopyableLabel = memo(({ children, ...stackProps }: CopyableLabelProps) => {
   const buttonRef = useRef<HTMLButtonElement>(null)
   const cancellable = useCancellablePromise()
   const theme = useTheme()
@@ -44,7 +48,7 @@ export const CopyableLabel = memo(({ children }: { children: string }) => {
   ])
 
   return (
-    <Stack direction="row" alignItems="center" gap={1}>
+    <Stack direction="row" alignItems="center" gap={1} {...stackProps}>
       <Box sx={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
         {children}
       </Box>

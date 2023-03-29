@@ -53,6 +53,8 @@ model Account {
   //
   siteId                    Int
   Site                      Site      @relation(fields: [siteId], references: [id], onDelete: Cascade)
+
+  @@unique([siteId, loginOrEmail])
 }
 
 model SiteInstructions {

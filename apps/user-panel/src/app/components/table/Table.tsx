@@ -45,7 +45,7 @@ interface TableProps<DataType extends object, KeyPropertyType extends string & P
   headerContent?: ReactNode
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   data: DataType[] | PaginatedApiFunction<DataType, any>
-  onAdd?: () => void
+  onAdd?: ReactNode | (() => void)
   onEdit?: (data: DataType) => void
   onDelete?: (data: DataType) => void
 }
@@ -198,11 +198,14 @@ export const Table = genericMemo(
                       <LoadingIconButton loading={fetchingData} onClick={refresh} size="small">
                         <RefreshRounded />
                       </LoadingIconButton>
-                      {onAdd && (
-                        <IconButton onClick={onAdd} size="small">
-                          <AddRounded />
-                        </IconButton>
-                      )}
+                      {onAdd &&
+                        (typeof onAdd === 'function' ? (
+                          <IconButton onClick={onAdd} size="small">
+                            <AddRounded />
+                          </IconButton>
+                        ) : (
+                          onAdd
+                        ))}
                     </Stack>
                   </Stack>
                 </TableCell>

@@ -36,7 +36,7 @@ export const SiteTagForm = ({
   const createSiteTagRequest = useApiRequest(window.electronAPI.createSiteTag)
   const updateSiteTagRequest = useApiRequest(window.electronAPI.updateSiteTag)
 
-  const form = useForm<UpsertSiteTagSchema>({
+  const form = useForm({
     resolver: yupResolver(upsertSiteTagSchema),
     defaultValues: siteTag
       ? {
@@ -70,7 +70,7 @@ export const SiteTagForm = ({
           assignedTagsIds?.includes(tag.id) ? (
             <BooleanValue value={true} sx={{ justifyContent: 'center' }} />
           ) : (
-            <Tooltip title="Assign">
+            <Tooltip title="Assign" disableInteractive>
               <IconButton size="small" onClick={() => onAssign?.(tag)}>
                 <AddRounded />
               </IconButton>

@@ -17,7 +17,7 @@
     "dev": "cross-env NODE_ENV=dev nodemon --legacy-watch ./src/**/* --exec \"yarn run build && yarn run start\" -e ts",
     "db:generate": "prisma generate",
     "db:generate:reset": "cross-env yarn run db:generate && shx rm -f ./external/data.db && shx touch ./external/data.db && prisma migrate resolve --applied 0_init && prisma db push",
-    "db:migrate": "prisma migrate dev --name database_structure_changes",
+    "db:migrate": "prisma migrate dev",
     "db:format": "prisma format",
     "db:seed": "prisma db seed",
     "db:studio": "prisma studio --port 5555",

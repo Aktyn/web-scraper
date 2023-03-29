@@ -27,7 +27,7 @@ export const JsonValue = ({ children: value }: { children: string }) => {
         component="pre"
         sx={{
           m: 0,
-          maxWidth: '14rem',
+          maxWidth: '12rem',
           whiteSpace: 'nowrap',
           overflow: 'hidden',
           textOverflow: 'ellipsis',

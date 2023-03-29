@@ -9,11 +9,15 @@ const rendererToElectronMessageNames = [
   'setUserSetting',
 
   'getAccounts',
+  'createAccount',
+  'deleteAccount',
+  'updateAccount',
 
   'getSiteTags',
   'deleteSiteTag',
   'updateSiteTag',
   'createSiteTag',
+  'deleteLooseSiteTags',
 
   'getSites',
   'getSite',

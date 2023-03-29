@@ -14,6 +14,8 @@ export const EncryptionPasswordForm = ({ onSave }: { onSave?: () => void }) => {
     inputRef.current?.querySelector('input')?.focus()
   }, [])
 
+  //TODO: option for re-decrypting entire database with new password
+
   return (
     <Stack
       component="form"
