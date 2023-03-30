@@ -8,7 +8,12 @@ import { CustomPopover, type CustomPopoverRef } from './CustomPopover'
 import 'prismjs/components/prism-json.js'
 import 'prismjs/themes/prism-dark.css'
 
-export const JsonValue = ({ children: value }: { children: string }) => {
+interface JsonValueProps {
+  children: string | null
+  disablePreview?: boolean
+}
+
+export const JsonValue = ({ children: value, disablePreview }: JsonValueProps) => {
   const containerRef = useRef<HTMLDivElement>(null)
 
   const jsonPreviewPopoverRef = useRef<CustomPopoverRef>(null)
@@ -17,7 +22,9 @@ export const JsonValue = ({ children: value }: { children: string }) => {
     if (!containerRef.current) {
       return
     }
-    containerRef.current.innerHTML = prism.highlight(value, prism.languages.json, 'json')
+    containerRef.current.innerHTML = value
+      ? prism.highlight(value, prism.languages.json, 'json')
+      : ''
   }, [value])
 
   return (
@@ -34,41 +41,50 @@ export const JsonValue = ({ children: value }: { children: string }) => {
           fontSize: '0.875rem',
         }}
       />
-      <Tooltip title="Preview JSON" disableInteractive>
-        <Box>
-          <IconButton
-            size="small"
-            color="inherit"
-            onClick={(event) => jsonPreviewPopoverRef.current?.open(event.currentTarget)}
+      {!disablePreview && (
+        <>
+          <Tooltip title="Preview JSON" disableInteractive>
+            <Box>
+              <IconButton
+                size="small"
+                color="inherit"
+                onClick={(event) => jsonPreviewPopoverRef.current?.open(event.currentTarget)}
+              >
+                <OpenInFullRounded fontSize="small" />
+              </IconButton>
+            </Box>
+          </Tooltip>
+          <CustomPopover
+            ref={jsonPreviewPopoverRef}
+            anchorOrigin={{
+              vertical: 'center',
+              horizontal: 'center',
+            }}
+            transformOrigin={{
+              vertical: 'center',
+              horizontal: 'center',
+            }}
+            PaperProps={{
+              sx: {
+                display: 'flex',
+              },
+            }}
           >
-            <OpenInFullRounded fontSize="small" />
-          </IconButton>
-        </Box>
-      </Tooltip>
-      <CustomPopover
-        ref={jsonPreviewPopoverRef}
-        anchorOrigin={{
-          vertical: 'center',
-          horizontal: 'center',
-        }}
-        transformOrigin={{
-          vertical: 'center',
-          horizontal: 'center',
-        }}
-      >
-        <Preview value={value} />
-      </CustomPopover>
+            <Preview value={value} />
+          </CustomPopover>
+        </>
+      )}
     </Stack>
   )
 }
 
-const Preview = ({ value }: { value: string }) => {
+const Preview = ({ value }: { value: string | null }) => {
   const previewContainerRef = useRef<HTMLDivElement>(null)
 
   const [parsingError, setParsingError] = useState(false)
 
   useEffect(() => {
-    if (!previewContainerRef.current) {
+    if (!previewContainerRef.current || !value) {
       return
     }
 
@@ -103,15 +119,17 @@ const Preview = ({ value }: { value: string }) => {
   }
 
   return (
-    <Box
-      ref={previewContainerRef}
-      component="pre"
-      sx={{
-        m: 0,
-        p: 2,
-        overflow: 'auto',
-        fontSize: '0.875rem',
-      }}
-    />
+    <Stack flexGrow={1} maxHeight="100%" overflow="auto">
+      <Box
+        ref={previewContainerRef}
+        component="pre"
+        sx={{
+          m: 0,
+          p: 2,
+          overflow: 'auto',
+          fontSize: '0.875rem',
+        }}
+      />
+    </Stack>
   )
 }

@@ -1,4 +1,4 @@
-import type { PropsWithChildren } from 'react'
+import type { PropsWithChildren, ReactNode } from 'react'
 import { useContext } from 'react'
 import {
   drawerClasses,
@@ -14,7 +14,7 @@ import { DrawerContext } from '../../context/drawerContext'
 
 interface NestedDrawerProps {
   open: boolean
-  title?: string
+  title?: ReactNode
   onClose?: () => void
 }
 

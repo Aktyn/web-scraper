@@ -4,7 +4,6 @@ import {
   AccountCircleRounded,
   CheckRounded,
   CloseRounded,
-  EditRounded,
   EventRounded,
   KeyRounded,
   LockRounded,
@@ -16,6 +15,7 @@ import { LoadingButton } from '@mui/lab'
 import {
   Box,
   CircularProgress,
+  FormHelperText,
   IconButton,
   InputAdornment,
   Stack,
@@ -33,8 +33,10 @@ import { useForm } from 'react-hook-form'
 import { SiteSelectForm } from './SiteSelectForm'
 import { NestedDrawer } from '../../components/common/NestedDrawer'
 import { DrawerToggle } from '../../components/common/button/DrawerToggle'
+import { ToggleIconButton } from '../../components/common/button/ToggleIconButton'
 import { UrlButton } from '../../components/common/button/UrlButton'
 import { FormInput } from '../../components/form/FormInput'
+import { FormJsonInput } from '../../components/form/FormJsonInput'
 import { UserDataContext } from '../../context/userDataContext'
 import { useApiRequest } from '../../hooks/useApiRequest'
 import { formatDate } from '../../utils'
@@ -184,13 +186,25 @@ export const AccountForm = ({ account, onSuccess }: AccountFormProps) => {
               ),
             }}
           />
-          {/* TODO: JSON field for additional credentials data */}
+          <FormJsonInput name="additionalCredentialsData" form={form} label="Additional data" />
           {siteId ? (
-            <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={1}>
+            <Stack
+              direction="row"
+              flexWrap="wrap"
+              alignItems="center"
+              justifyContent="space-between"
+              columnGap={1}
+            >
+              <FormHelperText variant="standard" margin="dense" sx={{ width: '100%' }}>
+                Site
+              </FormHelperText>
               {site ? <UrlButton>{site.url}</UrlButton> : <CircularProgress size={24} />}
-              <IconButton onClick={() => setShowSiteSelect(true)}>
-                <EditRounded />
-              </IconButton>
+              <ToggleIconButton
+                open={showSiteSelect}
+                onToggle={setShowSiteSelect}
+                closeTooltip="Select site"
+                openTooltip="Close site select"
+              />
             </Stack>
           ) : (
             <DrawerToggle open={showSiteSelect} onToggle={setShowSiteSelect}>

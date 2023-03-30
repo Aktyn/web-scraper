@@ -26,7 +26,8 @@
       "~/*": ["./app/*"]
     },
     "baseUrl": ".",
-    "types": ["node"]
+    "types": ["node"],
+    "jsxImportSource": "@emotion/react"
   },
   "include": ["**/*.ts", "**/*.tsx"]
 }

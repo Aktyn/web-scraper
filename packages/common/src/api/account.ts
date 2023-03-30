@@ -15,7 +15,22 @@ export const upsertAccountSchema = yup
   .object({
     loginOrEmail: yup.string().default('').required(),
     password: yup.string().default('').required(),
-    additionalCredentialsData: yup.string().nullable().default(null).notRequired(),
+    additionalCredentialsData: yup
+      .string()
+      .test('json', '${path} is not a valid json', (value) => {
+        if (!value) {
+          return true
+        }
+        try {
+          JSON.parse(value)
+          return true
+        } catch {
+          return false
+        }
+      })
+      .nullable()
+      .default(null)
+      .notRequired(),
     siteId: yup.number().required(),
   })
   .required()
