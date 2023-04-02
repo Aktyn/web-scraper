@@ -20,6 +20,7 @@ export function useApiRequest<RequestFunctionType extends AnyApiFunction>(
 
   type ConfigType = {
     onSuccess?: (data: DataType, extras: { enqueueSnackbar: typeof enqueueSnackbar }) => void
+    onError?: (error: ApiError, extras: { enqueueSnackbar: typeof enqueueSnackbar }) => void
   }
 
   const submit = useCallback(
@@ -29,27 +30,31 @@ export function useApiRequest<RequestFunctionType extends AnyApiFunction>(
         .then((data) => {
           setSubmitting(false)
           if ('errorCode' in data && data.errorCode !== ErrorCode.NO_ERROR) {
-            enqueueSnackbar({
-              variant: 'error',
-              message: (
-                <Stack alignItems="flex-start" gap={0}>
-                  <Typography variant="body2">{errorHelpers[data.errorCode]}</Typography>
-                  {data.error && (
-                    <Typography
-                      variant="caption"
-                      sx={{
-                        maxWidth: '16rem',
-                        maxHeight: '8rem',
-                        overflow: 'hidden',
-                        textOverflow: 'ellipsis',
-                      }}
-                    >
-                      ({parseError(data.error)})
-                    </Typography>
-                  )}
-                </Stack>
-              ),
-            })
+            if (config.onError) {
+              config.onError(data, { enqueueSnackbar })
+            } else {
+              enqueueSnackbar({
+                variant: 'error',
+                message: (
+                  <Stack alignItems="flex-start" gap={0}>
+                    <Typography variant="body2">{errorHelpers[data.errorCode]}</Typography>
+                    {data.error && (
+                      <Typography
+                        variant="caption"
+                        sx={{
+                          maxWidth: '16rem',
+                          maxHeight: '8rem',
+                          overflow: 'hidden',
+                          textOverflow: 'ellipsis',
+                        }}
+                      >
+                        ({parseError(data.error)})
+                      </Typography>
+                    )}
+                  </Stack>
+                ),
+              })
+            }
             return
           }
           config.onSuccess?.(data as DataType, { enqueueSnackbar })

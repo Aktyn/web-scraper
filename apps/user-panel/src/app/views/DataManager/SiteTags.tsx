@@ -17,23 +17,25 @@ export const SiteTags = () => {
 
   const deleteSiteTagRequest = useApiRequest(window.electronAPI.deleteSiteTag)
   const deleteLooseTagsRequest = useApiRequest(window.electronAPI.deleteLooseSiteTags)
-  const columns = useTableColumns<SiteTag>([
-    {
-      id: 'id',
-      header: 'ID',
-      accessor: 'id',
-    },
-    {
-      id: 'name',
-      header: 'Name',
-      accessor: 'name',
-    },
-    {
-      id: 'description',
-      header: 'Description',
-      accessor: 'description',
-    },
-  ])
+  const columns = useTableColumns<SiteTag>({
+    definitions: [
+      {
+        id: 'id',
+        header: 'ID',
+        accessor: 'id',
+      },
+      {
+        id: 'name',
+        header: 'Name',
+        accessor: 'name',
+      },
+      {
+        id: 'description',
+        header: 'Description',
+        accessor: 'description',
+      },
+    ],
+  })
 
   const [siteTagToDelete, setSiteTagToDelete] = useState<SiteTag | null>(null)
   const [siteTagToEdit, setSiteTagToEdit] = useState<SiteTag | null>(null)

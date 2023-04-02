@@ -25,6 +25,8 @@ const rendererToElectronMessageNames = [
   'deleteSite',
   'updateSite',
   'getSitePreview',
+
+  'getSiteInstructions',
 ] as const
 
 const api = {

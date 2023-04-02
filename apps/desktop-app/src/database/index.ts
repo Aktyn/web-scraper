@@ -1,6 +1,7 @@
 import * as account from './account'
 import prisma from './client'
 import * as site from './site'
+import * as siteInstructions from './siteInstructions'
 import * as siteTag from './siteTag'
 import * as userData from './userData'
 
@@ -9,8 +10,11 @@ const Database = {
   account,
   site,
   siteTag,
+  siteInstructions,
   userData,
+
   disconnect: () => prisma.$disconnect(),
+
   utils: {
     extractCursor: <DataType, Property extends keyof DataType>(
       data: DataType[],

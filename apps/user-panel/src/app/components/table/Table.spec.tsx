@@ -30,7 +30,7 @@ describe('Table', () => {
   ]
 
   const MockTable = () => {
-    const columns = useTableColumns(mockColumnsDefinitions)
+    const columns = useTableColumns({ definitions: mockColumnsDefinitions })
     return <Table columns={columns} keyProperty="id" data={mockData} />
   }
 

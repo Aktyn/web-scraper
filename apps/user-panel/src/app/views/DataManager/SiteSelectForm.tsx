@@ -19,44 +19,46 @@ export const SiteSelectForm = ({ site: selectedSite, onSelect }: SiteSelectFormP
   const [searchValue, setSearchValue] = useState('')
 
   const columns = useTableColumns<Site>(
-    [
-      {
-        id: 'url',
-        header: 'URL',
-        accessor: (site) => <UrlButton maxWidth="16rem">{site.url}</UrlButton>,
-      },
-      {
-        id: 'language',
-        header: 'Language',
-        accessor: 'language',
-      },
-      {
-        id: 'tags',
-        header: 'Tags',
-        cellSx: {
-          py: 0,
+    {
+      definitions: [
+        {
+          id: 'url',
+          header: 'URL',
+          accessor: (site) => <UrlButton maxWidth="16rem">{site.url}</UrlButton>,
         },
-        accessor: (site) => <TagsCellValue tags={site.tags} />,
-      },
-      {
-        id: 'options',
-        header: '',
-        accessor: (site) =>
-          selectedSite?.id === site.id ? (
-            <BooleanValue value={true} sx={{ justifyContent: 'center' }} />
-          ) : (
-            <Tooltip title="Select" disableInteractive>
-              <IconButton size="small" onClick={() => onSelect?.(site)}>
-                <AddRounded />
-              </IconButton>
-            </Tooltip>
-          ),
-        cellSx: {
-          textAlign: 'center',
-          py: 0,
+        {
+          id: 'language',
+          header: 'Language',
+          accessor: 'language',
         },
-      },
-    ],
+        {
+          id: 'tags',
+          header: 'Tags',
+          cellSx: {
+            py: 0,
+          },
+          accessor: (site) => <TagsCellValue tags={site.tags} />,
+        },
+        {
+          id: 'options',
+          header: '',
+          accessor: (site) =>
+            selectedSite?.id === site.id ? (
+              <BooleanValue value={true} sx={{ justifyContent: 'center' }} />
+            ) : (
+              <Tooltip title="Select" disableInteractive>
+                <IconButton size="small" onClick={() => onSelect?.(site)}>
+                  <AddRounded />
+                </IconButton>
+              </Tooltip>
+            ),
+          cellSx: {
+            textAlign: 'center',
+            py: 0,
+          },
+        },
+      ],
+    },
     [],
   )
 

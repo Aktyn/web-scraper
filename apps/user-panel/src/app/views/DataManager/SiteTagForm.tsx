@@ -52,36 +52,38 @@ export const SiteTagForm = ({
   const siteTagId = siteTag?.id
 
   const columns = useTableColumns<SiteTag>(
-    [
-      {
-        id: 'name',
-        header: 'Name',
-        accessor: 'name',
-      },
-      {
-        id: 'description',
-        header: 'Description',
-        accessor: 'description',
-      },
-      {
-        id: 'options',
-        header: '',
-        accessor: (tag) =>
-          assignedTagsIds?.includes(tag.id) ? (
-            <BooleanValue value={true} sx={{ justifyContent: 'center' }} />
-          ) : (
-            <Tooltip title="Assign" disableInteractive>
-              <IconButton size="small" onClick={() => onAssign?.(tag)}>
-                <AddRounded />
-              </IconButton>
-            </Tooltip>
-          ),
-        cellSx: {
-          textAlign: 'center',
-          py: 0,
+    {
+      definitions: [
+        {
+          id: 'name',
+          header: 'Name',
+          accessor: 'name',
         },
-      },
-    ],
+        {
+          id: 'description',
+          header: 'Description',
+          accessor: 'description',
+        },
+        {
+          id: 'options',
+          header: '',
+          accessor: (tag) =>
+            assignedTagsIds?.includes(tag.id) ? (
+              <BooleanValue value={true} sx={{ justifyContent: 'center' }} />
+            ) : (
+              <Tooltip title="Assign" disableInteractive>
+                <IconButton size="small" onClick={() => onAssign?.(tag)}>
+                  <AddRounded />
+                </IconButton>
+              </Tooltip>
+            ),
+          cellSx: {
+            textAlign: 'center',
+            py: 0,
+          },
+        },
+      ],
+    },
     [assignedTagsIds],
   )
 

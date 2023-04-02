@@ -5,6 +5,7 @@ import type {
   PaginatedApiFunctionWithEncryptedData,
 } from './common'
 import type { Site, SiteTag, UpsertSiteSchema, UpsertSiteTagSchema } from './site'
+import type { SiteInstructions } from './siteInstructions'
 import type { UserSettings } from './user'
 
 /**
@@ -35,6 +36,8 @@ export enum RendererToElectronMessage {
   deleteSite = 'deleteSite',
   updateSite = 'updateSite',
   getSitePreview = 'getSitePreview',
+
+  getSiteInstructions = 'getSiteInstructions',
 }
 
 export type ElectronApi = {
@@ -88,4 +91,8 @@ export type ElectronApi = {
   [RendererToElectronMessage.getSitePreview]: (
     url: string,
   ) => Promise<{ imageBase64: string } | ApiError>
+
+  [RendererToElectronMessage.getSiteInstructions]: (
+    siteId: Site['id'],
+  ) => Promise<SiteInstructions | ApiError>
 }

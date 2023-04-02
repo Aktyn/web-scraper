@@ -44,68 +44,70 @@ export const Accounts = () => {
   )
 
   const columns = useTableColumns<Account>(
-    [
-      {
-        id: 'id',
-        header: 'ID',
-        accessor: 'id',
-      },
-      {
-        id: 'createdAt',
-        header: 'Created',
-        accessor: 'createdAt',
-      },
-      {
-        id: 'loginOrEmail',
-        header: 'Login or email',
-        accessor: (row) => <CopyableLabel maxWidth="8rem">{row.loginOrEmail}</CopyableLabel>,
-        encrypted: true,
-      },
-      {
-        id: 'password',
-        header: 'Password',
-        accessor: (row) => <CopyableLabel maxWidth="8rem">{row.password}</CopyableLabel>,
-        encrypted: true,
-      },
-      {
-        id: 'additionalCredentialsData',
-        header: 'Additional credentials data',
-        accessor: 'additionalCredentialsData',
-        encrypted: true,
-        jsonString: true,
-      },
-      {
-        id: 'lastUsed',
-        header: 'Last used',
-        accessor: 'lastUsed',
-      },
-      {
-        id: 'active',
-        header: 'Active',
-        accessor: 'active',
-      },
-      {
-        id: 'siteId',
-        header: 'Site',
-        accessor: (account) => (
-          <Tooltip title="Show details" disableInteractive>
-            <LoadingIconButton
-              size="small"
-              onClick={() => {
-                setOpenSiteForAccountId(account.id)
-                handleShowSite(account.siteId)
-              }}
-              loading={openSiteForAccountId === account.id && getSiteRequest.submitting}
-            >
-              <VisibilityRounded />
-            </LoadingIconButton>
-          </Tooltip>
-        ),
-        cellSx: {
-          py: 0,
+    {
+      definitions: [
+        {
+          id: 'id',
+          header: 'ID',
+          accessor: 'id',
         },
-      },
-    ],
+        {
+          id: 'createdAt',
+          header: 'Created',
+          accessor: 'createdAt',
+        },
+        {
+          id: 'loginOrEmail',
+          header: 'Login or email',
+          accessor: (row) => <CopyableLabel maxWidth="8rem">{row.loginOrEmail}</CopyableLabel>,
+          encrypted: true,
+        },
+        {
+          id: 'password',
+          header: 'Password',
+          accessor: (row) => <CopyableLabel maxWidth="8rem">{row.password}</CopyableLabel>,
+          encrypted: true,
+        },
+        {
+          id: 'additionalCredentialsData',
+          header: 'Additional credentials data',
+          accessor: 'additionalCredentialsData',
+          encrypted: true,
+          jsonString: true,
+        },
+        {
+          id: 'lastUsed',
+          header: 'Last used',
+          accessor: 'lastUsed',
+        },
+        {
+          id: 'active',
+          header: 'Active',
+          accessor: 'active',
+        },
+        {
+          id: 'siteId',
+          header: 'Site',
+          accessor: (account) => (
+            <Tooltip title="Show details" disableInteractive>
+              <LoadingIconButton
+                size="small"
+                onClick={() => {
+                  setOpenSiteForAccountId(account.id)
+                  handleShowSite(account.siteId)
+                }}
+                loading={openSiteForAccountId === account.id && getSiteRequest.submitting}
+              >
+                <VisibilityRounded />
+              </LoadingIconButton>
+            </Tooltip>
+          ),
+          cellSx: {
+            py: 0,
+          },
+        },
+      ],
+    },
     [getSiteRequest.submitting, handleShowSite, openSiteForAccountId],
   )
 

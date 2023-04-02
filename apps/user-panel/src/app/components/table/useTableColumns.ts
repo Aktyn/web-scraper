@@ -16,15 +16,27 @@ export interface ColumnDefinition<DataType> {
   // filter?: (props: FilterPropsBase<any>) => React.ReactElement<FilterPropsBase<any>>
 }
 
+interface CustomActionDefinition<DataType> {
+  /** Unique key for the action component */
+  id: string
+  accessor: (row: DataType) => string | ReactNode
+}
+
 export function useTableColumns<DataType extends object>(
-  columnsDefinitions: ColumnDefinition<DataType>[],
+  data: {
+    definitions: ColumnDefinition<DataType>[]
+    customActions?: CustomActionDefinition<DataType>[]
+  },
   deps: DependencyList = [],
 ) {
   return useMemo(
     () => ({
-      definitions: columnsDefinitions,
+      definitions: data.definitions,
+      customActions: data.customActions ?? emptyArray,
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     deps,
   )
 }
+
+const emptyArray: never[] = []

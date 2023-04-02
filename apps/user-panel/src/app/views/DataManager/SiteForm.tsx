@@ -214,7 +214,7 @@ export const SiteForm = ({ site, onSuccess }: SiteFormProps) => {
           </Stack>
           {site && (
             <DrawerToggle open={showSiteAccounts} onToggle={setShowSiteAccounts}>
-              Accounts
+              Preview accounts
             </DrawerToggle>
           )}
         </Stack>

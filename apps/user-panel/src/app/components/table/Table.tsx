@@ -10,6 +10,7 @@ import {
 } from 'react'
 import { AddRounded, DeleteRounded, EditRounded, RefreshRounded } from '@mui/icons-material'
 import {
+  Box,
   IconButton,
   Stack,
   Table as MuiTable,
@@ -79,7 +80,7 @@ export const Table = genericMemo(
       const [fetchingData, setFetchingData] = useState(false)
 
       const mainTableHeaderSize = 51
-      const hasActionsColumn = !!onDelete || !!onEdit
+      const hasActionsColumn = !!onDelete || !!onEdit || columns.customActions.length > 0
       const columnsCount = columns.definitions.length + (hasActionsColumn ? 1 : 0)
 
       const fetchDataChunk = useCallback(
@@ -247,6 +248,9 @@ export const Table = genericMemo(
                           justifyContent="end-start"
                           gap={1}
                         >
+                          {columns.customActions.map((customAction) => (
+                            <Box key={customAction.id}>{customAction.accessor(row)}</Box>
+                          ))}
                           {onEdit && (
                             <Tooltip title="Edit" disableInteractive>
                               <IconButton size="small" onClick={() => onEdit(row)}>

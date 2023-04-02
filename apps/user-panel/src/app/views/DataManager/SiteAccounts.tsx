@@ -11,25 +11,27 @@ interface SiteAccountsProps {
 }
 
 export const SiteAccounts = ({ site }: SiteAccountsProps) => {
-  const columns = useTableColumns<Account>([
-    {
-      id: 'loginOrEmail',
-      header: 'Login or email',
-      accessor: (row) => <CopyableLabel>{row.loginOrEmail}</CopyableLabel>,
-      encrypted: true,
-    },
-    {
-      id: 'password',
-      header: 'Password',
-      accessor: (row) => <CopyableLabel>{row.password}</CopyableLabel>,
-      encrypted: true,
-    },
-    {
-      id: 'active',
-      header: 'Active',
-      accessor: 'active',
-    },
-  ])
+  const columns = useTableColumns<Account>({
+    definitions: [
+      {
+        id: 'loginOrEmail',
+        header: 'Login or email',
+        accessor: (row) => <CopyableLabel>{row.loginOrEmail}</CopyableLabel>,
+        encrypted: true,
+      },
+      {
+        id: 'password',
+        header: 'Password',
+        accessor: (row) => <CopyableLabel>{row.password}</CopyableLabel>,
+        encrypted: true,
+      },
+      {
+        id: 'active',
+        header: 'Active',
+        accessor: 'active',
+      },
+    ],
+  })
 
   const getAccountsRequest = useEncryptedApiRequest(window.electronAPI.getAccounts)
   const getSiteAccountsRequest = useCallback<PaginatedApiFunction<Account, 'id'>>(
