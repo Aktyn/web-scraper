@@ -11,7 +11,11 @@ export async function getSiteInstructions(siteId: Site['id']) {
     include: {
       Actions: {
         include: {
-          ActionSteps: true,
+          ActionSteps: {
+            orderBy: {
+              orderIndex: 'asc',
+            },
+          },
         },
       },
       Procedures: {

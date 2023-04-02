@@ -101,7 +101,7 @@ export const SiteInstructionsForm = ({ site }: SiteInstructionsFormProps) => {
       site.id,
     )
     //TODO: disable eslint react hook dependency
-  }, [site])
+  }, [])
 
   if (!site) {
     return null

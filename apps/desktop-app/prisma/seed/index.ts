@@ -1,6 +1,7 @@
 import { PrismaClient } from '@prisma/client'
 import { seedAccount } from './account'
 import { seedSite } from './site'
+import { seedSiteInstructions } from './siteInstructions'
 import { seedSiteTag } from './siteTag'
 import { seedSiteTagsRelation } from './siteTagsRelation'
 
@@ -10,6 +11,7 @@ async function main() {
   await seedSiteTag(prisma)
   await seedSite(prisma)
   await seedSiteTagsRelation(prisma)
+  await seedSiteInstructions(prisma)
   await seedAccount(prisma)
 }
 
