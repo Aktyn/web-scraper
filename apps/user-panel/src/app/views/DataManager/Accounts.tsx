@@ -2,8 +2,7 @@ import { useCallback, useRef, useState } from 'react'
 import { AddRounded, VisibilityRounded } from '@mui/icons-material'
 import { Box, Tooltip } from '@mui/material'
 import type { Account, Site } from '@web-scraper/common'
-import { AccountForm } from './AccountForm'
-import { SiteForm } from './SiteForm'
+import { AccountForm } from '../../components/account/AccountForm'
 import { TransitionType, ViewTransition } from '../../components/animation/ViewTransition'
 import { ConfirmationDialog } from '../../components/common/ConfirmationDialog'
 import { CopyableLabel } from '../../components/common/CopyableLabel'
@@ -11,6 +10,7 @@ import type { CustomDrawerRef } from '../../components/common/CustomDrawer'
 import { CustomDrawer } from '../../components/common/CustomDrawer'
 import { EncryptedContentIconButton } from '../../components/common/button/EncryptedContentIconButton'
 import { LoadingIconButton } from '../../components/common/button/LoadingIconButton'
+import { SiteForm } from '../../components/site/SiteForm'
 import type { TableRef } from '../../components/table'
 import { Table, useTableColumns } from '../../components/table'
 import { useEncryptedApiRequest } from '../../components/table/useEncryptedApiRequest'
@@ -21,16 +21,20 @@ export const Accounts = () => {
   const siteDrawerRef = useRef<CustomDrawerRef>(null)
   const accountDrawerRef = useRef<CustomDrawerRef>(null)
 
-  const getSiteRequest = useApiRequest(window.electronAPI.getSite)
+  const { submit: getSiteRequest, submitting: gettingSiteRequest } = useApiRequest(
+    window.electronAPI.getSite,
+  )
   const getAccountsEncryptedRequest = useEncryptedApiRequest(window.electronAPI.getAccounts)
-  const deleteAccountRequest = useApiRequest(window.electronAPI.deleteAccount)
+  const { submit: deleteAccountRequest, submitting: deletingAccountRequest } = useApiRequest(
+    window.electronAPI.deleteAccount,
+  )
 
   const [showSite, setShowSite] = useState<Site | null>(null)
   const [openSiteForAccountId, setOpenSiteForAccountId] = useState<Site['id'] | null>(null)
 
   const handleShowSite = useCallback(
     (siteId: Site['id']) => {
-      getSiteRequest.submit(
+      getSiteRequest(
         {
           onSuccess: (site) => {
             setShowSite(site)
@@ -40,7 +44,8 @@ export const Accounts = () => {
         siteId,
       )
     },
-    [getSiteRequest],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [],
   )
 
   const columns = useTableColumns<Account>(
@@ -96,7 +101,7 @@ export const Accounts = () => {
                   setOpenSiteForAccountId(account.id)
                   handleShowSite(account.siteId)
                 }}
-                loading={openSiteForAccountId === account.id && getSiteRequest.submitting}
+                loading={openSiteForAccountId === account.id && gettingSiteRequest}
               >
                 <VisibilityRounded />
               </LoadingIconButton>
@@ -108,7 +113,7 @@ export const Accounts = () => {
         },
       ],
     },
-    [getSiteRequest.submitting, handleShowSite, openSiteForAccountId],
+    [gettingSiteRequest, handleShowSite, openSiteForAccountId],
   )
 
   const [accountToDelete, setAccountToDelete] = useState<Account | null>(null)
@@ -132,7 +137,7 @@ export const Accounts = () => {
     if (!accountToDelete) {
       return
     }
-    deleteAccountRequest.submit(
+    deleteAccountRequest(
       {
         onSuccess: (res, { enqueueSnackbar }) => {
           setOpenAccountDeleteDialog(false)
@@ -165,7 +170,7 @@ export const Accounts = () => {
         open={openAccountDeleteDialog}
         onClose={() => setOpenAccountDeleteDialog(false)}
         onConfirm={handleDeleteConfirm}
-        loading={deleteAccountRequest.submitting}
+        loading={deletingAccountRequest}
         titleContent="Confirm action"
         confirmButtonText="Delete"
       >

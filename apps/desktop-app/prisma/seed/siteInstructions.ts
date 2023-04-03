@@ -7,12 +7,6 @@ import {
 } from '@web-scraper/common'
 
 export async function seedSiteInstructions(prisma: PrismaClient) {
-  // await prisma.site.create({ data: { url: 'https://www.onet.pl/', language: 'PL' } })
-  // await prisma.site.create({ data: { url: 'https://www.interia.pl/', language: 'PL' } })
-  // await prisma.site.create({ data: { url: 'https://www.pyszne.pl/', language: 'PL' } })
-  // await prisma.site.create({ data: { url: 'https://allegro.pl/', language: 'PL' } })
-  // await prisma.site.create({ data: { url: 'https://coinmarketcap.com/', language: 'PL' } })
-
   const instructions1 = await prisma.siteInstructions.create({ data: { siteId: 1 } })
   const loginAction = await prisma.action.create({
     data: { name: 'login', siteInstructionsId: instructions1.id, url: null },

@@ -10,12 +10,12 @@ import {
   type UpsertSiteTagSchema,
 } from '@web-scraper/common'
 import { useForm } from 'react-hook-form'
-import { UrlButton } from '../../components/common/button/UrlButton'
-import { SearchInput } from '../../components/common/input/SearchInput'
-import { FormInput } from '../../components/form/FormInput'
-import { Table, type TableRef, useTableColumns } from '../../components/table'
-import { BooleanValue } from '../../components/table/BooleanValue'
 import { useApiRequest } from '../../hooks/useApiRequest'
+import { UrlButton } from '../common/button/UrlButton'
+import { SearchInput } from '../common/input/SearchInput'
+import { FormInput } from '../form/FormInput'
+import { Table, type TableRef, useTableColumns } from '../table'
+import { BooleanValue } from '../table/BooleanValue'
 
 interface SiteTagFormProps {
   siteTag?: SiteTag | null

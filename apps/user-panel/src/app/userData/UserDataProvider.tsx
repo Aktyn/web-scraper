@@ -16,7 +16,8 @@ export const UserDataProvider = ({ children }: PropsWithChildren) => {
     getUserSettingsRequest.submit({
       onSuccess: setSettings,
     })
-  }, [getUserSettingsRequest])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const updateSetting = useCallback<
     <KeyType extends keyof UserSettings>(key: KeyType, value: UserSettings[KeyType]) => void
@@ -25,7 +26,8 @@ export const UserDataProvider = ({ children }: PropsWithChildren) => {
       setSettings((prev) => ({ ...prev, [key]: value }))
       setUserSettingsRequest.submit({}, key, value)
     },
-    [setUserSettingsRequest],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [],
   )
 
   return (

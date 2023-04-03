@@ -20,14 +20,14 @@ import {
 import { type Site, upsertSiteSchema, type UpsertSiteSchema } from '@web-scraper/common'
 import anime from 'animejs'
 import { useFieldArray, useForm } from 'react-hook-form'
-import { SiteAccounts } from './SiteAccounts'
-import { SiteTagForm } from './SiteTagForm'
-import { NestedDrawer } from '../../components/common/NestedDrawer'
-import { UrlPreview } from '../../components/common/UrlPreview'
-import { DrawerToggle } from '../../components/common/button/DrawerToggle'
-import { FormInput } from '../../components/form/FormInput'
 import { useApiRequest } from '../../hooks/useApiRequest'
 import { formatDate } from '../../utils'
+import { SiteAccounts } from '../account/SiteAccounts'
+import { NestedDrawer } from '../common/NestedDrawer'
+import { UrlPreview } from '../common/UrlPreview'
+import { DrawerToggle } from '../common/button/DrawerToggle'
+import { FormInput } from '../form/FormInput'
+import { SiteTagForm } from '../siteTag/SiteTagForm'
 
 interface SiteFormProps {
   site?: Site | null

@@ -2,9 +2,9 @@ import { useCallback } from 'react'
 import { Divider, Stack } from '@mui/material'
 import type { Account, PaginatedApiFunction, Site } from '@web-scraper/common'
 import { CopyableLabel } from 'src/app/components/common/CopyableLabel'
-import { UrlButton } from '../../components/common/button/UrlButton'
-import { Table, useTableColumns } from '../../components/table'
-import { useEncryptedApiRequest } from '../../components/table/useEncryptedApiRequest'
+import { UrlButton } from '../common/button/UrlButton'
+import { Table, useTableColumns } from '../table'
+import { useEncryptedApiRequest } from '../table/useEncryptedApiRequest'
 
 interface SiteAccountsProps {
   site: Site

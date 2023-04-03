@@ -2,11 +2,11 @@ import { useCallback, useRef, useState } from 'react'
 import { AddRounded } from '@mui/icons-material'
 import { IconButton, Stack, Tooltip } from '@mui/material'
 import type { Site, PaginatedApiFunction } from '@web-scraper/common'
-import { UrlButton } from '../../components/common/button/UrlButton'
-import { SearchInput } from '../../components/common/input/SearchInput'
-import { Table, type TableRef, useTableColumns } from '../../components/table'
-import { BooleanValue } from '../../components/table/BooleanValue'
-import { TagsCellValue } from '../../components/table/TagsCellValue'
+import { UrlButton } from '../common/button/UrlButton'
+import { SearchInput } from '../common/input/SearchInput'
+import { Table, type TableRef, useTableColumns } from '../table'
+import { BooleanValue } from '../table/BooleanValue'
+import { TagsCellValue } from '../table/TagsCellValue'
 
 interface SiteSelectFormProps {
   site?: Site | null

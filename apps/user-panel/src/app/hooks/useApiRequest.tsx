@@ -15,6 +15,7 @@ export function useApiRequest<RequestFunctionType extends AnyApiFunction>(
   const { enqueueSnackbar } = useSnackbar()
 
   const [submitting, setSubmitting] = useState(false)
+  const [data, setData] = useState<Awaited<ReturnType<RequestFunctionType>> | null>(null)
 
   type DataType = Awaited<ReturnType<RequestFunctionType>> extends ApiError | infer T ? T : never
 
@@ -28,6 +29,7 @@ export function useApiRequest<RequestFunctionType extends AnyApiFunction>(
       setSubmitting(true)
       cancellable(request(...args))
         .then((data) => {
+          setData(data as never)
           setSubmitting(false)
           if ('errorCode' in data && data.errorCode !== ErrorCode.NO_ERROR) {
             if (config.onError) {
@@ -74,7 +76,8 @@ export function useApiRequest<RequestFunctionType extends AnyApiFunction>(
     () => ({
       submit,
       submitting,
+      data,
     }),
-    [submit, submitting],
+    [data, submit, submitting],
   )
 }

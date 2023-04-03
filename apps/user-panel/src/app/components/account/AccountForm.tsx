@@ -30,16 +30,16 @@ import {
   type UpsertAccountSchema,
 } from '@web-scraper/common'
 import { useForm } from 'react-hook-form'
-import { SiteSelectForm } from './SiteSelectForm'
-import { NestedDrawer } from '../../components/common/NestedDrawer'
-import { DrawerToggle } from '../../components/common/button/DrawerToggle'
-import { ToggleIconButton } from '../../components/common/button/ToggleIconButton'
-import { UrlButton } from '../../components/common/button/UrlButton'
-import { FormInput } from '../../components/form/FormInput'
-import { FormJsonInput } from '../../components/form/FormJsonInput'
 import { UserDataContext } from '../../context/userDataContext'
 import { useApiRequest } from '../../hooks/useApiRequest'
 import { formatDate } from '../../utils'
+import { NestedDrawer } from '../common/NestedDrawer'
+import { DrawerToggle } from '../common/button/DrawerToggle'
+import { ToggleIconButton } from '../common/button/ToggleIconButton'
+import { UrlButton } from '../common/button/UrlButton'
+import { FormInput } from '../form/FormInput'
+import { FormJsonInput } from '../form/FormJsonInput'
+import { SiteSelectForm } from '../site/SiteSelectForm'
 
 interface AccountFormProps {
   account?: Account | null
@@ -85,7 +85,8 @@ export const AccountForm = ({ account, onSuccess }: AccountFormProps) => {
       },
       siteId,
     )
-  }, [getSiteRequest, siteId])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [siteId])
 
   const onSubmit = useCallback(
     (data: UpsertAccountSchema) => {

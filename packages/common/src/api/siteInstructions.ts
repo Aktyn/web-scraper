@@ -1,3 +1,5 @@
+import * as yup from 'yup'
+
 export interface SiteInstructions {
   id: number
   createdAt: Date
@@ -91,3 +93,78 @@ export interface FlowStep {
   onSuccess: FlowStep | null
   onFailure: FlowStep | null
 }
+
+export const upsertActionStepSchema = yup.object({
+  type: yup.mixed<ActionStepType>().oneOf(Object.values(ActionStepType)).required(),
+  data: yup.object().nullable().default(null).notRequired(), //TODO: more specific schema depending on `type` value
+  orderIndex: yup.number().required(),
+  actionId: yup.number().required(),
+})
+
+export const upsertActionSchema = yup.object({
+  name: yup.string().default('').required(),
+  url: yup.string().nullable().default(null).notRequired(),
+  siteInstructionsId: yup.number().required(),
+  actionSteps: yup
+    .array()
+    .of(upsertActionStepSchema.omit(['actionId']))
+    .default([])
+    .required(),
+})
+
+type FlowSchemaTypeHelper = yup.ObjectSchema<
+  {
+    actionName: string
+    globalReturnValues: string | null
+    onSuccess: object | null
+    onFailure: object | null
+  },
+  yup.AnyObject,
+  {
+    actionName: undefined
+    globalReturnValues: null
+    onSuccess: null
+    onFailure: null
+  },
+  ''
+>
+
+const upsertFlowSchema: FlowSchemaTypeHelper = yup.object({
+  actionName: yup
+    .string()
+    .matches(/^(action|global)\.[^.].*/)
+    .required(),
+  globalReturnValues: yup.string().nullable().default(null).notRequired(),
+  onSuccess: yup.lazy(() =>
+    upsertFlowSchema.nullable().default(null).notRequired(),
+  ) as unknown as yup.ObjectSchema<yup.AnyObject>,
+  onFailure: yup.lazy(() =>
+    upsertFlowSchema.nullable().default(null).notRequired(),
+  ) as unknown as yup.ObjectSchema<yup.AnyObject>,
+})
+
+export const upsertProcedureSchema = yup.object({
+  type: yup.mixed<ProcedureType>().oneOf(Object.values(ProcedureType)).required(),
+  startUrl: yup.string().default('').required(),
+  waitFor: yup.string().nullable().default(null).notRequired(),
+  siteInstructionsId: yup.number().required(),
+  flow: upsertFlowSchema.nullable().default(null).notRequired(),
+})
+
+export const upsertSiteInstructionsSchema = yup
+  .object({
+    siteId: yup.number().required(),
+    actions: yup
+      .array()
+      .of(upsertActionSchema.omit(['siteInstructionsId']))
+      .default([])
+      .required(),
+    procedures: yup
+      .array()
+      .of(upsertProcedureSchema.omit(['siteInstructionsId']))
+      .default([])
+      .required(),
+  })
+  .required()
+
+export type UpsertSiteInstructionsSchema = yup.InferType<typeof upsertSiteInstructionsSchema>

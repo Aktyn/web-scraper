@@ -1,14 +1,14 @@
 import { useCallback, useRef, useState } from 'react'
 import { Box, IconButton, type IconButtonProps, SvgIcon, Tooltip } from '@mui/material'
 import type { Site } from '@web-scraper/common'
-import { SiteForm } from './SiteForm'
-import { SiteInstructionsForm } from './SiteInstructionsForm'
 import { TransitionType, ViewTransition } from '../../components/animation/ViewTransition'
 import { ConfirmationDialog } from '../../components/common/ConfirmationDialog'
 import type { CustomDrawerRef } from '../../components/common/CustomDrawer'
 import { CustomDrawer } from '../../components/common/CustomDrawer'
 import { UrlButton } from '../../components/common/button/UrlButton'
 import { ReactComponent as CogsIcon } from '../../components/icons/cogs.svg'
+import { SiteForm } from '../../components/site/SiteForm'
+import { SiteInstructionsForm } from '../../components/siteInstructions/SiteInstructionsForm'
 import { Table, type TableRef, useTableColumns } from '../../components/table'
 import { TagsCellValue } from '../../components/table/TagsCellValue'
 import { useApiRequest } from '../../hooks/useApiRequest'
@@ -18,7 +18,9 @@ export const Sites = () => {
   const siteDrawerRef = useRef<CustomDrawerRef>(null)
   const siteInstructionsDrawerRef = useRef<CustomDrawerRef>(null)
 
-  const deleteSiteRequest = useApiRequest(window.electronAPI.deleteSite)
+  const { submit: deleteSiteRequest, submitting: deletingSiteRequest } = useApiRequest(
+    window.electronAPI.deleteSite,
+  )
   const columns = useTableColumns<Site>(
     {
       definitions: [
@@ -85,7 +87,7 @@ export const Sites = () => {
     if (!siteToDelete) {
       return
     }
-    deleteSiteRequest.submit(
+    deleteSiteRequest(
       {
         onSuccess: (res, { enqueueSnackbar }) => {
           setOpenSiteDeleteDialog(false)
@@ -119,7 +121,7 @@ export const Sites = () => {
         open={openSiteDeleteDialog}
         onClose={() => setOpenSiteDeleteDialog(false)}
         onConfirm={handleDeleteConfirm}
-        loading={deleteSiteRequest.submitting}
+        loading={deletingSiteRequest}
         titleContent="Confirm action"
         confirmButtonText="Delete"
       >

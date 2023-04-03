@@ -422,6 +422,94 @@ describe('registerRequestsHandler', () => {
       tags: [],
     })
   })
+
+  it('should return site instructions with given id', async () => {
+    databaseMock.siteInstructions.findUnique.mockResolvedValue({
+      ...mockData.siteInstructions[0],
+    })
+    databaseMock.flowStep.findUnique.mockResolvedValue({
+      ...mockData.flowSteps[0],
+    })
+
+    registerRequestsHandler()
+
+    const getSiteInstructions = handlers.get(
+      'getSiteInstructions',
+    ) as HandlersInterface[RendererToElectronMessage.getSiteInstructions]
+
+    expect(getSiteInstructions).toBeDefined()
+    await expect(getSiteInstructions(null as never, 1)).resolves.toEqual({
+      id: 1,
+      createdAt: new Date('2023-02-19T23:40:10.302Z'),
+      siteId: 1,
+      actions: [
+        {
+          actionSteps: [
+            {
+              actionId: 1,
+              data: {
+                element: 'body > input[type=text]',
+              },
+              id: 1,
+              orderIndex: 1,
+              type: 'fillInput',
+            },
+            {
+              actionId: 1,
+              data: {
+                element: 'body > button',
+                waitForNavigation: false,
+              },
+              id: 2,
+              orderIndex: 2,
+              type: 'pressButton',
+            },
+            {
+              actionId: 1,
+              data: {
+                element: 'body > div',
+                mapSuccess: [
+                  {
+                    content: 'success',
+                    error: 'error.common.noError',
+                  },
+                ],
+              },
+              id: 3,
+              orderIndex: 3,
+              type: 'checkSuccess',
+            },
+          ],
+          id: 1,
+          name: 'login',
+          siteInstructionsId: 1,
+          url: null,
+        },
+      ],
+      procedures: [
+        {
+          flow: {
+            actionName: 'action.name',
+            globalReturnValues: null,
+            id: 1,
+            onFailure: null,
+            onSuccess: {
+              actionName: 'global.finishProcedure',
+              globalReturnValues: null,
+              id: 2,
+              onFailure: null,
+              onSuccess: null,
+            },
+          },
+          id: 1,
+          siteInstructionsId: 1,
+          startUrl: '{{URL.ORIGIN}}/login',
+          type: 'login',
+          waitFor: 'body > h1',
+        },
+      ],
+    })
+  })
 })
 
 const decryptedAccounts = [
