@@ -94,9 +94,33 @@ export interface FlowStep {
   onFailure: FlowStep | null
 }
 
+const mapSiteErrorSchema = yup.object({
+  content: yup.string().required(),
+  errorType: yup.mixed<ActionStepErrorType>().oneOf(Object.values(ActionStepErrorType)).required(),
+})
+
 export const upsertActionStepSchema = yup.object({
   type: yup.mixed<ActionStepType>().oneOf(Object.values(ActionStepType)).required(),
-  data: yup.object().nullable().default(null).notRequired(), //TODO: more specific schema depending on `type` value
+  data: yup
+    .object({
+      duration: yup.number().nullable().default(null).notRequired(),
+      element: yup.string().nullable().default(null).notRequired(),
+      value: yup.string().nullable().default(null).notRequired(),
+      waitForNavigation: yup.boolean().nullable().default(null).notRequired(),
+      solver: yup
+        .mixed<CaptchaSolverType>()
+        .oneOf(Object.values(CaptchaSolverType))
+        .nullable()
+        .default(null)
+        .notRequired(),
+      elements: yup.array().of(yup.string()).nullable().default([]).notRequired(),
+      mapError: yup.array().of(mapSiteErrorSchema).nullable().default([]).notRequired(),
+      mapSuccess: yup.array().of(mapSiteErrorSchema).nullable().default([]).notRequired(),
+    })
+    .partial()
+    .nullable()
+    .default(null)
+    .notRequired(),
   orderIndex: yup.number().required(),
   actionId: yup.number().required(),
 })
@@ -107,7 +131,7 @@ export const upsertActionSchema = yup.object({
   siteInstructionsId: yup.number().required(),
   actionSteps: yup
     .array()
-    .of(upsertActionStepSchema.omit(['actionId']))
+    .of(upsertActionStepSchema.omit(['actionId', 'orderIndex']))
     .default([])
     .required(),
 })
@@ -153,7 +177,6 @@ export const upsertProcedureSchema = yup.object({
 
 export const upsertSiteInstructionsSchema = yup
   .object({
-    siteId: yup.number().required(),
     actions: yup
       .array()
       .of(upsertActionSchema.omit(['siteInstructionsId']))

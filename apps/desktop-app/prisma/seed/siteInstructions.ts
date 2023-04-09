@@ -9,12 +9,12 @@ import {
 export async function seedSiteInstructions(prisma: PrismaClient) {
   const instructions1 = await prisma.siteInstructions.create({ data: { siteId: 1 } })
   const loginAction = await prisma.action.create({
-    data: { name: 'login', siteInstructionsId: instructions1.id, url: null },
+    data: { name: 'login', siteInstructionsId: instructions1.id, url: '{{URL.ORIGIN}}/login' },
   })
   await prisma.actionStep.create({
     data: {
       type: ActionStepType.FILL_INPUT,
-      data: JSON.stringify({ element: 'body > input[type=text]' }),
+      data: JSON.stringify({ element: 'body > input[type=text]', value: 'test' }),
       orderIndex: 1,
       actionId: loginAction.id,
     },
@@ -32,7 +32,7 @@ export async function seedSiteInstructions(prisma: PrismaClient) {
       type: ActionStepType.CHECK_SUCCESS,
       data: JSON.stringify({
         element: 'body > div',
-        mapSuccess: [{ content: 'success', error: ActionStepErrorType.NO_ERROR }],
+        mapSuccess: [{ content: 'success', errorType: ActionStepErrorType.NO_ERROR }],
       }),
       orderIndex: 3,
       actionId: loginAction.id,

@@ -67,6 +67,15 @@ export const baseThemeOptions: ThemeOptions = {
         },
       ],
     },
+    MuiSelect: {
+      styleOverrides: {
+        select: {
+          '&:focus': {
+            backgroundColor: 'transparent',
+          },
+        },
+      },
+    },
     MuiTabs: {
       styleOverrides: {
         indicator: {
@@ -123,6 +132,11 @@ export const baseThemeOptions: ThemeOptions = {
     MuiDialog: {
       styleOverrides: {
         paper: customPaper,
+      },
+    },
+    MuiAccordion: {
+      styleOverrides: {
+        root: customPaper,
       },
     },
     MuiLink: {

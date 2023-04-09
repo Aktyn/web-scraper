@@ -1,17 +1,10 @@
 import { Stack, Typography } from '@mui/material'
 import type { UpsertSiteInstructionsSchema } from '@web-scraper/common'
-import type { UseFormReturn } from 'react-hook-form'
 import { useFieldArray } from 'react-hook-form'
 
-interface ProceduresFormProps {
-  form: UseFormReturn<UpsertSiteInstructionsSchema>
-}
-
-export const ProceduresForm = ({ form }: ProceduresFormProps) => {
-  const proceduresFields = useFieldArray({
-    control: form.control,
+export const ProceduresForm = () => {
+  const proceduresFields = useFieldArray<UpsertSiteInstructionsSchema, 'procedures'>({
     name: 'procedures',
-    keyName: 'fieldKey',
   })
 
   return (
@@ -20,7 +13,7 @@ export const ProceduresForm = ({ form }: ProceduresFormProps) => {
         Procedures
       </Typography>
       {proceduresFields.fields.map((field) => (
-        <Stack key={field.fieldKey}>{field.startUrl}</Stack>
+        <Stack key={field.id}>{field.startUrl}</Stack>
       ))}
     </Stack>
   )

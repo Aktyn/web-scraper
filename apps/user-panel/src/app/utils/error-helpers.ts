@@ -1,7 +1,7 @@
 import type { ApiError } from '@web-scraper/common'
 import { ErrorCode } from '@web-scraper/common'
 
-export const errorHelpers: { [key in ErrorCode]: string } = {
+export const errorLabels: { [key in ErrorCode]: string } = {
   [ErrorCode.NO_ERROR]: 'No error',
   [ErrorCode.UNKNOWN_ERROR]: 'Unknown error',
   [ErrorCode.API_ERROR]: 'API error',

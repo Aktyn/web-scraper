@@ -17,7 +17,7 @@ import { RootPortal } from './portal/RootPortal'
 import { useCancellablePromise } from '../../hooks/useCancellablePromise'
 import { useDebounce } from '../../hooks/useDebounce'
 import { useStateToRef } from '../../hooks/useStateToRef'
-import { errorHelpers } from '../../utils'
+import { errorLabels } from '../../utils'
 
 interface UrlPreviewProps {
   url: string
@@ -52,7 +52,7 @@ export const UrlPreview = ({ url, width, maxHeight }: UrlPreviewProps) => {
 
           setLoading(false)
           if ('errorCode' in response) {
-            console.warn(errorHelpers[response.errorCode])
+            console.warn(errorLabels[response.errorCode])
             setImagePreviewSrc('')
             return
           }

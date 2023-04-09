@@ -34,6 +34,9 @@ export function getDeepProperty<DataType extends object, PathType extends string
   const properties = path.split('.')
   let value: object = obj
   while (properties.length > 0) {
+    if (value === undefined || value === null) {
+      return (value ?? fallback) as ExtractTypeByPath<DataType, PathType>
+    }
     value = value[properties[0] as keyof typeof value]
     properties.shift()
   }

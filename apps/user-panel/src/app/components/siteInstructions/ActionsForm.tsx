@@ -1,27 +1,59 @@
-import { Stack, Typography } from '@mui/material'
+import { LabelRounded, LinkRounded } from '@mui/icons-material'
+import { InputAdornment, Stack } from '@mui/material'
 import type { UpsertSiteInstructionsSchema } from '@web-scraper/common'
-import type { UseFormReturn } from 'react-hook-form'
-import { useFieldArray } from 'react-hook-form'
+import { useFieldArray, useFormContext } from 'react-hook-form'
+import { StepsForm } from './StepsForm'
+import { ItemsList } from '../common/treeStructure/ItemsList'
+import { FormInput } from '../form/FormInput'
 
-interface ActionsFormProps {
-  form: UseFormReturn<UpsertSiteInstructionsSchema>
-}
-
-export const ActionsForm = ({ form }: ActionsFormProps) => {
-  const actionsFields = useFieldArray({
-    control: form.control,
+export const ActionsForm = () => {
+  const form = useFormContext<UpsertSiteInstructionsSchema>()
+  const actionsFields = useFieldArray<UpsertSiteInstructionsSchema, 'actions'>({
     name: 'actions',
-    keyName: 'fieldKey',
   })
 
   return (
-    <Stack rowGap={2}>
-      <Typography variant="body1" color="text.secondary" fontWeight="bold" textAlign="center">
-        Actions
-      </Typography>
-      {actionsFields.fields.map((field) => (
-        <Stack key={field.fieldKey}>{field.name}</Stack>
-      ))}
-    </Stack>
+    <ItemsList
+      title="Actions"
+      items={actionsFields.fields}
+      onAdd={() =>
+        actionsFields.append({
+          name: '',
+          url: null,
+          actionSteps: [],
+        })
+      }
+      onDelete={(_, index) => actionsFields.remove(index)}
+    >
+      {(field, index) => (
+        <Stack key={field.id} flexGrow={1} gap={2}>
+          <FormInput
+            name={`actions.${index}.name`}
+            form={form}
+            label="Name"
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <LabelRounded />
+                </InputAdornment>
+              ),
+            }}
+          />
+          <FormInput
+            name={`actions.${index}.url`}
+            form={form}
+            label="URL"
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <LinkRounded />
+                </InputAdornment>
+              ),
+            }}
+          />
+          <StepsForm fieldName={`actions.${index}.actionSteps`} />
+        </Stack>
+      )}
+    </ItemsList>
   )
 }

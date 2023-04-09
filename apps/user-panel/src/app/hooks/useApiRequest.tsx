@@ -3,7 +3,7 @@ import { Stack, Typography } from '@mui/material'
 import { type ApiError, ErrorCode } from '@web-scraper/common'
 import { useSnackbar } from 'notistack'
 import { useCancellablePromise } from './useCancellablePromise'
-import { errorHelpers, parseError } from '../utils'
+import { errorLabels, parseError } from '../utils'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyApiFunction = (...args: any[]) => Promise<ApiError | object>
@@ -39,7 +39,7 @@ export function useApiRequest<RequestFunctionType extends AnyApiFunction>(
                 variant: 'error',
                 message: (
                   <Stack alignItems="flex-start" gap={0}>
-                    <Typography variant="body2">{errorHelpers[data.errorCode]}</Typography>
+                    <Typography variant="body2">{errorLabels[data.errorCode]}</Typography>
                     {data.error && (
                       <Typography
                         variant="caption"

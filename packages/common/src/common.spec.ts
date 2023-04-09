@@ -34,4 +34,24 @@ describe('getDeepProperty', () => {
 
     expect(deepProperty).toBe(1337)
   })
+
+  it('should return fallback value if there is no value found', () => {
+    const deepProperty = getDeepProperty(
+      {
+        level1: {
+          level2: {
+            level3: {
+              targetValue: 1337,
+            },
+            sideValue3: 'z',
+          },
+          sideValue2: 'y',
+        },
+        sideValue1: 'x',
+      },
+      'level1.level2.level3.nonExistingValue' as never,
+    )
+
+    expect(deepProperty).toBe(null)
+  })
 })

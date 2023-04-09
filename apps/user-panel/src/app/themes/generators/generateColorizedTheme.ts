@@ -239,6 +239,11 @@ export function generateColorizedTheme({
               paper: glassmorphicPaper,
             },
           },
+          MuiAccordion: {
+            styleOverrides: {
+              root: glassmorphicPaper,
+            },
+          },
           MuiLink: {
             styleOverrides: {
               root: {
