@@ -65,8 +65,8 @@ export const SiteInstructionsForm = ({ site }: SiteInstructionsFormProps) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [site])
 
-  const onSubmit = useCallback((data: UpsertSiteInstructionsSchema) => {
-    console.log(data)
+  const onSubmit = useCallback((_data: UpsertSiteInstructionsSchema) => {
+    // console.log(data)
     //TODO
     // if (siteId) {
     //   updateSiteRequest.submit(
@@ -95,8 +95,6 @@ export const SiteInstructionsForm = ({ site }: SiteInstructionsFormProps) => {
   if (!site) {
     return null
   }
-
-  console.log(form.formState.errors)
 
   return (
     <FormProvider {...form}>
