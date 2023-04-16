@@ -1,8 +1,17 @@
+import { describe, expect, it } from 'vitest'
 import { generateComplementaryColor, mixColors, setSaturation } from './helpers'
 
 describe('mixColors', () => {
-  it('should create an instance', () => {
+  it('should return mixed color by given factor', () => {
     expect(mixColors('#ffffff', '#000000', 0.5)).toBe('rgb(127, 127, 127)')
+  })
+
+  it('should correctly mix alpha channel', () => {
+    expect(mixColors('#ffffffff', '#00000000', 0.5)).toBe('rgba(127, 127, 127, 0.5)')
+  })
+
+  it('should handle alpha channel if only one color has it', () => {
+    expect(mixColors('#ff00ff40', '#000000', 0.75)).toBe('rgba(63, 0, 63, 0.81275)')
   })
 })
 

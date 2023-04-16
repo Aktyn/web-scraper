@@ -1,19 +1,21 @@
 import { type ColorFormat, decomposeColor, recomposeColor } from '@mui/material'
+import { mix } from '@web-scraper/common'
 
-//TODO: make sure it properly handles transparent colors especially when only one of the colors is transparent
 export function mixColors(color1: string, color2: string, factor: number, format?: ColorFormat) {
   const c1 = decomposeColor(color1)
   const c2 = decomposeColor(color2)
-  if (c1.type !== c2.type || c1.colorSpace !== c2.colorSpace) {
-    throw new Error('Colors must be of the same type and color space')
+  if (c1.colorSpace !== c2.colorSpace || c1.values.length < 3 || c2.values.length < 3) {
+    throw new Error('Colors must be of the same type and color space and have at least 3 channels')
   }
 
-  const result = c1.values.map((c, i) => {
-    return c * (1.0 - factor) + c2.values[i] * factor
-  }) as typeof c1.values
+  const rgb = [0, 0, 0].map((_, i) => mix(c1.values[i], c2.values[i], factor))
+  const alpha = mix(c1.values[3] ?? 1, c2.values[3] ?? 1, factor)
+  if (alpha !== 1) {
+    rgb.push(alpha)
+  }
 
   return recomposeColor({
-    values: result,
+    values: rgb as [number, number, number],
     type: format ?? c1.type,
     colorSpace: c1.colorSpace,
   })

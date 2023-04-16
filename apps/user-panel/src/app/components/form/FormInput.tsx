@@ -13,6 +13,7 @@ export const FormInput = <FormSchema extends object>({
   name,
   form,
   required,
+  error: externalError,
   ...textFieldProps
 }: FormInputProps<FormSchema>) => {
   const error = getDeepProperty(form.formState.errors, name as never) as GlobalError | undefined
@@ -22,7 +23,7 @@ export const FormInput = <FormSchema extends object>({
       {...textFieldProps}
       {...form.register(name)}
       required={required}
-      error={!!error}
+      error={externalError || !!error}
       helperText={error?.message}
       variant="standard"
       name={name}

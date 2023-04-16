@@ -89,18 +89,24 @@ export interface Procedure {
 export interface FlowStep {
   id: number
   actionName: `action.${Action['name']}` | `global.${GlobalActionType}`
-  globalReturnValues: string | null
+  globalReturnValues: string[]
   onSuccess: FlowStep | null
   onFailure: FlowStep | null
 }
 
 const mapSiteErrorSchema = yup.object({
-  content: yup.string().required(),
-  errorType: yup.mixed<ActionStepErrorType>().oneOf(Object.values(ActionStepErrorType)).required(),
+  content: yup.string().required('Content is required'),
+  errorType: yup
+    .mixed<ActionStepErrorType>()
+    .oneOf(Object.values(ActionStepErrorType))
+    .required('Error type is required'),
 })
 
 export const upsertActionStepSchema = yup.object({
-  type: yup.mixed<ActionStepType>().oneOf(Object.values(ActionStepType)).required(),
+  type: yup
+    .mixed<ActionStepType>()
+    .oneOf(Object.values(ActionStepType))
+    .required('Type is required'),
   data: yup
     .object({
       duration: yup.number().nullable().default(null).notRequired(),
@@ -126,7 +132,7 @@ export const upsertActionStepSchema = yup.object({
 })
 
 export const upsertActionSchema = yup.object({
-  name: yup.string().default('').required(),
+  name: yup.string().default('').required('Name is required'),
   url: yup.string().nullable().default(null).notRequired(),
   siteInstructionsId: yup.number().required(),
   actionSteps: yup
@@ -139,14 +145,14 @@ export const upsertActionSchema = yup.object({
 type FlowSchemaTypeHelper = yup.ObjectSchema<
   {
     actionName: string
-    globalReturnValues: string | null
+    globalReturnValues: string[]
     onSuccess: object | null
     onFailure: object | null
   },
   yup.AnyObject,
   {
     actionName: undefined
-    globalReturnValues: null
+    globalReturnValues: string[]
     onSuccess: null
     onFailure: null
   },
@@ -156,9 +162,13 @@ type FlowSchemaTypeHelper = yup.ObjectSchema<
 const upsertFlowSchema: FlowSchemaTypeHelper = yup.object({
   actionName: yup
     .string()
-    .matches(/^(action|global)\.[^.].*/)
-    .required(),
-  globalReturnValues: yup.string().nullable().default(null).notRequired(),
+    .matches(/^(action|global)\.[^.].*/, 'Action name is invalid')
+    .required('Action name is required'),
+  globalReturnValues: yup
+    .array()
+    .of(yup.string().required('Value is required'))
+    .default([])
+    .required('Global return values are required'),
   onSuccess: yup.lazy(() =>
     upsertFlowSchema.nullable().default(null).notRequired(),
   ) as unknown as yup.ObjectSchema<yup.AnyObject>,
@@ -168,8 +178,8 @@ const upsertFlowSchema: FlowSchemaTypeHelper = yup.object({
 })
 
 export const upsertProcedureSchema = yup.object({
-  type: yup.mixed<ProcedureType>().oneOf(Object.values(ProcedureType)).required(),
-  startUrl: yup.string().default('').required(),
+  type: yup.mixed<ProcedureType>().oneOf(Object.values(ProcedureType)).required('Type is required'),
+  startUrl: yup.string().default('').required('Start URL is required'),
   waitFor: yup.string().nullable().default(null).notRequired(),
   siteInstructionsId: yup.number().required(),
   flow: upsertFlowSchema.nullable().default(null).notRequired(),
@@ -177,14 +187,17 @@ export const upsertProcedureSchema = yup.object({
 
 export const upsertSiteInstructionsSchema = yup
   .object({
-    actions: yup
-      .array()
-      .of(upsertActionSchema.omit(['siteInstructionsId']))
-      .default([])
-      .required(),
     procedures: yup
       .array()
       .of(upsertProcedureSchema.omit(['siteInstructionsId']))
+      .default([])
+      .required(),
+    actions: yup
+      .array()
+      .of(upsertActionSchema.omit(['siteInstructionsId']))
+      .test('unique', 'Multiple actions with the same name are not allowed', (value) =>
+        value ? value.length === new Set(value.map((v) => v.name))?.size : true,
+      )
       .default([])
       .required(),
   })

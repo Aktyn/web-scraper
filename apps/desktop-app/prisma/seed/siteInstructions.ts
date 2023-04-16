@@ -54,7 +54,7 @@ export async function seedSiteInstructions(prisma: PrismaClient) {
   const flowStart = await prisma.flowStep.create({
     data: {
       actionName: `action.${loginAction.name}`,
-      globalReturnValues: null,
+      globalReturnValues: JSON.stringify([]),
       onSuccessFlowStepId: successFlowStep2.id,
       onFailureFlowStepId: failureFlowStep2.id,
     },

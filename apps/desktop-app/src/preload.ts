@@ -27,6 +27,7 @@ const rendererToElectronMessageNames = [
   'getSitePreview',
 
   'getSiteInstructions',
+  'setSiteInstructions',
 ] as const
 
 const api = {

@@ -1,4 +1,10 @@
-import { ActionStepErrorType, ActionStepType, CaptchaSolverType } from '@web-scraper/common'
+import {
+  ActionStepErrorType,
+  ActionStepType,
+  CaptchaSolverType,
+  GlobalActionType,
+  ProcedureType,
+} from '@web-scraper/common'
 
 export const actionStepTypeNames: { [key in ActionStepType]: string } = {
   [ActionStepType.WAIT]: 'Wait',
@@ -25,4 +31,13 @@ export const actionStepErrorTypeNames: { [key in ActionStepErrorType]: string } 
 
 export const captchaSolverTypeNames: { [key in CaptchaSolverType]: string } = {
   [CaptchaSolverType.SIMPLE]: 'Simple captcha solver',
+}
+
+export const procedureTypeNames: { [key in ProcedureType]: string } = {
+  [ProcedureType.LOGIN]: 'Login',
+}
+
+export const globalActionTypeNames: { [key in GlobalActionType]: string } = {
+  [GlobalActionType.FINISH]: 'Finish',
+  [GlobalActionType.FINISH_WITH_ERROR]: 'Finish with error',
 }

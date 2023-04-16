@@ -32,7 +32,8 @@ export const StepsForm = ({ fieldName }: StepsFormProps) => {
       }
       onDelete={(_, index) => stepsFields.remove(index)}
     >
-      {(field, index) => (
+      {(field, index) => [
+        field.id,
         <Stack key={field.id} flexGrow={1} gap={2}>
           <FormInput
             name={`${fieldName}.${index}.type`}
@@ -58,8 +59,8 @@ export const StepsForm = ({ fieldName }: StepsFormProps) => {
             stepFieldName={`${fieldName}.${index}`}
             fieldName={`${fieldName}.${index}.data`}
           />
-        </Stack>
-      )}
+        </Stack>,
+      ]}
     </ItemsList>
   )
 }

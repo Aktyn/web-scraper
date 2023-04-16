@@ -490,12 +490,12 @@ describe('registerRequestsHandler', () => {
         {
           flow: {
             actionName: 'action.name',
-            globalReturnValues: null,
+            globalReturnValues: [],
             id: 1,
             onFailure: null,
             onSuccess: {
               actionName: 'global.finishProcedure',
-              globalReturnValues: null,
+              globalReturnValues: [],
               id: 2,
               onFailure: null,
               onSuccess: null,

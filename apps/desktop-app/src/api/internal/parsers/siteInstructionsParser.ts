@@ -57,7 +57,11 @@ function parseDatabaseFlowStep(
     return null
   }
   return {
-    ...pick(flowStep, 'id', 'globalReturnValues'),
+    ...pick(flowStep, 'id'),
+    globalReturnValues: tryParseJSON<FlowStep['globalReturnValues']>(
+      flowStep.globalReturnValues,
+      [],
+    ),
     actionName: flowStep.actionName as FlowStep['actionName'],
     onSuccess: parseDatabaseFlowStep(flowStep.OnSuccessFlowStep),
     onFailure: parseDatabaseFlowStep(flowStep.OnFailureFlowStep),

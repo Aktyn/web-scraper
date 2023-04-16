@@ -108,6 +108,10 @@ export const Sites = () => {
     setSiteToShowInstructions(site)
     siteInstructionsDrawerRef.current?.open()
   }, [])
+  const handleSiteInstructionsSet = useCallback(() => {
+    setSiteToShowInstructions(null)
+    siteInstructionsDrawerRef.current?.close()
+  }, [])
 
   return (
     <>
@@ -115,7 +119,12 @@ export const Sites = () => {
         <SiteForm site={siteToEdit} onSuccess={finalizeSiteActionSuccess} />
       </CustomDrawer>
       <CustomDrawer ref={siteInstructionsDrawerRef} title="Site instructions">
-        <SiteInstructionsForm site={siteToShowInstructions} />
+        {siteToShowInstructions && (
+          <SiteInstructionsForm
+            site={siteToShowInstructions}
+            onSuccess={handleSiteInstructionsSet}
+          />
+        )}
       </CustomDrawer>
       <ConfirmationDialog
         open={openSiteDeleteDialog}

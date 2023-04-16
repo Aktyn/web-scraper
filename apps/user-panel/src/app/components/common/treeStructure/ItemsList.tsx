@@ -1,71 +1,65 @@
-import { type ReactNode, useEffect, useRef, useState } from 'react'
+import { useState, type ReactNode, type Key } from 'react'
 import { AddRounded, DeleteRounded, ExpandMoreRounded } from '@mui/icons-material'
 import {
   Accordion,
   AccordionDetails,
   AccordionSummary,
-  alpha,
   Box,
-  darken,
   IconButton,
-  lighten,
   Stack,
-  type Theme,
   Typography,
+  darken,
+  type Theme,
+  accordionSummaryClasses,
+  lighten,
 } from '@mui/material'
-import anime from 'animejs'
+import { mixColors } from '../../../themes'
 
-interface ItemsListProps<ItemType extends object> {
+interface ItemsListProps<ItemType extends object | string | number> {
   level?: number
   title: ReactNode
-  children: (item: ItemType, index: number) => ReactNode
+  children: (item: ItemType, index: number) => [Key, ReactNode]
   items: ItemType[]
   onAdd?: () => void
   onDelete?: (item: ItemType, index: number) => void
 }
 
-export const ItemsList = <ItemType extends object>({
+export const ItemsList = <ItemType extends object | string | number>({
   level = 0,
   title,
-  children,
+  children: getChild,
   items,
   onAdd,
   onDelete,
 }: ItemsListProps<ItemType>) => {
-  const upArrowIconRef = useRef<SVGSVGElement>(null)
-
   const [expanded, setExpanded] = useState(true)
 
   const allowExpand = level > 0
-  const borderStyle = (theme: Theme) => `2px solid ${theme.palette.primary.main}`
-
-  useEffect(() => {
-    anime({
-      targets: upArrowIconRef.current,
-    })
-  }, [])
+  const borderColor = (theme: Theme) =>
+    darken(mixColors(theme.palette.primary.main, theme.palette.secondary.main, 0.5), 0.1)
+  const borderStyle = (theme: Theme) => `1px solid ${borderColor(theme)}`
 
   return (
     <Accordion
-      expanded={expanded}
+      expanded={items.length > 0 && expanded}
       onChange={allowExpand ? (_, expand) => setExpanded(expand) : undefined}
       TransitionProps={{ unmountOnExit: true }}
       square
       disableGutters
+      disabled={items.length === 0}
       elevation={level > 0 ? 4 : 0}
       sx={{
         '&::before': {
           display: 'none',
         },
         width: level > 1 ? 'auto' : '100%',
-        borderRadius: '0.5rem',
         mr: level > 1 ? 'calc(-1rem + 2px)' : undefined,
         backgroundColor: (theme) =>
           `${
             level
               ? level % 2 === 0
-                ? alpha(darken(theme.palette.background.paper, 0.4), 0.2)
-                : alpha(lighten(theme.palette.background.paper, 0.1), 0.1)
+                ? lighten(theme.palette.background.paper, 0.05)
+                : darken(theme.palette.background.paper, 0.05)
               : 'transparent'
           } !important`,
         backdropFilter: level ? undefined : 'none',
@@ -76,28 +70,41 @@ export const ItemsList = <ItemType extends object>({
       <AccordionSummary
         expandIcon={allowExpand ? <ExpandMoreRounded /> : undefined}
         sx={{
-          pl: level > 0 ? '2rem' : undefined,
+          height: '58px',
+          opacity: '1 !important',
+          pl: level > 0 ? 0 : '0.5rem',
           cursor: allowExpand ? 'pointer' : 'default !important',
           '& > *': {
             cursor: allowExpand ? 'pointer' : 'default !important',
             alignItems: 'center',
             justifyContent: 'flex-start',
           },
+          [`& .${accordionSummaryClasses.expandIconWrapper}`]:
+            items.length === 0
+              ? {
+                  color: (theme) => theme.palette.action.disabled,
+                }
+              : {},
         }}
       >
-        {level > 0 && (
-          <Box
-            sx={{
-              height: 0,
-              borderTop: borderStyle,
-              width: '3rem',
-              ml: 'calc(-3rem - 2px)',
-              mr: '0.5rem',
-            }}
-          />
-        )}
+        <Box
+          sx={{
+            height: 0,
+            borderTop: borderStyle,
+            width: level > 0 ? '3rem' : '2rem',
+            mr: '0.5rem',
+            ml: level > 0 ? 'calc(-1rem - 1px)' : 0,
+          }}
+        />
         {typeof title === 'string' ? (
-          <Typography variant="body1" color="text.secondary" fontWeight="bold" textAlign="center">
+          <Typography
+            variant="body1"
+            color="text.secondary"
+            fontWeight="bold"
+            textAlign="center"
+            whiteSpace="nowrap"
+            mr={2}
+          >
             {title}
           </Typography>
         ) : (
@@ -111,7 +118,13 @@ export const ItemsList = <ItemType extends object>({
               onAdd()
               setExpanded(true)
             }}
-            sx={{ justifySelf: 'flex-end', mr: allowExpand ? '0.5rem' : undefined, ml: 'auto' }}
+            disabled={false}
+            sx={{
+              justifySelf: 'flex-end',
+              mr: allowExpand ? '0.5rem' : undefined,
+              ml: 'auto',
+              pointerEvents: 'all',
+            }}
           >
             <AddRounded />
           </IconButton>
@@ -125,42 +138,89 @@ export const ItemsList = <ItemType extends object>({
         <Stack
           rowGap={2}
           sx={{
-            borderLeft: borderStyle,
-            borderTopLeftRadius: '0.5rem',
+            position: 'relative',
+            '&::before': {
+              content: '""',
+              display: 'block',
+              position: 'absolute',
+              top: '-37px', //(58px of MuiAccordionSummary) / 2 + 8px padding of MuiAccordionDetails
+              left: '-1px',
+              bottom: 0,
+              width: '1px',
+              backgroundImage: (theme) =>
+                `linear-gradient(to top, transparent, ${borderColor(theme)} 4rem)`,
+            },
           }}
         >
-          {items.map((field, index) => (
-            <Box
-              key={index}
-              sx={{
-                '&::before': {
-                  content: '""',
-                  display: 'block',
-                  height: '1rem',
-                  borderTopRightRadius: '0.5rem',
-                  borderTopLeftRadius: index === 0 ? '0.5rem' : undefined,
-                  width: '50%',
-                  borderTop: borderStyle,
-                  borderRight: borderStyle,
-                },
-              }}
-            >
-              <Stack
-                direction="row"
-                alignItems="flex-start"
-                justifyContent={onDelete ? 'space-between' : 'stretch'}
-                columnGap={1}
-                pl="1rem"
-              >
-                {children(field, index)}
+          {items.map((field, index) => {
+            const [key, child] = getChild(field, index)
+
+            return (
+              <Box key={key ?? index} sx={{ position: 'relative' }}>
+                <Box
+                  sx={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    right: '50%',
+                    height: '1rem',
+                    borderTop: borderStyle,
+                    borderRight: borderStyle,
+                    borderTopRightRadius: '0.5rem',
+                  }}
+                />
                 {onDelete && (
-                  <IconButton size="small" onClick={() => onDelete(field, index)}>
-                    <DeleteRounded />
-                  </IconButton>
+                  <>
+                    <Box
+                      sx={{
+                        position: 'absolute',
+                        top: 0,
+                        left: 'calc(50% - 1px)',
+                        right: '25%',
+                        height: '0.5rem',
+                        borderTop: borderStyle,
+                        borderLeft: borderStyle,
+                        borderRight: borderStyle,
+                        borderTopLeftRadius: '0.5rem',
+                        borderTopRightRadius: '1rem',
+                      }}
+                    />
+                    <Box
+                      sx={{
+                        position: 'absolute',
+                        top: '0.5rem',
+                        left: 'calc(75% - 1px)',
+                        right: '34px',
+                        height: '0.5rem',
+                        borderBottom: borderStyle,
+                        borderLeft: borderStyle,
+                        borderBottomLeftRadius: '1rem',
+                      }}
+                    />
+                  </>
                 )}
-              </Stack>
-            </Box>
-          ))}
+                <Stack
+                  direction="row"
+                  alignItems="flex-start"
+                  justifyContent={onDelete ? 'space-between' : 'stretch'}
+                  columnGap={1}
+                  pl="1rem"
+                  pt="0.5rem"
+                >
+                  {child}
+                  {onDelete && (
+                    <IconButton
+                      size="small"
+                      onClick={() => onDelete(field, index)}
+                      sx={{ mt: 'calc(-0.5rem - 2px)' }}
+                    >
+                      <DeleteRounded />
+                    </IconButton>
+                  )}
+                </Stack>
+              </Box>
+            )
+          })}
         </Stack>
       </AccordionDetails>
     </Accordion>

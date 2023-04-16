@@ -1,5 +1,11 @@
 import type { FlowStep as DatabaseFlowStep } from '@prisma/client'
-import { ErrorCode, type Site } from '@web-scraper/common'
+import {
+  ErrorCode,
+  type UpsertSiteInstructionsSchema,
+  type Site,
+  upsertSiteInstructionsSchema,
+  safePromise,
+} from '@web-scraper/common'
 
 import Database from './index'
 
@@ -68,5 +74,128 @@ async function getProcedureFlow(flowStep: DatabaseFlowStep): Promise<DatabaseFlo
     OnFailureFlowStep: flowStep.onFailureFlowStepId
       ? await getProcedureFlow(await getFlowStep(flowStep.onFailureFlowStepId))
       : null,
+  }
+}
+
+function validateUpsertSchema(data: UpsertSiteInstructionsSchema) {
+  try {
+    upsertSiteInstructionsSchema.validateSync(data)
+  } catch (error) {
+    throw ErrorCode.INCORRECT_DATA
+  }
+}
+
+async function deleteSiteInstructions(siteId: Site['id']) {
+  const instructions = await getSiteInstructions(siteId)
+
+  //Remove each flow step as it is not deleted cascade
+  const deleteFlowStepTree = async (
+    flowStep: (typeof instructions)['Procedures'][number]['FlowStep'],
+  ) => {
+    if (!flowStep) {
+      return
+    }
+    await deleteFlowStepTree(flowStep.OnSuccessFlowStep)
+    await deleteFlowStepTree(flowStep.OnFailureFlowStep)
+    await Database.prisma.flowStep.delete({
+      where: {
+        id: flowStep.id,
+      },
+    })
+  }
+  for (const procedure of instructions.Procedures) {
+    await deleteFlowStepTree(procedure.FlowStep)
+  }
+
+  await Database.prisma.siteInstructions.delete({
+    where: {
+      siteId,
+    },
+  })
+}
+
+export async function setSiteInstructions(
+  siteId: Site['id'],
+  instructionsSchema: UpsertSiteInstructionsSchema,
+) {
+  validateUpsertSchema(instructionsSchema)
+
+  await safePromise(deleteSiteInstructions(siteId))
+
+  type FlowSchemaType = NonNullable<UpsertSiteInstructionsSchema['procedures'][number]['flow']>
+  type FlowCreateSchemaType = {
+    actionName: string
+    globalReturnValues: string
+    onSuccessFlowStepId: number | null
+    onFailureFlowStepId: number | null
+  }
+
+  const getFlowCreateSchema = async (flow: FlowSchemaType): Promise<FlowCreateSchemaType> => {
+    return {
+      actionName: flow.actionName,
+      globalReturnValues: JSON.stringify(flow.globalReturnValues ?? []),
+      onSuccessFlowStepId: flow.onSuccess
+        ? await Database.prisma.flowStep
+            .create({
+              data: await getFlowCreateSchema(flow.onSuccess as FlowSchemaType),
+              select: {
+                id: true,
+              },
+            })
+            .then((flowStep) => flowStep.id)
+        : null,
+      onFailureFlowStepId: flow.onFailure
+        ? await Database.prisma.flowStep
+            .create({
+              data: await getFlowCreateSchema(flow.onFailure as FlowSchemaType),
+              select: {
+                id: true,
+              },
+            })
+            .then((flowStep) => flowStep.id)
+        : null,
+    }
+  }
+
+  const instructions = await Database.prisma.siteInstructions.create({
+    data: {
+      siteId,
+      Actions: {
+        create: instructionsSchema.actions.map((action) => ({
+          name: action.name,
+          url: action.url,
+          ActionSteps: {
+            create: action.actionSteps.map((step, index) => ({
+              type: step.type,
+              data: JSON.stringify(step.data),
+              orderIndex: index + 1,
+            })),
+          },
+        })),
+      },
+      Procedures: {
+        create: await Promise.all(
+          instructionsSchema.procedures.map(async (procedure) => ({
+            type: procedure.type,
+            startUrl: procedure.startUrl,
+            waitFor: procedure.waitFor,
+            flowStepId: procedure.flow
+              ? await Database.prisma.flowStep
+                  .create({
+                    data: await getFlowCreateSchema(procedure.flow),
+                    select: {
+                      id: true,
+                    },
+                  })
+                  .then((flowStep) => flowStep.id)
+              : null,
+          })),
+        ),
+      },
+    },
+  })
+
+  if (!instructions) {
+    throw ErrorCode.DATABASE_ERROR
   }
 }

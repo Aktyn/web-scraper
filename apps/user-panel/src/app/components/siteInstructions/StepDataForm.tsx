@@ -152,7 +152,7 @@ const WaitForNavigationFormInput = ({ fieldName }: DataFieldFormProps) => {
   return (
     <FormControl>
       <Controller
-        name={fieldName}
+        name={`${fieldName}.waitForNavigation`}
         control={form.control}
         render={({ field }) => (
           <FormControlLabel
@@ -219,7 +219,8 @@ const ElementsFormInput = ({ fieldName }: DataFieldFormProps) => {
       onAdd={() => elementsFields.append('')}
       onDelete={(_, index) => elementsFields.remove(index)}
     >
-      {(field, index) => (
+      {(field, index) => [
+        field.id,
         <FormInput
           key={field.id}
           name={`${fieldName}.elements.${index}`}
@@ -235,8 +236,8 @@ const ElementsFormInput = ({ fieldName }: DataFieldFormProps) => {
           sx={{
             minWidth: '16rem',
           }}
-        />
-      )}
+        />,
+      ]}
     </ItemsList>
   )
 }
@@ -266,7 +267,8 @@ const MapSiteErrorsFormInput = ({
       }
       onDelete={(_, index) => siteErrorFields.remove(index)}
     >
-      {(field, index) => (
+      {(field, index) => [
+        field.id,
         <Stack key={field.id} flexGrow={1} gap={2}>
           <FormInput
             name={`${fieldName}.${keyName}.${index}.content`}
@@ -310,8 +312,8 @@ const MapSiteErrorsFormInput = ({
               </TextField>
             )}
           />
-        </Stack>
-      )}
+        </Stack>,
+      ]}
     </ItemsList>
   )
 }

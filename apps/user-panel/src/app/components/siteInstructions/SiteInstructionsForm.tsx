@@ -28,11 +28,13 @@ import { errorLabels, formatDate } from '../../utils'
 import { UrlButton } from '../common/button/UrlButton'
 
 interface SiteInstructionsFormProps {
-  site?: Site | null
+  site: Site
+  onSuccess: () => void
 }
 
-export const SiteInstructionsForm = ({ site }: SiteInstructionsFormProps) => {
-  const getSiteInstructions = useApiRequest(window.electronAPI.getSiteInstructions)
+export const SiteInstructionsForm = ({ site, onSuccess }: SiteInstructionsFormProps) => {
+  const getSiteInstructionsRequest = useApiRequest(window.electronAPI.getSiteInstructions)
+  const setSiteInstructionsRequest = useApiRequest(window.electronAPI.setSiteInstructions)
 
   const form = useForm<UpsertSiteInstructionsSchema>({
     mode: 'onTouched',
@@ -42,10 +44,7 @@ export const SiteInstructionsForm = ({ site }: SiteInstructionsFormProps) => {
   const [instructions, setInstructions] = useState<SiteInstructions | null>(null)
 
   useEffect(() => {
-    if (!site) {
-      return
-    }
-    getSiteInstructions.submit(
+    getSiteInstructionsRequest.submit(
       {
         onSuccess: (instructions) => {
           form.reset(pick(instructions, 'procedures', 'actions'))
@@ -65,47 +64,32 @@ export const SiteInstructionsForm = ({ site }: SiteInstructionsFormProps) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [site])
 
-  const onSubmit = useCallback((_data: UpsertSiteInstructionsSchema) => {
-    // console.log(data)
-    //TODO
-    // if (siteId) {
-    //   updateSiteRequest.submit(
-    //     {
-    //       onSuccess: (_, { enqueueSnackbar }) => {
-    //         enqueueSnackbar({ variant: 'success', message: 'Site updated' })
-    //         onSuccess()
-    //       },
-    //     },
-    //     siteId,
-    //     { ...data, language: data.language || null },
-    //   )
-    // } else {
-    //   createSiteRequest.submit(
-    //     {
-    //       onSuccess: (_, { enqueueSnackbar }) => {
-    //         enqueueSnackbar({ variant: 'success', message: 'Site created' })
-    //         onSuccess()
-    //       },
-    //     },
-    //     data,
-    //   )
-    // }
-  }, [])
-
-  if (!site) {
-    return null
-  }
+  const onSubmit = useCallback(
+    (data: UpsertSiteInstructionsSchema) => {
+      setSiteInstructionsRequest.submit(
+        {
+          onSuccess: (_, { enqueueSnackbar }) => {
+            enqueueSnackbar({ variant: 'success', message: 'Site instructions set successfully' })
+            onSuccess()
+          },
+        },
+        site.id,
+        data,
+      )
+    },
+    [onSuccess, setSiteInstructionsRequest, site.id],
+  )
 
   return (
     <FormProvider {...form}>
       <Stack
         flexGrow={1}
-        overflow="auto"
+        overflow="hidden"
         minWidth="32rem"
         component="form"
         onSubmit={form.handleSubmit(onSubmit)}
       >
-        {!getSiteInstructions.submitting && (
+        {!getSiteInstructionsRequest.submitting && (
           <>
             <Box
               sx={{
@@ -150,32 +134,34 @@ export const SiteInstructionsForm = ({ site }: SiteInstructionsFormProps) => {
         <Stack
           flexGrow={1}
           alignItems="stretch"
-          // position="relative"
+          justifyContent="stretch"
+          sx={{
+            overflowY: 'hidden',
+            overflowX: 'auto',
+            maxWidth: 'calc(100vw - 2rem)',
+          }}
         >
-          {getSiteInstructions.submitting ? (
+          {getSiteInstructionsRequest.submitting ? (
             <CircularProgress color="primary" size="2rem" sx={{ mx: 'auto', my: 2 }} />
           ) : (
             <Box
               key={instructions?.id || 'instructions'}
               sx={{
-                // position: 'absolute',
-                // left: 0,
-                // top: 0,
-                // height: '100%',
-                // width: '100%',
-                overflow: 'auto',
+                flexGrow: 1,
+                overflow: 'hidden',
                 display: 'grid',
-                gridTemplateColumns: '1fr 1px 1fr',
+                gridTemplateColumns: 'auto 1px auto',
+                gridTemplateRows: '100%',
                 justifyContent: 'center',
                 alignItems: 'stretch',
                 gap: 0,
               }}
             >
-              <Stack justifyContent="flex-start">
+              <Stack flexGrow={1} justifyContent="flex-start" overflow="auto">
                 <ProceduresForm />
               </Stack>
               <Divider orientation="vertical" flexItem />
-              <Stack justifyContent="flex-start">
+              <Stack flexGrow={1} justifyContent="flex-start" overflow="auto">
                 <ActionsForm />
               </Stack>
             </Box>
@@ -187,8 +173,7 @@ export const SiteInstructionsForm = ({ site }: SiteInstructionsFormProps) => {
             color="primary"
             type="submit"
             endIcon={<SendRounded />}
-            // disabled={!url} //TODO
-            // loading={createSiteRequest.submitting || updateSiteRequest.submitting} //TODO
+            loading={setSiteInstructionsRequest.submitting}
             loadingPosition="end"
           >
             Apply
