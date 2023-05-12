@@ -1,4 +1,4 @@
-import { useState, type ReactNode, type Key } from 'react'
+import { useState, type Key, type ReactNode } from 'react'
 import { AddRounded, DeleteRounded, ExpandMoreRounded } from '@mui/icons-material'
 import {
   Accordion,
@@ -7,12 +7,12 @@ import {
   Box,
   IconButton,
   Stack,
-  Typography,
-  darken,
-  type Theme,
   accordionSummaryClasses,
+  darken,
   lighten,
+  type Theme,
 } from '@mui/material'
+import { ItemTitle } from './ItemTitle'
 import { mixColors } from '../../../themes'
 
 interface ItemsListProps<ItemType extends object | string | number> {
@@ -87,29 +87,18 @@ export const ItemsList = <ItemType extends object | string | number>({
               : {},
         }}
       >
-        <Box
-          sx={{
-            height: 0,
-            borderTop: borderStyle,
-            width: level > 0 ? '3rem' : '2rem',
-            mr: '0.5rem',
-            ml: level > 0 ? 'calc(-1rem - 1px)' : 0,
-          }}
-        />
-        {typeof title === 'string' ? (
-          <Typography
-            variant="body1"
-            color="text.secondary"
-            fontWeight="bold"
-            textAlign="center"
-            whiteSpace="nowrap"
-            mr={2}
-          >
-            {title}
-          </Typography>
-        ) : (
-          title
+        {(items.length > 0 || level > 0) && (
+          <Box
+            sx={{
+              height: 0,
+              borderTop: borderStyle,
+              width: level > 0 ? '3rem' : '2rem',
+              mr: '0.5rem',
+              ml: level > 0 ? 'calc(-1rem - 1px)' : 0,
+            }}
+          />
         )}
+        {typeof title === 'string' ? <ItemTitle mr={2}>{title}</ItemTitle> : title}
         {onAdd && (
           <IconButton
             size="small"

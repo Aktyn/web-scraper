@@ -1,6 +1,7 @@
 import { useCallback, useRef, useState } from 'react'
-import { Box, IconButton, type IconButtonProps, SvgIcon, Tooltip } from '@mui/material'
+import { Box, IconButton, SvgIcon, Tooltip, type IconButtonProps } from '@mui/material'
 import type { Site } from '@web-scraper/common'
+import { TermInfo } from 'src/app/components/common/TermInfo'
 import { TransitionType, ViewTransition } from '../../components/animation/ViewTransition'
 import { ConfirmationDialog } from '../../components/common/ConfirmationDialog'
 import type { CustomDrawerRef } from '../../components/common/CustomDrawer'
@@ -9,7 +10,7 @@ import { UrlButton } from '../../components/common/button/UrlButton'
 import { ReactComponent as CogsIcon } from '../../components/icons/cogs.svg'
 import { SiteForm } from '../../components/site/SiteForm'
 import { SiteInstructionsForm } from '../../components/siteInstructions/SiteInstructionsForm'
-import { Table, type TableRef, useTableColumns } from '../../components/table'
+import { Table, useTableColumns, type TableRef } from '../../components/table'
 import { TagsCellValue } from '../../components/table/TagsCellValue'
 import { useApiRequest } from '../../hooks/useApiRequest'
 
@@ -118,7 +119,17 @@ export const Sites = () => {
       <CustomDrawer ref={siteDrawerRef} title={siteToEdit ? 'Update site' : 'Add site'}>
         <SiteForm site={siteToEdit} onSuccess={finalizeSiteActionSuccess} />
       </CustomDrawer>
-      <CustomDrawer ref={siteInstructionsDrawerRef} title="Site instructions">
+      <CustomDrawer
+        ref={siteInstructionsDrawerRef}
+        title={
+          <>
+            <Box component="span" mr={1}>
+              Site instructions
+            </Box>
+            <TermInfo term="Site instructions" />
+          </>
+        }
+      >
         {siteToShowInstructions && (
           <SiteInstructionsForm
             site={siteToShowInstructions}

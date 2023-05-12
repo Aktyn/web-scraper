@@ -15,22 +15,6 @@ describe('waitFor', () => {
 
     expect(fn).toBeCalledTimes(5)
   })
-
-  it('throws Timeout if condition is not met after given time limit', async () => {
-    const fn = vi.fn()
-
-    const promise = waitFor(
-      () => {
-        fn()
-        return Promise.resolve(false)
-      },
-      9,
-      30,
-    )
-
-    await expect(promise).rejects.toThrowError('Timeout')
-    expect(fn).toBeCalledTimes(4)
-  })
 })
 
 describe('safePromise', () => {

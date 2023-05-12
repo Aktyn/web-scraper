@@ -4,7 +4,7 @@ import { Divider, dividerClasses, Stack, Typography } from '@mui/material'
 import { TransitionType, ViewTransition } from '../../components/animation/ViewTransition'
 
 interface InfoContentBaseProps {
-  sections: { title: string; content: ReactNode }[]
+  sections: readonly { title: string; content: ReactNode }[]
 }
 
 export const InfoContentBase = ({ sections }: InfoContentBaseProps) => {

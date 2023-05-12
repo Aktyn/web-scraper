@@ -3,6 +3,8 @@ import { FormControl, FormHelperText, InputAdornment, Stack } from '@mui/materia
 import type { UpsertSiteInstructionsSchema } from '@web-scraper/common'
 import { useFieldArray, useFormContext } from 'react-hook-form'
 import { StepsForm } from './StepsForm'
+import { TermInfo } from '../common/TermInfo'
+import { ItemTitle } from '../common/treeStructure/ItemTitle'
 import { ItemsList } from '../common/treeStructure/ItemsList'
 import { FormInput } from '../form/FormInput'
 
@@ -17,7 +19,12 @@ export const ActionsForm = () => {
   return (
     <FormControl error={!!error}>
       <ItemsList
-        title="Actions"
+        title={
+          <Stack direction="row" alignItems="center" spacing={1} mr={2} color="text.secondary">
+            <ItemTitle>Actions</ItemTitle>
+            <TermInfo term="Action" sx={{ pointerEvents: 'all' }} />
+          </Stack>
+        }
         items={actionsFields.fields}
         onAdd={() =>
           actionsFields.append({

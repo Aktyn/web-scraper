@@ -21,7 +21,14 @@ export const CustomDrawerHeader = ({ title, onClose }: CustomDrawerHeaderProps) 
           <Typography
             variant="h6"
             color="text.secondary"
-            sx={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}
+            sx={{
+              whiteSpace: 'nowrap',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              display: 'flex',
+              flexDirection: 'row',
+              alignItems: 'center',
+            }}
           >
             {title}
           </Typography>

@@ -99,6 +99,7 @@ export const SiteInstructionsForm = ({ site, onSuccess }: SiteInstructionsFormPr
                 alignItems: 'center',
                 gap: 4,
                 py: 1,
+                px: 2,
               }}
             >
               <FormControl sx={{ justifySelf: 'flex-end' }}>

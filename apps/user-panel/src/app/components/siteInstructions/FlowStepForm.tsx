@@ -14,6 +14,8 @@ import { GlobalActionType, type UpsertSiteInstructionsSchema } from '@web-scrape
 import { Controller, useFormContext } from 'react-hook-form'
 import { GlobalReturnValuesForm } from './GlobalReturnValuesForm'
 import { globalActionTypeNames } from '../../utils/site-instructions-helpers'
+import { TermInfo } from '../common/TermInfo'
+import { ItemTitle } from '../common/treeStructure/ItemTitle'
 import { ItemsList } from '../common/treeStructure/ItemsList'
 
 interface FlowStepFormProps {
@@ -38,7 +40,16 @@ export const FlowStepForm = ({
 
   return (
     <ItemsList
-      title={title}
+      title={
+        title === 'Flow' ? (
+          <Stack direction="row" alignItems="center" spacing={1} mr={2} color="text.secondary">
+            <ItemTitle>{title}</ItemTitle>
+            <TermInfo term="Flow step" sx={{ pointerEvents: 'all' }} />
+          </Stack>
+        ) : (
+          title
+        )
+      }
       items={items}
       level={level}
       onAdd={

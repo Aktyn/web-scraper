@@ -4,6 +4,8 @@ import { ProcedureType, type UpsertSiteInstructionsSchema } from '@web-scraper/c
 import { useFieldArray, useFormContext } from 'react-hook-form'
 import { procedureTypeNames } from 'src/app/utils/site-instructions-helpers'
 import { FlowStepForm } from './FlowStepForm'
+import { TermInfo } from '../common/TermInfo'
+import { ItemTitle } from '../common/treeStructure/ItemTitle'
 import { ItemsList } from '../common/treeStructure/ItemsList'
 import { FormInput } from '../form/FormInput'
 
@@ -15,7 +17,12 @@ export const ProceduresForm = () => {
 
   return (
     <ItemsList
-      title="Procedures"
+      title={
+        <Stack direction="row" alignItems="center" spacing={1} mr={2} color="text.secondary">
+          <ItemTitle>Procedures</ItemTitle>
+          <TermInfo term="Procedure" sx={{ pointerEvents: 'all' }} />
+        </Stack>
+      }
       items={proceduresFields.fields}
       onAdd={() =>
         proceduresFields.append({
