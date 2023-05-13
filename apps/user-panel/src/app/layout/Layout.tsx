@@ -1,5 +1,6 @@
 import { memo, type PropsWithChildren } from 'react'
 import { Box, darken, Stack } from '@mui/material'
+import { BackgroundEffect } from './BackgroundEffect'
 import { Footer } from './Footer'
 import { Header } from './Header'
 import { Menu } from './Menu'
@@ -67,6 +68,7 @@ export const Layout = memo<LayoutProps>(({ children }) => {
           },
         }}
       >
+        <BackgroundEffect />
         {children}
       </Stack>
       <Footer />
