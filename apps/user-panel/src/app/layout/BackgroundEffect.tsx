@@ -1,6 +1,6 @@
 import { memo, useEffect, useRef } from 'react'
 import { darken, decomposeColor, useTheme } from '@mui/material'
-import { random } from '@web-scraper/common'
+import { gaussianRandomRange, random } from '@web-scraper/common'
 import { AutoSizer } from '../components/common/AutoSizer'
 import { Config } from '../config'
 import { useDebounce } from '../hooks/useDebounce'
@@ -75,8 +75,8 @@ class AbstractBackground {
   /** Milliseconds */
   private static readonly colorTransitionDuration = Config.VIEW_TRANSITION_DURATION / 2
   /** Pixels */
-  public static readonly particleSizeBase = 16
-  private static readonly particlesPerPixel = 0.015 / this.particleSizeBase ** 2
+  public static readonly particleSizeBase = 24
+  private static readonly particlesPerPixel = 0.03 / this.particleSizeBase ** 2
 
   private width = 0
   private height = 0
@@ -120,6 +120,26 @@ class AbstractBackground {
     this.registerChange()
   }
 
+  private fillRegularPolygon(centerX: number, centerY: number, outerRadius: number, sides: number) {
+    if (!this.ctx) {
+      return
+    }
+
+    this.ctx.beginPath()
+
+    for (let i = 0; i < sides; i++) {
+      const angle = (i * 2 * Math.PI) / sides
+
+      const x = centerX + outerRadius * Math.cos(angle)
+      const y = centerY + outerRadius * Math.sin(angle)
+
+      i === 0 ? this.ctx.moveTo(x, y) : this.ctx.lineTo(x, y)
+    }
+
+    this.ctx.closePath()
+    this.ctx.fill()
+  }
+
   private draw() {
     if (!this.ctx) {
       return
@@ -134,7 +154,9 @@ class AbstractBackground {
       this.ctx.save()
       this.ctx.translate(x, y)
       this.ctx.rotate(particle.rotation)
-      this.ctx.fillRect(-size / 2, -size / 2, size, size)
+
+      this.fillRegularPolygon(0, 0, size / 2, particle.sides)
+
       this.ctx.restore()
     }
   }
@@ -164,8 +186,6 @@ class AbstractBackground {
     if (colorUpdated || particlesUpdates) {
       this.animationFrameId = requestAnimationFrame(this.updateEvent)
     } else {
-      // eslint-disable-next-line no-console
-      console.log('Background effect transition finished')
       this.animationFrameId = null
     }
   }
@@ -233,6 +253,7 @@ class Particle {
 
   private pos: [number, number] = [0, 0]
   private nextPos: [number, number] = [0, 0]
+  public readonly sides = 3 + (Math.abs(gaussianRandomRange(-4, 4, 4)) | 0)
   public readonly size =
     AbstractBackground.particleSizeBase +
     random(-AbstractBackground.particleSizeBase * 0.5, AbstractBackground.particleSizeBase * 0.5)

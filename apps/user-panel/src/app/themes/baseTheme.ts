@@ -1,6 +1,5 @@
-import '@fontsource/roboto-flex/variable.css'
-import { drawerClasses } from '@mui/material'
-import type { CSSInterpolation, ThemeOptions } from '@mui/material'
+import '@fontsource/roboto-flex/variable-full.css'
+import { drawerClasses, type CSSInterpolation, type ThemeOptions } from '@mui/material'
 import { createTheme } from '@mui/material/styles'
 // noinspection ES6UnusedImports
 import {} from '@mui/lab/themeAugmentation'

@@ -69,7 +69,13 @@ export const SiteInstructionsForm = ({ site, onSuccess }: SiteInstructionsFormPr
       setSiteInstructionsRequest.submit(
         {
           onSuccess: (_, { enqueueSnackbar }) => {
-            enqueueSnackbar({ variant: 'success', message: 'Site instructions set successfully' })
+            enqueueSnackbar({
+              variant: 'success',
+              message:
+                data.actions.length || data.procedures.length
+                  ? 'Site instructions set successfully'
+                  : 'Site instructions removed successfully',
+            })
             onSuccess()
           },
         },

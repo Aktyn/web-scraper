@@ -1,10 +1,10 @@
 import type { FlowStep as DatabaseFlowStep } from '@prisma/client'
 import {
   ErrorCode,
-  type UpsertSiteInstructionsSchema,
-  type Site,
-  upsertSiteInstructionsSchema,
   safePromise,
+  upsertSiteInstructionsSchema,
+  type Site,
+  type UpsertSiteInstructionsSchema,
 } from '@web-scraper/common'
 
 import Database from './index'
@@ -120,7 +120,12 @@ export async function setSiteInstructions(
 ) {
   validateUpsertSchema(instructionsSchema)
 
+  //TODO: backup current site instructions before deleting them in case of an error in next steps
   await safePromise(deleteSiteInstructions(siteId))
+
+  if (!instructionsSchema.actions.length && !instructionsSchema.procedures.length) {
+    return
+  }
 
   type FlowSchemaType = NonNullable<UpsertSiteInstructionsSchema['procedures'][number]['flow']>
   type FlowCreateSchemaType = {
