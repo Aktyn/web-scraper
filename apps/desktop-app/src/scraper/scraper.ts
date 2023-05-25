@@ -44,7 +44,7 @@ export class Scraper<ModeType extends ScraperMode> {
     this.browser = new ScraperBrowser({
       headless: mode === ScraperMode.DEFAULT ? 'new' : false,
       onBrowserClosed: async () => {
-        await this.destroy()
+        await this.destroy(false)
         this.options?.onClose?.()
       },
     })
@@ -66,10 +66,13 @@ export class Scraper<ModeType extends ScraperMode> {
   }
 
   /** It basically closes puppeteer page */
-  async destroy() {
+  async destroy(destroyBrowser = true) {
     Scraper.instancesStore[this.mode].delete(this.id)
     this.mainPage && (await safePromise(this.mainPage.destroy()))
     this.mainPage = null
+    if (destroyBrowser) {
+      await safePromise(this.browser.destroy())
+    }
   }
 
   public getTestingURL: ModeType extends ScraperMode.TESTING ? () => string : never = (() => {

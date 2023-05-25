@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useState } from 'react'
 import { Stack, Typography } from '@mui/material'
-import { type ApiError, ErrorCode } from '@web-scraper/common'
+import { ErrorCode, type ApiError } from '@web-scraper/common'
 import { useSnackbar } from 'notistack'
 import { useCancellablePromise } from './useCancellablePromise'
 import { errorLabels, parseError } from '../utils'
@@ -15,6 +15,7 @@ export function useApiRequest<RequestFunctionType extends AnyApiFunction>(
   const { enqueueSnackbar } = useSnackbar()
 
   const [submitting, setSubmitting] = useState(false)
+  const [submittingData, setSubmittingData] = useState<Parameters<RequestFunctionType> | null>(null)
   const [data, setData] = useState<Awaited<ReturnType<RequestFunctionType>> | null>(null)
 
   type DataType = Awaited<ReturnType<RequestFunctionType>> extends ApiError | infer T ? T : never
@@ -27,10 +28,13 @@ export function useApiRequest<RequestFunctionType extends AnyApiFunction>(
   const submit = useCallback(
     (config: ConfigType, ...args: Parameters<RequestFunctionType>) => {
       setSubmitting(true)
+      setSubmittingData(args)
+
       cancellable(request(...args))
         .then((data) => {
           setData(data as never)
           setSubmitting(false)
+          setSubmittingData(null)
           if ('errorCode' in data && data.errorCode !== ErrorCode.NO_ERROR) {
             if (config.onError) {
               config.onError(data, { enqueueSnackbar })
@@ -66,6 +70,7 @@ export function useApiRequest<RequestFunctionType extends AnyApiFunction>(
             console.error(error)
           } else {
             setSubmitting(false)
+            setSubmittingData(null)
           }
         })
     },
@@ -76,8 +81,9 @@ export function useApiRequest<RequestFunctionType extends AnyApiFunction>(
     () => ({
       submit,
       submitting,
+      submittingData,
       data,
     }),
-    [data, submit, submitting],
+    [data, submit, submitting, submittingData],
   )
 }

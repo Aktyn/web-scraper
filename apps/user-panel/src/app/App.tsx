@@ -3,7 +3,7 @@ import createCache from '@emotion/cache'
 import { CacheProvider } from '@emotion/react'
 import { CssBaseline, ThemeProvider } from '@mui/material'
 import { SnackbarProvider } from 'notistack'
-import { ApiEventsProvider } from './api/ApiEventsProvider'
+import { ApiProvider } from './api/ApiProvider'
 import { FullViewLoader } from './components/common/loader/FullViewLoader'
 import { Config } from './config'
 import { ViewContext, type ViewName, ViewTransitionState } from './context/viewContext'
@@ -87,7 +87,7 @@ export const App = () => {
               }}
             >
               <UserDataProvider>
-                <ApiEventsProvider>
+                <ApiProvider>
                   <Layout>
                     <Suspense fallback={<FullViewLoader />}>
                       <currentView.component key={viewName} />
@@ -99,7 +99,7 @@ export const App = () => {
                       </Suspense>
                     )}
                   </Layout>
-                </ApiEventsProvider>
+                </ApiProvider>
               </UserDataProvider>
             </ViewContext.Provider>
           </SnackbarProvider>

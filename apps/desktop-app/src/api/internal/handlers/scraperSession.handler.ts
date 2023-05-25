@@ -1,9 +1,15 @@
-import { ElectronToRendererMessage, RendererToElectronMessage } from '@web-scraper/common'
+import type { ElectronApi } from '@web-scraper/common'
+import {
+  ElectronToRendererMessage,
+  ErrorCode,
+  RendererToElectronMessage,
+} from '@web-scraper/common'
 
 import Database from '../../../database'
 import { ExtendedBrowserWindow } from '../../../extendedBrowserWindow'
 import { Scraper } from '../../../scraper'
-import { handleApiRequest, type RequestHandlersSchema } from '../helpers'
+import { handleApiRequest, successResponse, type RequestHandlersSchema } from '../helpers'
+import { parseDatabaseSite } from '../parsers/siteParser'
 
 export const scraperSessionHandler = {
   [RendererToElectronMessage.startSiteInstructionsTestingSession]: handleApiRequest(
@@ -25,16 +31,52 @@ export const scraperSessionHandler = {
         const testingModeScraperInstance = new Scraper(Scraper.Mode.TESTING, {
           lockURL: site.url,
           onClose: () => {
-            ExtendedBrowserWindow.getInstances().forEach((windowInstance) => {
-              windowInstance.sendMessage(
-                ElectronToRendererMessage.siteInstructionsTestingSessionClosed,
-                testingModeScraperInstance.id,
-              )
-            })
+            broadcastMessage(
+              ElectronToRendererMessage.siteInstructionsTestingSessionClosed,
+              testingModeScraperInstance.id,
+            )
           },
         })
+
+        broadcastMessage(
+          ElectronToRendererMessage.siteInstructionsTestingSessionOpen,
+          testingModeScraperInstance.id,
+          parseDatabaseSite(site),
+        )
 
         return { sessionId: testingModeScraperInstance.id }
       }),
   ),
+  [RendererToElectronMessage.endSiteInstructionsTestingSession]: handleApiRequest(
+    RendererToElectronMessage.endSiteInstructionsTestingSession,
+    async (sessionId) => {
+      const existingInstance = Array.from(Scraper.getInstances(Scraper.Mode.TESTING).values()).find(
+        (instance) => instance.id === sessionId,
+      )
+      if (!existingInstance) {
+        throw ErrorCode.NOT_FOUND
+      }
+      await existingInstance.destroy()
+
+      broadcastMessage(
+        ElectronToRendererMessage.siteInstructionsTestingSessionClosed,
+        existingInstance.id,
+      )
+
+      return successResponse
+    },
+  ),
 } satisfies Partial<RequestHandlersSchema>
+
+function broadcastMessage<MessageType extends ElectronToRendererMessage>(
+  message: MessageType,
+  ...args: ElectronApi[MessageType] extends (
+    callback: (event: Event, ...args: infer T) => void,
+  ) => void
+    ? T
+    : never
+) {
+  ExtendedBrowserWindow.getInstances().forEach((windowInstance) => {
+    windowInstance.sendMessage(message, ...args)
+  })
+}

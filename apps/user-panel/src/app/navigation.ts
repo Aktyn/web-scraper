@@ -31,6 +31,9 @@ const Navigation = {
       disableTopFadeEffect: true,
     },
   } as NavigationEntry,
+  // TESTING_SESSIONS: {
+  //   //TODO
+  // },
   INFO: {
     component: lazy(() => import('./views/Info/InfoView')),
     theme: mainThemes.deepPurple,

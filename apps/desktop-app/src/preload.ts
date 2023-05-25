@@ -3,7 +3,10 @@ import type { ElectronApi } from '@web-scraper/common'
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { contextBridge, ipcRenderer, type IpcRendererEvent } from 'electron'
 
-const electronToRendererMessageNames = ['siteInstructionsTestingSessionClosed'] as const
+const electronToRendererMessageNames = [
+  'siteInstructionsTestingSessionOpen',
+  'siteInstructionsTestingSessionClosed',
+] as const
 const rendererToElectronMessageNames = [
   'getUserSettings',
   'setUserSetting',
@@ -30,6 +33,7 @@ const rendererToElectronMessageNames = [
   'setSiteInstructions',
 
   'startSiteInstructionsTestingSession',
+  'endSiteInstructionsTestingSession',
 ] as const
 
 const api = {

@@ -12,6 +12,7 @@ import type { UserSettings } from './user'
  * NOTE: ElectronToRendererMessage and RendererToElectronMessage keys must equal to its corresponding values and be written in camelCase
  */
 export enum ElectronToRendererMessage {
+  siteInstructionsTestingSessionOpen = 'siteInstructionsTestingSessionOpen',
   siteInstructionsTestingSessionClosed = 'siteInstructionsTestingSessionClosed',
 }
 
@@ -41,9 +42,13 @@ export enum RendererToElectronMessage {
   setSiteInstructions = 'setSiteInstructions',
 
   startSiteInstructionsTestingSession = 'startSiteInstructionsTestingSession',
+  endSiteInstructionsTestingSession = 'endSiteInstructionsTestingSession',
 }
 
 export type ElectronApi = {
+  [ElectronToRendererMessage.siteInstructionsTestingSessionOpen]: (
+    callback: (event: Event, sessionId: string, site: Site) => void,
+  ) => void
   [ElectronToRendererMessage.siteInstructionsTestingSessionClosed]: (
     callback: (event: Event, sessionId: string) => void,
   ) => void
@@ -106,4 +111,7 @@ export type ElectronApi = {
   [RendererToElectronMessage.startSiteInstructionsTestingSession]: (
     siteId: Site['id'],
   ) => Promise<{ sessionId: string } | ApiError>
+  [RendererToElectronMessage.endSiteInstructionsTestingSession]: (
+    sessionId: string,
+  ) => Promise<ApiError>
 }

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useContext, useEffect, useState } from 'react'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { EngineeringRounded, EventRounded, LinkRounded, SendRounded } from '@mui/icons-material'
 import { LoadingButton } from '@mui/lab'
@@ -23,8 +23,8 @@ import {
 import { FormProvider, useForm } from 'react-hook-form'
 import { ActionsForm } from './ActionsForm'
 import { ProceduresForm } from './ProceduresForm'
+import { ApiContext } from '../../context/apiContext'
 import { useApiRequest } from '../../hooks/useApiRequest'
-import { useSiteInstructionsTestingSession } from '../../hooks/useSiteInstructionsTestingSession'
 import { errorLabels, formatDate } from '../../utils'
 import { UrlButton } from '../common/button/UrlButton'
 
@@ -39,7 +39,8 @@ export const SiteInstructionsForm = ({ site, onSuccess }: SiteInstructionsFormPr
   )
   const setSiteInstructionsRequest = useApiRequest(window.electronAPI.setSiteInstructions)
 
-  const testingSession = useSiteInstructionsTestingSession()
+  const { testingSessions } = useContext(ApiContext)
+  const siteTestingSession = testingSessions.sessions.find((session) => session.site.id === site.id)
 
   const form = useForm<UpsertSiteInstructionsSchema>({
     mode: 'onTouched',
@@ -191,17 +192,20 @@ export const SiteInstructionsForm = ({ site, onSuccess }: SiteInstructionsFormPr
             variant="outlined"
             color="primary"
             endIcon={<EngineeringRounded />}
-            loading={testingSession.startingSession}
+            loading={
+              (testingSessions.startingSession &&
+                testingSessions.startingSessionData?.[0] === site.id) ||
+              (testingSessions.endingSession &&
+                testingSessions.endingSessionData?.[0] === siteTestingSession?.id)
+            }
             loadingPosition="end"
             onClick={() =>
-              testingSession.sessionId
-                ? () => {
-                    //TODO: stop session
-                  }
-                : testingSession.startSession(site.id)
+              siteTestingSession
+                ? testingSessions.endSession(siteTestingSession.id)
+                : testingSessions.startSession(site.id)
             }
           >
-            {testingSession.sessionId ? 'End testing session' : 'Start testing session'}
+            {siteTestingSession ? 'End testing session' : 'Start testing session'}
           </LoadingButton>
           <LoadingButton
             variant="outlined"
