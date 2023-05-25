@@ -9,6 +9,11 @@ vi.mock('electron', () => ({
   ipcMain: {
     handle: vi.fn(),
   },
+  BrowserWindow: class BrowserWindowMock {
+    constructor(_options: electron.BrowserWindowConstructorOptions) {
+      //noop
+    }
+  },
 }))
 
 vi.mock('electron-is-dev', () => ({
