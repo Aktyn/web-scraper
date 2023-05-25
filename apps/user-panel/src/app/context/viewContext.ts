@@ -1,6 +1,7 @@
 import { createContext } from 'react'
 import type Navigation from '../navigation'
 import type { ViewSettingsSchema } from '../navigation'
+import { noop } from '../utils'
 
 export enum ViewTransitionState {
   IDLE = 'idle',
@@ -9,10 +10,6 @@ export enum ViewTransitionState {
 }
 
 export type ViewName = keyof typeof Navigation
-
-const noop = () => {
-  // do nothing
-}
 
 export const ViewContext = createContext({
   viewName: 'DASHBOARD' as ViewName,

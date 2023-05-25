@@ -1,7 +1,7 @@
 import { RendererToElectronMessage } from '@web-scraper/common'
 
 import Database from '../../../database'
-import { getPagePreview } from '../../../utils/puppeeterMisc'
+import { getPagePreview } from '../../../utils/scraperMisc'
 import { handleApiRequest, type RequestHandlersSchema, successResponse } from '../helpers'
 import { parseDatabaseSite } from '../parsers/siteParser'
 

@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import { yupResolver } from '@hookform/resolvers/yup'
-import { EventRounded, LinkRounded, SendRounded } from '@mui/icons-material'
+import { EngineeringRounded, EventRounded, LinkRounded, SendRounded } from '@mui/icons-material'
 import { LoadingButton } from '@mui/lab'
 import {
   Box,
@@ -15,15 +15,16 @@ import {
 import {
   ErrorCode,
   pick,
+  upsertSiteInstructionsSchema,
   type Site,
   type SiteInstructions,
   type UpsertSiteInstructionsSchema,
-  upsertSiteInstructionsSchema,
 } from '@web-scraper/common'
 import { FormProvider, useForm } from 'react-hook-form'
 import { ActionsForm } from './ActionsForm'
 import { ProceduresForm } from './ProceduresForm'
 import { useApiRequest } from '../../hooks/useApiRequest'
+import { useSiteInstructionsTestingSession } from '../../hooks/useSiteInstructionsTestingSession'
 import { errorLabels, formatDate } from '../../utils'
 import { UrlButton } from '../common/button/UrlButton'
 
@@ -33,27 +34,32 @@ interface SiteInstructionsFormProps {
 }
 
 export const SiteInstructionsForm = ({ site, onSuccess }: SiteInstructionsFormProps) => {
-  const getSiteInstructionsRequest = useApiRequest(window.electronAPI.getSiteInstructions)
+  const { submit: getSiteInstructions, submitting: gettingSiteInstructions } = useApiRequest(
+    window.electronAPI.getSiteInstructions,
+  )
   const setSiteInstructionsRequest = useApiRequest(window.electronAPI.setSiteInstructions)
+
+  const testingSession = useSiteInstructionsTestingSession()
 
   const form = useForm<UpsertSiteInstructionsSchema>({
     mode: 'onTouched',
     resolver: yupResolver(upsertSiteInstructionsSchema),
   })
+  const resetForm = form.reset
 
   const [instructions, setInstructions] = useState<SiteInstructions | null>(null)
 
   useEffect(() => {
-    getSiteInstructionsRequest.submit(
+    getSiteInstructions(
       {
         onSuccess: (instructions) => {
-          form.reset(pick(instructions, 'procedures', 'actions'))
+          resetForm(pick(instructions, 'procedures', 'actions'))
           setInstructions(instructions)
         },
         onError: (error, { enqueueSnackbar }) => {
           if (error.errorCode === ErrorCode.NOT_FOUND) {
             setInstructions(null)
-            form.reset()
+            resetForm()
           } else {
             enqueueSnackbar({ variant: 'error', message: errorLabels[error.errorCode] })
           }
@@ -61,8 +67,7 @@ export const SiteInstructionsForm = ({ site, onSuccess }: SiteInstructionsFormPr
       },
       site.id,
     )
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [site])
+  }, [getSiteInstructions, resetForm, site.id])
 
   const onSubmit = useCallback(
     (data: UpsertSiteInstructionsSchema) => {
@@ -95,7 +100,7 @@ export const SiteInstructionsForm = ({ site, onSuccess }: SiteInstructionsFormPr
         component="form"
         onSubmit={form.handleSubmit(onSubmit)}
       >
-        {!getSiteInstructionsRequest.submitting && (
+        {!gettingSiteInstructions && (
           <>
             <Box
               sx={{
@@ -148,7 +153,7 @@ export const SiteInstructionsForm = ({ site, onSuccess }: SiteInstructionsFormPr
             maxWidth: 'calc(100vw - 2rem)',
           }}
         >
-          {getSiteInstructionsRequest.submitting ? (
+          {gettingSiteInstructions ? (
             <CircularProgress color="primary" size="2rem" sx={{ mx: 'auto', my: 2 }} />
           ) : (
             <Box
@@ -159,7 +164,7 @@ export const SiteInstructionsForm = ({ site, onSuccess }: SiteInstructionsFormPr
                 display: 'grid',
                 gridTemplateColumns: 'auto 1px auto',
                 gridTemplateRows: '100%',
-                justifyContent: 'center',
+                justifyContent: 'stretch',
                 alignItems: 'stretch',
                 gap: 0,
               }}
@@ -174,7 +179,30 @@ export const SiteInstructionsForm = ({ site, onSuccess }: SiteInstructionsFormPr
             </Box>
           )}
         </Stack>
-        <Stack direction="row" alignItems="center" justifyContent="center" py={2}>
+        <Stack
+          direction="row"
+          flexWrap="wrap"
+          alignItems="center"
+          justifyContent="space-between"
+          p={2}
+          gap={2}
+        >
+          <LoadingButton
+            variant="outlined"
+            color="primary"
+            endIcon={<EngineeringRounded />}
+            loading={testingSession.startingSession}
+            loadingPosition="end"
+            onClick={() =>
+              testingSession.sessionId
+                ? () => {
+                    //TODO: stop session
+                  }
+                : testingSession.startSession(site.id)
+            }
+          >
+            {testingSession.sessionId ? 'End testing session' : 'Start testing session'}
+          </LoadingButton>
           <LoadingButton
             variant="outlined"
             color="primary"
@@ -183,7 +211,7 @@ export const SiteInstructionsForm = ({ site, onSuccess }: SiteInstructionsFormPr
             loading={setSiteInstructionsRequest.submitting}
             loadingPosition="end"
           >
-            Apply
+            Apply changes
           </LoadingButton>
         </Stack>
       </Stack>

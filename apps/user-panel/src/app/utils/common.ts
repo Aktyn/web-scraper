@@ -3,6 +3,9 @@ import { forwardRef, memo } from 'react'
 export const genericMemo: <T>(component: T) => T = memo
 export const genericForwardRef: <T>(component: T) => T = forwardRef as never
 
+/** Do nothing */
+export const noop = () => {}
+
 export async function copyToClipboard(text: string) {
   const result = await navigator.permissions.query({ name: 'clipboard-write' as PermissionName })
   if (result.state !== 'granted') {

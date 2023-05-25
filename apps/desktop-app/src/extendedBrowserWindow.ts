@@ -3,6 +3,21 @@ import type { ElectronApi, ElectronToRendererMessage } from '@web-scraper/common
 import { BrowserWindow } from 'electron'
 
 export class ExtendedBrowserWindow extends BrowserWindow {
+  private static readonly instances: Map<BrowserWindow['id'], ExtendedBrowserWindow> = new Map()
+
+  public static getInstances() {
+    return Array.from(ExtendedBrowserWindow.instances.values())
+  }
+
+  constructor(options: Electron.BrowserWindowConstructorOptions) {
+    super(options)
+
+    ExtendedBrowserWindow.instances.set(this.id, this)
+    this.on('closed', () => {
+      ExtendedBrowserWindow.instances.delete(this.id)
+    })
+  }
+
   sendMessage<Message extends ElectronToRendererMessage>(
     message: Message,
     ...args: ElectronApi[Message] extends (

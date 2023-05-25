@@ -13,10 +13,14 @@ export class ScraperPage {
   private readonly page: Page
   private initialized = false
 
+  public static async createFromExisting(page: Page) {
+    const scraperPage = new ScraperPage(page)
+    await scraperPage.init()
+    return scraperPage
+  }
+
   public static async create(browser: Browser) {
-    const page = new ScraperPage(await browser.newPage())
-    await page.init()
-    return page
+    return ScraperPage.createFromExisting(await browser.newPage())
   }
 
   private constructor(page: Page) {

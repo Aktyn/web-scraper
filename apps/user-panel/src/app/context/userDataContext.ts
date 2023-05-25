@@ -1,9 +1,6 @@
 import { createContext, type Dispatch, type SetStateAction } from 'react'
 import type { UserSettings } from '@web-scraper/common'
-
-const noop = () => {
-  // do nothing
-}
+import { noop } from '../utils'
 
 export const defaultUserSettings: UserSettings = {
   tablesCompactMode: false as boolean,

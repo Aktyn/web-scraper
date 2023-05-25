@@ -9,7 +9,7 @@ const myEnv = dotenv.config()
 dotenvExpand.expand(myEnv)
 
 // eslint-disable-next-line import/order
-import { ElectronToRendererMessage, safePromise } from '@web-scraper/common'
+import { safePromise } from '@web-scraper/common'
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { app, shell } from 'electron'
 import isDev from 'electron-is-dev'
@@ -54,22 +54,6 @@ function createWindow() {
   if (isDev) {
     mainWindow.webContents.openDevTools({ mode: 'bottom' })
   }
-
-  // Emit dummy event every second TODO: remove this after creating first real use case
-  let tempCounter2 = 0
-  setInterval(() => {
-    mainWindow.sendMessage(ElectronToRendererMessage.dummyEventFromMain, ++tempCounter2)
-  }, 1000)
-
-  // Test scraper
-  // ;(async () => {
-  //   const scraper = new Scraper()
-  //   await scraper.init()
-  //
-  //   await wait(30_000)
-  //   await scraper.destroy()
-  //   // await ScraperBrowser.destroy()
-  // })()
 }
 
 app.whenReady().then(() => {

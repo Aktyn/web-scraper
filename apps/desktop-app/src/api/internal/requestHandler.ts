@@ -2,6 +2,7 @@
 import { ipcMain } from 'electron'
 
 import { accountHandler } from './handlers/account.handler'
+import { scraperSessionHandler } from './handlers/scraperSession.handler'
 import { siteHandler } from './handlers/site.handler'
 import { siteInstructionsHandler } from './handlers/siteInstructions.handler'
 import { siteTagHandler } from './handlers/siteTag.handler'
@@ -15,6 +16,7 @@ export function registerRequestsHandler() {
     ...siteTagHandler,
     ...siteHandler,
     ...siteInstructionsHandler,
+    ...scraperSessionHandler,
   } satisfies RequestHandlersSchema
 
   for (const channel in handler) {

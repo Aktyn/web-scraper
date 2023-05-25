@@ -6,7 +6,7 @@ export async function getPagePreview(url: string) {
   const browser = await launch({
     args: ['--disable-infobars', '--no-default-browser-check'],
     ignoreDefaultArgs: ['--enable-automation', '--enable-blink-features=IdleDetection'],
-    headless: true,
+    headless: 'new', //TODO: verify if this works
     devtools: false,
     handleSIGINT: true,
     ignoreHTTPSErrors: true,

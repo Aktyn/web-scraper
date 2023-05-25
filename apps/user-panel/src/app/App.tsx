@@ -3,6 +3,7 @@ import createCache from '@emotion/cache'
 import { CacheProvider } from '@emotion/react'
 import { CssBaseline, ThemeProvider } from '@mui/material'
 import { SnackbarProvider } from 'notistack'
+import { ApiEventsProvider } from './api/ApiEventsProvider'
 import { FullViewLoader } from './components/common/loader/FullViewLoader'
 import { Config } from './config'
 import { ViewContext, type ViewName, ViewTransitionState } from './context/viewContext'
@@ -20,7 +21,7 @@ const emotionCache = createCache({
 export const App = () => {
   const mounted = useMounted()
 
-  const [viewName, setViewName] = useState<ViewName>('DASHBOARD')
+  const [viewName, setViewName] = useState<ViewName>('DATA_MANAGER') //TODO: restore DASHBOARD
   const [previousViewName, setPreviousViewName] = useState<ViewName | null>(null)
   const [nextViewName, setNextViewName] = useState<ViewName | null>(null)
   const [viewTransitionState, setViewTransitionState] = useState(ViewTransitionState.IDLE)
@@ -86,17 +87,19 @@ export const App = () => {
               }}
             >
               <UserDataProvider>
-                <Layout>
-                  <Suspense fallback={<FullViewLoader />}>
-                    <currentView.component key={viewName} />
-                  </Suspense>
-                  {nextView && (
-                    // Preloads next view file
-                    <Suspense fallback={null}>
-                      <nextView.component key={nextViewName} doNotRender />
+                <ApiEventsProvider>
+                  <Layout>
+                    <Suspense fallback={<FullViewLoader />}>
+                      <currentView.component key={viewName} />
                     </Suspense>
-                  )}
-                </Layout>
+                    {nextView && (
+                      // Preloads next view file
+                      <Suspense fallback={null}>
+                        <nextView.component key={nextViewName} doNotRender />
+                      </Suspense>
+                    )}
+                  </Layout>
+                </ApiEventsProvider>
               </UserDataProvider>
             </ViewContext.Provider>
           </SnackbarProvider>
