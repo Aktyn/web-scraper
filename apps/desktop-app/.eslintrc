@@ -137,6 +137,7 @@
       "warn",
       {
         "allow": [
+          "info",
           "warn",
           "error"
         ]

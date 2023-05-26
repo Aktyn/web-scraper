@@ -17,6 +17,7 @@ import isDev from 'electron-is-dev'
 import { registerRequestsHandler } from './api/internal/requestHandler'
 import Database from './database'
 import { ExtendedBrowserWindow } from './extendedBrowserWindow'
+import { Scraper } from './scraper'
 import { EXTERNAL_DIRECTORY_PATH } from './utils'
 
 function createWindow() {
@@ -68,6 +69,10 @@ app.whenReady().then(() => {
 })
 
 app.on('window-all-closed', async () => {
+  for (const instance of Scraper.getAllInstances()) {
+    await safePromise(instance.destroy(true))
+  }
+
   await safePromise(Database.disconnect())
   if (process.platform !== 'darwin') {
     app.quit()

@@ -1,15 +1,7 @@
-import type { Browser, Page } from 'puppeteer'
+import type { Browser, Page, PageEventObject, ScreenshotOptions, WaitForOptions } from 'puppeteer'
 import { getRandom } from 'random-useragent'
 
-export class ScraperPage {
-  // public static readonly defaultViewPort: Viewport = {
-  //   width: 1280,
-  //   height: 720,
-  //   isMobile: false,
-  //   hasTouch: false,
-  //   deviceScaleFactor: 1,
-  // }
-
+export class ScraperPage implements Pick<Page, 'on' | 'off'> {
   private readonly page: Page
   private initialized = false
 
@@ -59,14 +51,44 @@ export class ScraperPage {
     this.initialized = true
   }
 
-  public async goto(url: string, waitFor?: string) {
-    await this.page.goto(url, {
+  public on<K extends keyof PageEventObject>(
+    eventName: K,
+    handler: (event: PageEventObject[K]) => void,
+  ) {
+    return this.page!.on(eventName, handler)
+  }
+
+  public off<K extends keyof PageEventObject>(
+    eventName: K,
+    handler: (event: PageEventObject[K]) => void,
+  ) {
+    return this.page!.off(eventName, handler)
+  }
+
+  public async goto(
+    url: string,
+    waitForSelector?: string | null,
+    options: WaitForOptions & { referer?: string; referrerPolicy?: string } = {
       waitUntil: 'load',
       timeout: 0,
-    })
+    },
+  ) {
+    await this.page.goto(url, options)
 
-    if (waitFor) {
-      await this.page.waitForSelector(waitFor)
+    if (waitForSelector) {
+      await this.page.waitForSelector(waitForSelector)
     }
+  }
+
+  screenshot(options: ScreenshotOptions & { encoding: 'base64' }) {
+    return this.page.screenshot(options)
+  }
+
+  close(...args: Parameters<Page['close']>) {
+    return this.page.close(...args)
+  }
+
+  url() {
+    return this.page.url()
   }
 }

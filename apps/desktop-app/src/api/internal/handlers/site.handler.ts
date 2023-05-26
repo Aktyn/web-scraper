@@ -1,7 +1,7 @@
 import { RendererToElectronMessage } from '@web-scraper/common'
 
 import Database from '../../../database'
-import { getPagePreview } from '../../../utils/scraperMisc'
+import { Scraper } from '../../../scraper'
 import { handleApiRequest, type RequestHandlersSchema, successResponse } from '../helpers'
 import { parseDatabaseSite } from '../parsers/siteParser'
 
@@ -31,6 +31,17 @@ export const siteHandler = {
   ),
   [RendererToElectronMessage.getSitePreview]: handleApiRequest(
     RendererToElectronMessage.getSitePreview,
-    (url) => getPagePreview(url).then((preview) => ({ imageBase64: preview })),
+    async (url) => {
+      const scraperPreviewInstance =
+        Array.from(Scraper.getInstances(Scraper.Mode.PREVIEW).values()).at(0) ??
+        new Scraper(Scraper.Mode.PREVIEW, {
+          viewportWidth: 1280,
+          viewportHeight: 720,
+        })
+
+      return {
+        imageBase64: await scraperPreviewInstance.takeScreenshot(url),
+      }
+    },
   ),
 } satisfies Partial<RequestHandlersSchema>

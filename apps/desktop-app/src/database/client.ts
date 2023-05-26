@@ -7,7 +7,6 @@ import isDev from 'electron-is-dev'
 
 import { EXECUTABLE_DIRECTORY_PATH, EXTERNAL_DIRECTORY_PATH } from '../utils'
 
-// eslint-disable-next-line no-console
 console.info('EXECUTABLE_DIRECTORY_PATH', EXECUTABLE_DIRECTORY_PATH)
 
 const databaseFilePath = (() => {
@@ -30,7 +29,6 @@ const databaseUrl = url
   .pathToFileURL(databaseFilePath)
   .href.replace(/^file:(\/)+([a-z]:)/i, 'file:$2')
 
-// eslint-disable-next-line no-console
 console.info('Database URL:', databaseUrl)
 
 const prisma = new PrismaClient({

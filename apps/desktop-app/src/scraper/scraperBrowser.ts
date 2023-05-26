@@ -3,7 +3,13 @@ import path from 'path'
 
 import { cacheable, safePromise, waitFor } from '@web-scraper/common'
 import isDev from 'electron-is-dev'
-import { launch, type Browser, type PuppeteerLaunchOptions } from 'puppeteer'
+import {
+  launch,
+  type Browser,
+  type EventType,
+  type Handler,
+  type PuppeteerLaunchOptions,
+} from 'puppeteer'
 
 import { EXTERNAL_DIRECTORY_PATH } from '../utils'
 
@@ -29,7 +35,7 @@ export default class ScraperBrowser {
           // ...(process.env.TOR_PROXY_SERVER
           //   ? [`--proxy-server=${process.env.TOR_PROXY_SERVER}`]
           //   : []),
-          '--start-maximized',
+          // '--start-maximized',
           '--disable-infobars',
           '--no-default-browser-check',
         ],
@@ -67,6 +73,7 @@ export default class ScraperBrowser {
       }
 
       this.browser = browser
+
       // eslint-disable-next-line no-console
       console.log('Browser initialized')
     })
@@ -75,6 +82,18 @@ export default class ScraperBrowser {
   public async destroy() {
     await this.browser?.close()
     this.browser = null
+  }
+
+  @waitForBrowser
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  public async on(event: EventType, handler: Handler<any>) {
+    return this.browser!.on(event, handler)
+  }
+
+  @waitForBrowser
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  public async off(event: EventType, handler: Handler<any>) {
+    return this.browser!.off(event, handler)
   }
 
   @waitForBrowser

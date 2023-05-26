@@ -1,8 +1,9 @@
 import { Suspense, useCallback, useState } from 'react'
 import createCache from '@emotion/cache'
 import { CacheProvider } from '@emotion/react'
-import { CssBaseline, ThemeProvider } from '@mui/material'
-import { SnackbarProvider } from 'notistack'
+import { CloseRounded } from '@mui/icons-material'
+import { CssBaseline, IconButton, ThemeProvider } from '@mui/material'
+import { SnackbarProvider, closeSnackbar } from 'notistack'
 import { ApiProvider } from './api/ApiProvider'
 import { FullViewLoader } from './components/common/loader/FullViewLoader'
 import { Config } from './config'
@@ -75,6 +76,11 @@ export const App = () => {
               horizontal: 'center',
               vertical: 'top',
             }}
+            action={(key) => (
+              <IconButton onClick={() => key && closeSnackbar(key)}>
+                <CloseRounded />
+              </IconButton>
+            )}
           >
             <ViewContext.Provider
               value={{
