@@ -41,6 +41,7 @@ export enum RendererToElectronMessage {
   getSiteInstructions = 'getSiteInstructions',
   setSiteInstructions = 'setSiteInstructions',
 
+  getSiteInstructionsTestingSessions = 'getSiteInstructionsTestingSessions',
   startSiteInstructionsTestingSession = 'startSiteInstructionsTestingSession',
   endSiteInstructionsTestingSession = 'endSiteInstructionsTestingSession',
 }
@@ -108,6 +109,9 @@ export type ElectronApi = {
     data: UpsertSiteInstructionsSchema,
   ) => Promise<ApiError>
 
+  [RendererToElectronMessage.getSiteInstructionsTestingSessions]: () => Promise<
+    { sessionId: string; site: Site }[] | ApiError
+  >
   [RendererToElectronMessage.startSiteInstructionsTestingSession]: (
     siteId: Site['id'],
   ) => Promise<{ sessionId: string } | ApiError>

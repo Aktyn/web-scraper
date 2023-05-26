@@ -1,6 +1,6 @@
 import { createContext } from 'react'
 import type { ElectronApi, ElectronToRendererMessage } from '@web-scraper/common'
-import type { TestingSessionsContext } from '../api/ApiProvider'
+import type { TestingSessionsContext } from '../api/useTestingSessions'
 import { noop } from '../utils'
 
 export type ApiEventListenerType = <MessageType extends ElectronToRendererMessage>(

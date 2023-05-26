@@ -69,7 +69,9 @@ export const Layout = memo<LayoutProps>(({ children }) => {
         }}
       >
         <BackgroundEffect />
-        {children}
+        <Stack flexGrow={1} width="100%" height="100%" zIndex={1}>
+          {children}
+        </Stack>
       </Stack>
       <Footer />
     </Box>

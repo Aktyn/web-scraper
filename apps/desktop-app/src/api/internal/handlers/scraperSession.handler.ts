@@ -12,13 +12,24 @@ import { handleApiRequest, successResponse, type RequestHandlersSchema } from '.
 import { parseDatabaseSite } from '../parsers/siteParser'
 
 export const scraperSessionHandler = {
+  [RendererToElectronMessage.getSiteInstructionsTestingSessions]: handleApiRequest(
+    RendererToElectronMessage.getSiteInstructionsTestingSessions,
+    () => {
+      return Promise.all(
+        Array.from(Scraper.getInstances(Scraper.Mode.TESTING).values()).map(async (scraper) => ({
+          sessionId: scraper.id,
+          site: await Database.site.getSite(scraper.getOptions().siteId).then(parseDatabaseSite),
+        })),
+      )
+    },
+  ),
   [RendererToElectronMessage.startSiteInstructionsTestingSession]: handleApiRequest(
     RendererToElectronMessage.startSiteInstructionsTestingSession,
     (siteId) =>
       Database.site.getSite(siteId).then((site) => {
         const existingInstance = Array.from(
           Scraper.getInstances(Scraper.Mode.TESTING).values(),
-        ).find((instance) => instance.getTestingURL() === site.url)
+        ).find((instance) => instance.getOptions().lockURL === site.url)
 
         if (existingInstance) {
           console.warn(
@@ -29,6 +40,7 @@ export const scraperSessionHandler = {
         }
 
         const testingModeScraperInstance = new Scraper(Scraper.Mode.TESTING, {
+          siteId: site.id,
           lockURL: site.url,
           onClose: () => {
             broadcastMessage(

@@ -2,6 +2,7 @@ import { safePromise, wait } from '@web-scraper/common'
 import type { Page } from 'puppeteer'
 import * as uuid from 'uuid'
 
+import type { Site } from './../../../../packages/common/lib/api/site.d'
 import ScraperBrowser from './scraperBrowser'
 import type { ScraperPage } from './scraperPage'
 
@@ -12,7 +13,7 @@ export enum ScraperMode {
 }
 
 type ScraperOptions<ModeType extends ScraperMode> = (ModeType extends ScraperMode.TESTING
-  ? { lockURL: string }
+  ? { siteId: Site['id']; lockURL: string }
   : ModeType extends ScraperMode.PREVIEW
   ? { viewportWidth: number; viewportHeight: number }
   : never) & {
@@ -88,12 +89,16 @@ export class Scraper<ModeType extends ScraperMode> {
     }
   }
 
-  public getTestingURL: ModeType extends ScraperMode.TESTING ? () => string : never = (() => {
-    if (this.mode !== ScraperMode.TESTING) {
-      throw new Error('Scraper is not in testing mode')
-    }
-    return (this as Scraper<ScraperMode.TESTING>).options.lockURL
-  }) as never
+  public getOptions() {
+    return this.options as Readonly<ScraperOptions<ModeType>>
+  }
+
+  // public getTestingURL: ModeType extends ScraperMode.TESTING ? () => string : never = (() => {
+  //   if (this.mode !== ScraperMode.TESTING) {
+  //     throw new Error('Scraper is not in testing mode')
+  //   }
+  //   return (this as Scraper<ScraperMode.TESTING>).options.lockURL
+  // }) as never
 
   async init() {
     if (this.mainPage) {

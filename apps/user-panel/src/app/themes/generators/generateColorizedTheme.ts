@@ -187,17 +187,14 @@ export function generateColorizedTheme({
                 [`&.${tableRowClasses.hover}:hover`]: {
                   backgroundColor: divider,
                 },
+                [`&.${tableRowClasses.head}`]: {
+                  backgroundColor: 'inherit',
+                },
                 '&:nth-of-type(even)': {
                   backgroundColor: alpha(common.white, 0.01),
-                  [`&.${tableRowClasses.head}`]: {
-                    backgroundColor: 'inherit',
-                  },
                 },
                 '&:nth-of-type(odd)': {
                   backgroundColor: alpha(common.black, 0.01),
-                  [`&.${tableRowClasses.head}`]: {
-                    backgroundColor: 'inherit',
-                  },
                 },
               },
             },
@@ -225,6 +222,21 @@ export function generateColorizedTheme({
           MuiPopover: {
             styleOverrides: {
               paper: glassmorphicPaper,
+            },
+          },
+          MuiCard: {
+            variants: [
+              {
+                props: { variant: 'outlined' },
+                style: glassmorphicPaper,
+              },
+            ],
+          },
+          MuiCardActions: {
+            styleOverrides: {
+              root: {
+                borderTop: `1px solid ${alpha(paperDivider, 0.5)}`,
+              },
             },
           },
           MuiDrawer: {

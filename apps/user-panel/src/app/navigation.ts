@@ -31,9 +31,11 @@ const Navigation = {
       disableTopFadeEffect: true,
     },
   } as NavigationEntry,
-  // TESTING_SESSIONS: {
-  //   //TODO
-  // },
+  TESTING: {
+    component: lazy(() => import('./views/Testing/TestingView')),
+    theme: mainThemes.purple,
+    gridPosition: [1, 0],
+  } as NavigationEntry,
   INFO: {
     component: lazy(() => import('./views/Info/InfoView')),
     theme: mainThemes.deepPurple,
@@ -48,6 +50,6 @@ export default Navigation
 
 /** Grid visualization of transition purposes **/
 /*-------------------------------
-| DASHBOARD     | ------------- |
-| DATA_MANAGER  | INFO--------- |
+| DASHBOARD     | TESTING       |
+| DATA_MANAGER  | INFO          |
 --------------------------------*/

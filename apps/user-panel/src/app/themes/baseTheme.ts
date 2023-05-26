@@ -52,6 +52,12 @@ export const baseThemeOptions: ThemeOptions = {
           lineHeight: 1,
           borderRadius: '2rem',
         },
+        textPrimary: {
+          paddingInline: '0.5rem',
+        },
+        textSecondary: {
+          paddingInline: '0.5rem',
+        },
       },
     },
     MuiInputBase: {
@@ -103,6 +109,19 @@ export const baseThemeOptions: ThemeOptions = {
       styleOverrides: {
         paper: customPaper,
       },
+    },
+    MuiCard: {
+      styleOverrides: {
+        root: {
+          borderRadius: '1rem',
+        },
+      },
+      variants: [
+        {
+          props: { variant: 'outlined' },
+          style: customPaper,
+        },
+      ],
     },
     MuiDrawer: {
       styleOverrides: {

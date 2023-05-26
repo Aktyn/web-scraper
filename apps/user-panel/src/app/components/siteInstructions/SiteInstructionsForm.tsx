@@ -196,12 +196,12 @@ export const SiteInstructionsForm = ({ site, onSuccess }: SiteInstructionsFormPr
               (testingSessions.startingSession &&
                 testingSessions.startingSessionData?.[0] === site.id) ||
               (testingSessions.endingSession &&
-                testingSessions.endingSessionData?.[0] === siteTestingSession?.id)
+                testingSessions.endingSessionData?.[0] === siteTestingSession?.sessionId)
             }
             loadingPosition="end"
             onClick={() =>
               siteTestingSession
-                ? testingSessions.endSession(siteTestingSession.id)
+                ? testingSessions.endSession(siteTestingSession.sessionId)
                 : testingSessions.startSession(site.id)
             }
           >
