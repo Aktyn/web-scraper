@@ -44,6 +44,7 @@ export enum RendererToElectronMessage {
   getSiteInstructionsTestingSessions = 'getSiteInstructionsTestingSessions',
   startSiteInstructionsTestingSession = 'startSiteInstructionsTestingSession',
   endSiteInstructionsTestingSession = 'endSiteInstructionsTestingSession',
+  testActionStep = 'testActionStep',
 }
 
 // eslint-disable-next-line @typescript-eslint/ban-types
@@ -131,5 +132,9 @@ export type ElectronApi = {
   ) => Promise<{ sessionId: string } | ApiError>
   [RendererToElectronMessage.endSiteInstructionsTestingSession]: (
     sessionId: string,
+  ) => Promise<ApiError>
+  [RendererToElectronMessage.testActionStep]: (
+    sessionId: string,
+    actionStep: UpsertSiteInstructionsSchema['actions'][number]['actionSteps'][number],
   ) => Promise<ApiError>
 }

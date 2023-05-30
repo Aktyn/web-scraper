@@ -1,8 +1,11 @@
+import { useCallback, useContext } from 'react'
 import { FormatListBulletedRounded } from '@mui/icons-material'
 import { InputAdornment, MenuItem, Stack } from '@mui/material'
 import { ActionStepType, type UpsertSiteInstructionsSchema } from '@web-scraper/common'
 import { useFieldArray, useFormContext } from 'react-hook-form'
 import { StepDataForm } from './StepDataForm'
+import { SiteInstructionsTestingSessionContext } from '../../context/siteInstructionsTestingSessionContext'
+import { useApiRequest } from '../../hooks/useApiRequest'
 import { actionStepTypeNames } from '../../utils/site-instructions-helpers'
 import { ItemsList } from '../common/treeStructure/ItemsList'
 import { FormInput } from '../form/FormInput'
@@ -16,6 +19,31 @@ export const StepsForm = ({ fieldName }: StepsFormProps) => {
   const stepsFields = useFieldArray<UpsertSiteInstructionsSchema, typeof fieldName>({
     name: fieldName,
   })
+
+  const { submit: submitTestActionStep, submitting: testingActionStep } = useApiRequest(
+    window.electronAPI.testActionStep,
+  )
+
+  const testingSession = useContext(SiteInstructionsTestingSessionContext)
+
+  const testActionStep = useCallback(
+    (actionStep: UpsertSiteInstructionsSchema['actions'][number]['actionSteps'][number]) => {
+      if (!testingSession) {
+        return
+      }
+
+      submitTestActionStep(
+        {
+          onSuccess: (_, { enqueueSnackbar }) => {
+            enqueueSnackbar({ variant: 'success', message: 'Action step completed' })
+          },
+        },
+        testingSession.sessionId,
+        actionStep,
+      )
+    },
+    [submitTestActionStep, testingSession],
+  )
 
   return (
     <ItemsList
@@ -31,6 +59,8 @@ export const StepsForm = ({ fieldName }: StepsFormProps) => {
         })
       }
       onDelete={(_, index) => stepsFields.remove(index)}
+      onPlay={!testingSession ? undefined : testActionStep}
+      loadingPlayButton={testingActionStep}
     >
       {(field, index) => [
         field.id,

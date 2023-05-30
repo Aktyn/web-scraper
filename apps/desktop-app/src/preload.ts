@@ -35,6 +35,7 @@ const rendererToElectronMessageNames = [
   'getSiteInstructionsTestingSessions',
   'startSiteInstructionsTestingSession',
   'endSiteInstructionsTestingSession',
+  'testActionStep',
 ] as const
 
 const api = {

@@ -78,6 +78,26 @@ export const scraperSessionHandler = {
       return successResponse
     },
   ),
+  [RendererToElectronMessage.testActionStep]: handleApiRequest(
+    RendererToElectronMessage.endSiteInstructionsTestingSession,
+    async (sessionId, actionStep) => {
+      console.log('TEST', sessionId, actionStep)
+      // const existingInstance = Array.from(Scraper.getInstances(Scraper.Mode.TESTING).values()).find(
+      //   (instance) => instance.id === sessionId,
+      // )
+      // if (!existingInstance) {
+      //   throw ErrorCode.NOT_FOUND
+      // }
+      // await existingInstance.destroy()
+
+      // broadcastMessage(
+      //   ElectronToRendererMessage.siteInstructionsTestingSessionClosed,
+      //   existingInstance.id,
+      // )
+
+      return successResponse
+    },
+  ),
 } satisfies Partial<RequestHandlersSchema>
 
 function broadcastMessage<MessageType extends ElectronToRendererMessage>(

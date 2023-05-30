@@ -14,7 +14,7 @@
     "build": "tsc -p ./tsconfig.json",
     "prebuild": "prisma generate",
     "start": "electron ./dist/main.js",
-    "dev": "cross-env NODE_ENV=dev nodemon --legacy-watch ./src/**/* --exec \"yarn run build && yarn run start\" -e ts",
+    "dev": "cross-env NODE_ENV=dev nodemon --legacy-watch ./src/**/* --exec \"yarn run build && yarn run start\" -e ts || exit 1",
     "db:generate": "prisma generate",
     "db:generate:reset": "cross-env yarn run db:generate && shx rm -f ./external/data.db && shx touch ./external/data.db && prisma migrate resolve --applied 0_init && prisma db push",
     "db:migrate": "prisma migrate dev",

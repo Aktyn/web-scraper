@@ -1,5 +1,5 @@
 import { useState, type Key, type ReactNode } from 'react'
-import { AddRounded, DeleteRounded, ExpandMoreRounded } from '@mui/icons-material'
+import { AddRounded, DeleteRounded, ExpandMoreRounded, PlayArrowRounded } from '@mui/icons-material'
 import {
   Accordion,
   AccordionDetails,
@@ -12,9 +12,11 @@ import {
   lighten,
   type Theme,
   alpha,
+  Tooltip,
 } from '@mui/material'
 import { ItemTitle } from './ItemTitle'
 import { mixColors } from '../../../themes'
+import { LoadingIconButton } from '../button/LoadingIconButton'
 
 interface ItemsListProps<ItemType extends object | string | number> {
   level?: number
@@ -23,6 +25,8 @@ interface ItemsListProps<ItemType extends object | string | number> {
   items: ItemType[]
   onAdd?: () => void
   onDelete?: (item: ItemType, index: number) => void
+  onPlay?: (item: ItemType, index: number) => void
+  loadingPlayButton?: boolean
 }
 
 export const ItemsList = <ItemType extends object | string | number>({
@@ -32,6 +36,8 @@ export const ItemsList = <ItemType extends object | string | number>({
   items,
   onAdd,
   onDelete,
+  onPlay,
+  loadingPlayButton,
 }: ItemsListProps<ItemType>) => {
   const [expanded, setExpanded] = useState(true)
 
@@ -126,7 +132,7 @@ export const ItemsList = <ItemType extends object | string | number>({
         }}
       >
         <Stack
-          rowGap={2}
+          rowGap={4}
           sx={{
             position: 'relative',
             '&::before': {
@@ -159,54 +165,55 @@ export const ItemsList = <ItemType extends object | string | number>({
                     borderTopRightRadius: '0.5rem',
                   }}
                 />
-                {onDelete && (
+                {(onDelete || onPlay) && (
                   <>
                     <Box
                       sx={{
                         position: 'absolute',
                         top: 0,
                         left: 'calc(50% - 1px)',
-                        right: '25%',
+                        right: onDelete && onPlay ? '4.25rem' : '2.125rem',
                         height: '0.5rem',
                         borderTop: borderStyle,
                         borderLeft: borderStyle,
-                        borderRight: borderStyle,
                         borderTopLeftRadius: '0.5rem',
-                        borderTopRightRadius: '1rem',
                       }}
                     />
-                    <Box
-                      sx={{
-                        position: 'absolute',
-                        top: '0.5rem',
-                        left: 'calc(75% - 1px)',
-                        right: '34px',
-                        height: '0.5rem',
-                        borderBottom: borderStyle,
-                        borderLeft: borderStyle,
-                        borderBottomLeftRadius: '1rem',
-                      }}
-                    />
+                    {onPlay && (
+                      <Tooltip title="Run test">
+                        <LoadingIconButton
+                          size="small"
+                          onClick={() => onPlay(field, index)}
+                          sx={{
+                            position: 'absolute',
+                            top: '-1.075rem',
+                            right: onDelete ? '2.125rem' : '0',
+                            zIndex: 1,
+                          }}
+                          loading={loadingPlayButton}
+                        >
+                          <PlayArrowRounded />
+                        </LoadingIconButton>
+                      </Tooltip>
+                    )}
+                    {onDelete && (
+                      <IconButton
+                        size="small"
+                        onClick={() => onDelete(field, index)}
+                        sx={{
+                          position: 'absolute',
+                          top: '-1.075rem',
+                          right: '0',
+                          zIndex: 1,
+                        }}
+                      >
+                        <DeleteRounded />
+                      </IconButton>
+                    )}
                   </>
                 )}
-                <Stack
-                  direction="row"
-                  alignItems="flex-start"
-                  justifyContent={onDelete ? 'space-between' : 'stretch'}
-                  columnGap={1}
-                  pl="1rem"
-                  pt="0.5rem"
-                >
+                <Stack justifyContent="flex-start" alignItems="stretch" px="1rem" pt="0.5rem">
                   {child}
-                  {onDelete && (
-                    <IconButton
-                      size="small"
-                      onClick={() => onDelete(field, index)}
-                      sx={{ mt: 'calc(-0.5rem - 2px)' }}
-                    >
-                      <DeleteRounded />
-                    </IconButton>
-                  )}
                 </Stack>
               </Box>
             )
