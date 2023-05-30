@@ -46,12 +46,26 @@ export enum RendererToElectronMessage {
   endSiteInstructionsTestingSession = 'endSiteInstructionsTestingSession',
 }
 
+// eslint-disable-next-line @typescript-eslint/ban-types
+type Event<Params extends object = {}> = {
+  preventDefault: () => void
+  readonly defaultPrevented: boolean
+} & Params
+
+export interface IpcRendererEventPolyfill extends Event {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  ports: any[]
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  sender: any
+  senderId: number
+}
+
 export type ElectronApi = {
   [ElectronToRendererMessage.siteInstructionsTestingSessionOpen]: (
-    callback: (event: Event, sessionId: string, site: Site) => void,
+    callback: (event: IpcRendererEventPolyfill, sessionId: string, site: Site) => void,
   ) => void
   [ElectronToRendererMessage.siteInstructionsTestingSessionClosed]: (
-    callback: (event: Event, sessionId: string) => void,
+    callback: (event: IpcRendererEventPolyfill, sessionId: string) => void,
   ) => void
 
   [RendererToElectronMessage.getUserSettings]: () => Promise<UserSettings | ApiError>

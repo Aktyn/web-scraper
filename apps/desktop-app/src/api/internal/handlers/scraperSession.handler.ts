@@ -1,4 +1,4 @@
-import type { ElectronApi } from '@web-scraper/common'
+import type { ElectronApi, IpcRendererEventPolyfill } from '@web-scraper/common'
 import {
   ElectronToRendererMessage,
   ErrorCode,
@@ -83,12 +83,12 @@ export const scraperSessionHandler = {
 function broadcastMessage<MessageType extends ElectronToRendererMessage>(
   message: MessageType,
   ...args: ElectronApi[MessageType] extends (
-    callback: (event: Event, ...args: infer T) => void,
+    callback: (event: IpcRendererEventPolyfill, ...args: infer T) => void,
   ) => void
     ? T
     : never
 ) {
   ExtendedBrowserWindow.getInstances().forEach((windowInstance) => {
-    windowInstance.sendMessage(message, ...args)
+    windowInstance.sendMessage(message, ...(args as never))
   })
 }
