@@ -11,6 +11,7 @@ import {
   darken,
   lighten,
   type Theme,
+  alpha,
 } from '@mui/material'
 import { ItemTitle } from './ItemTitle'
 import { mixColors } from '../../../themes'
@@ -36,7 +37,7 @@ export const ItemsList = <ItemType extends object | string | number>({
 
   const allowExpand = level > 0
   const borderColor = (theme: Theme) =>
-    darken(mixColors(theme.palette.primary.main, theme.palette.secondary.main, 0.5), 0.1)
+    alpha(mixColors(theme.palette.primary.main, theme.palette.secondary.main, 0.15), 0.5)
   const borderStyle = (theme: Theme) => `1px solid ${borderColor(theme)}`
 
   return (

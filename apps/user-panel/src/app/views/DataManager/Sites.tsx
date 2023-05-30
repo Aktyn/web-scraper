@@ -1,5 +1,5 @@
 import { useCallback, useRef, useState } from 'react'
-import { Box, IconButton, SvgIcon, Tooltip, type IconButtonProps } from '@mui/material'
+import { Box } from '@mui/material'
 import type { Site } from '@web-scraper/common'
 import { TermInfo } from 'src/app/components/common/TermInfo'
 import { TransitionType, ViewTransition } from '../../components/animation/ViewTransition'
@@ -7,7 +7,7 @@ import { ConfirmationDialog } from '../../components/common/ConfirmationDialog'
 import type { CustomDrawerRef } from '../../components/common/CustomDrawer'
 import { CustomDrawer } from '../../components/common/CustomDrawer'
 import { UrlButton } from '../../components/common/button/UrlButton'
-import { ReactComponent as CogsIcon } from '../../components/icons/cogs.svg'
+import { OpenSiteInstructionsFormButton } from '../../components/site/OpenSiteInstructionsFormButton'
 import { SiteForm } from '../../components/site/SiteForm'
 import { SiteInstructionsForm } from '../../components/siteInstructions/SiteInstructionsForm'
 import { Table, useTableColumns, type TableRef } from '../../components/table'
@@ -162,15 +162,5 @@ export const Sites = () => {
         </Box>
       </ViewTransition>
     </>
-  )
-}
-
-const OpenSiteInstructionsFormButton = (iconButtonProps: IconButtonProps) => {
-  return (
-    <Tooltip title="Manage instructions" disableInteractive>
-      <IconButton size="small" {...iconButtonProps}>
-        <SvgIcon component={CogsIcon} inheritViewBox />
-      </IconButton>
-    </Tooltip>
   )
 }

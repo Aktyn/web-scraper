@@ -93,13 +93,6 @@ export class Scraper<ModeType extends ScraperMode> {
     return this.options as Readonly<ScraperOptions<ModeType>>
   }
 
-  // public getTestingURL: ModeType extends ScraperMode.TESTING ? () => string : never = (() => {
-  //   if (this.mode !== ScraperMode.TESTING) {
-  //     throw new Error('Scraper is not in testing mode')
-  //   }
-  //   return (this as Scraper<ScraperMode.TESTING>).options.lockURL
-  // }) as never
-
   async init() {
     if (this.mainPage) {
       console.error('Scraper main page has been already initialized')
