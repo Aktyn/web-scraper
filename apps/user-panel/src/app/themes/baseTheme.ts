@@ -1,4 +1,4 @@
-import '@fontsource/roboto-flex/variable-full.css'
+import '@fontsource-variable/roboto-flex'
 import { drawerClasses, type CSSInterpolation, type ThemeOptions } from '@mui/material'
 import { createTheme } from '@mui/material/styles'
 // noinspection ES6UnusedImports
@@ -14,7 +14,7 @@ const customPaper: CSSInterpolation = {
 
 export const baseThemeOptions: ThemeOptions = {
   typography: {
-    fontFamily: ['"Roboto FlexVariable"', 'Roboto', 'Arial', 'sans-serif'].join(','),
+    fontFamily: ['"Roboto Flex Variable"', 'Roboto', 'Arial', 'sans-serif'].join(','),
   },
   components: {
     MuiCssBaseline: {
