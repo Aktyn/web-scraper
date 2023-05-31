@@ -1,10 +1,25 @@
-import { safePromise, wait } from '@web-scraper/common'
-import type { Page } from 'puppeteer'
+import {
+  ActionStepErrorType,
+  ActionStepType,
+  Logger,
+  safePromise,
+  wait,
+  type ActionStep,
+  type MapSiteError,
+  type Site,
+} from '@web-scraper/common'
+import type { ElementHandle, Page } from 'puppeteer'
 import * as uuid from 'uuid'
 
-import type { Site } from './../../../../packages/common/lib/api/site.d'
 import ScraperBrowser from './scraperBrowser'
 import type { ScraperPage } from './scraperPage'
+import {
+  checkErrorStep,
+  checkSuccessStep,
+  pressButtonStep,
+  waitForElementStep,
+  waitStep,
+} from './steps'
 
 export enum ScraperMode {
   DEFAULT,
@@ -41,6 +56,7 @@ export class Scraper<ModeType extends ScraperMode> {
 
   private destroyed = false
   public readonly id = uuid.v4()
+  protected readonly logger: Logger
 
   private readonly browser: ScraperBrowser
   protected mainPage: ScraperPage | null = null
@@ -53,6 +69,9 @@ export class Scraper<ModeType extends ScraperMode> {
   constructor(mode: ScraperMode.PREVIEW, options: ScraperOptions<ScraperMode.PREVIEW>)
   constructor(public readonly mode: ModeType, options?: ScraperOptions<ModeType>) {
     this.options = options as never
+    this.logger = new Logger(
+      `[Scraper (mode: ${ScraperMode[this.mode]}) (id: ${this.id.substring(0, 8)})]`,
+    )
 
     this.browser = new ScraperBrowser({
       headless: [ScraperMode.DEFAULT, ScraperMode.PREVIEW].includes(mode) ? 'new' : false,
@@ -74,7 +93,7 @@ export class Scraper<ModeType extends ScraperMode> {
 
     Scraper.instancesStore[this.mode].set(this.id, this)
 
-    console.info(`Scraper instance created in mode: ${this.mode}`)
+    this.logger.info(`Instance created`)
 
     this.init()
   }
@@ -95,7 +114,7 @@ export class Scraper<ModeType extends ScraperMode> {
 
   async init() {
     if (this.mainPage) {
-      console.error('Scraper main page has been already initialized')
+      this.logger.error('Main page has been already initialized')
       return
     }
 
@@ -132,7 +151,7 @@ export class Scraper<ModeType extends ScraperMode> {
     self.mainPage!.on('framenavigated', async (frame) => {
       const url = new URL(self.mainPage!.url())
       if (url.host && url.host !== 'null' && url.host !== targetUrl.host) {
-        console.info(
+        this.logger.info(
           `Returning to ${self.options.lockURL} due to manual redirecting to different host (${url.host})`,
         )
         await safePromise(frame.goto(self.options.lockURL))
@@ -143,7 +162,7 @@ export class Scraper<ModeType extends ScraperMode> {
     await this.browser.on('targetcreated', async (target) => {
       if (target.type() === 'page' && !this.destroyed) {
         const newPage: Page = await target.page()
-        console.info('Closing manually opened page in testing mode')
+        this.logger.info('Closing manually opened page in testing mode')
         await newPage.close()
       }
     })
@@ -171,22 +190,76 @@ export class Scraper<ModeType extends ScraperMode> {
     return imageData
   }
 
-  // protected async waitFor(elements: string, timeOut?: number): Promise<puppeteer.ElementHandle<Element>>;
-  // protected async waitFor(elements: string[], timeOut?: number): Promise<puppeteer.ElementHandle<Element>[]>;
-  // protected async waitFor(elements: string | string[], timeOut = this.options.pageTimeout) {
-  //   try {
-  //     if (Array.isArray(elements)) {
-  //       const handles: puppeteer.ElementHandle<Element>[] = [];
-  //       for (const el of forceArray(elements)) {
-  //         const handle = await this.page.waitForSelector(el, { timeout: timeOut });
-  //         handles.push(handle);
-  //       }
-  //       return handles;
-  //     } else {
-  //       return await this.page.waitForSelector(elements, { timeout: timeOut });
-  //     }
-  //   } catch (error) {
-  //     return null;
-  //   }
-  // }
+  @assertMainPage
+  public async performActionStep(
+    actionStep: ActionStep,
+    // data: ParserData, //TODO: use data source
+  ): Promise<MapSiteError> {
+    this.logger.info('Performing action step:', actionStep.type)
+
+    switch (actionStep.type) {
+      case ActionStepType.WAIT:
+        return await this.waitStep(actionStep)
+      case ActionStepType.WAIT_FOR_ELEMENT:
+        return await this.waitForElementStep(actionStep)
+      case ActionStepType.PRESS_BUTTON:
+        return await this.pressButtonStep(actionStep)
+      // case ActionStepType.FILL_INPUT:
+      //   return await this.fillInputStep(actionStep, data)
+      // case ActionStepType.SELECT_OPTION:
+      //   return await this.selectStep(actionStep, data)
+      case ActionStepType.CHECK_ERROR:
+        return this.checkErrorStep(actionStep)
+      case ActionStepType.CHECK_SUCCESS:
+        return this.checkSuccessStep(actionStep)
+      default:
+        this.logger.warn(`Unknown step type: ${actionStep.type}`)
+        return { errorType: ActionStepErrorType.UNKNOWN_STEP_TYPE }
+    }
+
+    return { errorType: ActionStepErrorType.NO_ERROR }
+  }
+
+  // Steps implemented in separated files
+  private waitStep = waitStep
+  private waitForElementStep = waitForElementStep
+  private pressButtonStep = pressButtonStep
+  // private fillInputStep = fillInputStep;
+  // private selectStep = selectStep;
+  private checkErrorStep = checkErrorStep
+  private checkSuccessStep = checkSuccessStep
+
+  protected async waitFor(elements: string, timeOut?: number): Promise<AwaitedElementHandle>
+  protected async waitFor(elements: string[], timeOut?: number): Promise<AwaitedElementHandle[]>
+  protected async waitFor(elements: string | string[], timeout = 30_000) {
+    try {
+      if (Array.isArray(elements)) {
+        const handles: AwaitedElementHandle[] = []
+        for (const el of elements) {
+          const handle = await this.mainPage!.exposed.waitForSelector(el, { timeout })
+          handles.push(handle)
+        }
+        return handles
+      } else {
+        return await this.mainPage!.exposed.waitForSelector(elements, { timeout })
+      }
+    } catch (error) {
+      return null
+    }
+  }
+}
+
+type AwaitedElementHandle = ElementHandle<Element> | null
+
+function assertMainPage(_target: unknown, _propertyKey: string, descriptor: PropertyDescriptor) {
+  const originalMethod: (...args: unknown[]) => unknown = descriptor.value
+
+  descriptor.value = async function (this: Scraper<ScraperMode>, ...args: unknown[]) {
+    if (!this.mainPage) {
+      throw new Error('Browser is not initialized')
+    }
+    return originalMethod.apply(this, args)
+  }
+
+  return descriptor
 }

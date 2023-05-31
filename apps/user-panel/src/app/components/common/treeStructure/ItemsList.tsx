@@ -13,6 +13,7 @@ import {
   type Theme,
   alpha,
   Tooltip,
+  Grow,
 } from '@mui/material'
 import { ItemTitle } from './ItemTitle'
 import { mixColors } from '../../../themes'
@@ -26,7 +27,8 @@ interface ItemsListProps<ItemType extends object | string | number> {
   onAdd?: () => void
   onDelete?: (item: ItemType, index: number) => void
   onPlay?: (item: ItemType, index: number) => void
-  loadingPlayButton?: boolean
+  disablePlayButtons?: boolean
+  loadingPlayButtonIndex?: number
 }
 
 export const ItemsList = <ItemType extends object | string | number>({
@@ -37,7 +39,8 @@ export const ItemsList = <ItemType extends object | string | number>({
   onAdd,
   onDelete,
   onPlay,
-  loadingPlayButton,
+  disablePlayButtons,
+  loadingPlayButtonIndex,
 }: ItemsListProps<ItemType>) => {
   const [expanded, setExpanded] = useState(true)
 
@@ -180,21 +183,24 @@ export const ItemsList = <ItemType extends object | string | number>({
                       }}
                     />
                     {onPlay && (
-                      <Tooltip title="Run test">
-                        <LoadingIconButton
-                          size="small"
-                          onClick={() => onPlay(field, index)}
-                          sx={{
-                            position: 'absolute',
-                            top: '-1.075rem',
-                            right: onDelete ? '2.125rem' : '0',
-                            zIndex: 1,
-                          }}
-                          loading={loadingPlayButton}
-                        >
-                          <PlayArrowRounded />
-                        </LoadingIconButton>
-                      </Tooltip>
+                      <Grow in>
+                        <Tooltip title="Run test">
+                          <LoadingIconButton
+                            size="small"
+                            onClick={() => onPlay(field, index)}
+                            sx={{
+                              position: 'absolute',
+                              top: '-1.075rem',
+                              right: onDelete ? '2.125rem' : '0',
+                              zIndex: 1,
+                            }}
+                            disabled={disablePlayButtons}
+                            loading={loadingPlayButtonIndex === index}
+                          >
+                            <PlayArrowRounded />
+                          </LoadingIconButton>
+                        </Tooltip>
+                      </Grow>
                     )}
                     {onDelete && (
                       <IconButton

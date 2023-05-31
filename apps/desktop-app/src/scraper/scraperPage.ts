@@ -1,8 +1,13 @@
 import type { Browser, Page, PageEventObject, ScreenshotOptions, WaitForOptions } from 'puppeteer'
 import { getRandom } from 'random-useragent'
 
+const exposedMethods = [
+  'waitForSelector',
+  'waitForNavigation',
+  'click',
+] as const satisfies Readonly<(keyof Page)[]>
+
 export class ScraperPage implements Pick<Page, 'on' | 'off'> {
-  private readonly page: Page
   private initialized = false
 
   public static async createFromExisting(page: Page) {
@@ -15,9 +20,7 @@ export class ScraperPage implements Pick<Page, 'on' | 'off'> {
     return ScraperPage.createFromExisting(await browser.newPage())
   }
 
-  private constructor(page: Page) {
-    this.page = page
-  }
+  private constructor(private readonly page: Page) {}
 
   async destroy() {
     const pages = await this.page.browser().pages()
@@ -65,6 +68,10 @@ export class ScraperPage implements Pick<Page, 'on' | 'off'> {
     return this.page!.off(eventName, handler)
   }
 
+  public close(...args: Parameters<Page['close']>) {
+    return this.page.close(...args)
+  }
+
   public async goto(
     url: string,
     waitForSelector?: string | null,
@@ -80,15 +87,16 @@ export class ScraperPage implements Pick<Page, 'on' | 'off'> {
     }
   }
 
-  screenshot(options: ScreenshotOptions & { encoding: 'base64' }) {
+  public screenshot(options: ScreenshotOptions & { encoding: 'base64' }) {
     return this.page.screenshot(options)
   }
 
-  close(...args: Parameters<Page['close']>) {
-    return this.page.close(...args)
-  }
-
-  url() {
+  public url() {
     return this.page.url()
   }
+
+  public exposed = exposedMethods.reduce((acc, method) => {
+    acc[method] = this.page[method].bind(this) as never
+    return acc
+  }, {} as { [K in (typeof exposedMethods)[number]]: Page[K] })
 }

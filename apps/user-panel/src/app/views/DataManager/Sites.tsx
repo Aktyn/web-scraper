@@ -1,5 +1,5 @@
-import { useCallback, useRef, useState } from 'react'
-import { Box } from '@mui/material'
+import { useCallback, useContext, useMemo, useRef, useState } from 'react'
+import { Badge, Box } from '@mui/material'
 import type { Site } from '@web-scraper/common'
 import { TermInfo } from 'src/app/components/common/TermInfo'
 import { TransitionType, ViewTransition } from '../../components/animation/ViewTransition'
@@ -12,6 +12,7 @@ import { SiteForm } from '../../components/site/SiteForm'
 import { SiteInstructionsForm } from '../../components/siteInstructions/SiteInstructionsForm'
 import { Table, useTableColumns, type TableRef } from '../../components/table'
 import { TagsCellValue } from '../../components/table/TagsCellValue'
+import { ApiContext } from '../../context/apiContext'
 import { useApiRequest } from '../../hooks/useApiRequest'
 
 export const Sites = () => {
@@ -58,7 +59,10 @@ export const Sites = () => {
         {
           id: 'instructions',
           accessor: (site) => (
-            <OpenSiteInstructionsFormButton onClick={() => handleShowInstructions(site)} />
+            <OpenSiteInstructionsFormButtonWithBadge
+              site={site}
+              onClick={() => handleShowInstructions(site)}
+            />
           ),
         },
       ],
@@ -162,5 +166,28 @@ export const Sites = () => {
         </Box>
       </ViewTransition>
     </>
+  )
+}
+
+interface OpenSiteInstructionsFormButtonWithBadgeProps {
+  site: Site
+  onClick: () => void
+}
+
+const OpenSiteInstructionsFormButtonWithBadge = ({
+  site,
+  onClick,
+}: OpenSiteInstructionsFormButtonWithBadgeProps) => {
+  const { testingSessions } = useContext(ApiContext)
+
+  const isSiteSessionActive = useMemo(
+    () => testingSessions.sessions.some((session) => session.site.id === site.id),
+    [site.id, testingSessions.sessions],
+  )
+
+  return (
+    <Badge overlap="circular" variant={isSiteSessionActive ? 'dot' : undefined} color="secondary">
+      <OpenSiteInstructionsFormButton onClick={onClick} />
+    </Badge>
   )
 }

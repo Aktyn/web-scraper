@@ -42,3 +42,7 @@ export function getDeepProperty<DataType extends object, PathType extends string
   }
   return (value ?? fallback) as ExtractTypeByPath<DataType, PathType>
 }
+
+export function forceArray<DataType>(value: DataType | DataType[]) {
+  return Array.isArray(value) ? value : [value]
+}

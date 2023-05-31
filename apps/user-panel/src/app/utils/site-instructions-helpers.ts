@@ -20,7 +20,10 @@ export const actionStepTypeNames: { [key in ActionStepType]: string } = {
 
 export const actionStepErrorTypeNames: { [key in ActionStepErrorType]: string } = {
   [ActionStepErrorType.NO_ERROR]: 'No error',
-  [ActionStepErrorType.UNKNOWN]: 'Unknown',
+  [ActionStepErrorType.UNKNOWN]: 'Unknown error',
+  [ActionStepErrorType.UNKNOWN_STEP_TYPE]: 'Unknown step type',
+  [ActionStepErrorType.ELEMENT_NOT_FOUND]: 'Element not found',
+  [ActionStepErrorType.WAIT_FOR_NAVIGATION_ERROR]: 'Wait for navigation error',
   [ActionStepErrorType.INCORRECT_CAPTCHA]: 'Incorrect captcha',
   [ActionStepErrorType.INCORRECT_LOGIN_OR_PASSWORD]: 'Incorrect login or password',
   [ActionStepErrorType.INCORRECT_VERIFICATION_CODE]: 'Incorrect verification code',

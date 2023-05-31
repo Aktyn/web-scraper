@@ -15,6 +15,9 @@ export enum CaptchaSolverType {
 export enum ActionStepErrorType {
   NO_ERROR = 'error.common.noError',
   UNKNOWN = 'error.common.unknown',
+  UNKNOWN_STEP_TYPE = 'error.common.unknownStepType',
+  ELEMENT_NOT_FOUND = 'error.common.elementNotFound',
+  WAIT_FOR_NAVIGATION_ERROR = 'error.common.waitForNavigationError',
   INCORRECT_CAPTCHA = 'error.common.incorrectCaptcha',
   INCORRECT_LOGIN_OR_PASSWORD = 'error.common.incorrectLoginOrPassword',
   INCORRECT_VERIFICATION_CODE = 'error.common.incorrectVerificationCode',
@@ -25,7 +28,7 @@ export enum ActionStepErrorType {
 
 export interface MapSiteError {
   /** Regexp pattern allowed */
-  content: string
+  content?: string
   errorType: ActionStepErrorType
 }
 
@@ -44,7 +47,7 @@ export enum ActionStepType {
 type ActionStepBase<Type extends ActionStepType, Data> = {
   id: number
   type: Type
-  data: Data | null
+  data: Data
   orderIndex: number
   actionId: number
 }
@@ -89,6 +92,7 @@ export interface Procedure {
 export interface FlowStep {
   id: number
   actionName: `action.${Action['name']}` | `global.${GlobalActionType}`
+  /** Regex pattern allowed */
   globalReturnValues: string[]
   onSuccess: FlowStep | null
   onFailure: FlowStep | null

@@ -62,40 +62,26 @@ export const scraperSessionHandler = {
   [RendererToElectronMessage.endSiteInstructionsTestingSession]: handleApiRequest(
     RendererToElectronMessage.endSiteInstructionsTestingSession,
     async (sessionId) => {
-      const existingInstance = Array.from(Scraper.getInstances(Scraper.Mode.TESTING).values()).find(
-        (instance) => instance.id === sessionId,
-      )
-      if (!existingInstance) {
+      const scraper = Scraper.getInstances(Scraper.Mode.TESTING).get(sessionId)
+      if (!scraper) {
         throw ErrorCode.NOT_FOUND
       }
-      await existingInstance.destroy()
+      await scraper.destroy()
 
-      broadcastMessage(
-        ElectronToRendererMessage.siteInstructionsTestingSessionClosed,
-        existingInstance.id,
-      )
+      broadcastMessage(ElectronToRendererMessage.siteInstructionsTestingSessionClosed, scraper.id)
 
       return successResponse
     },
   ),
   [RendererToElectronMessage.testActionStep]: handleApiRequest(
     RendererToElectronMessage.endSiteInstructionsTestingSession,
-    async (sessionId, actionStep) => {
-      console.log('TEST', sessionId, actionStep)
-      // const existingInstance = Array.from(Scraper.getInstances(Scraper.Mode.TESTING).values()).find(
-      //   (instance) => instance.id === sessionId,
-      // )
-      // if (!existingInstance) {
-      //   throw ErrorCode.NOT_FOUND
-      // }
-      // await existingInstance.destroy()
+    (sessionId, actionStep) => {
+      const scraper = Scraper.getInstances(Scraper.Mode.TESTING).get(sessionId)
+      if (!scraper) {
+        throw ErrorCode.NOT_FOUND
+      }
 
-      // broadcastMessage(
-      //   ElectronToRendererMessage.siteInstructionsTestingSessionClosed,
-      //   existingInstance.id,
-      // )
-
-      return successResponse
+      return scraper.performActionStep(actionStep)
     },
   ),
 } satisfies Partial<RequestHandlersSchema>

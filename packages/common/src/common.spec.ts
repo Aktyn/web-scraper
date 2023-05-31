@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { getDeepProperty, omit, pick } from './common'
+import { forceArray, getDeepProperty, omit, pick } from './common'
 
 describe('pick', () => {
   it('should return object left only with given properties', () => {
@@ -53,5 +53,18 @@ describe('getDeepProperty', () => {
     )
 
     expect(deepProperty).toBe(null)
+  })
+})
+
+describe('forceArray', () => {
+  it('should return an array when given a non-array value', () => {
+    expect(forceArray('hello')).toStrictEqual(['hello'])
+    expect(forceArray(42)).toStrictEqual([42])
+    expect(forceArray({ foo: 'bar' })).toStrictEqual([{ foo: 'bar' }])
+  })
+
+  it('should return the same array when given an array value', () => {
+    const arr = [1, 2, 3]
+    expect(forceArray(arr)).toBe(arr)
   })
 })

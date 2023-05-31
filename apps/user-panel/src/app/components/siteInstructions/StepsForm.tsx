@@ -1,12 +1,20 @@
-import { useCallback, useContext } from 'react'
+import { useCallback, useContext, useState } from 'react'
 import { FormatListBulletedRounded } from '@mui/icons-material'
 import { InputAdornment, MenuItem, Stack } from '@mui/material'
-import { ActionStepType, type UpsertSiteInstructionsSchema } from '@web-scraper/common'
+import {
+  ActionStepErrorType,
+  ActionStepType,
+  type ActionStep,
+  type UpsertSiteInstructionsSchema,
+} from '@web-scraper/common'
 import { useFieldArray, useFormContext } from 'react-hook-form'
 import { StepDataForm } from './StepDataForm'
 import { SiteInstructionsTestingSessionContext } from '../../context/siteInstructionsTestingSessionContext'
 import { useApiRequest } from '../../hooks/useApiRequest'
-import { actionStepTypeNames } from '../../utils/site-instructions-helpers'
+import {
+  actionStepErrorTypeNames,
+  actionStepTypeNames,
+} from '../../utils/site-instructions-helpers'
 import { ItemsList } from '../common/treeStructure/ItemsList'
 import { FormInput } from '../form/FormInput'
 
@@ -26,20 +34,43 @@ export const StepsForm = ({ fieldName }: StepsFormProps) => {
 
   const testingSession = useContext(SiteInstructionsTestingSessionContext)
 
+  const [loadingPlayButtonIndex, setLoadingPlayButtonIndex] = useState(-1)
+
   const testActionStep = useCallback(
-    (actionStep: UpsertSiteInstructionsSchema['actions'][number]['actionSteps'][number]) => {
+    (
+      actionStepSchema: UpsertSiteInstructionsSchema['actions'][number]['actionSteps'][number],
+      itemIndex: number,
+    ) => {
       if (!testingSession) {
         return
       }
 
+      const actionStep = actionStepSchemaToActionStepBase(actionStepSchema)
+
+      if (!actionStep) {
+        return
+      }
+
+      setLoadingPlayButtonIndex(itemIndex)
       submitTestActionStep(
         {
-          onSuccess: (_, { enqueueSnackbar }) => {
-            enqueueSnackbar({ variant: 'success', message: 'Action step completed' })
+          onSuccess: (mapSiteError, { enqueueSnackbar }) => {
+            setLoadingPlayButtonIndex(-1)
+
+            if (mapSiteError.errorType === ActionStepErrorType.NO_ERROR) {
+              enqueueSnackbar({ variant: 'success', message: 'Action step completed' })
+            } else {
+              enqueueSnackbar({
+                variant: 'error',
+                message: `Action step failed (${
+                  actionStepErrorTypeNames[mapSiteError.errorType]
+                }); mapped content: ${mapSiteError.content ?? '-'}`,
+              })
+            }
           },
         },
         testingSession.sessionId,
-        actionStep,
+        { id: 0, actionId: 0, orderIndex: 0, ...actionStep } as ActionStep,
       )
     },
     [submitTestActionStep, testingSession],
@@ -60,7 +91,8 @@ export const StepsForm = ({ fieldName }: StepsFormProps) => {
       }
       onDelete={(_, index) => stepsFields.remove(index)}
       onPlay={!testingSession ? undefined : testActionStep}
-      loadingPlayButton={testingActionStep}
+      loadingPlayButtonIndex={testingActionStep ? loadingPlayButtonIndex : -1}
+      disablePlayButtons={testingActionStep}
     >
       {(field, index) => [
         field.id,
@@ -93,4 +125,116 @@ export const StepsForm = ({ fieldName }: StepsFormProps) => {
       ]}
     </ItemsList>
   )
+}
+
+function actionStepSchemaToActionStepBase(
+  actionStepSchema: UpsertSiteInstructionsSchema['actions'][number]['actionSteps'][number],
+): Omit<ActionStep, 'id' | 'orderIndex' | 'actionId'> | null {
+  if (!actionStepSchema?.data) {
+    return null
+  }
+
+  switch (actionStepSchema.type) {
+    case ActionStepType.WAIT:
+      if (!actionStepSchema.data.duration) {
+        return null
+      }
+      return {
+        ...actionStepSchema,
+        data: {
+          duration: actionStepSchema.data.duration,
+        },
+      }
+    case ActionStepType.WAIT_FOR_ELEMENT:
+      if (!actionStepSchema.data.element) {
+        return null
+      }
+      return {
+        ...actionStepSchema,
+        data: {
+          element: actionStepSchema.data.element,
+        },
+      }
+    case ActionStepType.FILL_INPUT:
+      if (!actionStepSchema.data.element || !actionStepSchema.data.value) {
+        return null
+      }
+      return {
+        ...actionStepSchema,
+        data: {
+          element: actionStepSchema.data.element,
+          value: actionStepSchema.data.value,
+        },
+      }
+    case ActionStepType.UPLOAD_FILE:
+      if (!actionStepSchema.data.element || !actionStepSchema.data.value) {
+        return null
+      }
+      return {
+        ...actionStepSchema,
+        data: {
+          element: actionStepSchema.data.element,
+          value: actionStepSchema.data.value,
+        },
+      }
+    case ActionStepType.SELECT_OPTION:
+      if (!actionStepSchema.data.element || !actionStepSchema.data.value) {
+        return null
+      }
+      return {
+        ...actionStepSchema,
+        data: {
+          element: actionStepSchema.data.element,
+          value: actionStepSchema.data.value,
+        },
+      }
+    case ActionStepType.PRESS_BUTTON:
+      if (!actionStepSchema.data.element) {
+        return null
+      }
+      return {
+        ...actionStepSchema,
+        data: {
+          element: actionStepSchema.data.element,
+          waitForNavigation: actionStepSchema.data.waitForNavigation ?? false,
+        },
+      }
+    case ActionStepType.SOLVE_CAPTCHA:
+      if (
+        !actionStepSchema.data.solver ||
+        !actionStepSchema.data.elements ||
+        !actionStepSchema.data.elements.every(Boolean)
+      ) {
+        return null
+      }
+      return {
+        ...actionStepSchema,
+        data: {
+          solver: actionStepSchema.data.solver,
+          elements: actionStepSchema.data.elements as string[],
+        },
+      }
+    case ActionStepType.CHECK_ERROR:
+      if (!actionStepSchema.data.element || !actionStepSchema.data.mapError) {
+        return null
+      }
+      return {
+        ...actionStepSchema,
+        data: {
+          element: actionStepSchema.data.element,
+          mapError: actionStepSchema.data.mapError,
+        },
+      }
+    case ActionStepType.CHECK_SUCCESS:
+      if (!actionStepSchema.data.element || !actionStepSchema.data.mapSuccess) {
+        return null
+      }
+      return {
+        ...actionStepSchema,
+        data: {
+          element: actionStepSchema.data.element,
+          mapSuccess: actionStepSchema.data.mapSuccess,
+        },
+      }
+  }
 }

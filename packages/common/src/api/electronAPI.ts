@@ -5,7 +5,12 @@ import type {
   PaginatedApiFunctionWithEncryptedData,
 } from './common'
 import type { Site, SiteTag, UpsertSiteSchema, UpsertSiteTagSchema } from './site'
-import type { SiteInstructions, UpsertSiteInstructionsSchema } from './siteInstructions'
+import type {
+  ActionStep,
+  MapSiteError,
+  SiteInstructions,
+  UpsertSiteInstructionsSchema,
+} from './siteInstructions'
 import type { UserSettings } from './user'
 
 /**
@@ -135,6 +140,6 @@ export type ElectronApi = {
   ) => Promise<ApiError>
   [RendererToElectronMessage.testActionStep]: (
     sessionId: string,
-    actionStep: UpsertSiteInstructionsSchema['actions'][number]['actionSteps'][number],
-  ) => Promise<ApiError>
+    actionStep: ActionStep,
+  ) => Promise<MapSiteError | ApiError>
 }
