@@ -54,14 +54,32 @@ type ActionStepBase<Type extends ActionStepType, Data> = {
 
 export type ActionStep =
   | ActionStepBase<ActionStepType.WAIT, { duration: number }>
-  | ActionStepBase<ActionStepType.WAIT_FOR_ELEMENT, { element: string }>
+  | ActionStepBase<ActionStepType.WAIT_FOR_ELEMENT, { element: string; timeout?: number }>
   | ActionStepBase<ActionStepType.FILL_INPUT, { element: string; value: string }>
   | ActionStepBase<ActionStepType.UPLOAD_FILE, { element: string; value: string }>
   | ActionStepBase<ActionStepType.SELECT_OPTION, { element: string; value: string }>
-  | ActionStepBase<ActionStepType.PRESS_BUTTON, { element: string; waitForNavigation?: boolean }>
+  | ActionStepBase<
+      ActionStepType.PRESS_BUTTON,
+      {
+        element: string
+        waitForNavigation?: boolean
+        waitForElementTimeout?: number
+        waitForNavigationTimeout?: number
+      }
+    >
   | ActionStepBase<ActionStepType.SOLVE_CAPTCHA, { solver: CaptchaSolverType; elements: string[] }>
-  | ActionStepBase<ActionStepType.CHECK_ERROR, { element: string; mapError: MapSiteError[] }>
-  | ActionStepBase<ActionStepType.CHECK_SUCCESS, { element: string; mapSuccess: MapSiteError[] }>
+  | ActionStepBase<
+      ActionStepType.CHECK_ERROR,
+      { element: string; mapError: MapSiteError[]; waitForElementTimeout?: number }
+    >
+  | ActionStepBase<
+      ActionStepType.CHECK_SUCCESS,
+      {
+        element: string
+        mapSuccess: Omit<MapSiteError, 'errorType'>[]
+        waitForElementTimeout?: number
+      }
+    >
 
 export interface Action {
   id: number
@@ -106,6 +124,8 @@ const mapSiteErrorSchema = yup.object({
     .required('Error type is required'),
 })
 
+const transformNanToUndefined = (value: number) => (isNaN(value) ? undefined : value)
+
 export const upsertActionStepSchema = yup.object({
   type: yup
     .mixed<ActionStepType>()
@@ -113,7 +133,12 @@ export const upsertActionStepSchema = yup.object({
     .required('Type is required'),
   data: yup
     .object({
-      duration: yup.number().nullable().default(null).notRequired(),
+      duration: yup
+        .number()
+        .transform(transformNanToUndefined)
+        .nullable()
+        .default(null)
+        .notRequired(),
       element: yup.string().nullable().default(null).notRequired(),
       value: yup.string().nullable().default(null).notRequired(),
       waitForNavigation: yup.boolean().nullable().default(null).notRequired(),
@@ -126,6 +151,24 @@ export const upsertActionStepSchema = yup.object({
       elements: yup.array().of(yup.string()).nullable().default([]).notRequired(),
       mapError: yup.array().of(mapSiteErrorSchema).nullable().default([]).notRequired(),
       mapSuccess: yup.array().of(mapSiteErrorSchema).nullable().default([]).notRequired(),
+      timeout: yup
+        .number()
+        .transform(transformNanToUndefined)
+        .nullable()
+        .default(null)
+        .notRequired(),
+      waitForElementTimeout: yup
+        .number()
+        .transform(transformNanToUndefined)
+        .nullable()
+        .default(null)
+        .notRequired(),
+      waitForNavigationTimeout: yup
+        .number()
+        .transform(transformNanToUndefined)
+        .nullable()
+        .default(null)
+        .notRequired(),
     })
     .partial()
     .nullable()

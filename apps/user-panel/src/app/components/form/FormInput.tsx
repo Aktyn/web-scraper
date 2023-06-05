@@ -21,7 +21,7 @@ export const FormInput = <FormSchema extends object>({
   return (
     <TextField
       {...textFieldProps}
-      {...form.register(name)}
+      {...form.register(name, { valueAsNumber: textFieldProps.type === 'number' })}
       required={required}
       error={externalError || !!error}
       helperText={error?.message}

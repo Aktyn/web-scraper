@@ -7,6 +7,7 @@ import {
   type ActionStep,
   type MapSiteError,
   type Site,
+  waitFor,
 } from '@web-scraper/common'
 import type { ElementHandle, Page } from 'puppeteer'
 import * as uuid from 'uuid'
@@ -63,6 +64,7 @@ export class Scraper<ModeType extends ScraperMode> {
   private readonly options: ModeType extends ScraperMode.DEFAULT
     ? undefined
     : ScraperOptions<ModeType>
+  private initialized = false
 
   constructor(mode: ScraperMode.DEFAULT)
   constructor(mode: ScraperMode.TESTING, options: ScraperOptions<ScraperMode.TESTING>)
@@ -74,7 +76,10 @@ export class Scraper<ModeType extends ScraperMode> {
     )
 
     this.browser = new ScraperBrowser({
-      headless: [ScraperMode.DEFAULT, ScraperMode.PREVIEW].includes(mode) ? 'new' : false,
+      headless:
+        [ScraperMode.DEFAULT, ScraperMode.PREVIEW].includes(mode) || process.env.VITEST_WORKER_ID
+          ? 'new'
+          : false,
       defaultViewport:
         mode === ScraperMode.PREVIEW
           ? {
@@ -112,7 +117,11 @@ export class Scraper<ModeType extends ScraperMode> {
     return this.options as Readonly<ScraperOptions<ModeType>>
   }
 
-  async init() {
+  public async waitForInit(timeout = 10_000) {
+    await waitFor(() => Promise.resolve(this.initialized), 100, timeout)
+  }
+
+  private async init() {
     if (this.mainPage) {
       this.logger.error('Main page has been already initialized')
       return
@@ -129,6 +138,7 @@ export class Scraper<ModeType extends ScraperMode> {
         await this.initPreviewMode()
         break
     }
+    this.initialized = true
   }
 
   private async initDefaultMode(self = this as Scraper<ScraperMode.DEFAULT>) {
@@ -256,7 +266,7 @@ function assertMainPage(_target: unknown, _propertyKey: string, descriptor: Prop
 
   descriptor.value = async function (this: Scraper<ScraperMode>, ...args: unknown[]) {
     if (!this.mainPage) {
-      throw new Error('Browser is not initialized')
+      throw new Error('Main page is not initialized')
     }
     return originalMethod.apply(this, args)
   }

@@ -1,5 +1,5 @@
 import type { Browser, Page, PageEventObject, ScreenshotOptions, WaitForOptions } from 'puppeteer'
-import { getRandom } from 'random-useragent'
+import { getRandom as getRandomUserAgent } from 'random-useragent'
 
 const exposedMethods = [
   'waitForSelector',
@@ -37,8 +37,8 @@ export class ScraperPage implements Pick<Page, 'on' | 'off'> {
     }
 
     // await this.page.setViewport(ScraperPage.defaultViewPort)
-    this.page.setDefaultTimeout(10_000)
-    this.page.setDefaultNavigationTimeout(10_000)
+    this.page.setDefaultTimeout(30_000)
+    this.page.setDefaultNavigationTimeout(30_000)
 
     //TODO
     // this.page.on('console', (msg) => {
@@ -49,7 +49,7 @@ export class ScraperPage implements Pick<Page, 'on' | 'off'> {
     //   }
     // })
 
-    await this.page.setUserAgent(getRandom())
+    await this.page.setUserAgent(getRandomUserAgent())
 
     this.initialized = true
   }
@@ -96,7 +96,7 @@ export class ScraperPage implements Pick<Page, 'on' | 'off'> {
   }
 
   public exposed = exposedMethods.reduce((acc, method) => {
-    acc[method] = this.page[method].bind(this) as never
+    acc[method] = this.page[method].bind(this.page) as never
     return acc
   }, {} as { [K in (typeof exposedMethods)[number]]: Page[K] })
 }

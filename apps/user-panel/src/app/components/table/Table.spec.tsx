@@ -1,6 +1,7 @@
 import { render, screen } from '@testing-library/react'
+import { describe, expect, it } from 'vitest'
 import { Table } from './Table'
-import { type ColumnDefinition, useTableColumns } from './useTableColumns'
+import { useTableColumns, type ColumnDefinition } from './useTableColumns'
 
 describe('Table', () => {
   const mockData = [

@@ -11,14 +11,21 @@ export async function pressButtonStep<ModeType extends ScraperMode>(
   this: Scraper<ModeType>,
   actionStep: ActionStep & { type: ActionStepType.PRESS_BUTTON },
 ) {
-  await this.waitFor(actionStep.data.element)
+  const buttonHandle = await this.waitFor(
+    actionStep.data.element,
+    actionStep.data.waitForElementTimeout,
+  )
+
+  if (!buttonHandle) {
+    return { errorType: ActionStepErrorType.ELEMENT_NOT_FOUND }
+  }
 
   if (actionStep.data.waitForNavigation) {
-    const clickPromise = this.mainPage!.exposed.click(actionStep.data.element)
+    const clickPromise = buttonHandle.click()
     try {
       await this.mainPage!.exposed.waitForNavigation({
         waitUntil: 'networkidle2',
-        timeout: 30_000, //TODO parametrize
+        timeout: actionStep.data.waitForNavigationTimeout ?? 30_000,
       })
     } catch (error) {
       this.logger.error(
@@ -31,7 +38,7 @@ export async function pressButtonStep<ModeType extends ScraperMode>(
 
     await clickPromise
   } else {
-    await this.mainPage!.exposed.click(actionStep.data.element)
+    await buttonHandle.click()
     await wait(2_000) //TODO: it should be parameterized as delay variable in site instructions
   }
 

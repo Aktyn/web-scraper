@@ -11,7 +11,10 @@ export async function checkSuccessStep<ModeType extends ScraperMode>(
   this: Scraper<ModeType>,
   actionStep: ActionStep & { type: ActionStepType.CHECK_SUCCESS },
 ): Promise<MapSiteError> {
-  const elementSuccess = await this.waitFor(actionStep.data.element, 30_000) //TODO: parametrize timeout
+  const elementSuccess = await this.waitFor(
+    actionStep.data.element,
+    actionStep.data.waitForElementTimeout,
+  )
   if (!elementSuccess) {
     return { errorType: ActionStepErrorType.ELEMENT_NOT_FOUND }
   }
@@ -23,7 +26,7 @@ export async function checkSuccessStep<ModeType extends ScraperMode>(
 
   const foundSuccess = actionStep.data.mapSuccess.find(({ content }) =>
     //TODO: allow regex pattern
-    elementTextSuccess.includes(content ?? ''),
+    content ? elementTextSuccess.match(new RegExp(content, 'i')) : true,
   )
   if (foundSuccess) {
     return { errorType: ActionStepErrorType.NO_ERROR }

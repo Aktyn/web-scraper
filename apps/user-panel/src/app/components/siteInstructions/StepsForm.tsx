@@ -7,7 +7,7 @@ import {
   type ActionStep,
   type UpsertSiteInstructionsSchema,
 } from '@web-scraper/common'
-import { useFieldArray, useFormContext } from 'react-hook-form'
+import { useFieldArray, useFormContext, get } from 'react-hook-form'
 import { StepDataForm } from './StepDataForm'
 import { SiteInstructionsTestingSessionContext } from '../../context/siteInstructionsTestingSessionContext'
 import { useApiRequest } from '../../hooks/useApiRequest'
@@ -24,6 +24,7 @@ interface StepsFormProps {
 
 export const StepsForm = ({ fieldName }: StepsFormProps) => {
   const form = useFormContext<UpsertSiteInstructionsSchema>()
+  const getValues = form.getValues
   const stepsFields = useFieldArray<UpsertSiteInstructionsSchema, typeof fieldName>({
     name: fieldName,
   })
@@ -45,11 +46,16 @@ export const StepsForm = ({ fieldName }: StepsFormProps) => {
         return
       }
 
-      const actionStep = actionStepSchemaToActionStepBase(actionStepSchema)
+      const actionStep = actionStepSchemaToActionStepBase({
+        ...actionStepSchema,
+        type: get(getValues(), `${fieldName}.${itemIndex}.type`),
+      })
 
       if (!actionStep) {
         return
       }
+
+      console.info(`Manually executing action step (${actionStep.type}):`, actionStep)
 
       setLoadingPlayButtonIndex(itemIndex)
       submitTestActionStep(
@@ -73,7 +79,7 @@ export const StepsForm = ({ fieldName }: StepsFormProps) => {
         { id: 0, actionId: 0, orderIndex: 0, ...actionStep } as ActionStep,
       )
     },
-    [submitTestActionStep, testingSession],
+    [fieldName, getValues, submitTestActionStep, testingSession],
   )
 
   return (
@@ -153,6 +159,7 @@ function actionStepSchemaToActionStepBase(
         ...actionStepSchema,
         data: {
           element: actionStepSchema.data.element,
+          timeout: actionStepSchema.data.timeout ?? undefined,
         },
       }
     case ActionStepType.FILL_INPUT:
@@ -197,6 +204,8 @@ function actionStepSchemaToActionStepBase(
         data: {
           element: actionStepSchema.data.element,
           waitForNavigation: actionStepSchema.data.waitForNavigation ?? false,
+          waitForNavigationTimeout: actionStepSchema.data.waitForNavigationTimeout ?? undefined,
+          waitForElementTimeout: actionStepSchema.data.waitForElementTimeout ?? undefined,
         },
       }
     case ActionStepType.SOLVE_CAPTCHA:
@@ -223,6 +232,7 @@ function actionStepSchemaToActionStepBase(
         data: {
           element: actionStepSchema.data.element,
           mapError: actionStepSchema.data.mapError,
+          waitForElementTimeout: actionStepSchema.data.waitForElementTimeout ?? undefined,
         },
       }
     case ActionStepType.CHECK_SUCCESS:
@@ -233,7 +243,8 @@ function actionStepSchemaToActionStepBase(
         ...actionStepSchema,
         data: {
           element: actionStepSchema.data.element,
-          mapSuccess: actionStepSchema.data.mapSuccess,
+          mapSuccess: actionStepSchema.data.mapSuccess?.map((item) => ({ content: item.content })),
+          waitForElementTimeout: actionStepSchema.data.waitForElementTimeout ?? undefined,
         },
       }
   }

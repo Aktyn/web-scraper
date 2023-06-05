@@ -43,9 +43,14 @@ export const StepDataForm = ({ stepFieldName, ...fieldFormProps }: StepDataFormP
     default:
       return null
     case ActionStepType.WAIT:
-      return <DurationFormInput {...fieldFormProps} />
+      return <DurationFormInput {...fieldFormProps} type="duration" />
     case ActionStepType.WAIT_FOR_ELEMENT:
-      return <ElementFormInput {...fieldFormProps} />
+      return (
+        <>
+          <ElementFormInput {...fieldFormProps} />
+          <DurationFormInput {...fieldFormProps} type="timeout" />
+        </>
+      )
     case ActionStepType.FILL_INPUT:
     case ActionStepType.UPLOAD_FILE:
     case ActionStepType.SELECT_OPTION:
@@ -60,6 +65,8 @@ export const StepDataForm = ({ stepFieldName, ...fieldFormProps }: StepDataFormP
         <>
           <ElementFormInput {...fieldFormProps} />
           <WaitForNavigationFormInput {...fieldFormProps} />
+          <DurationFormInput {...fieldFormProps} type="waitForElementTimeout" />
+          <DurationFormInput {...fieldFormProps} type="waitForNavigationTimeout" />
         </>
       )
     case ActionStepType.SOLVE_CAPTCHA:
@@ -78,20 +85,36 @@ export const StepDataForm = ({ stepFieldName, ...fieldFormProps }: StepDataFormP
             {...fieldFormProps}
             keyName={stepType === ActionStepType.CHECK_ERROR ? 'mapError' : 'mapSuccess'}
           />
+          <DurationFormInput {...fieldFormProps} type="waitForElementTimeout" />
         </>
       )
   }
   return null
 }
 
-const DurationFormInput = ({ fieldName }: DataFieldFormProps) => {
+const DurationFormInput = ({
+  fieldName,
+  type = 'duration',
+}: DataFieldFormProps & {
+  type?: 'duration' | 'timeout' | 'waitForElementTimeout' | 'waitForNavigationTimeout'
+}) => {
   const form = useFormContext<UpsertSiteInstructionsSchema>()
 
   return (
     <FormInput
-      name={`${fieldName}.duration`}
+      name={`${fieldName}.${type}`}
       form={form}
-      label="Duration"
+      label={
+        type === 'duration'
+          ? 'Duration'
+          : type === 'timeout'
+          ? 'Timeout'
+          : type === 'waitForElementTimeout'
+          ? 'Wait for element timeout'
+          : type === 'waitForNavigationTimeout'
+          ? 'Wait for navigation timeout'
+          : 'Unknown type'
+      }
       type="number"
       InputProps={{
         startAdornment: (
@@ -285,33 +308,35 @@ const MapSiteErrorsFormInput = ({
               minWidth: '16rem',
             }}
           />
-          <Controller
-            name={`${fieldName}.${keyName}.${index}.errorType`}
-            control={form.control}
-            render={({ field }) => (
-              <TextField
-                variant="standard"
-                label="Error type"
-                select
-                value={field.value ?? ''}
-                onChange={(e) => field.onChange(e.target.value)}
-                onBlur={field.onBlur}
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <FormatListBulletedRounded />
-                    </InputAdornment>
-                  ),
-                }}
-              >
-                {Object.values(ActionStepErrorType).map((errorType) => (
-                  <MenuItem key={errorType} value={errorType}>
-                    {actionStepErrorTypeNames[errorType]}
-                  </MenuItem>
-                ))}
-              </TextField>
-            )}
-          />
+          {keyName === 'mapError' && (
+            <Controller
+              name={`${fieldName}.${keyName}.${index}.errorType`}
+              control={form.control}
+              render={({ field }) => (
+                <TextField
+                  variant="standard"
+                  label="Error type"
+                  select
+                  value={field.value ?? ''}
+                  onChange={(e) => field.onChange(e.target.value)}
+                  onBlur={field.onBlur}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <FormatListBulletedRounded />
+                      </InputAdornment>
+                    ),
+                  }}
+                >
+                  {Object.values(ActionStepErrorType).map((errorType) => (
+                    <MenuItem key={errorType} value={errorType}>
+                      {actionStepErrorTypeNames[errorType]}
+                    </MenuItem>
+                  ))}
+                </TextField>
+              )}
+            />
+          )}
         </Stack>,
       ]}
     </ItemsList>
