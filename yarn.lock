@@ -1668,10 +1668,10 @@
   resolved "https://registry.yarnpkg.com/@eslint/js/-/js-8.41.0.tgz#080321c3b68253522f7646b55b577dd99d2950b3"
   integrity sha512-LxcyMGxwmTh2lY9FwHPGWOHmYFCZvbrFCBZL4FzSSsxsRPuhrYUg/49/0KDfW8tnIEaEHtfmn6+NPN+1DqaNmA==
 
-"@fontsource-variable/roboto-flex@^5.0.1":
-  version "5.0.1"
-  resolved "https://registry.yarnpkg.com/@fontsource-variable/roboto-flex/-/roboto-flex-5.0.1.tgz#fa9c402ede0650f21166454a847e94bd19471a8b"
-  integrity sha512-U0C6V2RyyZOpEfQ+apNqK1J0qu+YZuVjgbsB4ilkgYV4FJbdO8VW0jUNIxsC6Mvn5C6yoGHyLizz4LZkOxhtug==
+"@fontsource-variable/roboto-flex@^5.0.2":
+  version "5.0.2"
+  resolved "https://registry.yarnpkg.com/@fontsource-variable/roboto-flex/-/roboto-flex-5.0.2.tgz#74542ce7b8459ddccbb16c1e2da5cee2ef495d0f"
+  integrity sha512-WhTvdVrSKD/dFNASmHhyUleoJosm3fZ1YadXxEtxVUoTIqY/dmC5BBefpBjWOby3sorhelnP/9YVqfV6BF+Cqw==
 
 "@gar/promisify@^1.0.1":
   version "1.1.3"
