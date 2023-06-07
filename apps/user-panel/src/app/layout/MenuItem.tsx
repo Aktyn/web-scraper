@@ -8,6 +8,7 @@ import {
   ListItemIcon,
   ListItemText,
   listItemTextClasses,
+  type SvgIconProps,
   type SxProps,
   type Theme,
 } from '@mui/material'
@@ -20,7 +21,7 @@ import { useView } from '../hooks/useView'
 
 export interface MenuItemProps {
   label: ReactNode
-  icon: SvgIconComponent
+  icon: SvgIconComponent | ((svgProps: SvgIconProps) => JSX.Element)
   viewName: ViewName
 }
 

@@ -10,6 +10,8 @@ import { headerSize } from './Header'
 import { contentAreaBorderRadius } from './Layout'
 import { MenuItem, type MenuItemProps } from './MenuItem'
 import { commonLayoutTransitions } from './helpers'
+import { RecaptchaIcon } from '../components/icons/RecaptchaIcon'
+import { RoutineIcon } from '../components/icons/RoutineIcon'
 import { ReactComponent as LogoIcon } from '../components/icons/icon.svg'
 import { ApiContext } from '../context/apiContext'
 
@@ -30,8 +32,10 @@ const TestingLabel = () => {
 
 const menuEntries: MenuItemProps[] = [
   { label: 'Dashboard', icon: DashboardRounded, viewName: 'DASHBOARD' },
+  { label: 'Routines', icon: RoutineIcon, viewName: 'ROUTINES' },
   { label: 'Data manager', icon: StorageRounded, viewName: 'DATA_MANAGER' },
   { label: <TestingLabel />, icon: EngineeringRounded, viewName: 'TESTING' },
+  { label: 'Captcha', icon: RecaptchaIcon, viewName: 'CAPTCHA' },
   { label: 'Info', icon: InfoRounded, viewName: 'INFO' },
 ]
 
