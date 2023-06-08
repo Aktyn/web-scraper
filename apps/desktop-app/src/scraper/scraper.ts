@@ -203,7 +203,7 @@ export class Scraper<ModeType extends ScraperMode> {
   @assertMainPage
   public async performActionStep(
     actionStep: ActionStep,
-    // data: ParserData, //TODO: use data source
+    // data: ParserData, //TODO: onDataRequest
   ): Promise<MapSiteError> {
     this.logger.info('Performing action step:', actionStep.type)
 
@@ -214,6 +214,9 @@ export class Scraper<ModeType extends ScraperMode> {
         return await this.waitForElementStep(actionStep)
       case ActionStepType.PRESS_BUTTON:
         return await this.pressButtonStep(actionStep)
+      /**
+       * TODO: Fill input and select option will request data with callback (look above TODO). For testing action step, handler will send an api call to user-panel which will open a modal with input for user to manually type data. After the api call returns user input, the handler will pass it to data request callback to continue performing step.
+       **/
       // case ActionStepType.FILL_INPUT:
       //   return await this.fillInputStep(actionStep, data)
       // case ActionStepType.SELECT_OPTION:

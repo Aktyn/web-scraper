@@ -16,14 +16,10 @@ import {
 import {
   ActionStepErrorType,
   ActionStepType,
-  CaptchaSolverType,
   type UpsertSiteInstructionsSchema,
 } from '@web-scraper/common'
 import { Controller, useFieldArray, useFormContext } from 'react-hook-form'
-import {
-  actionStepErrorTypeNames,
-  captchaSolverTypeNames,
-} from '../../utils/site-instructions-helpers'
+import { actionStepErrorTypeNames } from '../../utils/site-instructions-helpers'
 import { ItemsList } from '../common/treeStructure/ItemsList'
 import { FormInput } from '../form/FormInput'
 
@@ -69,13 +65,14 @@ export const StepDataForm = ({ stepFieldName, ...fieldFormProps }: StepDataFormP
           <DurationFormInput {...fieldFormProps} type="waitForNavigationTimeout" />
         </>
       )
-    case ActionStepType.SOLVE_CAPTCHA:
-      return (
-        <>
-          <CaptchaSolverFormInput {...fieldFormProps} />
-          <ElementsFormInput {...fieldFormProps} />
-        </>
-      )
+    //TODO
+    // case ActionStepType.SOLVE_CAPTCHA:
+    //   return (
+    //     <>
+    //       <CaptchaSolverFormInput {...fieldFormProps} />
+    //       <ElementsFormInput {...fieldFormProps} />
+    //     </>
+    //   )
     case ActionStepType.CHECK_ERROR:
     case ActionStepType.CHECK_SUCCESS:
       return (
@@ -190,80 +187,81 @@ const WaitForNavigationFormInput = ({ fieldName }: DataFieldFormProps) => {
   )
 }
 
-const CaptchaSolverFormInput = ({ fieldName }: DataFieldFormProps) => {
-  const form = useFormContext<UpsertSiteInstructionsSchema>()
+//TODO
+// const CaptchaSolverFormInput = ({ fieldName }: DataFieldFormProps) => {
+//   const form = useFormContext<UpsertSiteInstructionsSchema>()
 
-  return (
-    <Controller
-      name={`${fieldName}.solver`}
-      control={form.control}
-      render={({ field }) => (
-        <TextField
-          variant="standard"
-          label="Captcha solver"
-          select
-          value={field.value ?? ''}
-          onChange={(e) => field.onChange(e.target.value)}
-          onBlur={field.onBlur}
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position="start">
-                <FormatListBulletedRounded />
-              </InputAdornment>
-            ),
-          }}
-        >
-          {Object.values(CaptchaSolverType).map((solver) => (
-            <MenuItem key={solver} value={solver}>
-              {captchaSolverTypeNames[solver]}
-            </MenuItem>
-          ))}
-        </TextField>
-      )}
-    />
-  )
-}
+//   return (
+//     <Controller
+//       name={`${fieldName}.solver`}
+//       control={form.control}
+//       render={({ field }) => (
+//         <TextField
+//           variant="standard"
+//           label="Captcha solver"
+//           select
+//           value={field.value ?? ''}
+//           onChange={(e) => field.onChange(e.target.value)}
+//           onBlur={field.onBlur}
+//           InputProps={{
+//             startAdornment: (
+//               <InputAdornment position="start">
+//                 <FormatListBulletedRounded />
+//               </InputAdornment>
+//             ),
+//           }}
+//         >
+//           {Object.values(CaptchaSolverType).map((solver) => (
+//             <MenuItem key={solver} value={solver}>
+//               {captchaSolverTypeNames[solver]}
+//             </MenuItem>
+//           ))}
+//         </TextField>
+//       )}
+//     />
+//   )
+// }
 
-const ElementsFormInput = ({ fieldName }: DataFieldFormProps) => {
-  const form = useFormContext<UpsertSiteInstructionsSchema>()
-  const elementsFields = useFieldArray<
-    UpsertSiteInstructionsSchema,
-    // @ts-expect-error missing type support for array of strings
-    `${typeof fieldName}.elements`
-  >({
-    name: `${fieldName}.elements`,
-  })
+// const ElementsFormInput = ({ fieldName }: DataFieldFormProps) => {
+//   const form = useFormContext<UpsertSiteInstructionsSchema>()
+//   const elementsFields = useFieldArray<
+//     UpsertSiteInstructionsSchema,
+//     // @ts-expect-error missing type support for array of strings
+//     `${typeof fieldName}.elements`
+//   >({
+//     name: `${fieldName}.elements`,
+//   })
 
-  return (
-    <ItemsList
-      title="Elements"
-      items={elementsFields.fields}
-      level={2}
-      onAdd={() => elementsFields.append('')}
-      onDelete={(_, index) => elementsFields.remove(index)}
-    >
-      {(field, index) => [
-        field.id,
-        <FormInput
-          key={field.id}
-          name={`${fieldName}.elements.${index}`}
-          form={form}
-          label="Element"
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position="start">
-                <CodeRounded />
-              </InputAdornment>
-            ),
-          }}
-          sx={{
-            minWidth: '16rem',
-          }}
-        />,
-      ]}
-    </ItemsList>
-  )
-}
+//   return (
+//     <ItemsList
+//       title="Elements"
+//       items={elementsFields.fields}
+//       level={2}
+//       onAdd={() => elementsFields.append('')}
+//       onDelete={(_, index) => elementsFields.remove(index)}
+//     >
+//       {(field, index) => [
+//         field.id,
+//         <FormInput
+//           key={field.id}
+//           name={`${fieldName}.elements.${index}`}
+//           form={form}
+//           label="Element"
+//           InputProps={{
+//             startAdornment: (
+//               <InputAdornment position="start">
+//                 <CodeRounded />
+//               </InputAdornment>
+//             ),
+//           }}
+//           sx={{
+//             minWidth: '16rem',
+//           }}
+//         />,
+//       ]}
+//     </ItemsList>
+//   )
+// }
 
 const MapSiteErrorsFormInput = ({
   fieldName,
@@ -283,10 +281,16 @@ const MapSiteErrorsFormInput = ({
       items={siteErrorFields.fields}
       level={2}
       onAdd={() =>
-        siteErrorFields.append({
-          content: '',
-          errorType: ActionStepErrorType.NO_ERROR,
-        })
+        siteErrorFields.append(
+          (keyName === 'mapError'
+            ? {
+                content: '',
+                errorType: ActionStepErrorType.UNKNOWN,
+              }
+            : { content: '' }) as typeof keyName extends 'mapError'
+            ? { content: string; errorType: ActionStepErrorType }
+            : { content: string },
+        )
       }
       onDelete={(_, index) => siteErrorFields.remove(index)}
     >

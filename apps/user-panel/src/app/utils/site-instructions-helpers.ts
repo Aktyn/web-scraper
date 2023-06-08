@@ -13,7 +13,6 @@ export const actionStepTypeNames: { [key in ActionStepType]: string } = {
   [ActionStepType.UPLOAD_FILE]: 'Upload file',
   [ActionStepType.SELECT_OPTION]: 'Select option',
   [ActionStepType.PRESS_BUTTON]: 'Press button',
-  [ActionStepType.SOLVE_CAPTCHA]: 'Solve captcha',
   [ActionStepType.CHECK_ERROR]: 'Check error',
   [ActionStepType.CHECK_SUCCESS]: 'Check success',
 }

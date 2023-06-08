@@ -39,7 +39,7 @@ export enum ActionStepType {
   UPLOAD_FILE = 'uploadFile',
   SELECT_OPTION = 'selectOption',
   PRESS_BUTTON = 'pressButton',
-  SOLVE_CAPTCHA = 'solveCaptcha',
+  // SOLVE_CAPTCHA = 'solveCaptcha', //TODO: support for captcha fields
   CHECK_ERROR = 'checkError',
   CHECK_SUCCESS = 'checkSuccess',
 }
@@ -67,7 +67,7 @@ export type ActionStep =
         waitForNavigationTimeout?: number
       }
     >
-  | ActionStepBase<ActionStepType.SOLVE_CAPTCHA, { solver: CaptchaSolverType; elements: string[] }>
+  // | ActionStepBase<ActionStepType.SOLVE_CAPTCHA, { solver: CaptchaSolverType; elements: string[] }>
   | ActionStepBase<
       ActionStepType.CHECK_ERROR,
       { element: string; mapError: MapSiteError[]; waitForElementTimeout?: number }
@@ -150,7 +150,12 @@ export const upsertActionStepSchema = yup.object({
         .notRequired(),
       elements: yup.array().of(yup.string()).nullable().default([]).notRequired(),
       mapError: yup.array().of(mapSiteErrorSchema).nullable().default([]).notRequired(),
-      mapSuccess: yup.array().of(mapSiteErrorSchema).nullable().default([]).notRequired(),
+      mapSuccess: yup
+        .array()
+        .of(mapSiteErrorSchema.omit(['errorType']))
+        .nullable()
+        .default([])
+        .notRequired(),
       timeout: yup
         .number()
         .transform(transformNanToUndefined)

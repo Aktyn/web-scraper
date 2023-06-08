@@ -7,7 +7,7 @@ import {
   type ActionStep,
   type UpsertSiteInstructionsSchema,
 } from '@web-scraper/common'
-import { useFieldArray, useFormContext, get } from 'react-hook-form'
+import { get, useFieldArray, useFormContext } from 'react-hook-form'
 import { StepDataForm } from './StepDataForm'
 import { SiteInstructionsTestingSessionContext } from '../../context/siteInstructionsTestingSessionContext'
 import { useApiRequest } from '../../hooks/useApiRequest'
@@ -208,21 +208,22 @@ function actionStepSchemaToActionStepBase(
           waitForElementTimeout: actionStepSchema.data.waitForElementTimeout ?? undefined,
         },
       }
-    case ActionStepType.SOLVE_CAPTCHA:
-      if (
-        !actionStepSchema.data.solver ||
-        !actionStepSchema.data.elements ||
-        !actionStepSchema.data.elements.every(Boolean)
-      ) {
-        return null
-      }
-      return {
-        ...actionStepSchema,
-        data: {
-          solver: actionStepSchema.data.solver,
-          elements: actionStepSchema.data.elements as string[],
-        },
-      }
+    //TODO
+    // case ActionStepType.SOLVE_CAPTCHA:
+    //   if (
+    //     !actionStepSchema.data.solver ||
+    //     !actionStepSchema.data.elements ||
+    //     !actionStepSchema.data.elements.every(Boolean)
+    //   ) {
+    //     return null
+    //   }
+    //   return {
+    //     ...actionStepSchema,
+    //     data: {
+    //       solver: actionStepSchema.data.solver,
+    //       elements: actionStepSchema.data.elements as string[],
+    //     },
+    //   }
     case ActionStepType.CHECK_ERROR:
       if (!actionStepSchema.data.element || !actionStepSchema.data.mapError) {
         return null
