@@ -6,6 +6,7 @@ import { contextBridge, ipcRenderer, type IpcRendererEvent } from 'electron'
 const electronToRendererMessageNames = [
   'siteInstructionsTestingSessionOpen',
   'siteInstructionsTestingSessionClosed',
+  'requestManualDataForActionStep',
 ] as const
 const rendererToElectronMessageNames = [
   'getUserSettings',
@@ -36,6 +37,7 @@ const rendererToElectronMessageNames = [
   'startSiteInstructionsTestingSession',
   'endSiteInstructionsTestingSession',
   'testActionStep',
+  'returnManualDataForActionStep',
 ] as const
 
 const api = {

@@ -15,30 +15,32 @@ export const CopyableLabel = memo(({ children, ...stackProps }: CopyableLabelPro
   const theme = useTheme()
 
   const handleCopy = useCallback(() => {
-    cancellable(copyToClipboard(children)).then((success) => {
-      const commonParams: anime.AnimeParams = {
-        targets: buttonRef.current,
-        easing: 'easeInOutExpo',
-      }
+    cancellable(copyToClipboard(children))
+      .then((success) => {
+        const commonParams: anime.AnimeParams = {
+          targets: buttonRef.current,
+          easing: 'easeInOutExpo',
+        }
 
-      if (buttonRef.current) {
-        anime.remove(buttonRef.current)
-      }
-      anime({
-        ...commonParams,
-        color: success ? theme.palette.success.main : theme.palette.error.main,
-        scale: success ? 1.2 : 1,
-        duration: 400,
-        complete: () => {
-          anime({
-            ...commonParams,
-            color: theme.palette.text.secondary,
-            scale: 1,
-            duration: 1000,
-          })
-        },
+        if (buttonRef.current) {
+          anime.remove(buttonRef.current)
+        }
+        anime({
+          ...commonParams,
+          color: success ? theme.palette.success.main : theme.palette.error.main,
+          scale: success ? 1.2 : 1,
+          duration: 400,
+          complete: () => {
+            anime({
+              ...commonParams,
+              color: theme.palette.text.secondary,
+              scale: 1,
+              duration: 1000,
+            })
+          },
+        })
       })
-    })
+      .catch((error) => error && console.error(error))
   }, [
     cancellable,
     children,

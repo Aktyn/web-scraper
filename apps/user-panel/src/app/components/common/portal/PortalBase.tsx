@@ -10,5 +10,6 @@ export const PortalBase = memo(({ children, element }: PropsWithChildren<PortalB
   if (!element) {
     return null
   }
+  //@ts-expect-error types mismatch between react-dom and react
   return createPortal(children, element)
 })

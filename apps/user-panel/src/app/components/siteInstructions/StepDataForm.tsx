@@ -47,13 +47,14 @@ export const StepDataForm = ({ stepFieldName, ...fieldFormProps }: StepDataFormP
           <DurationFormInput {...fieldFormProps} type="timeout" />
         </>
       )
+    // case ActionStepType.UPLOAD_FILE:
     case ActionStepType.FILL_INPUT:
-    case ActionStepType.UPLOAD_FILE:
     case ActionStepType.SELECT_OPTION:
       return (
         <>
           <ElementFormInput {...fieldFormProps} />
           <ValueFormInput {...fieldFormProps} />
+          <DurationFormInput {...fieldFormProps} type="waitForElementTimeout" />
         </>
       )
     case ActionStepType.PRESS_BUTTON:

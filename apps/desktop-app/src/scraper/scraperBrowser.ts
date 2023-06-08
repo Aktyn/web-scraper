@@ -28,7 +28,7 @@ export default class ScraperBrowser {
     onBrowserClosed,
     ...options
   }: Partial<PuppeteerLaunchOptions & ScraperBrowserOptions> = {}) {
-    safePromise(
+    void safePromise(
       launch({
         //TODO: allow different arguments
         args: [

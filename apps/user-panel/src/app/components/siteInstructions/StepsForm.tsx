@@ -171,19 +171,20 @@ function actionStepSchemaToActionStepBase(
         data: {
           element: actionStepSchema.data.element,
           value: actionStepSchema.data.value,
+          waitForElementTimeout: actionStepSchema.data.waitForElementTimeout ?? undefined,
         },
       }
-    case ActionStepType.UPLOAD_FILE:
-      if (!actionStepSchema.data.element || !actionStepSchema.data.value) {
-        return null
-      }
-      return {
-        ...actionStepSchema,
-        data: {
-          element: actionStepSchema.data.element,
-          value: actionStepSchema.data.value,
-        },
-      }
+    // case ActionStepType.UPLOAD_FILE:
+    //   if (!actionStepSchema.data.element || !actionStepSchema.data.value) {
+    //     return null
+    //   }
+    //   return {
+    //     ...actionStepSchema,
+    //     data: {
+    //       element: actionStepSchema.data.element,
+    //       value: actionStepSchema.data.value,
+    //     },
+    //   }
     case ActionStepType.SELECT_OPTION:
       if (!actionStepSchema.data.element || !actionStepSchema.data.value) {
         return null
@@ -193,6 +194,7 @@ function actionStepSchemaToActionStepBase(
         data: {
           element: actionStepSchema.data.element,
           value: actionStepSchema.data.value,
+          waitForElementTimeout: actionStepSchema.data.waitForElementTimeout ?? undefined,
         },
       }
     case ActionStepType.PRESS_BUTTON:

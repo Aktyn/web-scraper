@@ -4,3 +4,5 @@ export type PerformableActionStep<Type extends ActionStepType = ActionStepType> 
   ActionStep & { type: Type },
   'id' | 'orderIndex' | 'actionId'
 >
+
+export type RequestDataCallback = (valueQuery: string) => Promise<string>

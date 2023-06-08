@@ -10,7 +10,6 @@ export const actionStepTypeNames: { [key in ActionStepType]: string } = {
   [ActionStepType.WAIT]: 'Wait',
   [ActionStepType.WAIT_FOR_ELEMENT]: 'Wait for element',
   [ActionStepType.FILL_INPUT]: 'Fill input',
-  [ActionStepType.UPLOAD_FILE]: 'Upload file',
   [ActionStepType.SELECT_OPTION]: 'Select option',
   [ActionStepType.PRESS_BUTTON]: 'Press button',
   [ActionStepType.CHECK_ERROR]: 'Check error',
@@ -29,6 +28,7 @@ export const actionStepErrorTypeNames: { [key in ActionStepErrorType]: string } 
   [ActionStepErrorType.CAPTCHA_RECOGNITION_FAILED]: 'Captcha recognition failed',
   [ActionStepErrorType.UNKNOWN_INTERNAL_ERROR]: 'Unknown internal error',
   [ActionStepErrorType.INCORRECT_DATA]: 'Incorrect data',
+  [ActionStepErrorType.OPTION_NOT_SELECTED]: 'Option not selected',
 }
 
 export const captchaSolverTypeNames: { [key in CaptchaSolverType]: string } = {

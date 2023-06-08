@@ -1,4 +1,3 @@
-import type { ElectronApi, IpcRendererEventPolyfill } from '@web-scraper/common'
 import {
   ElectronToRendererMessage,
   ErrorCode,
@@ -6,9 +5,16 @@ import {
 } from '@web-scraper/common'
 
 import Database from '../../../database'
-import { ExtendedBrowserWindow } from '../../../extendedBrowserWindow'
 import { Scraper } from '../../../scraper'
-import { handleApiRequest, successResponse, type RequestHandlersSchema } from '../helpers'
+import type { RequestDataCallback } from '../../../scraper/steps'
+import {
+  broadcastMessage,
+  handleApiRequest,
+  successResponse,
+  type RequestHandlersSchema,
+  broadcastMessageWithResponseRequest,
+  responseToBroadcastedMessage,
+} from '../helpers'
 import { parseDatabaseSite } from '../parsers/siteParser'
 
 export const scraperSessionHandler = {
@@ -74,27 +80,30 @@ export const scraperSessionHandler = {
     },
   ),
   [RendererToElectronMessage.testActionStep]: handleApiRequest(
-    RendererToElectronMessage.endSiteInstructionsTestingSession,
+    RendererToElectronMessage.testActionStep,
     (sessionId, actionStep) => {
       const scraper = Scraper.getInstances(Scraper.Mode.TESTING).get(sessionId)
       if (!scraper) {
         throw ErrorCode.NOT_FOUND
       }
 
-      return scraper.performActionStep(actionStep)
+      const onDataRequest: RequestDataCallback = async (valueQuery) => {
+        const [value] = await broadcastMessageWithResponseRequest(
+          ElectronToRendererMessage.requestManualDataForActionStep,
+          actionStep,
+          valueQuery,
+        )
+        return value
+      }
+
+      return scraper.performActionStep(actionStep, onDataRequest)
+    },
+  ),
+  [RendererToElectronMessage.returnManualDataForActionStep]: handleApiRequest(
+    RendererToElectronMessage.returnManualDataForActionStep,
+    async (originMessage, requestId, value) => {
+      await responseToBroadcastedMessage(originMessage, requestId, value)
+      return successResponse
     },
   ),
 } satisfies Partial<RequestHandlersSchema>
-
-function broadcastMessage<MessageType extends ElectronToRendererMessage>(
-  message: MessageType,
-  ...args: ElectronApi[MessageType] extends (
-    callback: (event: IpcRendererEventPolyfill, ...args: infer T) => void,
-  ) => void
-    ? T
-    : never
-) {
-  ExtendedBrowserWindow.getInstances().forEach((windowInstance) => {
-    windowInstance.sendMessage(message, ...(args as never))
-  })
-}

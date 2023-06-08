@@ -19,6 +19,7 @@ import type { UserSettings } from './user'
 export enum ElectronToRendererMessage {
   siteInstructionsTestingSessionOpen = 'siteInstructionsTestingSessionOpen',
   siteInstructionsTestingSessionClosed = 'siteInstructionsTestingSessionClosed',
+  requestManualDataForActionStep = 'requestManualDataForActionStep',
 }
 
 export enum RendererToElectronMessage {
@@ -50,6 +51,7 @@ export enum RendererToElectronMessage {
   startSiteInstructionsTestingSession = 'startSiteInstructionsTestingSession',
   endSiteInstructionsTestingSession = 'endSiteInstructionsTestingSession',
   testActionStep = 'testActionStep',
+  returnManualDataForActionStep = 'returnManualDataForActionStep',
 }
 
 // eslint-disable-next-line @typescript-eslint/ban-types
@@ -66,13 +68,26 @@ export interface IpcRendererEventPolyfill extends Event {
   senderId: number
 }
 
+type ElectronToRendererMessageBlueprint<Args extends unknown[]> = (
+  callback: (event: IpcRendererEventPolyfill, ...args: Args) => void,
+) => void
+type ElectronToRendererMessageWithResponseRequestBlueprint<Args extends unknown[]> =
+  ElectronToRendererMessageBlueprint<[requestId: string, ...rest: Args]>
+export type RendererToElectronResponseBlueprint<
+  OriginMessageType extends ElectronToRendererMessage,
+  Args extends unknown[],
+> = (originMessage: OriginMessageType, requestId: string, ...args: Args) => Promise<ApiError>
+
 export type ElectronApi = {
-  [ElectronToRendererMessage.siteInstructionsTestingSessionOpen]: (
-    callback: (event: IpcRendererEventPolyfill, sessionId: string, site: Site) => void,
-  ) => void
-  [ElectronToRendererMessage.siteInstructionsTestingSessionClosed]: (
-    callback: (event: IpcRendererEventPolyfill, sessionId: string) => void,
-  ) => void
+  [ElectronToRendererMessage.siteInstructionsTestingSessionOpen]: ElectronToRendererMessageBlueprint<
+    [sessionId: string, site: Site]
+  >
+  [ElectronToRendererMessage.siteInstructionsTestingSessionClosed]: ElectronToRendererMessageBlueprint<
+    [sessionId: string]
+  >
+  [ElectronToRendererMessage.requestManualDataForActionStep]: ElectronToRendererMessageWithResponseRequestBlueprint<
+    [actionStep: ActionStep, valueQuery: string]
+  >
 
   [RendererToElectronMessage.getUserSettings]: () => Promise<UserSettings | ApiError>
   [RendererToElectronMessage.setUserSetting]: <KeyType extends keyof UserSettings>(
@@ -142,4 +157,8 @@ export type ElectronApi = {
     sessionId: string,
     actionStep: ActionStep,
   ) => Promise<MapSiteError | ApiError>
+  [RendererToElectronMessage.returnManualDataForActionStep]: RendererToElectronResponseBlueprint<
+    ElectronToRendererMessage.requestManualDataForActionStep,
+    [value: string]
+  >
 }

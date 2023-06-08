@@ -6,6 +6,10 @@ export function random(min: number, max: number, randomFunc = Math.random) {
   return randomFunc() * (max - min) + min
 }
 
+export function randomInt(min: number, max: number, randomFunc = Math.random) {
+  return Math.floor(randomFunc() * (max - min + 1)) + min
+}
+
 export function gaussianRandom(iterations = 6) {
   let rand = 0
   for (let i = 0; i < iterations; i += 1) {

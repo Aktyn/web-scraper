@@ -1,14 +1,28 @@
-//TODO
-// import { SiteInstructions, STEP_TYPE } from '@common';
+import {
+  ActionStepErrorType,
+  randomInt,
+  type ActionStep,
+  type ActionStepType,
+} from '@web-scraper/common'
 
-// import { Bot } from '..';
+import type { Scraper, ScraperMode } from '../scraper'
 
-// type Step = SiteInstructions['actions'][number]['steps'][number];
+import type { RequestDataCallback } from './helpers'
 
-// export async function fillInputStep<ParserData extends object>(
-//   this: Bot<ParserData>,
-//   step: Step & { type: STEP_TYPE.FILL_INPUT },
-//   data: ParserData,
-// ) {
-//   await this.page.type(step.element, this.parseSpecialCodes(step.value, data) ?? '');
-// }
+export async function fillInputStep<ModeType extends ScraperMode>(
+  this: Scraper<ModeType>,
+  actionStep: ActionStep & { type: ActionStepType.FILL_INPUT },
+  requestData: RequestDataCallback,
+) {
+  const inputHandle = await this.waitFor(
+    actionStep.data.element,
+    actionStep.data.waitForElementTimeout,
+  )
+  if (!inputHandle) {
+    return { errorType: ActionStepErrorType.ELEMENT_NOT_FOUND }
+  }
+
+  await inputHandle.type(await requestData(actionStep.data.value), { delay: randomInt(100, 500) })
+
+  return { errorType: ActionStepErrorType.NO_ERROR }
+}

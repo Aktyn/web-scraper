@@ -10,6 +10,7 @@ module.exports = {
   ],
   plugins: ['@emotion', 'react', '@typescript-eslint', 'prettier'],
   parserOptions: {
+    project: './tsconfig.json',
     ecmaVersion: 2021,
     sourceType: 'module',
     ecmaFeatures: {
@@ -43,6 +44,7 @@ module.exports = {
     '@typescript-eslint/explicit-function-return-type': 0,
     '@typescript-eslint/consistent-type-imports': 'error',
     '@typescript-eslint/no-empty-function': 'off',
+    '@typescript-eslint/no-floating-promises': 'error',
     '@typescript-eslint/no-unused-vars': [
       'error',
       {

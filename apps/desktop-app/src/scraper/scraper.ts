@@ -15,9 +15,12 @@ import * as uuid from 'uuid'
 import ScraperBrowser from './scraperBrowser'
 import type { ScraperPage } from './scraperPage'
 import {
+  type RequestDataCallback,
   checkErrorStep,
   checkSuccessStep,
+  fillInputStep,
   pressButtonStep,
+  selectOptionStep,
   waitForElementStep,
   waitStep,
 } from './steps'
@@ -100,7 +103,7 @@ export class Scraper<ModeType extends ScraperMode> {
 
     this.logger.info(`Instance created`)
 
-    this.init()
+    this.init().catch((error) => this.logger.error(error))
   }
 
   async destroy(destroyBrowser = true) {
@@ -129,7 +132,7 @@ export class Scraper<ModeType extends ScraperMode> {
 
     switch (this.mode) {
       case ScraperMode.DEFAULT:
-        this.initDefaultMode()
+        await this.initDefaultMode()
         break
       case ScraperMode.TESTING:
         await this.initTestingMode()
@@ -203,7 +206,7 @@ export class Scraper<ModeType extends ScraperMode> {
   @assertMainPage
   public async performActionStep(
     actionStep: ActionStep,
-    // data: ParserData, //TODO: onDataRequest
+    onDataRequest: RequestDataCallback,
   ): Promise<MapSiteError> {
     this.logger.info('Performing action step:', actionStep.type)
 
@@ -214,31 +217,30 @@ export class Scraper<ModeType extends ScraperMode> {
         return await this.waitForElementStep(actionStep)
       case ActionStepType.PRESS_BUTTON:
         return await this.pressButtonStep(actionStep)
-      /**
-       * TODO: Fill input and select option will request data with callback (look above TODO). For testing action step, handler will send an api call to user-panel which will open a modal with input for user to manually type data. After the api call returns user input, the handler will pass it to data request callback to continue performing step.
-       **/
-      // case ActionStepType.FILL_INPUT:
-      //   return await this.fillInputStep(actionStep, data)
-      // case ActionStepType.SELECT_OPTION:
-      //   return await this.selectStep(actionStep, data)
+      case ActionStepType.FILL_INPUT:
+        return await this.fillInputStep(actionStep, onDataRequest)
+      case ActionStepType.SELECT_OPTION:
+        return await this.selectOptionStep(actionStep, onDataRequest)
       case ActionStepType.CHECK_ERROR:
         return this.checkErrorStep(actionStep)
       case ActionStepType.CHECK_SUCCESS:
         return this.checkSuccessStep(actionStep)
       default:
-        this.logger.warn(`Unknown step type: ${actionStep.type}`)
+        this.logger.warn(
+          `Unknown step type: ${
+            'type' in actionStep ? (actionStep as { type: never }).type : undefined
+          }`,
+        )
         return { errorType: ActionStepErrorType.UNKNOWN_STEP_TYPE }
     }
-
-    return { errorType: ActionStepErrorType.NO_ERROR }
   }
 
   // Steps implemented in separated files
   private waitStep = waitStep
   private waitForElementStep = waitForElementStep
   private pressButtonStep = pressButtonStep
-  // private fillInputStep = fillInputStep;
-  // private selectStep = selectStep;
+  private fillInputStep = fillInputStep
+  private selectOptionStep = selectOptionStep
   private checkErrorStep = checkErrorStep
   private checkSuccessStep = checkSuccessStep
 

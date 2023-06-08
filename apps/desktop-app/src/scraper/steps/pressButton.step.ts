@@ -15,7 +15,6 @@ export async function pressButtonStep<ModeType extends ScraperMode>(
     actionStep.data.element,
     actionStep.data.waitForElementTimeout,
   )
-
   if (!buttonHandle) {
     return { errorType: ActionStepErrorType.ELEMENT_NOT_FOUND }
   }

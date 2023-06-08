@@ -1,13 +1,14 @@
 import type { Browser, Page, PageEventObject, ScreenshotOptions, WaitForOptions } from 'puppeteer'
 import { getRandom as getRandomUserAgent } from 'random-useragent'
 
-const exposedMethods = [
-  'waitForSelector',
-  'waitForNavigation',
-  'click',
-] as const satisfies Readonly<(keyof Page)[]>
-
 export class ScraperPage implements Pick<Page, 'on' | 'off'> {
+  private static readonly exposedMethods = [
+    'waitForSelector',
+    'waitForNavigation',
+    'click',
+    'type',
+  ] as const satisfies Readonly<(keyof Page)[]>
+
   private initialized = false
 
   public static async createFromExisting(page: Page) {
@@ -95,8 +96,8 @@ export class ScraperPage implements Pick<Page, 'on' | 'off'> {
     return this.page.url()
   }
 
-  public exposed = exposedMethods.reduce((acc, method) => {
+  public exposed = ScraperPage.exposedMethods.reduce((acc, method) => {
     acc[method] = this.page[method].bind(this.page) as never
     return acc
-  }, {} as { [K in (typeof exposedMethods)[number]]: Page[K] })
+  }, {} as { [K in (typeof ScraperPage.exposedMethods)[number]]: Page[K] })
 }

@@ -24,6 +24,7 @@ export enum ActionStepErrorType {
   CAPTCHA_RECOGNITION_FAILED = 'error.internal.captchaRecognitionFailed',
   UNKNOWN_INTERNAL_ERROR = 'error.internal.unknown',
   INCORRECT_DATA = 'error.internal.incorrectData',
+  OPTION_NOT_SELECTED = 'error.common.optionNotSelected',
 }
 
 export interface MapSiteError {
@@ -36,7 +37,7 @@ export enum ActionStepType {
   WAIT = 'wait',
   WAIT_FOR_ELEMENT = 'waitForElement',
   FILL_INPUT = 'fillInput',
-  UPLOAD_FILE = 'uploadFile',
+  // UPLOAD_FILE = 'uploadFile', //TODO: support for file fields
   SELECT_OPTION = 'selectOption',
   PRESS_BUTTON = 'pressButton',
   // SOLVE_CAPTCHA = 'solveCaptcha', //TODO: support for captcha fields
@@ -55,9 +56,15 @@ type ActionStepBase<Type extends ActionStepType, Data> = {
 export type ActionStep =
   | ActionStepBase<ActionStepType.WAIT, { duration: number }>
   | ActionStepBase<ActionStepType.WAIT_FOR_ELEMENT, { element: string; timeout?: number }>
-  | ActionStepBase<ActionStepType.FILL_INPUT, { element: string; value: string }>
-  | ActionStepBase<ActionStepType.UPLOAD_FILE, { element: string; value: string }>
-  | ActionStepBase<ActionStepType.SELECT_OPTION, { element: string; value: string }>
+  | ActionStepBase<
+      ActionStepType.FILL_INPUT,
+      { element: string; value: string; waitForElementTimeout?: number }
+    >
+  // | ActionStepBase<ActionStepType.UPLOAD_FILE, { element: string; value: string }>
+  | ActionStepBase<
+      ActionStepType.SELECT_OPTION,
+      { element: string; value: string; waitForElementTimeout?: number }
+    >
   | ActionStepBase<
       ActionStepType.PRESS_BUTTON,
       {
