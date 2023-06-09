@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react'
 import {
   CircleRounded,
   CodeRounded,
@@ -53,7 +54,7 @@ export const StepDataForm = ({ stepFieldName, ...fieldFormProps }: StepDataFormP
       return (
         <>
           <ElementFormInput {...fieldFormProps} />
-          <ValueFormInput {...fieldFormProps} />
+          <ValueFormInput {...fieldFormProps} label="Value query" />
           <DurationFormInput {...fieldFormProps} type="waitForElementTimeout" />
         </>
       )
@@ -148,14 +149,17 @@ const ElementFormInput = ({ fieldName }: DataFieldFormProps) => {
   )
 }
 
-const ValueFormInput = ({ fieldName }: DataFieldFormProps) => {
+const ValueFormInput = ({
+  fieldName,
+  label = 'Value',
+}: DataFieldFormProps & { label?: ReactNode }) => {
   const form = useFormContext<UpsertSiteInstructionsSchema>()
 
   return (
     <FormInput
       name={`${fieldName}.value`}
       form={form}
-      label="Value"
+      label={label}
       InputProps={{
         startAdornment: (
           <InputAdornment position="start">

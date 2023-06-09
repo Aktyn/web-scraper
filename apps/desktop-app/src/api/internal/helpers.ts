@@ -105,7 +105,7 @@ export function broadcastMessageWithResponseRequest<MessageType extends Electron
     const timeout = setTimeout(() => {
       awaitingMessageResponses.delete(requestId)
       reject(new Error(`Request ${requestId} for message ${message} timed out`))
-    }, 1_800_000)
+    }, 300_000)
 
     awaitingMessageResponses.set(requestId, (originMessage, data) => {
       clearTimeout(timeout)

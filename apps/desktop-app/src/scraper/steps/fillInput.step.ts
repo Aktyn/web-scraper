@@ -3,6 +3,7 @@ import {
   randomInt,
   type ActionStep,
   type ActionStepType,
+  safePromise,
 } from '@web-scraper/common'
 
 import type { Scraper, ScraperMode } from '../scraper'
@@ -22,7 +23,8 @@ export async function fillInputStep<ModeType extends ScraperMode>(
     return { errorType: ActionStepErrorType.ELEMENT_NOT_FOUND }
   }
 
-  await inputHandle.type(await requestData(actionStep.data.value), { delay: randomInt(100, 500) })
+  await safePromise(inputHandle.evaluate((node) => ((node as HTMLInputElement).value = '')))
+  await inputHandle.type(await requestData(actionStep.data.value), { delay: randomInt(50, 200) })
 
   return { errorType: ActionStepErrorType.NO_ERROR }
 }

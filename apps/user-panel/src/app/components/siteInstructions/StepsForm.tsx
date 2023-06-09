@@ -55,7 +55,10 @@ export const StepsForm = ({ fieldName }: StepsFormProps) => {
         return
       }
 
-      console.info(`Manually executing action step (${actionStep.type}):`, actionStep)
+      console.info(
+        `Manually executing action step (${actionStepTypeNames[actionStep.type]}):`,
+        actionStep,
+      )
 
       setLoadingPlayButtonIndex(itemIndex)
       submitTestActionStep(
@@ -64,7 +67,10 @@ export const StepsForm = ({ fieldName }: StepsFormProps) => {
             setLoadingPlayButtonIndex(-1)
 
             if (mapSiteError.errorType === ActionStepErrorType.NO_ERROR) {
-              enqueueSnackbar({ variant: 'success', message: 'Action step completed' })
+              enqueueSnackbar({
+                variant: 'success',
+                message: `Action step completed (${actionStepTypeNames[actionStep.type]})`,
+              })
             } else {
               enqueueSnackbar({
                 variant: 'error',

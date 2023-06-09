@@ -10,8 +10,8 @@ import type { RequestDataCallback } from './steps'
 
 class ExposedScraper<ModeType extends ScraperMode> extends Scraper<ModeType> {
   private getElementValue(selector: `${string} ${'input' | 'select'}`) {
-    return this.mainPage?.exposed
-      .waitForSelector(selector)
+    return this.mainPage
+      ?.waitForSelector(selector)
       ?.then((element) => element?.evaluate((input) => input.value))
   }
 

@@ -1,8 +1,8 @@
 import {
-  wait,
+  ActionStepErrorType,
   type ActionStep,
   type ActionStepType,
-  ActionStepErrorType,
+  randomInt,
 } from '@web-scraper/common'
 
 import type { Scraper, ScraperMode } from '../scraper'
@@ -37,8 +37,9 @@ export async function pressButtonStep<ModeType extends ScraperMode>(
 
     await clickPromise
   } else {
-    await buttonHandle.click()
-    await wait(2_000) //TODO: it should be parameterized as delay variable in site instructions
+    await buttonHandle.click({
+      delay: randomInt(50, 200),
+    })
   }
 
   return { errorType: ActionStepErrorType.NO_ERROR }

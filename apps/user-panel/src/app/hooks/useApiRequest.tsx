@@ -23,6 +23,8 @@ export function useApiRequest<RequestFunctionType extends AnyApiFunction>(
   type ConfigType = {
     onSuccess?: (data: DataType, extras: { enqueueSnackbar: typeof enqueueSnackbar }) => void
     onError?: (error: ApiError, extras: { enqueueSnackbar: typeof enqueueSnackbar }) => void
+    /** Called regardless the request succeeded or failed */
+    onEnd?: () => void
   }
 
   const submit = useCallback(
@@ -61,9 +63,12 @@ export function useApiRequest<RequestFunctionType extends AnyApiFunction>(
                 ),
               })
             }
+            config.onEnd?.()
             return
           }
+
           config.onSuccess?.(data as DataType, { enqueueSnackbar })
+          config.onEnd?.()
         })
         .catch((error) => {
           if (error) {

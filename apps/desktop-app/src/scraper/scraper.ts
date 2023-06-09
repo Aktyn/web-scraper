@@ -162,7 +162,7 @@ export class Scraper<ModeType extends ScraperMode> {
       await this.initTestingMode(self)
     })
     self.mainPage!.on('framenavigated', async (frame) => {
-      const url = new URL(self.mainPage!.url())
+      const url = new URL(self.mainPage!.exposed.url())
       if (url.host && url.host !== 'null' && url.host !== targetUrl.host) {
         this.logger.info(
           `Returning to ${self.options.lockURL} due to manual redirecting to different host (${url.host})`,
@@ -251,12 +251,12 @@ export class Scraper<ModeType extends ScraperMode> {
       if (Array.isArray(elements)) {
         const handles: AwaitedElementHandle[] = []
         for (const el of elements) {
-          const handle = await this.mainPage!.exposed.waitForSelector(el, { timeout })
+          const handle = await this.mainPage!.waitForSelector(el, { timeout })
           handles.push(handle)
         }
         return handles
       } else {
-        return await this.mainPage!.exposed.waitForSelector(elements, { timeout })
+        return await this.mainPage!.waitForSelector(elements, { timeout })
       }
     } catch (error) {
       return null

@@ -1,9 +1,16 @@
-import type { Browser, Page, PageEventObject, ScreenshotOptions, WaitForOptions } from 'puppeteer'
+import type {
+  Browser,
+  Page,
+  PageEventObject,
+  ScreenshotOptions,
+  WaitForOptions,
+  WaitForSelectorOptions,
+} from 'puppeteer'
 import { getRandom as getRandomUserAgent } from 'random-useragent'
 
 export class ScraperPage implements Pick<Page, 'on' | 'off'> {
   private static readonly exposedMethods = [
-    'waitForSelector',
+    'url',
     'waitForNavigation',
     'click',
     'type',
@@ -84,7 +91,7 @@ export class ScraperPage implements Pick<Page, 'on' | 'off'> {
     await this.page.goto(url, options)
 
     if (waitForSelector) {
-      await this.page.waitForSelector(waitForSelector)
+      await this.waitForSelector(waitForSelector, { timeout: 30_000 })
     }
   }
 
@@ -92,8 +99,29 @@ export class ScraperPage implements Pick<Page, 'on' | 'off'> {
     return this.page.screenshot(options)
   }
 
-  public url() {
-    return this.page.url()
+  public async waitForSelector<Selector extends string>(
+    selector: Selector,
+    options?: WaitForSelectorOptions,
+  ) {
+    try {
+      const elementHandle = await this.page.waitForSelector(selector, options)
+      if (!elementHandle) {
+        throw new Error(`Element not found: ${selector}`)
+      }
+      return elementHandle
+    } catch (error) {
+      const iframes = this.page.frames()
+
+      for (const frame of iframes) {
+        const elementHandle = await frame
+          .waitForSelector(selector, { timeout: 2_000 })
+          .catch(() => null)
+        if (elementHandle) {
+          return elementHandle
+        }
+      }
+      throw error
+    }
   }
 
   public exposed = ScraperPage.exposedMethods.reduce((acc, method) => {

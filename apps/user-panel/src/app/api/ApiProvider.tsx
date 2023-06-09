@@ -1,7 +1,8 @@
-import { useCallback, useEffect, useRef, type PropsWithChildren } from 'react'
-import type { ElectronApi } from '@web-scraper/common'
+import { useCallback, useEffect, useRef, type PropsWithChildren, useState } from 'react'
+import type { ActionStep, ElectronApi } from '@web-scraper/common'
 import { ElectronToRendererMessage } from '@web-scraper/common'
 import { useTestingSessions } from './useTestingSessions'
+import { ManualDataForActionStepDialog } from '../components/siteInstructions/ManualDataForActionStepDialog'
 import type { ApiEventListenerType } from '../context/apiContext'
 import { ApiContext } from '../context/apiContext'
 
@@ -18,6 +19,14 @@ export const ApiProvider = ({ children }: PropsWithChildren) => {
   )
 
   const testingSessions = useTestingSessions()
+
+  const [manualDataForActionStepResponseQueue, setManualDataForActionStepResponseQueue] = useState<
+    {
+      requestId: string
+      actionStep: ActionStep
+      valueQuery: string
+    }[]
+  >([])
 
   useEffect(() => {
     let mounted = true
@@ -38,24 +47,42 @@ export const ApiProvider = ({ children }: PropsWithChildren) => {
       })
     }
 
-    registerEvent(
-      ElectronToRendererMessage.siteInstructionsTestingSessionOpen,
-      (_, sessionId, site) => {
+    const eventsHandlers: {
+      [key in ElectronToRendererMessage]: (
+        ...args: Parameters<Parameters<ElectronApi[key]>[0]>
+      ) => void
+    } = {
+      [ElectronToRendererMessage.siteInstructionsTestingSessionOpen]: (_, sessionId, site) => {
         console.info(
           `Site instructions testing session open (id: ${sessionId}; site url: ${site.url})`,
         )
         testingSessions.setSessions((sessions) => [...sessions, { sessionId, site }])
       },
-    )
-    registerEvent(
-      ElectronToRendererMessage.siteInstructionsTestingSessionClosed,
-      (_, sessionId) => {
+      [ElectronToRendererMessage.siteInstructionsTestingSessionClosed]: (_, sessionId) => {
         console.info(`Site instructions testing session closed (id: ${sessionId})`)
         testingSessions.setSessions((sessions) =>
           sessions.filter((session) => session.sessionId !== sessionId),
         )
       },
-    )
+      [ElectronToRendererMessage.requestManualDataForActionStep]: (
+        _,
+        requestId,
+        actionStep,
+        valueQuery,
+      ) => {
+        console.info(
+          `Manual data requested for action step (id: ${requestId}; step type: ${actionStep.type})`,
+        )
+        setManualDataForActionStepResponseQueue((queue) => [
+          ...queue,
+          { requestId, actionStep, valueQuery },
+        ])
+      },
+    }
+
+    for (const key in eventsHandlers) {
+      registerEvent(key as ElectronToRendererMessage, eventsHandlers[key as never])
+    }
 
     return () => {
       mounted = false
@@ -66,6 +93,15 @@ export const ApiProvider = ({ children }: PropsWithChildren) => {
   return (
     <ApiContext.Provider value={{ addEventsListener, removeEventsListener, testingSessions }}>
       {children}
+      <ManualDataForActionStepDialog
+        open={manualDataForActionStepResponseQueue.length > 0}
+        data={manualDataForActionStepResponseQueue.at(0)}
+        onResponseSent={(handledData) =>
+          setManualDataForActionStepResponseQueue((queue) =>
+            queue.filter((item) => item !== handledData),
+          )
+        }
+      />
     </ApiContext.Provider>
   )
 }
