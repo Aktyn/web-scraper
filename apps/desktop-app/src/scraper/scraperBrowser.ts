@@ -47,7 +47,7 @@ export default class ScraperBrowser {
         ignoreHTTPSErrors: true,
         timeout: 30_000,
         product: 'chrome',
-        userDataDir: '', //TODO
+        userDataDir: isDev ? path.join(EXTERNAL_DIRECTORY_PATH, 'userData') : '',
         ...options,
       }),
     ).then(async (browser) => {
