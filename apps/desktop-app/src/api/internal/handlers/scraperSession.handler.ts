@@ -32,7 +32,7 @@ export const scraperSessionHandler = {
   [RendererToElectronMessage.startSiteInstructionsTestingSession]: handleApiRequest(
     RendererToElectronMessage.startSiteInstructionsTestingSession,
     (siteId) =>
-      Database.site.getSite(siteId).then((site) => {
+      Database.site.getSite(siteId).then(async (site) => {
         const existingInstance = Array.from(
           Scraper.getInstances(Scraper.Mode.TESTING).values(),
         ).find((instance) => instance.getOptions().lockURL === site.url)
@@ -55,6 +55,7 @@ export const scraperSessionHandler = {
             )
           },
         })
+        await testingModeScraperInstance.waitForInit()
 
         broadcastMessage(
           ElectronToRendererMessage.siteInstructionsTestingSessionOpen,
@@ -87,7 +88,7 @@ export const scraperSessionHandler = {
         throw ErrorCode.NOT_FOUND
       }
 
-      const onDataRequest: RequestDataCallback = async (valueQuery) => {
+      const onDataRequest: RequestDataCallback = async (valueQuery, actionStep) => {
         const [value] = await broadcastMessageWithResponseRequest(
           ElectronToRendererMessage.requestManualDataForActionStep,
           actionStep,
@@ -97,6 +98,26 @@ export const scraperSessionHandler = {
       }
 
       return scraper.performActionStep(actionStep, onDataRequest)
+    },
+  ),
+  [RendererToElectronMessage.testAction]: handleApiRequest(
+    RendererToElectronMessage.testAction,
+    (sessionId, action) => {
+      const scraper = Scraper.getInstances(Scraper.Mode.TESTING).get(sessionId)
+      if (!scraper) {
+        throw ErrorCode.NOT_FOUND
+      }
+
+      const onDataRequest: RequestDataCallback = async (valueQuery, actionStep) => {
+        const [value] = await broadcastMessageWithResponseRequest(
+          ElectronToRendererMessage.requestManualDataForActionStep,
+          actionStep,
+          valueQuery,
+        )
+        return value
+      }
+
+      return scraper.performAction(action, onDataRequest)
     },
   ),
   [RendererToElectronMessage.returnManualDataForActionStep]: handleApiRequest(

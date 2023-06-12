@@ -26,7 +26,7 @@ import { ProceduresForm } from './ProceduresForm'
 import { ApiContext } from '../../context/apiContext'
 import { SiteInstructionsTestingSessionContext } from '../../context/siteInstructionsTestingSessionContext'
 import { useApiRequest } from '../../hooks/useApiRequest'
-import { errorLabels, formatDate } from '../../utils'
+import { formatDate } from '../../utils'
 import { UrlButton } from '../common/button/UrlButton'
 
 interface SiteInstructionsFormProps {
@@ -58,12 +58,12 @@ export const SiteInstructionsForm = ({ site, onSuccess }: SiteInstructionsFormPr
           resetForm(pick(instructions, 'procedures', 'actions'))
           setInstructions(instructions)
         },
-        onError: (error, { enqueueSnackbar }) => {
+        onError: (error, { showErrorSnackbar }) => {
           if (error.errorCode === ErrorCode.NOT_FOUND) {
             setInstructions(null)
             resetForm()
           } else {
-            enqueueSnackbar({ variant: 'error', message: errorLabels[error.errorCode] })
+            showErrorSnackbar()
           }
         },
       },

@@ -38,6 +38,7 @@ export const siteHandler = {
           viewportWidth: 1280,
           viewportHeight: 720,
         })
+      await scraperPreviewInstance.waitForInit()
 
       return {
         imageBase64: await scraperPreviewInstance.takeScreenshot(url),

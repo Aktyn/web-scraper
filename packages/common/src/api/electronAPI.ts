@@ -6,6 +6,8 @@ import type {
 } from './common'
 import type { Site, SiteTag, UpsertSiteSchema, UpsertSiteTagSchema } from './site'
 import type {
+  Action,
+  ActionExecutionResult,
   ActionStep,
   MapSiteError,
   SiteInstructions,
@@ -51,6 +53,7 @@ export enum RendererToElectronMessage {
   startSiteInstructionsTestingSession = 'startSiteInstructionsTestingSession',
   endSiteInstructionsTestingSession = 'endSiteInstructionsTestingSession',
   testActionStep = 'testActionStep',
+  testAction = 'testAction',
   returnManualDataForActionStep = 'returnManualDataForActionStep',
 }
 
@@ -157,6 +160,10 @@ export type ElectronApi = {
     sessionId: string,
     actionStep: ActionStep,
   ) => Promise<MapSiteError | ApiError>
+  [RendererToElectronMessage.testAction]: (
+    sessionId: string,
+    action: Action,
+  ) => Promise<ActionExecutionResult | ApiError>
   [RendererToElectronMessage.returnManualDataForActionStep]: RendererToElectronResponseBlueprint<
     ElectronToRendererMessage.requestManualDataForActionStep,
     [value: string]

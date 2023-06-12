@@ -24,7 +24,9 @@ export async function fillInputStep<ModeType extends ScraperMode>(
   }
 
   await safePromise(inputHandle.evaluate((node) => ((node as HTMLInputElement).value = '')))
-  await inputHandle.type(await requestData(actionStep.data.value), { delay: randomInt(50, 200) })
+  await inputHandle.type(await requestData(actionStep.data.value, actionStep), {
+    delay: randomInt(50, 200),
+  })
 
   return { errorType: ActionStepErrorType.NO_ERROR }
 }

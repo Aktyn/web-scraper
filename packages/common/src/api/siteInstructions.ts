@@ -88,6 +88,14 @@ export type ActionStep =
       }
     >
 
+export interface ActionExecutionResult {
+  action: Action
+  actionStepsResults: {
+    step: ActionStep
+    result: MapSiteError
+  }[]
+}
+
 export interface Action {
   id: number
   name: string

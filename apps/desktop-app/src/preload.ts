@@ -37,6 +37,7 @@ const rendererToElectronMessageNames = [
   'startSiteInstructionsTestingSession',
   'endSiteInstructionsTestingSession',
   'testActionStep',
+  'testAction',
   'returnManualDataForActionStep',
 ] as const
 

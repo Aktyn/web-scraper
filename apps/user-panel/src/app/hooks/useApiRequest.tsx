@@ -22,7 +22,10 @@ export function useApiRequest<RequestFunctionType extends AnyApiFunction>(
 
   type ConfigType = {
     onSuccess?: (data: DataType, extras: { enqueueSnackbar: typeof enqueueSnackbar }) => void
-    onError?: (error: ApiError, extras: { enqueueSnackbar: typeof enqueueSnackbar }) => void
+    onError?: (
+      error: ApiError,
+      extras: { enqueueSnackbar: typeof enqueueSnackbar; showErrorSnackbar: () => void },
+    ) => void
     /** Called regardless the request succeeded or failed */
     onEnd?: () => void
   }
@@ -38,9 +41,7 @@ export function useApiRequest<RequestFunctionType extends AnyApiFunction>(
           setSubmitting(false)
           setSubmittingData(null)
           if ('errorCode' in data && data.errorCode !== ErrorCode.NO_ERROR) {
-            if (config.onError) {
-              config.onError(data, { enqueueSnackbar })
-            } else {
+            const showErrorSnackbar = () =>
               enqueueSnackbar({
                 variant: 'error',
                 message: (
@@ -62,6 +63,11 @@ export function useApiRequest<RequestFunctionType extends AnyApiFunction>(
                   </Stack>
                 ),
               })
+
+            if (config.onError) {
+              config.onError(data, { enqueueSnackbar, showErrorSnackbar })
+            } else {
+              showErrorSnackbar()
             }
             config.onEnd?.()
             return

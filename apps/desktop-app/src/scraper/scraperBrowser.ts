@@ -47,36 +47,41 @@ export default class ScraperBrowser {
         ignoreHTTPSErrors: true,
         timeout: 30_000,
         product: 'chrome',
-        userDataDir: isDev ? path.join(EXTERNAL_DIRECTORY_PATH, 'userData') : '',
+        userDataDir:
+          isDev && !process.env.VITEST_WORKER_ID
+            ? path.join(EXTERNAL_DIRECTORY_PATH, 'userData')
+            : '',
         ...options,
       }),
-    ).then(async (browser) => {
-      if (!browser) {
-        throw new Error('Error during browser initialization')
-      }
-
-      browser.on('disconnected', () => {
-        onBrowserClosed?.()
-      })
-
-      const pages = await browser.pages()
-      const initPage = pages[0] || (await browser.newPage())
-
-      if (loadInfoPage) {
-        try {
-          await initPage.goto(`data:text/html,${encodeURIComponent(getInfoPageHTML())}`, {
-            waitUntil: 'load',
-          })
-        } catch (error) {
-          console.error('Cannot load initial page:', error)
+    )
+      .then(async (browser) => {
+        if (!browser) {
+          throw new Error('Error during browser initialization')
         }
-      }
 
-      this.browser = browser
+        browser.on('disconnected', () => {
+          onBrowserClosed?.()
+        })
 
-      // eslint-disable-next-line no-console
-      console.log('Browser initialized')
-    })
+        const pages = await browser.pages()
+        const initPage = pages[0] || (await browser.newPage())
+
+        if (loadInfoPage) {
+          try {
+            await initPage.goto(`data:text/html,${encodeURIComponent(getInfoPageHTML())}`, {
+              waitUntil: 'load',
+            })
+          } catch (error) {
+            console.error('Cannot load initial page:', error)
+          }
+        }
+
+        this.browser = browser
+
+        // eslint-disable-next-line no-console
+        console.log('Browser initialized')
+      })
+      .catch(console.error)
   }
 
   public async destroy() {

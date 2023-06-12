@@ -1,6 +1,11 @@
 import type { Server } from 'http'
 
-import { ActionStepErrorType, ActionStepType, type ActionStep } from '@web-scraper/common'
+import {
+  ActionStepErrorType,
+  ActionStepType,
+  type Action,
+  type ActionStep,
+} from '@web-scraper/common'
 import express from 'express'
 import { afterAll, beforeAll, describe, expect, it, vi, type Mock } from 'vitest'
 
@@ -23,49 +28,53 @@ class ExposedScraper<ModeType extends ScraperMode> extends Scraper<ModeType> {
   }
 }
 
-describe('Scraper.TESTING', () => {
+const actionStepBase = {
+  id: 1,
+  orderIndex: 0,
+  actionId: 1,
+} as const satisfies Partial<ActionStep>
+
+const dummyRequestDataCallback: RequestDataCallback = () => Promise.resolve('')
+
+const withScraperTestingMode = async (
+  callback: (
+    scraper: ExposedScraper<typeof Scraper.Mode.TESTING>,
+    closeListener: Mock<any, any>,
+  ) => Promise<any>,
+) => {
+  const closeListener = vi.fn()
+
+  const scraper = new ExposedScraper<typeof Scraper.Mode.TESTING>(Scraper.Mode.TESTING, {
+    siteId: 1,
+    lockURL: 'http://localhost:1357/mock-testing',
+    onClose: closeListener,
+  })
+  await scraper.waitForInit()
+
+  await callback(scraper, closeListener)
+
+  await scraper.destroy(true)
+}
+
+function initServer(app: express.Express) {
+  for (const page of pages) {
+    app.get(page.route, (_req, res) => {
+      res.status(200).type('text/html').send(page.body)
+    })
+  }
+
+  const port = 1357
+  return app.listen(port)
+}
+
+describe('Scraper.PREVIEW', () => {
   const app = express()
   let server: Server | null = null
 
-  const actionStepBase = {
-    id: 1,
-    orderIndex: 0,
-    actionId: 1,
-  } as const satisfies Partial<ActionStep>
-
-  const dummyRequestDataCallback: RequestDataCallback = () => Promise.resolve('')
-
-  const withScraperTestingMode = async (
-    callback: (
-      scraper: ExposedScraper<typeof Scraper.Mode.TESTING>,
-      closeListener: Mock<any, any>,
-    ) => Promise<any>,
-  ) => {
-    const closeListener = vi.fn()
-
-    const scraper = new ExposedScraper<typeof Scraper.Mode.TESTING>(Scraper.Mode.TESTING, {
-      siteId: 1,
-      lockURL: 'http://localhost:1357/mock-testing',
-      onClose: closeListener,
-    })
-    await scraper.waitForInit()
-
-    await callback(scraper, closeListener)
-
-    await scraper.destroy(true)
-  }
-
-  beforeAll(async () => {
-    for (const page of pages) {
-      app.get(page.route, (_req, res) => {
-        res.status(200).type('text/html').send(page.body)
-      })
-    }
-
-    const port = 1357
-    server = app.listen(port)
+  beforeAll(() => {
+    server = initServer(app)
   })
-  afterAll(async () => {
+  afterAll(() => {
     server?.close()
   })
 
@@ -80,6 +89,18 @@ describe('Scraper.TESTING', () => {
     expect(isBase64(screenshot)).toBe(true)
 
     await scraper.destroy(true)
+  })
+})
+
+describe('Scraper.TESTING action steps', () => {
+  const app = express()
+  let server: Server | null = null
+
+  beforeAll(() => {
+    server = initServer(app)
+  })
+  afterAll(() => {
+    server?.close()
   })
 
   it('should perform "wait" step in testing mode', () => {
@@ -366,6 +387,49 @@ describe('Scraper.TESTING', () => {
     },
     { timeout: 10_000 },
   )
+})
+
+describe('Scraper.TESTING action', () => {
+  const app = express()
+  let server: Server | null = null
+
+  beforeAll(() => {
+    server = initServer(app)
+  })
+  afterAll(() => {
+    server?.close()
+  })
+
+  it('should perform action in testing mode', () => {
+    return withScraperTestingMode(async (scraper) => {
+      const waitStep: ActionStep = {
+        ...actionStepBase,
+        type: ActionStepType.WAIT,
+        data: {
+          duration: 1000,
+        },
+      }
+
+      const action: Action = {
+        id: 0,
+        url: 'http://localhost:1357/mock-testing',
+        siteInstructionsId: 0,
+        name: 'mock action',
+        actionSteps: [waitStep],
+      }
+
+      const actionExecutionResult = await scraper.performAction(action, dummyRequestDataCallback)
+      expect(actionExecutionResult).toEqual({
+        action,
+        actionStepsResults: [
+          {
+            step: waitStep,
+            result: { errorType: ActionStepErrorType.NO_ERROR },
+          },
+        ],
+      })
+    })
+  })
 })
 
 const pages = [

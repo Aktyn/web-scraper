@@ -4,10 +4,13 @@ import {
   Logger,
   safePromise,
   wait,
+  waitFor,
+  type Action,
   type ActionStep,
   type MapSiteError,
   type Site,
-  waitFor,
+  type ActionExecutionResult,
+  sortNumbers,
 } from '@web-scraper/common'
 import type { ElementHandle, Page } from 'puppeteer'
 import * as uuid from 'uuid'
@@ -15,7 +18,6 @@ import * as uuid from 'uuid'
 import ScraperBrowser from './scraperBrowser'
 import type { ScraperPage } from './scraperPage'
 import {
-  type RequestDataCallback,
   checkErrorStep,
   checkSuccessStep,
   fillInputStep,
@@ -23,6 +25,7 @@ import {
   selectOptionStep,
   waitForElementStep,
   waitStep,
+  type RequestDataCallback,
 } from './steps'
 
 export enum ScraperMode {
@@ -121,7 +124,12 @@ export class Scraper<ModeType extends ScraperMode> {
   }
 
   public async waitForInit(timeout = 10_000) {
-    await waitFor(() => Promise.resolve(this.initialized), 100, timeout)
+    try {
+      await waitFor(() => Promise.resolve(this.initialized), 100, timeout)
+    } catch (error) {
+      await this.destroy()
+      throw error
+    }
   }
 
   private async init() {
@@ -201,6 +209,31 @@ export class Scraper<ModeType extends ScraperMode> {
     await safePromise(page.close())
 
     return imageData
+  }
+
+  @assertMainPage
+  public async performAction(
+    action: Action,
+    onDataRequest: RequestDataCallback,
+  ): Promise<ActionExecutionResult> {
+    this.logger.info('Performing action:', action.name)
+
+    if (action.url) {
+      await this.mainPage!.goto(action.url, null, { timeout: 30_000, waitUntil: 'networkidle0' })
+    }
+
+    const actionStepsResults: ActionExecutionResult['actionStepsResults'] = []
+
+    const steps = action.actionSteps.sort(sortNumbers('orderIndex', 'asc'))
+    for (const step of steps) {
+      const result = await this.performActionStep(step, onDataRequest)
+      actionStepsResults.push({ step, result })
+    }
+
+    return {
+      action,
+      actionStepsResults,
+    }
   }
 
   @assertMainPage

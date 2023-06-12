@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import type { Site } from '@web-scraper/common'
 import { useApiRequest } from '../hooks/useApiRequest'
-import { errorLabels } from '../utils'
 
 export interface TestingSessionSchema {
   sessionId: string
@@ -43,9 +42,6 @@ export function useTestingSessions() {
               message: 'Site instructions testing session started',
             })
           },
-          onError: (error, { enqueueSnackbar }) => {
-            enqueueSnackbar({ variant: 'error', message: errorLabels[error.errorCode] })
-          },
         },
         siteId,
       )
@@ -62,9 +58,6 @@ export function useTestingSessions() {
               variant: 'success',
               message: 'Site instructions testing session ended',
             })
-          },
-          onError: (error, { enqueueSnackbar }) => {
-            enqueueSnackbar({ variant: 'error', message: errorLabels[error.errorCode] })
           },
         },
         typeof session === 'string' ? session : session.sessionId,

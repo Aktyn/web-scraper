@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { forceArray, getDeepProperty, omit, pick } from './common'
+import { forceArray, getDeepProperty, omit, pick, sortNumbers } from './common'
 
 describe('pick', () => {
   it('should return object left only with given properties', () => {
@@ -66,5 +66,63 @@ describe('forceArray', () => {
   it('should return the same array when given an array value', () => {
     const arr = [1, 2, 3]
     expect(forceArray(arr)).toBe(arr)
+  })
+})
+
+describe('sort', () => {
+  it('should sort an array of objects in ascending order by a given numeric key', () => {
+    const data = [
+      { id: 1, value: 5 },
+      { id: 2, value: 3 },
+      { id: 3, value: 7 },
+    ]
+    const sortedData = data.sort(sortNumbers('value', 'asc'))
+    expect(sortedData).toStrictEqual([
+      { id: 2, value: 3 },
+      { id: 1, value: 5 },
+      { id: 3, value: 7 },
+    ])
+  })
+
+  it('should sort an array of objects in descending order by a given numeric key', () => {
+    const data = [
+      { id: 1, value: 5 },
+      { id: 2, value: 3 },
+      { id: 3, value: 7 },
+    ]
+    const sortedData = data.sort(sortNumbers('value', 'desc'))
+    expect(sortedData).toStrictEqual([
+      { id: 3, value: 7 },
+      { id: 1, value: 5 },
+      { id: 2, value: 3 },
+    ])
+  })
+
+  it('should sort an array of objects in ascending order by a given numeric key with negative values', () => {
+    const data = [
+      { id: 1, value: -5 },
+      { id: 2, value: 3 },
+      { id: 3, value: 7 },
+    ]
+    const sortedData = data.sort(sortNumbers('value', 'asc'))
+    expect(sortedData).toStrictEqual([
+      { id: 1, value: -5 },
+      { id: 2, value: 3 },
+      { id: 3, value: 7 },
+    ])
+  })
+
+  it('should sort an array of objects in descending order by a given numeric key with negative values', () => {
+    const data = [
+      { id: 1, value: -5, stringValue: 'foo' },
+      { id: 2, value: 3, stringValue: 'foo' },
+      { id: 3, value: 7, stringValue: 'foo' },
+    ]
+    const sortedData = data.sort(sortNumbers('value', 'desc'))
+    expect(sortedData).toStrictEqual([
+      { id: 3, value: 7, stringValue: 'foo' },
+      { id: 2, value: 3, stringValue: 'foo' },
+      { id: 1, value: -5, stringValue: 'foo' },
+    ])
   })
 })

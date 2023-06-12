@@ -27,6 +27,7 @@ interface ItemsListProps<ItemType extends object | string | number> {
   onAdd?: () => void
   onDelete?: (item: ItemType, index: number) => void
   onPlay?: (item: ItemType, index: number) => void
+  onPlayTooltip?: ReactNode
   disablePlayButtons?: boolean
   loadingPlayButtonIndex?: number
 }
@@ -39,6 +40,7 @@ export const ItemsList = <ItemType extends object | string | number>({
   onAdd,
   onDelete,
   onPlay,
+  onPlayTooltip = 'Play',
   disablePlayButtons,
   loadingPlayButtonIndex,
 }: ItemsListProps<ItemType>) => {
@@ -184,7 +186,7 @@ export const ItemsList = <ItemType extends object | string | number>({
                     />
                     {onPlay && (
                       <Grow in>
-                        <Tooltip title="Run test">
+                        <Tooltip title={onPlayTooltip}>
                           <LoadingIconButton
                             size="small"
                             onClick={() => onPlay(field, index)}

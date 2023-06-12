@@ -1,4 +1,4 @@
-import type { ExtractTypeByPath, Path } from './types'
+import type { ExtractTypeByPath, NumericKeys, Path } from './types'
 
 export function pick<ObjectType, Key extends Extract<keyof ObjectType, string>>(
   object: ObjectType,
@@ -45,4 +45,15 @@ export function getDeepProperty<DataType extends object, PathType extends string
 
 export function forceArray<DataType>(value: DataType | DataType[]) {
   return Array.isArray(value) ? value : [value]
+}
+
+export function sortNumbers<DataType extends object>(
+  key: NumericKeys<DataType>,
+  direction: 'asc' | 'desc' = 'asc',
+) {
+  return (a: DataType, b: DataType) => {
+    const aValue = a[key]
+    const bValue = b[key]
+    return direction === 'asc' ? aValue - bValue : bValue - aValue
+  }
 }

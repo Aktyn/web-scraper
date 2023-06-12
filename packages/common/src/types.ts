@@ -25,3 +25,7 @@ export type ExtractTypeByPath<
   : PathType extends keyof DataType
   ? DataType[PathType]
   : never
+
+export type NumericKeys<T> = {
+  [K in keyof T]: T[K] extends number ? K : never
+}[keyof T]

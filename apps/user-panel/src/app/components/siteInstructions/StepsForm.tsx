@@ -46,10 +46,13 @@ export const StepsForm = ({ fieldName }: StepsFormProps) => {
         return
       }
 
-      const actionStep = actionStepSchemaToActionStepBase({
-        ...actionStepSchema,
-        type: get(getValues(), `${fieldName}.${itemIndex}.type`),
-      })
+      const actionStep = actionStepSchemaToExecutableActionStep(
+        {
+          ...actionStepSchema,
+          type: get(getValues(), `${fieldName}.${itemIndex}.type`),
+        },
+        itemIndex,
+      )
 
       if (!actionStep) {
         return
@@ -82,7 +85,7 @@ export const StepsForm = ({ fieldName }: StepsFormProps) => {
           },
         },
         testingSession.sessionId,
-        { id: 0, actionId: 0, orderIndex: 0, ...actionStep } as ActionStep,
+        actionStep,
       )
     },
     [fieldName, getValues, submitTestActionStep, testingSession],
@@ -103,6 +106,7 @@ export const StepsForm = ({ fieldName }: StepsFormProps) => {
       }
       onDelete={(_, index) => stepsFields.remove(index)}
       onPlay={!testingSession ? undefined : testActionStep}
+      onPlayTooltip="Test step"
       loadingPlayButtonIndex={testingActionStep ? loadingPlayButtonIndex : -1}
       disablePlayButtons={testingActionStep}
     >
@@ -139,12 +143,15 @@ export const StepsForm = ({ fieldName }: StepsFormProps) => {
   )
 }
 
-function actionStepSchemaToActionStepBase(
+export function actionStepSchemaToExecutableActionStep(
   actionStepSchema: UpsertSiteInstructionsSchema['actions'][number]['actionSteps'][number],
-): Omit<ActionStep, 'id' | 'orderIndex' | 'actionId'> | null {
+  orderIndex = 0,
+): ActionStep | null {
   if (!actionStepSchema?.data) {
     return null
   }
+
+  const zeroIndexes = { id: 0, actionId: 0, orderIndex } as const
 
   switch (actionStepSchema.type) {
     case ActionStepType.WAIT:
@@ -152,7 +159,9 @@ function actionStepSchemaToActionStepBase(
         return null
       }
       return {
+        ...zeroIndexes,
         ...actionStepSchema,
+        type: actionStepSchema.type,
         data: {
           duration: actionStepSchema.data.duration,
         },
@@ -162,7 +171,9 @@ function actionStepSchemaToActionStepBase(
         return null
       }
       return {
+        ...zeroIndexes,
         ...actionStepSchema,
+        type: actionStepSchema.type,
         data: {
           element: actionStepSchema.data.element,
           timeout: actionStepSchema.data.timeout ?? undefined,
@@ -173,7 +184,9 @@ function actionStepSchemaToActionStepBase(
         return null
       }
       return {
+        ...zeroIndexes,
         ...actionStepSchema,
+        type: actionStepSchema.type,
         data: {
           element: actionStepSchema.data.element,
           value: actionStepSchema.data.value,
@@ -196,7 +209,9 @@ function actionStepSchemaToActionStepBase(
         return null
       }
       return {
+        ...zeroIndexes,
         ...actionStepSchema,
+        type: actionStepSchema.type,
         data: {
           element: actionStepSchema.data.element,
           value: actionStepSchema.data.value,
@@ -208,7 +223,9 @@ function actionStepSchemaToActionStepBase(
         return null
       }
       return {
+        ...zeroIndexes,
         ...actionStepSchema,
+        type: actionStepSchema.type,
         data: {
           element: actionStepSchema.data.element,
           waitForNavigation: actionStepSchema.data.waitForNavigation ?? false,
@@ -237,7 +254,9 @@ function actionStepSchemaToActionStepBase(
         return null
       }
       return {
+        ...zeroIndexes,
         ...actionStepSchema,
+        type: actionStepSchema.type,
         data: {
           element: actionStepSchema.data.element,
           mapError: actionStepSchema.data.mapError,
@@ -249,7 +268,9 @@ function actionStepSchemaToActionStepBase(
         return null
       }
       return {
+        ...zeroIndexes,
         ...actionStepSchema,
+        type: actionStepSchema.type,
         data: {
           element: actionStepSchema.data.element,
           mapSuccess: actionStepSchema.data.mapSuccess?.map((item) => ({ content: item.content })),
