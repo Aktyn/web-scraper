@@ -38,6 +38,7 @@ export default class ScraperBrowser {
           // '--start-maximized',
           '--disable-infobars',
           '--no-default-browser-check',
+          // '--lang=en-US,en',
         ],
         ignoreDefaultArgs: ['--enable-automation', '--enable-blink-features=IdleDetection'],
         headless: false,
@@ -47,6 +48,7 @@ export default class ScraperBrowser {
         ignoreHTTPSErrors: true,
         timeout: 30_000,
         product: 'chrome',
+        // env: { LANGUAGE: 'en_US' },
         userDataDir:
           isDev && !process.env.VITEST_WORKER_ID
             ? path.join(EXTERNAL_DIRECTORY_PATH, 'userData')

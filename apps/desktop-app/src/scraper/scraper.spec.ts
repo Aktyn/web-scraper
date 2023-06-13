@@ -409,24 +409,72 @@ describe('Scraper.TESTING action', () => {
           duration: 1000,
         },
       }
+      const waitForElementStep: ActionStep = {
+        ...actionStepBase,
+        type: ActionStepType.WAIT_FOR_ELEMENT,
+        data: {
+          element: 'body > h1',
+        },
+      }
+      const pressButtonStep: ActionStep = {
+        ...actionStepBase,
+        type: ActionStepType.PRESS_BUTTON,
+        data: {
+          element: 'body > button',
+          waitForNavigation: false,
+        },
+      }
+      const checkErrorStep: ActionStep = {
+        ...actionStepBase,
+        type: ActionStepType.CHECK_ERROR,
+        data: {
+          element: 'body > div#error-message',
+          mapError: [
+            {
+              errorType: ActionStepErrorType.UNKNOWN,
+              content: 'non existing error message',
+            },
+          ],
+          waitForElementTimeout: 2_000,
+        },
+      }
+      const checkSuccessStep: ActionStep = {
+        ...actionStepBase,
+        type: ActionStepType.CHECK_SUCCESS,
+        data: {
+          element: 'body > div#success-message',
+          mapSuccess: [
+            {
+              content: 'mock success [a-z]+',
+            },
+          ],
+          waitForElementTimeout: 2_000,
+        },
+      }
+
+      const steps = [
+        waitStep,
+        waitForElementStep,
+        pressButtonStep,
+        checkErrorStep,
+        checkSuccessStep,
+      ]
 
       const action: Action = {
         id: 0,
         url: 'http://localhost:1357/mock-testing',
         siteInstructionsId: 0,
         name: 'mock action',
-        actionSteps: [waitStep],
+        actionSteps: steps,
       }
 
       const actionExecutionResult = await scraper.performAction(action, dummyRequestDataCallback)
       expect(actionExecutionResult).toEqual({
         action,
-        actionStepsResults: [
-          {
-            step: waitStep,
-            result: { errorType: ActionStepErrorType.NO_ERROR },
-          },
-        ],
+        actionStepsResults: steps.map((step) => ({
+          step,
+          result: { errorType: ActionStepErrorType.NO_ERROR },
+        })),
       })
     })
   })

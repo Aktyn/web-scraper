@@ -219,7 +219,16 @@ export class Scraper<ModeType extends ScraperMode> {
     this.logger.info('Performing action:', action.name)
 
     if (action.url) {
-      await this.mainPage!.goto(action.url, null, { timeout: 30_000, waitUntil: 'networkidle0' })
+      try {
+        if (new URL(this.mainPage!.exposed.url()).href !== new URL(action.url).href) {
+          await this.mainPage!.goto(action.url, null, {
+            timeout: 30_000,
+            waitUntil: 'networkidle0',
+          })
+        }
+      } catch (error) {
+        this.logger.error(error)
+      }
     }
 
     const actionStepsResults: ActionExecutionResult['actionStepsResults'] = []
@@ -284,12 +293,12 @@ export class Scraper<ModeType extends ScraperMode> {
       if (Array.isArray(elements)) {
         const handles: AwaitedElementHandle[] = []
         for (const el of elements) {
-          const handle = await this.mainPage!.waitForSelector(el, { timeout })
+          const handle = await this.mainPage!.waitForSelector(el, { timeout, visible: true })
           handles.push(handle)
         }
         return handles
       } else {
-        return await this.mainPage!.waitForSelector(elements, { timeout })
+        return await this.mainPage!.waitForSelector(elements, { timeout, visible: true })
       }
     } catch (error) {
       return null

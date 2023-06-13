@@ -15,6 +15,7 @@ export class ScraperPage implements Pick<Page, 'on' | 'off'> {
     'click',
     'type',
   ] as const satisfies Readonly<(keyof Page)[]>
+  private static readonly userAgent = getRandomUserAgent()
 
   private initialized = false
 
@@ -25,7 +26,20 @@ export class ScraperPage implements Pick<Page, 'on' | 'off'> {
   }
 
   public static async create(browser: Browser) {
-    return ScraperPage.createFromExisting(await browser.newPage())
+    const page = await browser.newPage()
+    // await page.evaluateOnNewDocument(() => {
+    //   Object.defineProperty(navigator, 'language', {
+    //     get: function () {
+    //       return 'en-GB'
+    //     },
+    //   })
+    //   Object.defineProperty(navigator, 'languages', {
+    //     get: function () {
+    //       return ['en-GB', 'en']
+    //     },
+    //   })
+    // })
+    return ScraperPage.createFromExisting(page)
   }
 
   private constructor(private readonly page: Page) {}
@@ -57,7 +71,7 @@ export class ScraperPage implements Pick<Page, 'on' | 'off'> {
     //   }
     // })
 
-    await this.page.setUserAgent(getRandomUserAgent())
+    await this.page.setUserAgent(ScraperPage.userAgent)
 
     this.initialized = true
   }
@@ -114,7 +128,7 @@ export class ScraperPage implements Pick<Page, 'on' | 'off'> {
 
       for (const frame of iframes) {
         const elementHandle = await frame
-          .waitForSelector(selector, { timeout: 2_000 })
+          .waitForSelector(selector, { ...options, timeout: 2_000 })
           .catch(() => null)
         if (elementHandle) {
           return elementHandle

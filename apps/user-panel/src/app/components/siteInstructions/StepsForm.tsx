@@ -20,9 +20,10 @@ import { FormInput } from '../form/FormInput'
 
 interface StepsFormProps {
   fieldName: `actions.${number}.actionSteps`
+  testingAction: boolean
 }
 
-export const StepsForm = ({ fieldName }: StepsFormProps) => {
+export const StepsForm = ({ fieldName, testingAction }: StepsFormProps) => {
   const form = useFormContext<UpsertSiteInstructionsSchema>()
   const getValues = form.getValues
   const stepsFields = useFieldArray<UpsertSiteInstructionsSchema, typeof fieldName>({
@@ -108,7 +109,7 @@ export const StepsForm = ({ fieldName }: StepsFormProps) => {
       onPlay={!testingSession ? undefined : testActionStep}
       onPlayTooltip="Test step"
       loadingPlayButtonIndex={testingActionStep ? loadingPlayButtonIndex : -1}
-      disablePlayButtons={testingActionStep}
+      disablePlayButtons={testingActionStep || testingAction}
     >
       {(field, index) => [
         field.id,

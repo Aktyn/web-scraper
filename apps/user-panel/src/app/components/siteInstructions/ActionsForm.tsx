@@ -45,6 +45,7 @@ export const ActionsForm = () => {
 
       const action = actionSchemaToExecutableAction({
         ...actionSchema,
+        name: get(getValues(), `actions.${itemIndex}.name`),
         url: get(getValues(), `actions.${itemIndex}.url`),
       })
 
@@ -60,6 +61,8 @@ export const ActionsForm = () => {
           onSuccess: (actionExecutionResult, { enqueueSnackbar }) => {
             setLoadingPlayButtonIndex(-1)
 
+            console.info('Action execution result:', actionExecutionResult)
+
             const failedStepResult = actionExecutionResult.actionStepsResults.find(
               (result) => result.result.errorType !== ActionStepErrorType.NO_ERROR,
             )
@@ -67,7 +70,7 @@ export const ActionsForm = () => {
             if (!failedStepResult) {
               enqueueSnackbar({
                 variant: 'success',
-                message: `Action completed with all steps successful`,
+                message: `Action completed with all steps successful (${action.name})`,
               })
             } else {
               enqueueSnackbar({
@@ -139,7 +142,7 @@ export const ActionsForm = () => {
                 ),
               }}
             />
-            <StepsForm fieldName={`actions.${index}.actionSteps`} />
+            <StepsForm fieldName={`actions.${index}.actionSteps`} testingAction={testingAction} />
           </Stack>,
         ]}
       </ItemsList>
