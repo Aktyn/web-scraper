@@ -3,17 +3,15 @@ import path from 'path'
 
 import { cacheable, safePromise, waitFor } from '@web-scraper/common'
 import isDev from 'electron-is-dev'
-import {
-  launch,
-  type Browser,
-  type EventType,
-  type Handler,
-  type PuppeteerLaunchOptions,
-} from 'puppeteer'
+import { type Browser, type EventType, type Handler, type PuppeteerLaunchOptions } from 'puppeteer'
+import puppeteer from 'puppeteer-extra'
+import StealthPlugin from 'puppeteer-extra-plugin-stealth'
 
 import { EXTERNAL_DIRECTORY_PATH } from '../utils'
 
 import { ScraperPage } from './scraperPage'
+
+puppeteer.use(StealthPlugin())
 
 interface ScraperBrowserOptions {
   loadInfoPage?: boolean
@@ -29,7 +27,8 @@ export default class ScraperBrowser {
     ...options
   }: Partial<PuppeteerLaunchOptions & ScraperBrowserOptions> = {}) {
     void safePromise(
-      launch({
+      puppeteer.launch({
+        // executablePath: executablePath(),
         //TODO: allow different arguments
         args: [
           // ...(process.env.TOR_PROXY_SERVER
