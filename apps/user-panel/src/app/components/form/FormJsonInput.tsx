@@ -5,7 +5,8 @@ import { DataObjectRounded } from '@mui/icons-material'
 import { alpha, Box, Button, FormControl, FormHelperText, Stack, useTheme } from '@mui/material'
 import { getDeepProperty, tryParseJSON } from '@web-scraper/common'
 import * as prism from 'prismjs'
-import { Controller, type FieldPath, type GlobalError, type UseFormReturn } from 'react-hook-form'
+import { Controller } from 'react-hook-form'
+import type { PathValue, FieldPath, GlobalError, UseFormReturn } from 'react-hook-form'
 import Editor from 'react-simple-code-editor'
 import { JsonValue } from '../common/JsonValue'
 import { NestedDrawer } from '../common/NestedDrawer'
@@ -13,19 +14,29 @@ import { ToggleIconButton } from '../common/button/ToggleIconButton'
 import 'prismjs/components/prism-json.js'
 import 'prismjs/themes/prism-dark.css'
 
-interface FormJsonInputProps<FormSchema extends object> {
-  name: FieldPath<FormSchema>
+type StringFormProperties<FormSchema extends object> = {
+  [key in FieldPath<FormSchema>]: PathValue<FormSchema, key> extends string | null ? key : never
+}[FieldPath<FormSchema>]
+
+interface FormJsonInputProps<
+  FormSchema extends object,
+  StringPropertyName extends StringFormProperties<FormSchema>,
+> {
+  name: StringPropertyName
   form: UseFormReturn<FormSchema>
   label: string
   required?: boolean
 }
 
-export const FormJsonInput = <FormSchema extends object>({
+export const FormJsonInput = <
+  FormSchema extends object,
+  StringPropertyName extends StringFormProperties<FormSchema>,
+>({
   name,
   form,
   label,
   required,
-}: FormJsonInputProps<FormSchema>) => {
+}: FormJsonInputProps<FormSchema, StringPropertyName>) => {
   const theme = useTheme()
   const error = getDeepProperty(form.formState.errors, name as never) as GlobalError | undefined
 
@@ -80,9 +91,15 @@ export const FormJsonInput = <FormSchema extends object>({
                     endIcon={<DataObjectRounded />}
                     disabled={!!error}
                     onClick={() => {
-                      const parsed = tryParseJSON(field.value)
+                      const parsed =
+                        typeof field.value === 'string' ? tryParseJSON(field.value) : null
                       if (parsed) {
-                        field.onChange(JSON.stringify(parsed, null, 2))
+                        field.onChange(
+                          JSON.stringify(parsed, null, 2) as PathValue<
+                            FormSchema,
+                            StringPropertyName
+                          >,
+                        )
                       }
                     }}
                   >
@@ -100,7 +117,7 @@ export const FormJsonInput = <FormSchema extends object>({
                   textareaId={`json-editor-${name}`}
                   value={field.value ?? ''}
                   placeholder="JSON"
-                  onValueChange={field.onChange}
+                  onValueChange={field.onChange as (value: string) => void}
                   onBlur={field.onBlur}
                   required={required}
                   highlight={(code) => prism.highlight(code || '', prism.languages.json, 'json')}

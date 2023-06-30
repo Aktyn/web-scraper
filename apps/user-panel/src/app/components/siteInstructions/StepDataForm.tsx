@@ -327,7 +327,10 @@ const MapSiteErrorsFormInput = ({
                   label="Error type"
                   select
                   value={field.value ?? ''}
-                  onChange={(e) => field.onChange(e.target.value)}
+                  onChange={(e) =>
+                    //TODO: test it
+                    field.onChange(e.target.value as never)
+                  }
                   onBlur={field.onBlur}
                   InputProps={{
                     startAdornment: (
