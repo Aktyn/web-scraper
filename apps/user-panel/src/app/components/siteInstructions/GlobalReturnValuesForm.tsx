@@ -34,6 +34,7 @@ export const GlobalReturnValuesForm = ({ level, fieldName }: GlobalReturnValuesF
           name={`${fieldName}.${index}`}
           form={form}
           label="Value"
+          debounceChange
           InputProps={{
             startAdornment: (
               <InputAdornment position="start">

@@ -159,7 +159,19 @@
     "@typescript-eslint/interface-name-prefix": "off",
     "@typescript-eslint/explicit-function-return-type": "off",
     "@typescript-eslint/no-extra-semi": "off",
-    "@typescript-eslint/consistent-type-imports": "error",
+    "@typescript-eslint/consistent-type-imports": [
+      "error",
+      {
+        "prefer": "type-imports",
+        "fixStyle": "inline-type-imports"
+      }
+    ],
+    "import/no-duplicates": [
+      "error",
+      {
+        "prefer-inline": true
+      }
+    ],
     "@typescript-eslint/consistent-type-exports": "error",
     "@typescript-eslint/no-floating-promises": "error"
   },

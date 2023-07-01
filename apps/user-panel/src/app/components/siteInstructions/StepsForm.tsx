@@ -160,8 +160,8 @@ export function actionStepSchemaToExecutableActionStep(
         return null
       }
       return {
-        ...zeroIndexes,
         ...actionStepSchema,
+        ...zeroIndexes,
         type: actionStepSchema.type,
         data: {
           duration: actionStepSchema.data.duration,
@@ -172,8 +172,8 @@ export function actionStepSchemaToExecutableActionStep(
         return null
       }
       return {
-        ...zeroIndexes,
         ...actionStepSchema,
+        ...zeroIndexes,
         type: actionStepSchema.type,
         data: {
           element: actionStepSchema.data.element,
@@ -185,8 +185,8 @@ export function actionStepSchemaToExecutableActionStep(
         return null
       }
       return {
-        ...zeroIndexes,
         ...actionStepSchema,
+        ...zeroIndexes,
         type: actionStepSchema.type,
         data: {
           element: actionStepSchema.data.element,
@@ -210,8 +210,8 @@ export function actionStepSchemaToExecutableActionStep(
         return null
       }
       return {
-        ...zeroIndexes,
         ...actionStepSchema,
+        ...zeroIndexes,
         type: actionStepSchema.type,
         data: {
           element: actionStepSchema.data.element,
@@ -224,8 +224,8 @@ export function actionStepSchemaToExecutableActionStep(
         return null
       }
       return {
-        ...zeroIndexes,
         ...actionStepSchema,
+        ...zeroIndexes,
         type: actionStepSchema.type,
         data: {
           element: actionStepSchema.data.element,
@@ -255,8 +255,8 @@ export function actionStepSchemaToExecutableActionStep(
         return null
       }
       return {
-        ...zeroIndexes,
         ...actionStepSchema,
+        ...zeroIndexes,
         type: actionStepSchema.type,
         data: {
           element: actionStepSchema.data.element,
@@ -269,8 +269,8 @@ export function actionStepSchemaToExecutableActionStep(
         return null
       }
       return {
-        ...zeroIndexes,
         ...actionStepSchema,
+        ...zeroIndexes,
         type: actionStepSchema.type,
         data: {
           element: actionStepSchema.data.element,

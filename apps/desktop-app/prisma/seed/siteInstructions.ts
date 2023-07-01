@@ -2,8 +2,10 @@ import type { PrismaClient } from '@prisma/client'
 import {
   ActionStepErrorType,
   ActionStepType,
+  GLOBAL_ACTION_PREFIX,
   GlobalActionType,
   ProcedureType,
+  REGULAR_ACTION_PREFIX,
 } from '@web-scraper/common'
 
 export async function seedSiteInstructions(prisma: PrismaClient) {
@@ -41,19 +43,19 @@ export async function seedSiteInstructions(prisma: PrismaClient) {
 
   const successFlowStep2 = await prisma.flowStep.create({
     data: {
-      actionName: `global.${GlobalActionType.FINISH}`,
+      actionName: `${GLOBAL_ACTION_PREFIX}.${GlobalActionType.FINISH}`,
     },
   })
 
   const failureFlowStep2 = await prisma.flowStep.create({
     data: {
-      actionName: `global.${GlobalActionType.FINISH_WITH_ERROR}`,
+      actionName: `${GLOBAL_ACTION_PREFIX}.${GlobalActionType.FINISH_WITH_ERROR}`,
     },
   })
 
   const flowStart = await prisma.flowStep.create({
     data: {
-      actionName: `action.${loginAction.name}`,
+      actionName: `${REGULAR_ACTION_PREFIX}.${loginAction.name}`,
       globalReturnValues: JSON.stringify([]),
       onSuccessFlowStepId: successFlowStep2.id,
       onFailureFlowStepId: failureFlowStep2.id,
@@ -62,7 +64,7 @@ export async function seedSiteInstructions(prisma: PrismaClient) {
 
   await prisma.procedure.create({
     data: {
-      type: ProcedureType.LOGIN,
+      type: ProcedureType.ACCOUNT_CHECK,
       startUrl: `{{URL.ORIGIN}}/login`,
       waitFor: 'body > h1',
       siteInstructionsId: instructions1.id,

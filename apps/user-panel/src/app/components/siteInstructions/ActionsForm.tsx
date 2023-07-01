@@ -23,6 +23,8 @@ import { FormInput } from '../form/FormInput'
 export const ActionsForm = () => {
   const form = useFormContext<UpsertSiteInstructionsSchema>()
   const getValues = form.getValues
+  const error = form.getFieldState('actions').error
+
   const actionsFields = useFieldArray<UpsertSiteInstructionsSchema, 'actions'>({
     name: 'actions',
   })
@@ -32,8 +34,6 @@ export const ActionsForm = () => {
   )
 
   const testingSession = useContext(SiteInstructionsTestingSessionContext)
-
-  const error = form.getFieldState('actions').error
 
   const [loadingPlayButtonIndex, setLoadingPlayButtonIndex] = useState(-1)
 
@@ -151,13 +151,13 @@ export const ActionsForm = () => {
   )
 }
 
-function actionSchemaToExecutableAction(
+export function actionSchemaToExecutableAction(
   actionSchema: UpsertSiteInstructionsSchema['actions'][number],
 ): Action | null {
   return {
+    ...actionSchema,
     id: 0,
     siteInstructionsId: 0,
-    ...actionSchema,
     actionSteps: actionSchema.actionSteps.reduce((acc, actionStepSchema, index) => {
       const step = actionStepSchemaToExecutableActionStep(actionStepSchema, index)
       if (step) {

@@ -42,7 +42,19 @@ module.exports = {
   rules: {
     '@typescript-eslint/explicit-module-boundary-types': 0,
     '@typescript-eslint/explicit-function-return-type': 0,
-    '@typescript-eslint/consistent-type-imports': 'error',
+    '@typescript-eslint/consistent-type-imports': [
+      'error',
+      {
+        prefer: 'type-imports',
+        fixStyle: 'inline-type-imports',
+      },
+    ],
+    'import/no-duplicates': [
+      'error',
+      {
+        'prefer-inline': true,
+      },
+    ],
     '@typescript-eslint/no-empty-function': 'off',
     '@typescript-eslint/no-floating-promises': 'error',
     '@typescript-eslint/no-unused-vars': [

@@ -10,8 +10,8 @@ import express from 'express'
 import { afterAll, beforeAll, describe, expect, it, vi, type Mock } from 'vitest'
 
 import '../test-utils/electronMock'
+import { type RequestDataCallback } from '.'
 import { Scraper, type ScraperMode } from './scraper'
-import type { RequestDataCallback } from './steps'
 
 class ExposedScraper<ModeType extends ScraperMode> extends Scraper<ModeType> {
   private getElementValue(selector: `${string} ${'input' | 'select'}`) {

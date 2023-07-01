@@ -24,6 +24,7 @@ interface ItemsListProps<ItemType extends object | string | number> {
   title: ReactNode
   children: (item: ItemType, index: number) => [Key, ReactNode]
   items: ItemType[]
+  disabled?: boolean
   onAdd?: () => void
   onDelete?: (item: ItemType, index: number) => void
   onPlay?: (item: ItemType, index: number) => void
@@ -37,6 +38,7 @@ export const ItemsList = <ItemType extends object | string | number>({
   title,
   children: getChild,
   items,
+  disabled,
   onAdd,
   onDelete,
   onPlay,
@@ -66,14 +68,16 @@ export const ItemsList = <ItemType extends object | string | number>({
         },
         width: level > 1 ? 'auto' : '100%',
         mr: level > 1 ? 'calc(-1rem + 2px)' : undefined,
-        backgroundColor: (theme) =>
-          `${
-            level
-              ? level % 2 === 0
-                ? lighten(theme.palette.background.paper, 0.05)
-                : darken(theme.palette.background.paper, 0.05)
-              : 'transparent'
-          } !important`,
+        backgroundColor: disabled
+          ? undefined
+          : (theme) =>
+              `${
+                level
+                  ? level % 2 === 0
+                    ? lighten(theme.palette.background.paper, 0.05)
+                    : darken(theme.palette.background.paper, 0.05)
+                  : 'transparent'
+              } !important`,
         backdropFilter: level ? undefined : 'none',
         border: level ? undefined : 'none',
         overflow: 'visible',
@@ -119,7 +123,7 @@ export const ItemsList = <ItemType extends object | string | number>({
               onAdd()
               setExpanded(true)
             }}
-            disabled={false}
+            disabled={disabled}
             sx={{
               justifySelf: 'flex-end',
               mr: allowExpand ? '0.5rem' : undefined,
@@ -207,6 +211,7 @@ export const ItemsList = <ItemType extends object | string | number>({
                     {onDelete && (
                       <IconButton
                         size="small"
+                        disabled={disabled}
                         onClick={() => onDelete(field, index)}
                         sx={{
                           position: 'absolute',

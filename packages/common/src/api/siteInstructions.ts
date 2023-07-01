@@ -107,10 +107,58 @@ export interface Action {
 export enum GlobalActionType {
   FINISH = 'finishProcedure',
   FINISH_WITH_ERROR = 'finishProcedureWithError',
+  FINISH_WITH_NOTIFICATION = 'finishProcedureWithNotification',
 }
 
+export interface FlowExecutionResult {
+  flow: FlowStep
+  flowStepsResults: {
+    flowStep: ShallowFlowStep
+    actionResult: ActionExecutionResult | null
+    returnedValues: string[]
+    succeeded: boolean
+  }[]
+}
+
+export const REGULAR_ACTION_PREFIX = 'action' as const
+export const GLOBAL_ACTION_PREFIX = 'global' as const
+
+export function isRegularAction(
+  actionName: FlowStep['actionName'],
+): actionName is FlowStep['actionName'] & `${typeof REGULAR_ACTION_PREFIX}.${string}` {
+  return actionName.startsWith(`${REGULAR_ACTION_PREFIX}.`)
+}
+
+export function isGlobalAction(
+  actionName: FlowStep['actionName'],
+): actionName is FlowStep['actionName'] & `${typeof GLOBAL_ACTION_PREFIX}.${GlobalActionType}` {
+  return actionName.startsWith(`${GLOBAL_ACTION_PREFIX}.`)
+}
+
+export interface FlowStep {
+  id: number
+  actionName:
+    | `${typeof REGULAR_ACTION_PREFIX}.${Action['name']}`
+    | `${typeof GLOBAL_ACTION_PREFIX}.${GlobalActionType}`
+
+  /** Regex pattern allowed */
+  globalReturnValues: string[]
+  onSuccess: FlowStep | null
+  onFailure: FlowStep | null
+}
+
+export type ShallowFlowStep = Omit<FlowStep, 'onSuccess' | 'onFailure'>
+
 export enum ProcedureType {
-  LOGIN = 'login',
+  ACCOUNT_CHECK = 'accountCheck',
+  DATA_RETRIEVAL = 'dataRetrieval',
+  MONITORING = 'monitoring',
+  CUSTOM = 'custom',
+}
+
+export interface ProcedureExecutionResult {
+  procedure: Procedure
+  flowExecutionResult: FlowExecutionResult | MapSiteError
 }
 
 export interface Procedure {
@@ -120,15 +168,6 @@ export interface Procedure {
   waitFor: string | null
   siteInstructionsId: number
   flow: FlowStep | null
-}
-
-export interface FlowStep {
-  id: number
-  actionName: `action.${Action['name']}` | `global.${GlobalActionType}`
-  /** Regex pattern allowed */
-  globalReturnValues: string[]
-  onSuccess: FlowStep | null
-  onFailure: FlowStep | null
 }
 
 const mapSiteErrorSchema = yup.object({

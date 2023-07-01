@@ -36,10 +36,14 @@ export const captchaSolverTypeNames: { [key in CaptchaSolverType]: string } = {
 }
 
 export const procedureTypeNames: { [key in ProcedureType]: string } = {
-  [ProcedureType.LOGIN]: 'Login',
+  [ProcedureType.ACCOUNT_CHECK]: 'Account check',
+  [ProcedureType.DATA_RETRIEVAL]: 'Data retrieval',
+  [ProcedureType.MONITORING]: 'Monitoring',
+  [ProcedureType.CUSTOM]: 'Custom',
 }
 
 export const globalActionTypeNames: { [key in GlobalActionType]: string } = {
   [GlobalActionType.FINISH]: 'Finish',
   [GlobalActionType.FINISH_WITH_ERROR]: 'Finish with error',
+  [GlobalActionType.FINISH_WITH_NOTIFICATION]: 'Finish with notification',
 }

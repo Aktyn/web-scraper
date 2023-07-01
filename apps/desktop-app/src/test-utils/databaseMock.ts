@@ -14,6 +14,7 @@ import type {
 import {
   ActionStepErrorType,
   ActionStepType,
+  GLOBAL_ACTION_PREFIX,
   GlobalActionType,
   ProcedureType,
 } from '@web-scraper/common'
@@ -105,7 +106,7 @@ export const mockData = {
       Procedures: [
         {
           id: 1,
-          type: ProcedureType.LOGIN,
+          type: ProcedureType.ACCOUNT_CHECK,
           startUrl: `{{URL.ORIGIN}}/login`,
           waitFor: 'body > h1',
           siteInstructionsId: 1,
@@ -127,7 +128,7 @@ export const mockData = {
   flowSteps: [
     {
       id: 2,
-      actionName: `global.${GlobalActionType.FINISH}`,
+      actionName: `${GLOBAL_ACTION_PREFIX}.${GlobalActionType.FINISH}`,
       globalReturnValues: null,
       onSuccessFlowStepId: null,
       onFailureFlowStepId: null,

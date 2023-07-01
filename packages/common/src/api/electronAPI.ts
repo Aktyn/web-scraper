@@ -9,7 +9,11 @@ import type {
   Action,
   ActionExecutionResult,
   ActionStep,
+  FlowExecutionResult,
+  FlowStep,
   MapSiteError,
+  Procedure,
+  ProcedureExecutionResult,
   SiteInstructions,
   UpsertSiteInstructionsSchema,
 } from './siteInstructions'
@@ -54,6 +58,8 @@ export enum RendererToElectronMessage {
   endSiteInstructionsTestingSession = 'endSiteInstructionsTestingSession',
   testActionStep = 'testActionStep',
   testAction = 'testAction',
+  testFlow = 'testFlow',
+  testProcedure = 'testProcedure',
   returnManualDataForActionStep = 'returnManualDataForActionStep',
 }
 
@@ -164,6 +170,16 @@ export type ElectronApi = {
     sessionId: string,
     action: Action,
   ) => Promise<ActionExecutionResult | ApiError>
+  [RendererToElectronMessage.testFlow]: (
+    sessionId: string,
+    flow: FlowStep,
+    actions: Action[],
+  ) => Promise<FlowExecutionResult | ApiError>
+  [RendererToElectronMessage.testProcedure]: (
+    sessionId: string,
+    procedure: Procedure,
+    actions: Action[],
+  ) => Promise<ProcedureExecutionResult | ApiError>
   [RendererToElectronMessage.returnManualDataForActionStep]: RendererToElectronResponseBlueprint<
     ElectronToRendererMessage.requestManualDataForActionStep,
     [value: string]

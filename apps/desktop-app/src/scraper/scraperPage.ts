@@ -3,10 +3,10 @@ import type {
   Page,
   PageEventObject,
   ScreenshotOptions,
+  Viewport,
   WaitForOptions,
   WaitForSelectorOptions,
 } from 'puppeteer'
-import { getRandom as getRandomUserAgent } from 'random-useragent'
 
 export class ScraperPage implements Pick<Page, 'on' | 'off'> {
   private static readonly exposedMethods = [
@@ -15,31 +15,22 @@ export class ScraperPage implements Pick<Page, 'on' | 'off'> {
     'click',
     'type',
   ] as const satisfies Readonly<(keyof Page)[]>
-  private static readonly userAgent = getRandomUserAgent()
 
   private initialized = false
 
-  public static async createFromExisting(page: Page) {
+  public static async createFromExisting(
+    page: Page,
+    userAgent: string,
+    viewport?: Viewport | null,
+  ) {
     const scraperPage = new ScraperPage(page)
-    await scraperPage.init()
+    await scraperPage.init(userAgent, viewport)
     return scraperPage
   }
 
-  public static async create(browser: Browser) {
+  public static async create(browser: Browser, userAgent: string, viewport?: Viewport | null) {
     const page = await browser.newPage()
-    // await page.evaluateOnNewDocument(() => {
-    //   Object.defineProperty(navigator, 'language', {
-    //     get: function () {
-    //       return 'en-GB'
-    //     },
-    //   })
-    //   Object.defineProperty(navigator, 'languages', {
-    //     get: function () {
-    //       return ['en-GB', 'en']
-    //     },
-    //   })
-    // })
-    return ScraperPage.createFromExisting(page)
+    return ScraperPage.createFromExisting(page, userAgent, viewport)
   }
 
   private constructor(private readonly page: Page) {}
@@ -53,12 +44,15 @@ export class ScraperPage implements Pick<Page, 'on' | 'off'> {
     }
   }
 
-  private async init() {
+  private async init(userAgent: string, viewport?: Viewport | null) {
     if (this.initialized) {
       return
     }
 
-    // await this.page.setViewport(ScraperPage.defaultViewPort)
+    if (viewport) {
+      await this.page.setViewport(viewport)
+    }
+    await this.page.setUserAgent(userAgent)
     this.page.setDefaultTimeout(30_000)
     this.page.setDefaultNavigationTimeout(30_000)
 
@@ -70,8 +64,6 @@ export class ScraperPage implements Pick<Page, 'on' | 'off'> {
     //       console.log(`${i}: ${String(msg.args[i]).trim()}`)
     //   }
     // })
-
-    await this.page.setUserAgent(ScraperPage.userAgent)
 
     this.initialized = true
   }

@@ -5,8 +5,7 @@ import {
 } from '@web-scraper/common'
 
 import Database from '../../../database'
-import { Scraper } from '../../../scraper'
-import type { RequestDataCallback } from '../../../scraper/steps'
+import { type RequestDataCallback, Scraper } from '../../../scraper'
 import {
   broadcastMessage,
   handleApiRequest,
@@ -88,15 +87,6 @@ export const scraperSessionHandler = {
         throw ErrorCode.NOT_FOUND
       }
 
-      const onDataRequest: RequestDataCallback = async (valueQuery, actionStep) => {
-        const [value] = await broadcastMessageWithResponseRequest(
-          ElectronToRendererMessage.requestManualDataForActionStep,
-          actionStep,
-          valueQuery,
-        )
-        return value
-      }
-
       return scraper.performActionStep(actionStep, onDataRequest)
     },
   ),
@@ -108,16 +98,29 @@ export const scraperSessionHandler = {
         throw ErrorCode.NOT_FOUND
       }
 
-      const onDataRequest: RequestDataCallback = async (valueQuery, actionStep) => {
-        const [value] = await broadcastMessageWithResponseRequest(
-          ElectronToRendererMessage.requestManualDataForActionStep,
-          actionStep,
-          valueQuery,
-        )
-        return value
+      return scraper.performAction(action, onDataRequest)
+    },
+  ),
+  [RendererToElectronMessage.testFlow]: handleApiRequest(
+    RendererToElectronMessage.testFlow,
+    (sessionId, flow, actions) => {
+      const scraper = Scraper.getInstances(Scraper.Mode.TESTING).get(sessionId)
+      if (!scraper) {
+        throw ErrorCode.NOT_FOUND
       }
 
-      return scraper.performAction(action, onDataRequest)
+      return scraper.performFlow(flow, actions, onDataRequest)
+    },
+  ),
+  [RendererToElectronMessage.testProcedure]: handleApiRequest(
+    RendererToElectronMessage.testProcedure,
+    (sessionId, procedure, actions) => {
+      const scraper = Scraper.getInstances(Scraper.Mode.TESTING).get(sessionId)
+      if (!scraper) {
+        throw ErrorCode.NOT_FOUND
+      }
+
+      return scraper.performProcedure(procedure, actions, onDataRequest)
     },
   ),
   [RendererToElectronMessage.returnManualDataForActionStep]: handleApiRequest(
@@ -128,3 +131,12 @@ export const scraperSessionHandler = {
     },
   ),
 } satisfies Partial<RequestHandlersSchema>
+
+const onDataRequest: RequestDataCallback = async (valueQuery, actionStep) => {
+  const [value] = await broadcastMessageWithResponseRequest(
+    ElectronToRendererMessage.requestManualDataForActionStep,
+    actionStep,
+    valueQuery,
+  )
+  return value
+}

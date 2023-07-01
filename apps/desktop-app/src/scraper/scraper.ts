@@ -1,20 +1,31 @@
 import {
   ActionStepErrorType,
   ActionStepType,
+  GLOBAL_ACTION_PREFIX,
+  GlobalActionType,
   Logger,
+  REGULAR_ACTION_PREFIX,
+  isGlobalAction,
+  isRegularAction,
+  omit,
   safePromise,
+  sortNumbers,
   wait,
   waitFor,
   type Action,
-  type ActionStep,
-  type MapSiteError,
-  type Site,
   type ActionExecutionResult,
-  sortNumbers,
+  type ActionStep,
+  type FlowExecutionResult,
+  type FlowStep,
+  type MapSiteError,
+  type Procedure,
+  type ProcedureExecutionResult,
+  type Site,
 } from '@web-scraper/common'
 import type { ElementHandle, Page } from 'puppeteer'
 import * as uuid from 'uuid'
 
+import type { RequestDataCallback } from '.'
 import ScraperBrowser from './scraperBrowser'
 import type { ScraperPage } from './scraperPage'
 import {
@@ -25,7 +36,6 @@ import {
   selectOptionStep,
   waitForElementStep,
   waitStep,
-  type RequestDataCallback,
 } from './steps'
 
 export enum ScraperMode {
@@ -89,11 +99,9 @@ export class Scraper<ModeType extends ScraperMode> {
       defaultViewport:
         mode === ScraperMode.PREVIEW
           ? {
+              ...ScraperBrowser.defaultViewport,
               width: (this as Scraper<ScraperMode.PREVIEW>).options.viewportWidth,
               height: (this as Scraper<ScraperMode.PREVIEW>).options.viewportHeight,
-              isMobile: false,
-              hasTouch: false,
-              deviceScaleFactor: 1,
             }
           : null,
       onBrowserClosed: async () => {
@@ -171,7 +179,12 @@ export class Scraper<ModeType extends ScraperMode> {
     })
     self.mainPage!.on('framenavigated', async (frame) => {
       const url = new URL(self.mainPage!.exposed.url())
-      if (url.host && url.host !== 'null' && url.host !== targetUrl.host) {
+      if (
+        url.host &&
+        url.host !== 'null' &&
+        url.host !== targetUrl.host &&
+        url.host.replace(/^[^.]+\./i, '') !== targetUrl.host
+      ) {
         this.logger.info(
           `Returning to ${self.options.lockURL} due to manual redirecting to different host (${url.host})`,
         )
@@ -209,6 +222,120 @@ export class Scraper<ModeType extends ScraperMode> {
     await safePromise(page.close())
 
     return imageData
+  }
+
+  @assertMainPage
+  public async performProcedure(
+    procedure: Procedure,
+    actions: Action[],
+    onDataRequest: RequestDataCallback,
+  ): Promise<ProcedureExecutionResult> {
+    this.logger.info('Performing procedure:', procedure.type)
+
+    if (!procedure.flow) {
+      throw new Error('Procedure flow is not defined')
+    }
+
+    try {
+      if (new URL(this.mainPage!.exposed.url()).href !== new URL(procedure.startUrl).href) {
+        await this.mainPage!.goto(procedure.startUrl, null, {
+          timeout: 30_000,
+          waitUntil: 'networkidle0',
+        })
+      }
+    } catch (error) {
+      this.logger.error(error)
+    }
+
+    if (procedure.waitFor) {
+      const handle = await this.waitFor(procedure.waitFor)
+      if (!handle) {
+        return {
+          procedure,
+          flowExecutionResult: { errorType: ActionStepErrorType.ELEMENT_NOT_FOUND },
+        }
+      }
+    }
+
+    return {
+      procedure,
+      flowExecutionResult: await this.performFlow(procedure.flow, actions, onDataRequest),
+    }
+  }
+
+  @assertMainPage
+  public async performFlow(
+    flow: FlowStep,
+    actions: Action[],
+    onDataRequest: RequestDataCallback,
+  ): Promise<FlowExecutionResult> {
+    this.logger.info('Performing flow starting with action:', flow.actionName)
+
+    const flowStepsResults: FlowExecutionResult['flowStepsResults'] = []
+
+    if (isRegularAction(flow.actionName)) {
+      const actionName = flow.actionName.substring(REGULAR_ACTION_PREFIX.length + 1)
+      const action = actions.find((action) => action.name === actionName)
+      if (!action) {
+        throw new Error(`Action ${actionName} not found`)
+      }
+
+      const actionResult = await this.performAction(action, onDataRequest)
+      const succeeded = actionResult.actionStepsResults.every(
+        (stepResult) => stepResult.result.errorType === ActionStepErrorType.NO_ERROR,
+      )
+
+      flowStepsResults.push({
+        flowStep: omit(flow, 'onSuccess', 'onFailure'),
+        actionResult,
+        returnedValues: [],
+        succeeded,
+      })
+
+      if (succeeded) {
+        if (!flow.onSuccess) {
+          throw new Error(`Flow ${flow.actionName} has no onSuccess flow`)
+        }
+        const successResult = await this.performFlow(flow.onSuccess, actions, onDataRequest)
+        flowStepsResults.push(...successResult.flowStepsResults)
+      } else {
+        if (!flow.onFailure) {
+          throw new Error(`Flow ${flow.actionName} has no onFailure flow`)
+        }
+        const failureResult = await this.performFlow(flow.onFailure, actions, onDataRequest)
+        flowStepsResults.push(...failureResult.flowStepsResults)
+      }
+    } else if (isGlobalAction(flow.actionName)) {
+      const globalAction = flow.actionName.substring(
+        GLOBAL_ACTION_PREFIX.length + 1,
+      ) as GlobalActionType
+
+      flowStepsResults.push({
+        flowStep: omit(flow, 'onSuccess', 'onFailure'),
+        actionResult: null,
+        returnedValues: [], //TODO
+        succeeded: globalAction !== GlobalActionType.FINISH_WITH_ERROR,
+      })
+
+      switch (globalAction) {
+        case GlobalActionType.FINISH:
+        case GlobalActionType.FINISH_WITH_ERROR:
+          // noop
+          break
+        case GlobalActionType.FINISH_WITH_NOTIFICATION:
+          //TODO: show system notification according to flow data
+          break
+        default:
+          throw new Error(`Invalid global action: ${globalAction}`)
+      }
+    } else {
+      throw new Error(`Invalid action name: ${flow.actionName}`)
+    }
+
+    return {
+      flow,
+      flowStepsResults,
+    }
   }
 
   @assertMainPage

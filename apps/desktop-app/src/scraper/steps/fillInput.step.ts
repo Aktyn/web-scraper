@@ -6,9 +6,8 @@ import {
   safePromise,
 } from '@web-scraper/common'
 
+import type { RequestDataCallback } from '../helpers'
 import type { Scraper, ScraperMode } from '../scraper'
-
-import type { RequestDataCallback } from './helpers'
 
 export async function fillInputStep<ModeType extends ScraperMode>(
   this: Scraper<ModeType>,

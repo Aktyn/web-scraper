@@ -1,8 +1,7 @@
 import { ActionStepErrorType, type ActionStep, type ActionStepType } from '@web-scraper/common'
 
+import type { RequestDataCallback } from '../helpers'
 import type { Scraper, ScraperMode } from '../scraper'
-
-import type { RequestDataCallback } from './helpers'
 
 export async function selectOptionStep<ModeType extends ScraperMode>(
   this: Scraper<ModeType>,

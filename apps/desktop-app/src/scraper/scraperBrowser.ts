@@ -3,9 +3,10 @@ import path from 'path'
 
 import { cacheable, safePromise, waitFor } from '@web-scraper/common'
 import isDev from 'electron-is-dev'
-import { type Browser, type EventType, type Handler, type PuppeteerLaunchOptions } from 'puppeteer'
+import type { Viewport, Browser, EventType, Handler, PuppeteerLaunchOptions } from 'puppeteer'
 import puppeteer from 'puppeteer-extra'
 import StealthPlugin from 'puppeteer-extra-plugin-stealth'
+import { getRandom as getRandomUserAgent } from 'random-useragent'
 
 import { EXTERNAL_DIRECTORY_PATH } from '../utils'
 
@@ -19,13 +20,27 @@ interface ScraperBrowserOptions {
 }
 
 export default class ScraperBrowser {
+  public static readonly defaultViewport: Viewport = {
+    width: 1280,
+    height: 1024,
+    isMobile: false,
+    hasTouch: false,
+    deviceScaleFactor: 1,
+  }
+
   protected browser: Browser | null = null
+  private readonly userAgent = getRandomUserAgentWithChrome()
+  private readonly viewport: Viewport | null
 
   constructor({
     loadInfoPage,
     onBrowserClosed,
     ...options
   }: Partial<PuppeteerLaunchOptions & ScraperBrowserOptions> = {}) {
+    const headless = options.headless ?? false
+
+    this.viewport = headless ? options.defaultViewport ?? ScraperBrowser.defaultViewport : null
+
     void safePromise(
       puppeteer.launch({
         // executablePath: executablePath(),
@@ -37,17 +52,20 @@ export default class ScraperBrowser {
           // '--start-maximized',
           '--disable-infobars',
           '--no-default-browser-check',
-          // '--lang=en-US,en',
+          '--lang=en-US,en',
         ],
-        ignoreDefaultArgs: ['--enable-automation', '--enable-blink-features=IdleDetection'],
-        headless: false,
+        ignoreDefaultArgs: [
+          '--enable-automation',
+          '--enable-blink-features=IdleDetection',
+          '--disable-blink-features=AutomationControlled',
+        ],
+        headless,
         devtools: isDev,
-        defaultViewport: null, //ScraperPage.defaultViewPort,
+        defaultViewport: headless ? ScraperBrowser.defaultViewport : null,
         handleSIGINT: true,
         ignoreHTTPSErrors: true,
         timeout: 30_000,
         product: 'chrome',
-        // env: { LANGUAGE: 'en_US' },
         userDataDir:
           isDev && !process.env.VITEST_WORKER_ID
             ? path.join(EXTERNAL_DIRECTORY_PATH, 'userData')
@@ -64,12 +82,10 @@ export default class ScraperBrowser {
           onBrowserClosed?.()
         })
 
-        const pages = await browser.pages()
-        const initPage = pages[0] || (await browser.newPage())
-
         if (loadInfoPage) {
           try {
-            await initPage.goto(`data:text/html,${encodeURIComponent(getInfoPageHTML())}`, {
+            const initPage = await this.getFirstPage()
+            await initPage.goto(`data:text/html,${encodeURIComponent(getInfoPageHTML())}`, null, {
               waitUntil: 'load',
             })
           } catch (error) {
@@ -79,8 +95,7 @@ export default class ScraperBrowser {
 
         this.browser = browser
 
-        // eslint-disable-next-line no-console
-        console.log('Browser initialized')
+        console.info('Browser initialized with user agent:', this.userAgent)
       })
       .catch(console.error)
   }
@@ -104,19 +119,33 @@ export default class ScraperBrowser {
 
   @waitForBrowser
   public async newPage() {
-    return ScraperPage.create(this.browser!)
+    return ScraperPage.create(this.browser!, this.userAgent, this.viewport)
   }
 
   @waitForBrowser
   public async getFirstPage() {
     const pages = await this.browser!.pages()
-    return pages[0] ? await ScraperPage.createFromExisting(pages[0]) : await this.newPage()
+    return pages[0]
+      ? await ScraperPage.createFromExisting(pages[0], this.userAgent, this.viewport)
+      : await this.newPage()
   }
 }
 
 const getInfoPageHTML = cacheable(() =>
   fs.readFileSync(path.join(EXTERNAL_DIRECTORY_PATH, 'infoPage.html'), 'utf8'),
 )
+
+function getRandomUserAgentWithChrome() {
+  let maxAttempts = 10_000
+  while (maxAttempts-- > 0) {
+    const userAgent = getRandomUserAgent()
+    if (userAgent?.includes('Chrome')) {
+      return userAgent
+    }
+  }
+
+  return getRandomUserAgent()
+}
 
 function waitForBrowser(_target: unknown, _propertyKey: string, descriptor: PropertyDescriptor) {
   const originalMethod: (...args: unknown[]) => unknown = descriptor.value
