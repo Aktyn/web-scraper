@@ -504,7 +504,7 @@ describe('registerRequestsHandler', () => {
           id: 1,
           siteInstructionsId: 1,
           startUrl: '{{URL.ORIGIN}}/login',
-          type: 'login',
+          type: 'accountCheck',
           waitFor: 'body > h1',
         },
       ],
