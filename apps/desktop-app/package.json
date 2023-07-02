@@ -34,7 +34,7 @@
   },
   "dependencies": {
     "@prisma/client": "^4.16.1",
-    "@prisma/generator-helper": "^4.16.1",
+    "@prisma/generator-helper": "^4.16.2",
     "@web-scraper/common": "^1.0.0",
     "dotenv": "^16.3.1",
     "dotenv-expand": "^10.0.0",
