@@ -25,6 +25,8 @@ jobs:
 
     - name: Install dependencies
       run: yarn install
+      env:
+        PUPPETEER_SKIP_DOWNLOAD: true
 
     - name: Check code with linter
       run: yarn run lint
