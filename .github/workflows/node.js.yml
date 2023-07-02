@@ -42,8 +42,11 @@ jobs:
         run: yarn install
         env:
           PUPPETEER_SKIP_DOWNLOAD: true
+          DISABLE_ERD: true
       - name: Build all projects
         run: yarn run build
+        env:
+          DISABLE_ERD: true
 
   test:
     runs-on: ubuntu-latest
@@ -61,7 +64,9 @@ jobs:
         run: yarn install
         env:
           PUPPETEER_SKIP_DOWNLOAD: true
+          DISABLE_ERD: true
       - name: Run all tests
         run: yarn run test
         env:
           CI: true
+          DISABLE_ERD: true
