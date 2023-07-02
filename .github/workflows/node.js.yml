@@ -25,6 +25,7 @@ jobs:
         PUPPETEER_SKIP_DOWNLOAD: true
 
   lint:
+    needs: install
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -40,6 +41,7 @@ jobs:
       run: yarn run lint
 
   build:
+    needs: install
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -55,6 +57,7 @@ jobs:
       run: yarn run build
 
   test:
+    needs: build
     runs-on: ubuntu-latest
     strategy:
       matrix:
