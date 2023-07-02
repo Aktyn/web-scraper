@@ -6,8 +6,9 @@ node_modules
 # testing
 coverage/
 
-# debug
+# logs
 npm-debug.log*
+yarn-error.log
 
 # local env files
 .env.local

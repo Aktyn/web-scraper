@@ -25,7 +25,6 @@ export async function checkErrorStep<ModeType extends ScraperMode>(
   }
 
   const foundError = actionStep.data.mapError.find(({ content }) =>
-    //TODO: allow regex pattern
     content ? elementTextError.match(new RegExp(content, 'i')) : true,
   )
   return foundError ?? { errorType: ActionStepErrorType.NO_ERROR }

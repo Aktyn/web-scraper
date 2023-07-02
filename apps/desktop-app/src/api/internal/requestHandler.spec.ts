@@ -1,10 +1,11 @@
-import { type ElectronApi, RendererToElectronMessage, ErrorCode } from '@web-scraper/common'
+import { ErrorCode, RendererToElectronMessage, type ElectronApi } from '@web-scraper/common'
 import { beforeEach, describe, expect, it } from 'vitest'
 import type { DeepMockProxy } from 'vitest-mock-extended'
 import { mockReset } from 'vitest-mock-extended'
-
-import { databaseMock, mockData } from '../../test-utils/databaseMock'
 import '../../test-utils/electronMock'
+
+import { Scraper } from '../../scraper'
+import { databaseMock, mockData } from '../../test-utils/databaseMock'
 
 import { registerRequestsHandler } from './requestHandler'
 
@@ -33,8 +34,12 @@ describe('registerRequestsHandler', () => {
   })
 
   it('should invoke ipcMain.handle for each defined handler', () => {
+    const rendererToElectronMessagesCount = Object.values(RendererToElectronMessage).length
+
     registerRequestsHandler()
-    expect(ipcMainMock.handle).toBeCalledTimes(Object.values(RendererToElectronMessage).length)
+
+    expect(ipcMainMock.handle).toBeCalledTimes(rendererToElectronMessagesCount)
+    expect(handlers.size).toBe(rendererToElectronMessagesCount)
   })
 
   it('should return parsed user settings', async () => {
@@ -509,6 +514,57 @@ describe('registerRequestsHandler', () => {
         },
       ],
     })
+  })
+
+  it('should set site instructions', async () => {
+    registerRequestsHandler()
+
+    const setSiteInstructions = handlers.get(
+      'setSiteInstructions',
+    ) as HandlersInterface[RendererToElectronMessage.setSiteInstructions]
+
+    expect(setSiteInstructions).toBeDefined()
+    await expect(
+      setSiteInstructions(null as never, 1, {
+        procedures: [],
+        actions: [],
+      }),
+    ).resolves.toEqual({
+      errorCode: ErrorCode.NO_ERROR,
+    })
+  })
+
+  it('should get site instructions testing sessions', async () => {
+    databaseMock.site.findUnique.mockResolvedValue({
+      ...mockData.sites[0],
+      //@ts-expect-error - incomplete mock types
+      Tags: [],
+    })
+
+    registerRequestsHandler()
+
+    const getSiteInstructionsTestingSessions = handlers.get(
+      'getSiteInstructionsTestingSessions',
+    ) as HandlersInterface[RendererToElectronMessage.getSiteInstructionsTestingSessions]
+
+    const siteId = 1
+    const scraper = new Scraper(Scraper.Mode.TESTING, {
+      siteId,
+      lockURL: 'http://localhost:1357/mock-testing',
+      onClose: () => void 0,
+    })
+
+    expect(getSiteInstructionsTestingSessions).toBeDefined()
+    await expect(getSiteInstructionsTestingSessions(null as never)).resolves.toEqual([
+      {
+        sessionId: scraper.id,
+        site: { ...mockData.sites[0], tags: [] },
+      },
+    ])
+
+    await scraper.destroy()
+
+    await expect(getSiteInstructionsTestingSessions(null as never)).resolves.toEqual([])
   })
 })
 

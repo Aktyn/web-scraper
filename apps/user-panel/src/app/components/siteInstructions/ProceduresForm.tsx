@@ -12,7 +12,7 @@ import { actionSchemaToExecutableAction } from './ActionsForm'
 import { FlowStepForm, flowSchemaToExecutableFlow } from './FlowStepForm'
 import { SiteInstructionsTestingSessionContext } from '../../context/siteInstructionsTestingSessionContext'
 import { useApiRequest } from '../../hooks/useApiRequest'
-import { procedureTypeNames } from '../../utils/site-instructions-helpers'
+import { actionStepErrorTypeNames, procedureTypeNames } from '../../utils/site-instructions-helpers'
 import { TermInfo } from '../common/TermInfo'
 import { ItemTitle } from '../common/treeStructure/ItemTitle'
 import { ItemsList } from '../common/treeStructure/ItemsList'
@@ -39,11 +39,7 @@ export const ProceduresForm = () => {
         return
       }
 
-      const procedure = procedureSchemaToExecutableProcedure(
-        procedureSchema,
-        // name: get(getValues(), `actions.${itemIndex}.name`),
-        // url: get(getValues(), `actions.${itemIndex}.url`),
-      )
+      const procedure = procedureSchemaToExecutableProcedure(procedureSchema)
 
       if (!procedure) {
         return
@@ -70,26 +66,45 @@ export const ProceduresForm = () => {
 
             console.info('Procedure execution result:', procedureExecutionResult)
 
-            //TODO
-            // const failedStepResult = procedureExecutionResult.actionStepsResults.find(
-            //   (result) => result.result.errorType !== ActionStepErrorType.NO_ERROR,
-            // )
+            if ('errorType' in procedureExecutionResult.flowExecutionResult) {
+              enqueueSnackbar({
+                variant: 'error',
+                message: `Procedure execution failed with error: ${
+                  actionStepErrorTypeNames[procedureExecutionResult.flowExecutionResult.errorType]
+                }`,
+              })
+            } else {
+              const failed =
+                !procedureExecutionResult.flowExecutionResult.flowStepsResults.at(-1)?.succeeded
 
-            // if (!failedStepResult) {
-            enqueueSnackbar({
-              variant: 'success',
-              message: `Procedure completed successfully (${procedureTypeNames[procedure.type]})`,
-            })
-            // } else {
-            //   enqueueSnackbar({
-            //     variant: 'error',
-            //     message: `Action step failed (step: ${
-            //       actionStepTypeNames[failedStepResult.step.type]
-            //     }; error: ${
-            //       actionStepErrorTypeNames[failedStepResult.result.errorType]
-            //     }); mapped content: ${failedStepResult.result.content ?? '-'}`,
-            //   })
-            // }
+              const lastFlowStepResult =
+                procedureExecutionResult.flowExecutionResult.flowStepsResults.at(-1)
+              const returnedValues = lastFlowStepResult?.returnedValues.reduce(
+                (acc, returnedValue) => {
+                  if (typeof returnedValue === 'string') {
+                    acc.push(returnedValue)
+                  }
+                  return acc
+                },
+                [] as string[],
+              )
+
+              if (!failed) {
+                enqueueSnackbar({
+                  variant: 'success',
+                  message: `Procedure completed successfully (returned values: ${
+                    returnedValues?.join(', ') ?? '-'
+                  })`,
+                })
+              } else {
+                enqueueSnackbar({
+                  variant: 'error',
+                  message: `Procedure execution failed (returned values: ${
+                    returnedValues?.join(', ') ?? '-'
+                  })`,
+                })
+              }
+            }
           },
         },
         testingSession.sessionId,

@@ -115,7 +115,7 @@ export interface FlowExecutionResult {
   flowStepsResults: {
     flowStep: ShallowFlowStep
     actionResult: ActionExecutionResult | null
-    returnedValues: string[]
+    returnedValues: (string | { error: string })[]
     succeeded: boolean
   }[]
 }

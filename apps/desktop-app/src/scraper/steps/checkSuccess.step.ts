@@ -25,7 +25,6 @@ export async function checkSuccessStep<ModeType extends ScraperMode>(
   }
 
   const foundSuccess = actionStep.data.mapSuccess.find(({ content }) =>
-    //TODO: allow regex pattern
     content ? elementTextSuccess.match(new RegExp(content, 'i')) : true,
   )
   if (foundSuccess) {

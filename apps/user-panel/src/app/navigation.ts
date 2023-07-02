@@ -20,7 +20,7 @@ interface NavigationEntry {
 const Navigation = {
   DASHBOARD: {
     component: lazy(() => import('./views/Dashboard/DashboardView')),
-    theme: mainThemes.cyan,
+    theme: mainThemes.deepPurple,
     gridPosition: [0, 0],
   } as NavigationEntry,
   ROUTINES: {
@@ -48,7 +48,7 @@ const Navigation = {
   } as NavigationEntry,
   INFO: {
     component: lazy(() => import('./views/Info/InfoView')),
-    theme: mainThemes.deepPurple,
+    theme: mainThemes.cyan,
     gridPosition: [2, 1],
     viewSettings: {
       disableTopFadeEffect: true,

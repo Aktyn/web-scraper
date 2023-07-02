@@ -3,11 +3,11 @@ import {
   ActionStepType,
   GLOBAL_ACTION_PREFIX,
   GlobalActionType,
-  Logger,
-  REGULAR_ACTION_PREFIX,
   isGlobalAction,
   isRegularAction,
+  Logger,
   omit,
+  REGULAR_ACTION_PREFIX,
   safePromise,
   sortNumbers,
   wait,
@@ -25,7 +25,7 @@ import {
 import type { ElementHandle, Page } from 'puppeteer'
 import * as uuid from 'uuid'
 
-import type { RequestDataCallback } from '.'
+import { getFlowFinishedNotification, type RequestDataCallback } from '.'
 import ScraperBrowser from './scraperBrowser'
 import type { ScraperPage } from './scraperPage'
 import {
@@ -281,7 +281,7 @@ export class Scraper<ModeType extends ScraperMode> {
       }
 
       const actionResult = await this.performAction(action, onDataRequest)
-      const succeeded = actionResult.actionStepsResults.every(
+      const actionSucceeded = actionResult.actionStepsResults.every(
         (stepResult) => stepResult.result.errorType === ActionStepErrorType.NO_ERROR,
       )
 
@@ -289,10 +289,10 @@ export class Scraper<ModeType extends ScraperMode> {
         flowStep: omit(flow, 'onSuccess', 'onFailure'),
         actionResult,
         returnedValues: [],
-        succeeded,
+        succeeded: actionSucceeded,
       })
 
-      if (succeeded) {
+      if (actionSucceeded) {
         if (!flow.onSuccess) {
           throw new Error(`Flow ${flow.actionName} has no onSuccess flow`)
         }
@@ -313,7 +313,24 @@ export class Scraper<ModeType extends ScraperMode> {
       flowStepsResults.push({
         flowStep: omit(flow, 'onSuccess', 'onFailure'),
         actionResult: null,
-        returnedValues: [], //TODO
+        returnedValues: await Promise.all(
+          flow.globalReturnValues.map(async (selector) => {
+            try {
+              const elementSuccess = await this.waitFor(selector)
+              if (!elementSuccess) {
+                return { error: 'Element not found' }
+              }
+
+              const text = await elementSuccess.evaluate((el) => el.textContent)
+              if (text === null) {
+                return { error: 'Element has no text content' }
+              }
+              return text
+            } catch (error) {
+              return { error: error instanceof Error ? error.message : String(error) }
+            }
+          }),
+        ),
         succeeded: globalAction !== GlobalActionType.FINISH_WITH_ERROR,
       })
 
@@ -323,7 +340,7 @@ export class Scraper<ModeType extends ScraperMode> {
           // noop
           break
         case GlobalActionType.FINISH_WITH_NOTIFICATION:
-          //TODO: show system notification according to flow data
+          getFlowFinishedNotification().show()
           break
         default:
           throw new Error(`Invalid global action: ${globalAction}`)

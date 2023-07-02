@@ -5,12 +5,17 @@ import {
   ActionStepType,
   type Action,
   type ActionStep,
+  type Procedure,
+  ProcedureType,
+  type FlowStep,
+  omit,
+  type ProcedureExecutionResult,
 } from '@web-scraper/common'
 import express from 'express'
 import { afterAll, beforeAll, describe, expect, it, vi, type Mock } from 'vitest'
 
-import '../test-utils/electronMock'
 import { type RequestDataCallback } from '.'
+import '../test-utils/electronMock'
 import { Scraper, type ScraperMode } from './scraper'
 
 class ExposedScraper<ModeType extends ScraperMode> extends Scraper<ModeType> {
@@ -34,7 +39,7 @@ const actionStepBase = {
   actionId: 1,
 } as const satisfies Partial<ActionStep>
 
-const dummyRequestDataCallback: RequestDataCallback = () => Promise.resolve('')
+const dummyRequestDataCallback: RequestDataCallback = () => Promise.resolve('mock-value')
 
 const withScraperTestingMode = async (
   callback: (
@@ -476,6 +481,149 @@ describe('Scraper.TESTING action', () => {
           result: { errorType: ActionStepErrorType.NO_ERROR },
         })),
       })
+    })
+  })
+})
+
+describe('Scraper.TESTING procedure', () => {
+  const app = express()
+  let server: Server | null = null
+
+  beforeAll(() => {
+    server = initServer(app)
+  })
+  afterAll(() => {
+    server?.close()
+  })
+
+  it('should perform procedure in testing mode', () => {
+    return withScraperTestingMode(async (scraper) => {
+      const waitStep: ActionStep = {
+        ...actionStepBase,
+        type: ActionStepType.WAIT,
+        data: {
+          duration: 1000,
+        },
+      }
+      const waitForElementStep: ActionStep = {
+        ...actionStepBase,
+        type: ActionStepType.WAIT_FOR_ELEMENT,
+        data: {
+          element: 'body > h1',
+        },
+      }
+      const pressButtonStep: ActionStep = {
+        ...actionStepBase,
+        type: ActionStepType.PRESS_BUTTON,
+        data: {
+          element: 'body > button',
+          waitForNavigation: false,
+        },
+      }
+      const checkErrorStep: ActionStep = {
+        ...actionStepBase,
+        type: ActionStepType.CHECK_ERROR,
+        data: {
+          element: 'body > div#error-message',
+          mapError: [
+            {
+              errorType: ActionStepErrorType.UNKNOWN,
+              content: 'non existing error message',
+            },
+          ],
+          waitForElementTimeout: 2_000,
+        },
+      }
+      const checkSuccessStep: ActionStep = {
+        ...actionStepBase,
+        type: ActionStepType.CHECK_SUCCESS,
+        data: {
+          element: 'body > div#success-message',
+          mapSuccess: [
+            {
+              content: 'mock success [a-z]+',
+            },
+          ],
+          waitForElementTimeout: 2_000,
+        },
+      }
+
+      const steps = [
+        waitStep,
+        waitForElementStep,
+        pressButtonStep,
+        checkErrorStep,
+        checkSuccessStep,
+      ]
+
+      const action: Action = {
+        id: 0,
+        url: null,
+        siteInstructionsId: 0,
+        name: 'mock action',
+        actionSteps: steps,
+      }
+
+      const mainFlow: FlowStep = {
+        id: 0,
+        actionName: 'action.mock action',
+        globalReturnValues: [],
+        onSuccess: {
+          id: 1,
+          actionName: 'global.finishProcedure',
+          globalReturnValues: ['#success-message'],
+          onSuccess: null,
+          onFailure: null,
+        },
+        onFailure: {
+          id: 2,
+          actionName: 'global.finishProcedureWithError',
+          globalReturnValues: [],
+          onSuccess: null,
+          onFailure: null,
+        },
+      }
+
+      const procedure: Procedure = {
+        id: 0,
+        type: ProcedureType.ACCOUNT_CHECK,
+        startUrl: 'http://localhost:1357/mock-testing',
+        waitFor: 'body > h1',
+        siteInstructionsId: 0,
+        flow: mainFlow,
+      }
+
+      const procedureExecutionResult = await scraper.performProcedure(
+        procedure,
+        [action],
+        dummyRequestDataCallback,
+      )
+      expect(procedureExecutionResult).toEqual({
+        procedure,
+        flowExecutionResult: {
+          flow: mainFlow,
+          flowStepsResults: [
+            {
+              flowStep: omit(mainFlow, 'onSuccess', 'onFailure'),
+              actionResult: {
+                action,
+                actionStepsResults: steps.map((step) => ({
+                  step,
+                  result: { errorType: ActionStepErrorType.NO_ERROR },
+                })),
+              },
+              returnedValues: [],
+              succeeded: true,
+            },
+            {
+              flowStep: omit(mainFlow.onSuccess!, 'onSuccess', 'onFailure'),
+              actionResult: null,
+              returnedValues: ['mock success message'],
+              succeeded: true,
+            },
+          ],
+        },
+      } satisfies ProcedureExecutionResult)
     })
   })
 })

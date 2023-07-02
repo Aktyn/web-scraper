@@ -29,7 +29,7 @@ export default class ScraperBrowser {
   }
 
   protected browser: Browser | null = null
-  private readonly userAgent = getRandomUserAgentWithChrome()
+  private readonly userAgent = getRandomDesktopUserAgentWithChrome()
   private readonly viewport: Viewport | null
 
   constructor({
@@ -135,11 +135,19 @@ const getInfoPageHTML = cacheable(() =>
   fs.readFileSync(path.join(EXTERNAL_DIRECTORY_PATH, 'infoPage.html'), 'utf8'),
 )
 
-function getRandomUserAgentWithChrome() {
+function getRandomDesktopUserAgentWithChrome() {
   let maxAttempts = 10_000
   while (maxAttempts-- > 0) {
     const userAgent = getRandomUserAgent()
-    if (userAgent?.includes('Chrome')) {
+    if (
+      userAgent.includes('Chrome') &&
+      !userAgent.includes('Mobile') &&
+      !userAgent.includes('Tablet') &&
+      !userAgent.includes('Android') &&
+      !userAgent.includes('iOS') &&
+      !userAgent.includes('Windows Phone') &&
+      !userAgent.includes('Lumia')
+    ) {
       return userAgent
     }
   }

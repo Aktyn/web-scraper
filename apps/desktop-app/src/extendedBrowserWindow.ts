@@ -2,6 +2,7 @@ import type { ElectronApi, ElectronToRendererMessage } from '@web-scraper/common
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { BrowserWindow } from 'electron'
 
+/* istanbul ignore next */
 export class ExtendedBrowserWindow extends BrowserWindow {
   private static readonly instances: Map<BrowserWindow['id'], ExtendedBrowserWindow> = new Map()
 

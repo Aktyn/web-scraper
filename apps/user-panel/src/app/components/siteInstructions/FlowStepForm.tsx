@@ -57,11 +57,7 @@ export const FlowStepForm = ({
         return
       }
 
-      const flow = flowSchemaToExecutableFlow(
-        flowSchema,
-        // name: get(getValues(), `actions.${itemIndex}.name`),
-        // url: get(getValues(), `actions.${itemIndex}.url`),
-      )
+      const flow = flowSchemaToExecutableFlow(flowSchema)
 
       if (!flow) {
         return
@@ -85,26 +81,34 @@ export const FlowStepForm = ({
 
             console.info('Flow execution result:', flowExecutionResult)
 
-            //TODO
-            // const failedStepResult = actionExecutionResult.actionStepsResults.find(
-            //   (result) => result.result.errorType !== ActionStepErrorType.NO_ERROR,
-            // )
+            const failed = !flowExecutionResult.flowStepsResults.at(-1)?.succeeded
 
-            // if (!failedStepResult) {
-            enqueueSnackbar({
-              variant: 'success',
-              message: `Flow completed successfully`,
-            })
-            // } else {
-            //   enqueueSnackbar({
-            //     variant: 'error',
-            //     message: `Action step failed (step: ${
-            //       actionStepTypeNames[failedStepResult.step.type]
-            //     }; error: ${
-            //       actionStepErrorTypeNames[failedStepResult.result.errorType]
-            //     }); mapped content: ${failedStepResult.result.content ?? '-'}`,
-            //   })
-            // }
+            const lastFlowStepResult = flowExecutionResult.flowStepsResults.at(-1)
+            const returnedValues = lastFlowStepResult?.returnedValues.reduce(
+              (acc, returnedValue) => {
+                if (typeof returnedValue === 'string') {
+                  acc.push(returnedValue)
+                }
+                return acc
+              },
+              [] as string[],
+            )
+
+            if (!failed) {
+              enqueueSnackbar({
+                variant: 'success',
+                message: `Flow completed successfully (returned values: ${
+                  returnedValues?.join(', ') ?? '-'
+                })`,
+              })
+            } else {
+              enqueueSnackbar({
+                variant: 'error',
+                message: `Flow execution failed (returned values: ${
+                  returnedValues?.join(', ') ?? '-'
+                })`,
+              })
+            }
           },
         },
         testingSession.sessionId,
