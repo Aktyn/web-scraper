@@ -16,7 +16,7 @@ import type {
   ProcedureExecutionResult,
   SiteInstructions,
   UpsertSiteInstructionsSchema,
-} from './siteInstructions'
+} from './scraper'
 import type { UserSettings } from './user'
 
 /**
