@@ -54,7 +54,7 @@ export const CopyableLabel = memo(({ children, ...stackProps }: CopyableLabelPro
       <Box sx={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
         {children}
       </Box>
-      <Tooltip title="Copy to clipboard" disableInteractive>
+      <Tooltip title="Copy to clipboard">
         <IconButton
           ref={buttonRef}
           size="small"

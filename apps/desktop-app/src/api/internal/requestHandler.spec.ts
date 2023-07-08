@@ -54,6 +54,7 @@ describe('registerRequestsHandler', () => {
     expect(getUserSettings).toBeDefined()
     await expect(getUserSettings(null as never)).resolves.toEqual({
       tablesCompactMode: true,
+      desktopNotifications: true,
     })
   })
 
@@ -292,17 +293,20 @@ describe('registerRequestsHandler', () => {
     databaseMock.site.findMany.mockResolvedValue(
       mockData.sites.map((site) => ({
         ...site,
-        Tags: mockData.siteTagsRelations.reduce((acc, siteTagsRelation) => {
-          if (siteTagsRelation.siteId === site.id) {
-            const tag = mockData.siteTags.find((tag) => tag.id === siteTagsRelation.tagId)
-            if (tag) {
-              acc.push({
-                Tag: tag,
-              })
+        Tags: mockData.siteTagsRelations.reduce(
+          (acc, siteTagsRelation) => {
+            if (siteTagsRelation.siteId === site.id) {
+              const tag = mockData.siteTags.find((tag) => tag.id === siteTagsRelation.tagId)
+              if (tag) {
+                acc.push({
+                  Tag: tag,
+                })
+              }
             }
-          }
-          return acc
-        }, [] as { Tag: (typeof mockData.siteTags)[number] }[]),
+            return acc
+          },
+          [] as { Tag: (typeof mockData.siteTags)[number] }[],
+        ),
       })),
     )
 

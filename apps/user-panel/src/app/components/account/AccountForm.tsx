@@ -225,7 +225,6 @@ export const AccountForm = ({ account, onSuccess }: AccountFormProps) => {
                 ? 'Press the key icon in the top right corner to unlock this button'
                 : undefined
             }
-            disableInteractive
           >
             <Box>
               <LoadingButton

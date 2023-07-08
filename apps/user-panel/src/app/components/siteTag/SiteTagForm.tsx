@@ -71,7 +71,7 @@ export const SiteTagForm = ({
             assignedTagsIds?.includes(tag.id) ? (
               <BooleanValue value={true} sx={{ justifyContent: 'center' }} />
             ) : (
-              <Tooltip title="Assign" disableInteractive>
+              <Tooltip title="Assign">
                 <IconButton size="small" onClick={() => onAssign?.(tag)}>
                   <AddRounded />
                 </IconButton>

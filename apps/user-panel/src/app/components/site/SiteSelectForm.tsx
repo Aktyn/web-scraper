@@ -46,7 +46,7 @@ export const SiteSelectForm = ({ site: selectedSite, onSelect }: SiteSelectFormP
             selectedSite?.id === site.id ? (
               <BooleanValue value={true} sx={{ justifyContent: 'center' }} />
             ) : (
-              <Tooltip title="Select" disableInteractive>
+              <Tooltip title="Select">
                 <IconButton size="small" onClick={() => onSelect?.(site)}>
                   <AddRounded />
                 </IconButton>

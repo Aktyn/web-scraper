@@ -11,10 +11,12 @@ export const UserDataProvider = ({ children }: PropsWithChildren) => {
     process.env.REACT_APP_ENCRYPTION_PASSWORD ?? null,
   )
   const [settings, setSettings] = useState(defaultUserSettings)
+  const [loadingSettings, setLoadingSettings] = useState(true)
 
   useEffect(() => {
     getUserSettingsRequest.submit({
       onSuccess: setSettings,
+      onEnd: () => setLoadingSettings(false),
     })
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
@@ -32,7 +34,13 @@ export const UserDataProvider = ({ children }: PropsWithChildren) => {
 
   return (
     <UserDataContext.Provider
-      value={{ dataEncryptionPassword, setDataEncryptionPassword, settings, updateSetting }}
+      value={{
+        dataEncryptionPassword,
+        setDataEncryptionPassword,
+        settings,
+        updateSetting,
+        loading: loadingSettings,
+      }}
     >
       {children}
     </UserDataContext.Provider>

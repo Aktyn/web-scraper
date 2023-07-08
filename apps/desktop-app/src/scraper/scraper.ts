@@ -25,6 +25,9 @@ import {
 import type { ElementHandle, Page } from 'puppeteer'
 import * as uuid from 'uuid'
 
+import { parseUserSettings } from '../api/internal/parsers/userSettingsParser'
+import Database from '../database'
+
 import { getFlowFinishedNotification, type RequestDataCallback } from '.'
 import ScraperBrowser from './scraperBrowser'
 import type { ScraperPage } from './scraperPage'
@@ -340,7 +343,12 @@ export class Scraper<ModeType extends ScraperMode> {
           // noop
           break
         case GlobalActionType.FINISH_WITH_NOTIFICATION:
-          getFlowFinishedNotification().show()
+          {
+            const userSettings = await Database.userData.getUserSettings().then(parseUserSettings)
+            if (userSettings.desktopNotifications) {
+              getFlowFinishedNotification().show()
+            }
+          }
           break
         default:
           throw new Error(`Invalid global action: ${globalAction}`)

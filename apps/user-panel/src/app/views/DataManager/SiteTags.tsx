@@ -108,7 +108,7 @@ export const SiteTags = () => {
             ref={tableRef}
             columns={columns}
             headerContent={
-              <Tooltip title="Remove all tags that are not assigned to any site" disableInteractive>
+              <Tooltip title="Remove all tags that are not assigned to any site">
                 <Box>
                   <ConfirmableButton
                     variant="outlined"

@@ -4,6 +4,7 @@ import { noop } from '../utils'
 
 export const defaultUserSettings: UserSettings = {
   tablesCompactMode: false as boolean,
+  desktopNotifications: true as boolean,
 } satisfies Record<string, number | string | boolean>
 
 export const UserDataContext = createContext({
@@ -14,4 +15,5 @@ export const UserDataContext = createContext({
     key: KeyType,
     value: UserSettings[KeyType],
   ) => void,
+  loading: true as boolean,
 })

@@ -185,7 +185,7 @@ export const SiteForm = ({ site, onSuccess }: SiteFormProps) => {
           >
             {siteTagsFields.fields.length ? (
               siteTagsFields.fields.map((field, index) => (
-                <Tooltip key={field.fieldKey} title={field.description} disableInteractive>
+                <Tooltip key={field.fieldKey} title={field.description}>
                   <Chip
                     label={field.name}
                     sx={{ fontWeight: 'bold', color: 'text.primary' }}
@@ -201,7 +201,7 @@ export const SiteForm = ({ site, onSuccess }: SiteFormProps) => {
                 No tags
               </Typography>
             )}
-            <Tooltip title="Assign existing tag or create new one" disableInteractive>
+            <Tooltip title="Assign existing tag or create new one">
               <IconButton
                 size="small"
                 onClick={() => {

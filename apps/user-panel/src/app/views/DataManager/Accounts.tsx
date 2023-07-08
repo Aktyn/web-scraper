@@ -94,7 +94,7 @@ export const Accounts = () => {
           id: 'siteId',
           header: 'Site',
           accessor: (account) => (
-            <Tooltip title="Show details" disableInteractive>
+            <Tooltip title="Show details">
               <LoadingIconButton
                 size="small"
                 onClick={() => {

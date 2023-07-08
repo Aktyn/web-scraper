@@ -161,5 +161,9 @@ export const mockData = {
       key: 'tablesCompactMode',
       value: JSON.stringify(true),
     },
+    {
+      key: 'desktopNotifications',
+      value: JSON.stringify(true),
+    },
   ] satisfies UserData[],
 }

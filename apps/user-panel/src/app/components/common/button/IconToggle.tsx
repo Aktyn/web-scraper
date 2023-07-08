@@ -1,28 +1,32 @@
 import type { ReactElement, ReactNode } from 'react'
 import { useEffect, useRef } from 'react'
-import type { SvgIconTypeMap } from '@mui/material'
+import type { SvgIconTypeMap, SxProps } from '@mui/material'
 import { alpha, IconButton, Stack, Tooltip, useTheme } from '@mui/material'
 import anime from 'animejs'
 
 const sizeRem = 1.875
 
-interface OptionSchema<ValueType extends string | number> {
+type SupportedValue = string | number | boolean
+
+interface OptionSchema<ValueType extends SupportedValue> {
   value: ValueType
   icon: ReactElement<SvgIconTypeMap<unknown, 'svg'>>
 }
 
-interface IconToggleProps<ValueType extends string | number> {
+interface IconToggleProps<ValueType extends SupportedValue> {
   tooltipTitle: ReactNode
   options: Readonly<[OptionSchema<ValueType>, OptionSchema<ValueType>]>
   value: ValueType
   onChange: (value: ValueType) => void
+  sx?: SxProps
 }
 
-export const IconToggle = <ValueType extends string | number>({
+export const IconToggle = <ValueType extends SupportedValue>({
   tooltipTitle,
   options,
   value,
   onChange,
+  sx,
 }: IconToggleProps<ValueType>) => {
   const ref = useRef<HTMLButtonElement>(null)
   const theme = useTheme()
@@ -65,7 +69,7 @@ export const IconToggle = <ValueType extends string | number>({
   }, [options, theme.palette.action.selected, theme.palette.primary.main, value])
 
   return (
-    <Tooltip title={tooltipTitle} disableInteractive>
+    <Tooltip title={tooltipTitle}>
       <Stack
         ref={ref}
         component="button"
@@ -84,6 +88,7 @@ export const IconToggle = <ValueType extends string | number>({
           '&:hover': {
             backgroundColor: (theme) => theme.palette.action.selected,
           },
+          ...sx,
         }}
         onClick={() => onChange(value === options[0].value ? options[1].value : options[0].value)}
       >
@@ -91,7 +96,7 @@ export const IconToggle = <ValueType extends string | number>({
           <IconButton
             component="div"
             size="small"
-            key={option.value}
+            key={option.value.toString()}
             sx={{
               pointerEvents: 'none',
               position: 'absolute',

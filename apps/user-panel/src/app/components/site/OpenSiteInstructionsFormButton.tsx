@@ -4,7 +4,7 @@ import { ReactComponent as CogsIcon } from '../../components/icons/cogs.svg'
 
 export const OpenSiteInstructionsFormButton = (iconButtonProps: IconButtonProps) => {
   return (
-    <Tooltip title="Manage instructions" disableInteractive>
+    <Tooltip title="Manage instructions">
       <IconButton size="small" {...iconButtonProps}>
         <SvgIcon component={CogsIcon} inheritViewBox />
       </IconButton>

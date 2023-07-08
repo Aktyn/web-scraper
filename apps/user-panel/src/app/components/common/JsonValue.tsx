@@ -43,7 +43,7 @@ export const JsonValue = ({ children: value, disablePreview }: JsonValueProps) =
       />
       {!disablePreview && (
         <>
-          <Tooltip title="Preview JSON" disableInteractive>
+          <Tooltip title="Preview JSON">
             <Box>
               <IconButton
                 size="small"

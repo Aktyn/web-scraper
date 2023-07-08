@@ -58,10 +58,7 @@ interface CellContentProps {
 const CellContent = ({ children: value, accessDenied, jsonString }: CellContentProps) => {
   if (accessDenied) {
     return (
-      <Tooltip
-        title="Press the key icon in the top right corner to unlock this content"
-        disableInteractive
-      >
+      <Tooltip title="Press the key icon in the top right corner to unlock this content">
         <LockRounded sx={{ color: 'text.secondary' }} />
       </Tooltip>
     )

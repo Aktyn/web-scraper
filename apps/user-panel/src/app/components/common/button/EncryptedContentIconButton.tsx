@@ -11,10 +11,7 @@ export const EncryptedContentIconButton = (props: IconButtonProps) => {
   }
 
   return (
-    <Tooltip
-      title="Press the key icon in the top right corner to unlock this button"
-      disableInteractive
-    >
+    <Tooltip title="Press the key icon in the top right corner to unlock this button">
       <Badge
         overlap="circular"
         badgeContent={<LockRounded color="disabled" sx={{ width: '1rem', height: '1rem' }} />}

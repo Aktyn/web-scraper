@@ -22,7 +22,7 @@ export const TagsCellValue = ({ tags }: TagsCellProps) => {
       }}
     >
       {tags.map((tag) => (
-        <Tooltip key={tag.id ?? tag.name} title={tag.description} disableInteractive>
+        <Tooltip key={tag.id ?? tag.name} title={tag.description}>
           <Chip
             label={tag.name}
             sx={{ fontWeight: 'bold', color: 'text.primary' }}

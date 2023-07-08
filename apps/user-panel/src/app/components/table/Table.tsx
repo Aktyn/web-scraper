@@ -252,14 +252,14 @@ export const Table = genericMemo(
                             <Box key={customAction.id}>{customAction.accessor(row)}</Box>
                           ))}
                           {onEdit && (
-                            <Tooltip title="Edit" disableInteractive>
+                            <Tooltip title="Edit">
                               <IconButton size="small" onClick={() => onEdit(row)}>
                                 <EditRounded />
                               </IconButton>
                             </Tooltip>
                           )}
                           {onDelete && (
-                            <Tooltip title="Delete" disableInteractive>
+                            <Tooltip title="Delete">
                               <IconButton size="small" onClick={() => onDelete(row)}>
                                 <DeleteRounded />
                               </IconButton>

@@ -39,6 +39,11 @@ export const baseThemeOptions: ThemeOptions = {
         },
       },
     },
+    MuiTooltip: {
+      defaultProps: {
+        disableInteractive: true,
+      },
+    },
     MuiTypography: {
       styleOverrides: {
         caption: {

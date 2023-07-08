@@ -11,7 +11,7 @@ export const TermInfo = memo<TermInfoProps & SvgIconTypeMap['props']>(({ term, .
   const termContent = termsDetails.find((termDetails) => termDetails.title === term)?.content
 
   return (
-    <Tooltip title={termContent ?? ''} disableInteractive>
+    <Tooltip title={termContent ?? ''}>
       <InfoRounded fontSize="inherit" {...iconProps} />
     </Tooltip>
   )
