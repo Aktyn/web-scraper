@@ -11,10 +11,7 @@ import { get, useFieldArray, useFormContext } from 'react-hook-form'
 import { StepsForm, actionStepSchemaToExecutableActionStep } from './StepsForm'
 import { SiteInstructionsTestingSessionContext } from '../../context/siteInstructionsTestingSessionContext'
 import { useApiRequest } from '../../hooks/useApiRequest'
-import {
-  actionStepErrorTypeNames,
-  actionStepTypeNames,
-} from '../../utils/site-instructions-helpers'
+import { actionStepErrorTypeNames, actionStepTypeNames } from '../../utils/dictionaries'
 import { TermInfo } from '../common/TermInfo'
 import { ItemTitle } from '../common/treeStructure/ItemTitle'
 import { ItemsList } from '../common/treeStructure/ItemsList'

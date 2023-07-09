@@ -1,7 +1,8 @@
-import { useCallback, useContext, useMemo, useRef, useState } from 'react'
+import { useCallback, useMemo, useRef, useState } from 'react'
 import { Badge, Box } from '@mui/material'
 import type { Site } from '@web-scraper/common'
 import { TermInfo } from 'src/app/components/common/TermInfo'
+import { ScraperTestingSessionsModule } from '../../api/ScraperTestingSessionsModule'
 import { TransitionType, ViewTransition } from '../../components/animation/ViewTransition'
 import { ConfirmationDialog } from '../../components/common/ConfirmationDialog'
 import type { CustomDrawerRef } from '../../components/common/CustomDrawer'
@@ -12,7 +13,6 @@ import { SiteForm } from '../../components/site/SiteForm'
 import { SiteInstructionsForm } from '../../components/siteInstructions/SiteInstructionsForm'
 import { Table, useTableColumns, type TableRef } from '../../components/table'
 import { TagsCellValue } from '../../components/table/TagsCellValue'
-import { ApiContext } from '../../context/apiContext'
 import { useApiRequest } from '../../hooks/useApiRequest'
 
 export const Sites = () => {
@@ -178,7 +178,7 @@ const OpenSiteInstructionsFormButtonWithBadge = ({
   site,
   onClick,
 }: OpenSiteInstructionsFormButtonWithBadgeProps) => {
-  const { testingSessions } = useContext(ApiContext)
+  const testingSessions = ScraperTestingSessionsModule.useTestingSessions()
 
   const isSiteSessionActive = useMemo(
     () => testingSessions.sessions.some((session) => session.site.id === site.id),

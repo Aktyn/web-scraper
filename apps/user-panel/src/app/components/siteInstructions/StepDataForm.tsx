@@ -20,7 +20,7 @@ import {
   type UpsertSiteInstructionsSchema,
 } from '@web-scraper/common'
 import { Controller, useFieldArray, useFormContext } from 'react-hook-form'
-import { actionStepErrorTypeNames } from '../../utils/site-instructions-helpers'
+import { actionStepErrorTypeNames } from '../../utils/dictionaries'
 import { ItemsList } from '../common/treeStructure/ItemsList'
 import { FormInput } from '../form/FormInput'
 

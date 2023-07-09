@@ -1,4 +1,4 @@
-import { useCallback, useContext, useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { EngineeringRounded, EventRounded, LinkRounded, SendRounded } from '@mui/icons-material'
 import { LoadingButton } from '@mui/lab'
@@ -23,7 +23,7 @@ import {
 import { FormProvider, useForm } from 'react-hook-form'
 import { ActionsForm } from './ActionsForm'
 import { ProceduresForm } from './ProceduresForm'
-import { ApiContext } from '../../context/apiContext'
+import { ScraperTestingSessionsModule } from '../../api/ScraperTestingSessionsModule'
 import { SiteInstructionsTestingSessionContext } from '../../context/siteInstructionsTestingSessionContext'
 import { useApiRequest } from '../../hooks/useApiRequest'
 import { formatDate } from '../../utils'
@@ -40,7 +40,7 @@ export const SiteInstructionsForm = ({ site, onSuccess }: SiteInstructionsFormPr
   )
   const setSiteInstructionsRequest = useApiRequest(window.electronAPI.setSiteInstructions)
 
-  const { testingSessions } = useContext(ApiContext)
+  const testingSessions = ScraperTestingSessionsModule.useTestingSessions()
   const siteTestingSession = testingSessions.sessions.find((session) => session.site.id === site.id)
 
   const form = useForm<UpsertSiteInstructionsSchema>({

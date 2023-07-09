@@ -1,4 +1,3 @@
-import { useContext } from 'react'
 import {
   DashboardRounded,
   EngineeringRounded,
@@ -10,13 +9,13 @@ import { headerSize } from './Header'
 import { contentAreaBorderRadius } from './Layout'
 import { MenuItem, type MenuItemProps } from './MenuItem'
 import { commonLayoutTransitions } from './helpers'
+import { ScraperTestingSessionsModule } from '../api/ScraperTestingSessionsModule'
 import { RecaptchaIcon } from '../components/icons/RecaptchaIcon'
 import { RoutineIcon } from '../components/icons/RoutineIcon'
 import { ReactComponent as LogoIcon } from '../components/icons/icon.svg'
-import { ApiContext } from '../context/apiContext'
 
 const TestingLabel = () => {
-  const { testingSessions } = useContext(ApiContext)
+  const testingSessions = ScraperTestingSessionsModule.useTestingSessions()
 
   return (
     <Box component="span">

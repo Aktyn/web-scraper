@@ -4,7 +4,6 @@ import type {
   PaginatedApiFunction,
   PaginatedApiFunctionWithEncryptedData,
 } from './common'
-import type { Site, SiteTag, UpsertSiteSchema, UpsertSiteTagSchema } from './site'
 import type {
   Action,
   ActionExecutionResult,
@@ -14,9 +13,14 @@ import type {
   MapSiteError,
   Procedure,
   ProcedureExecutionResult,
+  ScraperExecutionFinishedSchema,
+  ScraperExecutionResultSchema,
+  ScraperExecutionStartSchema,
+  ScraperMode,
   SiteInstructions,
   UpsertSiteInstructionsSchema,
 } from './scraper'
+import type { Site, SiteTag, UpsertSiteSchema, UpsertSiteTagSchema } from './site'
 import type { UserSettings } from './user'
 
 /**
@@ -25,6 +29,9 @@ import type { UserSettings } from './user'
 export enum ElectronToRendererMessage {
   siteInstructionsTestingSessionOpen = 'siteInstructionsTestingSessionOpen',
   siteInstructionsTestingSessionClosed = 'siteInstructionsTestingSessionClosed',
+  scraperExecutionStarted = 'scraperExecutionStarted',
+  scraperExecutionResult = 'scraperExecutionResult',
+  scraperExecutionFinished = 'scraperExecutionFinished',
   requestManualDataForActionStep = 'requestManualDataForActionStep',
 }
 
@@ -93,6 +100,30 @@ export type ElectronApi = {
   >
   [ElectronToRendererMessage.siteInstructionsTestingSessionClosed]: ElectronToRendererMessageBlueprint<
     [sessionId: string]
+  >
+  [ElectronToRendererMessage.scraperExecutionStarted]: ElectronToRendererMessageBlueprint<
+    [
+      scraperId: string,
+      scraperMode: ScraperMode,
+      executionId: string,
+      data: ScraperExecutionStartSchema,
+    ]
+  >
+  [ElectronToRendererMessage.scraperExecutionResult]: ElectronToRendererMessageBlueprint<
+    [
+      scraperId: string,
+      scraperMode: ScraperMode,
+      executionId: string,
+      data: ScraperExecutionResultSchema,
+    ]
+  >
+  [ElectronToRendererMessage.scraperExecutionFinished]: ElectronToRendererMessageBlueprint<
+    [
+      scraperId: string,
+      scraperMode: ScraperMode,
+      executionId: string,
+      data: ScraperExecutionFinishedSchema,
+    ]
   >
   [ElectronToRendererMessage.requestManualDataForActionStep]: ElectronToRendererMessageWithResponseRequestBlueprint<
     [actionStep: ActionStep, valueQuery: string]

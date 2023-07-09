@@ -3,9 +3,10 @@ import {
   type ActionStep,
   type ActionStepType,
   type MapSiteError,
+  type ScraperMode,
 } from '@web-scraper/common'
 
-import type { Scraper, ScraperMode } from '../scraper'
+import type { Scraper } from '../scraper'
 
 export async function checkErrorStep<ModeType extends ScraperMode>(
   this: Scraper<ModeType>,

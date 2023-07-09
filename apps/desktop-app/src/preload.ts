@@ -6,6 +6,9 @@ import { contextBridge, ipcRenderer, type IpcRendererEvent } from 'electron'
 const electronToRendererMessageNames = [
   'siteInstructionsTestingSessionOpen',
   'siteInstructionsTestingSessionClosed',
+  'scraperExecutionStarted',
+  'scraperExecutionResult',
+  'scraperExecutionFinished',
   'requestManualDataForActionStep',
 ] as const
 const rendererToElectronMessageNames = [

@@ -187,20 +187,20 @@ export const FlowStepForm = ({
   )
 }
 
-export function flowSchemaToExecutableFlow(flowSchema: FlowSchemaType): FlowStep | null {
+export function flowSchemaToExecutableFlow(flowSchema: FlowSchemaType, level = 0): FlowStep | null {
   if (!flowSchema) {
     return null
   }
 
   return {
     ...flowSchema,
-    id: 0,
+    id: level,
     actionName: flowSchema.actionName as FlowStep['actionName'],
     onSuccess: flowSchema.onSuccess
-      ? flowSchemaToExecutableFlow(flowSchema.onSuccess as FlowSchemaType)
+      ? flowSchemaToExecutableFlow(flowSchema.onSuccess as FlowSchemaType, level + 1)
       : null,
     onFailure: flowSchema.onFailure
-      ? flowSchemaToExecutableFlow(flowSchema.onFailure as FlowSchemaType)
+      ? flowSchemaToExecutableFlow(flowSchema.onFailure as FlowSchemaType, level + 1)
       : null,
   }
 }

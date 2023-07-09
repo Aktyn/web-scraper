@@ -1,11 +1,12 @@
 import {
+  ActionStepErrorType,
   wait,
   type ActionStep,
   type ActionStepType,
-  ActionStepErrorType,
+  type ScraperMode,
 } from '@web-scraper/common'
 
-import type { Scraper, ScraperMode } from '../scraper'
+import type { Scraper } from '../scraper'
 
 export async function waitStep<ModeType extends ScraperMode>(
   this: Scraper<ModeType>,

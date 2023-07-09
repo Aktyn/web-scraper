@@ -4,10 +4,12 @@ import { CacheProvider } from '@emotion/react'
 import { CloseRounded } from '@mui/icons-material'
 import { CssBaseline, IconButton, ThemeProvider } from '@mui/material'
 import { SnackbarProvider, closeSnackbar } from 'notistack'
-import { ApiProvider } from './api/ApiProvider'
+import { ApiModule } from './api/ApiModule'
+import { ScraperExecutionModule } from './api/ScraperExecutionModule'
+import { ScraperTestingSessionsModule } from './api/ScraperTestingSessionsModule'
 import { FullViewLoader } from './components/common/loader/FullViewLoader'
 import { Config } from './config'
-import { ViewContext, type ViewName, ViewTransitionState } from './context/viewContext'
+import { ViewContext, ViewTransitionState, type ViewName } from './context/viewContext'
 import { useMounted } from './hooks/useMounted'
 import { Layout } from './layout/Layout'
 import Navigation from './navigation'
@@ -93,19 +95,23 @@ export const App = () => {
               }}
             >
               <UserDataProvider>
-                <ApiProvider>
-                  <Layout>
-                    <Suspense fallback={<FullViewLoader />}>
-                      <currentView.component key={viewName} />
-                    </Suspense>
-                    {nextView && (
-                      // Preloads next view file
-                      <Suspense fallback={null}>
-                        <nextView.component key={nextViewName} doNotRender />
-                      </Suspense>
-                    )}
-                  </Layout>
-                </ApiProvider>
+                <ApiModule.Provider>
+                  <ScraperTestingSessionsModule.Provider>
+                    <ScraperExecutionModule.Provider>
+                      <Layout>
+                        <Suspense fallback={<FullViewLoader />}>
+                          <currentView.component key={viewName} />
+                        </Suspense>
+                        {nextView && (
+                          // Preloads next view file
+                          <Suspense fallback={null}>
+                            <nextView.component key={nextViewName} doNotRender />
+                          </Suspense>
+                        )}
+                      </Layout>
+                    </ScraperExecutionModule.Provider>
+                  </ScraperTestingSessionsModule.Provider>
+                </ApiModule.Provider>
               </UserDataProvider>
             </ViewContext.Provider>
           </SnackbarProvider>

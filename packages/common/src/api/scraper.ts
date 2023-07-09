@@ -1,5 +1,11 @@
 import * as yup from 'yup'
 
+export enum ScraperMode {
+  DEFAULT,
+  TESTING,
+  PREVIEW,
+}
+
 export interface SiteInstructions {
   id: number
   createdAt: Date
@@ -168,6 +174,51 @@ export interface Procedure {
   waitFor: string | null
   siteInstructionsId: number
   flow: FlowStep | null
+}
+
+export enum ScraperExecutionScope {
+  ACTION_STEP = 'actionStep',
+  ACTION = 'action',
+  FLOW = 'flow',
+  PROCEDURE = 'procedure',
+}
+
+export type ScraperExecutionStartSchema =
+  | {
+      scope: ScraperExecutionScope.ACTION_STEP
+      actionStep: ActionStep
+    }
+  | {
+      scope: ScraperExecutionScope.ACTION
+      action: Action
+    }
+  | {
+      scope: ScraperExecutionScope.FLOW
+      flow: FlowStep
+    }
+  | {
+      scope: ScraperExecutionScope.PROCEDURE
+      procedure: Procedure
+    }
+export type ScraperExecutionResultSchema =
+  | {
+      scope: ScraperExecutionScope.ACTION_STEP
+      actionStepResult: MapSiteError
+    }
+  | {
+      scope: ScraperExecutionScope.ACTION
+      actionResult: ActionExecutionResult['actionStepsResults']
+    }
+  | {
+      scope: ScraperExecutionScope.FLOW
+      flowResult: FlowExecutionResult['flowStepsResults']
+    }
+  | {
+      scope: ScraperExecutionScope.PROCEDURE
+      procedureResult: ProcedureExecutionResult['flowExecutionResult']
+    }
+export type ScraperExecutionFinishedSchema = {
+  scope: ScraperExecutionScope
 }
 
 const mapSiteErrorSchema = yup.object({

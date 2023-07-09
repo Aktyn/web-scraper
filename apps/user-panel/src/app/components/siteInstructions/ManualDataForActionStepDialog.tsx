@@ -13,7 +13,7 @@ import {
 } from '@mui/material'
 import { ElectronToRendererMessage, type ActionStep } from '@web-scraper/common'
 import { useApiRequest } from '../../hooks/useApiRequest'
-import { actionStepTypeNames } from '../../utils/site-instructions-helpers'
+import { actionStepTypeNames } from '../../utils/dictionaries'
 import { LabeledValuesList } from '../common/LabeledValuesList'
 
 interface DataSchema {

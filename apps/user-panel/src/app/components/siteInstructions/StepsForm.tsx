@@ -11,10 +11,7 @@ import { get, useFieldArray, useFormContext } from 'react-hook-form'
 import { StepDataForm } from './StepDataForm'
 import { SiteInstructionsTestingSessionContext } from '../../context/siteInstructionsTestingSessionContext'
 import { useApiRequest } from '../../hooks/useApiRequest'
-import {
-  actionStepErrorTypeNames,
-  actionStepTypeNames,
-} from '../../utils/site-instructions-helpers'
+import { actionStepErrorTypeNames, actionStepTypeNames } from '../../utils/dictionaries'
 import { ItemsList } from '../common/treeStructure/ItemsList'
 import { FormInput } from '../form/FormInput'
 

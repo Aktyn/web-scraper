@@ -1,9 +1,12 @@
-import { useCallback, useContext, useRef, useState } from 'react'
+import { useCallback, useRef, useState } from 'react'
 import { CancelRounded } from '@mui/icons-material'
 import { LoadingButton } from '@mui/lab'
 import { Box, Card, CardActions, CardContent, Stack, Typography } from '@mui/material'
 import type { Site } from '@web-scraper/common'
-import type { TestingSessionSchema } from '../../api/useTestingSessions'
+import {
+  ScraperTestingSessionsModule,
+  type TestingSessionSchema,
+} from '../../api/ScraperTestingSessionsModule'
 import type { CustomDrawerRef } from '../../components/common/CustomDrawer'
 import { CustomDrawer } from '../../components/common/CustomDrawer'
 import { TermInfo } from '../../components/common/TermInfo'
@@ -11,14 +14,13 @@ import { UrlButton } from '../../components/common/button/UrlButton'
 import { OpenSiteInstructionsFormButton } from '../../components/site/OpenSiteInstructionsFormButton'
 import { SiteInstructionsForm } from '../../components/siteInstructions/SiteInstructionsForm'
 import { TagsCellValue } from '../../components/table/TagsCellValue'
-import { ApiContext } from '../../context/apiContext'
 
 interface TestingSessionItemProps {
   session: TestingSessionSchema
 }
 
 export const TestingSessionItem = ({ session }: TestingSessionItemProps) => {
-  const { testingSessions } = useContext(ApiContext)
+  const testingSessions = ScraperTestingSessionsModule.useTestingSessions()
   const siteInstructionsDrawerRef = useRef<CustomDrawerRef>(null)
 
   const [siteToShowInstructions, setSiteToShowInstructions] = useState<Site | null>(null)

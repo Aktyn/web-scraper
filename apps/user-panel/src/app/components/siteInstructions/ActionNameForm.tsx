@@ -13,7 +13,7 @@ import {
 import type { GLOBAL_ACTION_PREFIX, UpsertSiteInstructionsSchema } from '@web-scraper/common'
 import { GlobalActionType, REGULAR_ACTION_PREFIX } from '@web-scraper/common'
 import { useFormContext, Controller } from 'react-hook-form'
-import { globalActionTypeNames } from '../../utils/site-instructions-helpers'
+import { globalActionTypeNames } from '../../utils/dictionaries'
 
 export const ActionNameForm = ({ fieldName }: { fieldName: `procedures.${number}.flow` }) => {
   const form = useFormContext<UpsertSiteInstructionsSchema>()

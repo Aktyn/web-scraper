@@ -1,12 +1,11 @@
-import { useContext } from 'react'
 import { Stack, Typography } from '@mui/material'
 import { TestingSessionItem } from './TestingSessionItem'
+import { ScraperTestingSessionsModule } from '../../api/ScraperTestingSessionsModule'
 import { TransitionType, ViewTransition } from '../../components/animation/ViewTransition'
-import { ApiContext } from '../../context/apiContext'
 import { commonLayoutTransitions } from '../../layout/helpers'
 
 export const TestingSessionsList = () => {
-  const { testingSessions } = useContext(ApiContext)
+  const testingSessions = ScraperTestingSessionsModule.useTestingSessions()
 
   return (
     <Stack alignItems="center" gap={2}>

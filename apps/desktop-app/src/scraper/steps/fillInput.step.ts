@@ -4,10 +4,11 @@ import {
   type ActionStep,
   type ActionStepType,
   safePromise,
+  type ScraperMode,
 } from '@web-scraper/common'
 
 import type { RequestDataCallback } from '../helpers'
-import type { Scraper, ScraperMode } from '../scraper'
+import type { Scraper } from '../scraper'
 
 export async function fillInputStep<ModeType extends ScraperMode>(
   this: Scraper<ModeType>,

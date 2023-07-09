@@ -266,6 +266,30 @@ export function generateColorizedTheme({
               },
             },
           },
+          MuiStepIcon: {
+            styleOverrides: {
+              root: {
+                color: textSecondary,
+                '&.Mui-active': {
+                  color: textPrimary,
+                },
+              },
+            },
+          },
+          MuiStepContent: {
+            styleOverrides: {
+              root: {
+                borderColor: alpha(textSecondary, 0.5),
+              },
+            },
+          },
+          MuiStepConnector: {
+            styleOverrides: {
+              line: {
+                borderColor: alpha(textSecondary, 0.5),
+              },
+            },
+          },
         },
       },
       { clone: true },

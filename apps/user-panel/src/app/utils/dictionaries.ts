@@ -4,6 +4,7 @@ import {
   CaptchaSolverType,
   GlobalActionType,
   ProcedureType,
+  ScraperExecutionScope,
 } from '@web-scraper/common'
 
 export const actionStepTypeNames: { [key in ActionStepType]: string } = {
@@ -46,4 +47,11 @@ export const globalActionTypeNames: { [key in GlobalActionType]: string } = {
   [GlobalActionType.FINISH]: 'Finish',
   [GlobalActionType.FINISH_WITH_ERROR]: 'Finish with error',
   [GlobalActionType.FINISH_WITH_NOTIFICATION]: 'Finish with notification',
+}
+
+export const scraperExecutionScopeNames: { [key in ScraperExecutionScope]: string } = {
+  [ScraperExecutionScope.ACTION_STEP]: 'Action step',
+  [ScraperExecutionScope.ACTION]: 'Action',
+  [ScraperExecutionScope.FLOW]: 'Flow',
+  [ScraperExecutionScope.PROCEDURE]: 'Procedure',
 }

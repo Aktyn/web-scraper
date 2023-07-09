@@ -10,13 +10,14 @@ import {
   type FlowStep,
   omit,
   type ProcedureExecutionResult,
+  type ScraperMode,
 } from '@web-scraper/common'
 import express from 'express'
 import { afterAll, beforeAll, describe, expect, it, vi, type Mock } from 'vitest'
 
 import { type RequestDataCallback } from '.'
 import '../test-utils/electronMock'
-import { Scraper, type ScraperMode } from './scraper'
+import { Scraper } from './scraper'
 
 class ExposedScraper<ModeType extends ScraperMode> extends Scraper<ModeType> {
   private getElementValue(selector: `${string} ${'input' | 'select'}`) {

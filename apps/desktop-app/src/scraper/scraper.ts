@@ -21,10 +21,14 @@ import {
   type Procedure,
   type ProcedureExecutionResult,
   type Site,
+  ElectronToRendererMessage,
+  ScraperExecutionScope,
+  ScraperMode,
 } from '@web-scraper/common'
 import type { ElementHandle, Page } from 'puppeteer'
 import * as uuid from 'uuid'
 
+import { broadcastMessage } from '../api/internal/helpers'
 import { parseUserSettings } from '../api/internal/parsers/userSettingsParser'
 import Database from '../database'
 
@@ -40,12 +44,6 @@ import {
   waitForElementStep,
   waitStep,
 } from './steps'
-
-export enum ScraperMode {
-  DEFAULT,
-  TESTING,
-  PREVIEW,
-}
 
 type ScraperOptions<ModeType extends ScraperMode> = (ModeType extends ScraperMode.TESTING
   ? { siteId: Site['id']; lockURL: string }
@@ -233,36 +231,82 @@ export class Scraper<ModeType extends ScraperMode> {
     actions: Action[],
     onDataRequest: RequestDataCallback,
   ): Promise<ProcedureExecutionResult> {
-    this.logger.info('Performing procedure:', procedure.type)
-
-    if (!procedure.flow) {
-      throw new Error('Procedure flow is not defined')
-    }
-
+    const executionId = uuid.v4()
     try {
-      if (new URL(this.mainPage!.exposed.url()).href !== new URL(procedure.startUrl).href) {
-        await this.mainPage!.goto(procedure.startUrl, null, {
-          timeout: 30_000,
-          waitUntil: 'networkidle0',
-        })
-      }
-    } catch (error) {
-      this.logger.error(error)
-    }
-
-    if (procedure.waitFor) {
-      const handle = await this.waitFor(procedure.waitFor)
-      if (!handle) {
-        return {
+      this.logger.info('Performing procedure:', procedure.type)
+      broadcastMessage(
+        ElectronToRendererMessage.scraperExecutionStarted,
+        this.id,
+        this.mode,
+        executionId,
+        {
+          scope: ScraperExecutionScope.PROCEDURE,
           procedure,
-          flowExecutionResult: { errorType: ActionStepErrorType.ELEMENT_NOT_FOUND },
+        },
+      )
+
+      if (!procedure.flow) {
+        throw new Error('Procedure flow is not defined')
+      }
+
+      try {
+        if (new URL(this.mainPage!.exposed.url()).href !== new URL(procedure.startUrl).href) {
+          await this.mainPage!.goto(procedure.startUrl, null, {
+            timeout: 30_000,
+            waitUntil: 'networkidle0',
+          })
+        }
+      } catch (error) {
+        this.logger.error(error)
+      }
+
+      if (procedure.waitFor) {
+        const handle = await this.waitFor(procedure.waitFor)
+        if (!handle) {
+          broadcastMessage(
+            ElectronToRendererMessage.scraperExecutionResult,
+            this.id,
+            this.mode,
+            executionId,
+            {
+              scope: ScraperExecutionScope.PROCEDURE,
+              procedureResult: { errorType: ActionStepErrorType.ELEMENT_NOT_FOUND },
+            },
+          )
+          return {
+            procedure,
+            flowExecutionResult: { errorType: ActionStepErrorType.ELEMENT_NOT_FOUND },
+          }
         }
       }
-    }
 
-    return {
-      procedure,
-      flowExecutionResult: await this.performFlow(procedure.flow, actions, onDataRequest),
+      const flowExecutionResult = await this.performFlow(procedure.flow, actions, onDataRequest)
+
+      broadcastMessage(
+        ElectronToRendererMessage.scraperExecutionResult,
+        this.id,
+        this.mode,
+        executionId,
+        {
+          scope: ScraperExecutionScope.PROCEDURE,
+          procedureResult: flowExecutionResult,
+        },
+      )
+
+      return {
+        procedure,
+        flowExecutionResult,
+      }
+    } finally {
+      broadcastMessage(
+        ElectronToRendererMessage.scraperExecutionFinished,
+        this.id,
+        this.mode,
+        executionId,
+        {
+          scope: ScraperExecutionScope.PROCEDURE,
+        },
+      )
     }
   }
 
@@ -272,94 +316,128 @@ export class Scraper<ModeType extends ScraperMode> {
     actions: Action[],
     onDataRequest: RequestDataCallback,
   ): Promise<FlowExecutionResult> {
-    this.logger.info('Performing flow starting with action:', flow.actionName)
-
-    const flowStepsResults: FlowExecutionResult['flowStepsResults'] = []
-
-    if (isRegularAction(flow.actionName)) {
-      const actionName = flow.actionName.substring(REGULAR_ACTION_PREFIX.length + 1)
-      const action = actions.find((action) => action.name === actionName)
-      if (!action) {
-        throw new Error(`Action ${actionName} not found`)
-      }
-
-      const actionResult = await this.performAction(action, onDataRequest)
-      const actionSucceeded = actionResult.actionStepsResults.every(
-        (stepResult) => stepResult.result.errorType === ActionStepErrorType.NO_ERROR,
+    const executionId = uuid.v4()
+    try {
+      this.logger.info('Performing flow starting with action:', flow.actionName)
+      broadcastMessage(
+        ElectronToRendererMessage.scraperExecutionStarted,
+        this.id,
+        this.mode,
+        executionId,
+        {
+          scope: ScraperExecutionScope.FLOW,
+          flow,
+        },
       )
 
-      flowStepsResults.push({
-        flowStep: omit(flow, 'onSuccess', 'onFailure'),
-        actionResult,
-        returnedValues: [],
-        succeeded: actionSucceeded,
-      })
+      const flowStepsResults: FlowExecutionResult['flowStepsResults'] = []
 
-      if (actionSucceeded) {
-        if (!flow.onSuccess) {
-          throw new Error(`Flow ${flow.actionName} has no onSuccess flow`)
+      if (isRegularAction(flow.actionName)) {
+        const actionName = flow.actionName.substring(REGULAR_ACTION_PREFIX.length + 1)
+        const action = actions.find((action) => action.name === actionName)
+        if (!action) {
+          throw new Error(`Action ${actionName} not found`)
         }
-        const successResult = await this.performFlow(flow.onSuccess, actions, onDataRequest)
-        flowStepsResults.push(...successResult.flowStepsResults)
-      } else {
-        if (!flow.onFailure) {
-          throw new Error(`Flow ${flow.actionName} has no onFailure flow`)
-        }
-        const failureResult = await this.performFlow(flow.onFailure, actions, onDataRequest)
-        flowStepsResults.push(...failureResult.flowStepsResults)
-      }
-    } else if (isGlobalAction(flow.actionName)) {
-      const globalAction = flow.actionName.substring(
-        GLOBAL_ACTION_PREFIX.length + 1,
-      ) as GlobalActionType
 
-      flowStepsResults.push({
-        flowStep: omit(flow, 'onSuccess', 'onFailure'),
-        actionResult: null,
-        returnedValues: await Promise.all(
-          flow.globalReturnValues.map(async (selector) => {
-            try {
-              const elementSuccess = await this.waitFor(selector)
-              if (!elementSuccess) {
-                return { error: 'Element not found' }
-              }
+        const actionResult = await this.performAction(action, onDataRequest)
+        const actionSucceeded = actionResult.actionStepsResults.every(
+          (stepResult) => stepResult.result.errorType === ActionStepErrorType.NO_ERROR,
+        )
 
-              const text = await elementSuccess.evaluate((el) => el.textContent)
-              if (text === null) {
-                return { error: 'Element has no text content' }
-              }
-              return text
-            } catch (error) {
-              return { error: error instanceof Error ? error.message : String(error) }
-            }
-          }),
-        ),
-        succeeded: globalAction !== GlobalActionType.FINISH_WITH_ERROR,
-      })
+        flowStepsResults.push({
+          flowStep: omit(flow, 'onSuccess', 'onFailure'),
+          actionResult,
+          returnedValues: [],
+          succeeded: actionSucceeded,
+        })
 
-      switch (globalAction) {
-        case GlobalActionType.FINISH:
-        case GlobalActionType.FINISH_WITH_ERROR:
-          // noop
-          break
-        case GlobalActionType.FINISH_WITH_NOTIFICATION:
-          {
-            const userSettings = await Database.userData.getUserSettings().then(parseUserSettings)
-            if (userSettings.desktopNotifications) {
-              getFlowFinishedNotification().show()
-            }
+        if (actionSucceeded) {
+          if (!flow.onSuccess) {
+            throw new Error(`Flow ${flow.actionName} has no onSuccess flow`)
           }
-          break
-        default:
-          throw new Error(`Invalid global action: ${globalAction}`)
-      }
-    } else {
-      throw new Error(`Invalid action name: ${flow.actionName}`)
-    }
+          const successResult = await this.performFlow(flow.onSuccess, actions, onDataRequest)
+          flowStepsResults.push(...successResult.flowStepsResults)
+        } else {
+          if (!flow.onFailure) {
+            throw new Error(`Flow ${flow.actionName} has no onFailure flow`)
+          }
+          const failureResult = await this.performFlow(flow.onFailure, actions, onDataRequest)
+          flowStepsResults.push(...failureResult.flowStepsResults)
+        }
+      } else if (isGlobalAction(flow.actionName)) {
+        const globalAction = flow.actionName.substring(
+          GLOBAL_ACTION_PREFIX.length + 1,
+        ) as GlobalActionType
 
-    return {
-      flow,
-      flowStepsResults,
+        flowStepsResults.push({
+          flowStep: omit(flow, 'onSuccess', 'onFailure'),
+          actionResult: null,
+          returnedValues: await Promise.all(
+            flow.globalReturnValues.map(async (selector) => {
+              try {
+                const elementSuccess = await this.waitFor(selector)
+                if (!elementSuccess) {
+                  return { error: 'Element not found' }
+                }
+
+                const text = await elementSuccess.evaluate((el) => el.textContent)
+                if (text === null) {
+                  return { error: 'Element has no text content' }
+                }
+                return text
+              } catch (error) {
+                return { error: error instanceof Error ? error.message : String(error) }
+              }
+            }),
+          ),
+          succeeded: globalAction !== GlobalActionType.FINISH_WITH_ERROR,
+        })
+
+        switch (globalAction) {
+          case GlobalActionType.FINISH:
+          case GlobalActionType.FINISH_WITH_ERROR:
+            // noop
+            break
+          case GlobalActionType.FINISH_WITH_NOTIFICATION:
+            {
+              const userSettings = await Database.userData.getUserSettings().then(parseUserSettings)
+              if (userSettings.desktopNotifications) {
+                getFlowFinishedNotification().show()
+              }
+            }
+            break
+          default:
+            throw new Error(`Invalid global action: ${globalAction}`)
+        }
+      } else {
+        throw new Error(`Invalid action name: ${flow.actionName}`)
+      }
+
+      broadcastMessage(
+        ElectronToRendererMessage.scraperExecutionResult,
+        this.id,
+        this.mode,
+        executionId,
+        {
+          scope: ScraperExecutionScope.FLOW,
+          flowResult: flowStepsResults,
+        },
+      )
+
+      return {
+        flow,
+        flowStepsResults,
+      }
+    } finally {
+      broadcastMessage(
+        ElectronToRendererMessage.scraperExecutionFinished,
+        this.id,
+        this.mode,
+        executionId,
+        {
+          scope: ScraperExecutionScope.FLOW,
+        },
+      )
     }
   }
 
@@ -368,32 +446,65 @@ export class Scraper<ModeType extends ScraperMode> {
     action: Action,
     onDataRequest: RequestDataCallback,
   ): Promise<ActionExecutionResult> {
-    this.logger.info('Performing action:', action.name)
+    const executionId = uuid.v4()
+    try {
+      this.logger.info('Performing action:', action.name)
+      broadcastMessage(
+        ElectronToRendererMessage.scraperExecutionStarted,
+        this.id,
+        this.mode,
+        executionId,
+        {
+          scope: ScraperExecutionScope.ACTION,
+          action,
+        },
+      )
 
-    if (action.url) {
-      try {
-        if (new URL(this.mainPage!.exposed.url()).href !== new URL(action.url).href) {
-          await this.mainPage!.goto(action.url, null, {
-            timeout: 30_000,
-            waitUntil: 'networkidle0',
-          })
+      if (action.url) {
+        try {
+          if (new URL(this.mainPage!.exposed.url()).href !== new URL(action.url).href) {
+            await this.mainPage!.goto(action.url, null, {
+              timeout: 30_000,
+              waitUntil: 'networkidle0',
+            })
+          }
+        } catch (error) {
+          this.logger.error(error)
         }
-      } catch (error) {
-        this.logger.error(error)
       }
-    }
 
-    const actionStepsResults: ActionExecutionResult['actionStepsResults'] = []
+      const actionStepsResults: ActionExecutionResult['actionStepsResults'] = []
 
-    const steps = action.actionSteps.sort(sortNumbers('orderIndex', 'asc'))
-    for (const step of steps) {
-      const result = await this.performActionStep(step, onDataRequest)
-      actionStepsResults.push({ step, result })
-    }
+      const steps = action.actionSteps.sort(sortNumbers('orderIndex', 'asc'))
+      for (const step of steps) {
+        const result = await this.performActionStep(step, onDataRequest)
+        actionStepsResults.push({ step, result })
+      }
 
-    return {
-      action,
-      actionStepsResults,
+      broadcastMessage(
+        ElectronToRendererMessage.scraperExecutionResult,
+        this.id,
+        this.mode,
+        executionId,
+        {
+          scope: ScraperExecutionScope.ACTION,
+          actionResult: actionStepsResults,
+        },
+      )
+      return {
+        action,
+        actionStepsResults,
+      }
+    } finally {
+      broadcastMessage(
+        ElectronToRendererMessage.scraperExecutionFinished,
+        this.id,
+        this.mode,
+        executionId,
+        {
+          scope: ScraperExecutionScope.ACTION,
+        },
+      )
     }
   }
 
@@ -402,8 +513,51 @@ export class Scraper<ModeType extends ScraperMode> {
     actionStep: ActionStep,
     onDataRequest: RequestDataCallback,
   ): Promise<MapSiteError> {
-    this.logger.info('Performing action step:', actionStep.type)
+    const executionId = uuid.v4()
+    try {
+      this.logger.info('Performing action step:', actionStep.type)
+      broadcastMessage(
+        ElectronToRendererMessage.scraperExecutionStarted,
+        this.id,
+        this.mode,
+        executionId,
+        {
+          scope: ScraperExecutionScope.ACTION_STEP,
+          actionStep,
+        },
+      )
 
+      const result = await this.getActionStepResult(actionStep, onDataRequest)
+
+      broadcastMessage(
+        ElectronToRendererMessage.scraperExecutionResult,
+        this.id,
+        this.mode,
+        executionId,
+        {
+          scope: ScraperExecutionScope.ACTION_STEP,
+          actionStepResult: result,
+        },
+      )
+      return result
+    } finally {
+      broadcastMessage(
+        ElectronToRendererMessage.scraperExecutionFinished,
+        this.id,
+        this.mode,
+        executionId,
+        {
+          scope: ScraperExecutionScope.ACTION_STEP,
+        },
+      )
+    }
+  }
+
+  @assertMainPage
+  private async getActionStepResult(
+    actionStep: ActionStep,
+    onDataRequest: RequestDataCallback,
+  ): Promise<MapSiteError> {
     switch (actionStep.type) {
       case ActionStepType.WAIT:
         return await this.waitStep(actionStep)
