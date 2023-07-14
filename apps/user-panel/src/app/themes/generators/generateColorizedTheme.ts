@@ -14,7 +14,7 @@ import { Config } from '../../config'
 import { baseTheme, baseThemeOptions } from '../baseTheme'
 import { generateComplementaryColor, mixColors, setSaturation } from '../helpers'
 
-type ColorSchema = {
+export type ColorSchema = {
   50: string
   100: string
   200: string

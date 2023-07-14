@@ -2,7 +2,6 @@ import { useCallback, useMemo, useRef, useState } from 'react'
 import { Badge, Box } from '@mui/material'
 import type { Site } from '@web-scraper/common'
 import { TermInfo } from 'src/app/components/common/TermInfo'
-import { ScraperTestingSessionsModule } from '../../api/ScraperTestingSessionsModule'
 import { TransitionType, ViewTransition } from '../../components/animation/ViewTransition'
 import { ConfirmationDialog } from '../../components/common/ConfirmationDialog'
 import type { CustomDrawerRef } from '../../components/common/CustomDrawer'
@@ -14,6 +13,7 @@ import { SiteInstructionsForm } from '../../components/siteInstructions/SiteInst
 import { Table, useTableColumns, type TableRef } from '../../components/table'
 import { TagsCellValue } from '../../components/table/TagsCellValue'
 import { useApiRequest } from '../../hooks/useApiRequest'
+import { ScraperTestingSessionsModule } from '../../modules/ScraperTestingSessionsModule'
 
 export const Sites = () => {
   const tableRef = useRef<TableRef>(null)

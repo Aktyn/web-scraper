@@ -52,6 +52,10 @@ export const baseThemeOptions: ThemeOptions = {
       },
     },
     MuiButton: {
+      defaultProps: {
+        variant: 'outlined',
+        color: 'primary',
+      },
       styleOverrides: {
         root: {
           lineHeight: 1,

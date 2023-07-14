@@ -43,16 +43,21 @@ const Navigation = {
   } as NavigationEntry,
   CAPTCHA: {
     component: lazy(() => import('./views/Captcha/CaptchaView')),
-    theme: mainThemes.pink,
+    theme: mainThemes.cyan,
     gridPosition: [1, 1],
   } as NavigationEntry,
   INFO: {
     component: lazy(() => import('./views/Info/InfoView')),
-    theme: mainThemes.cyan,
+    theme: mainThemes.pink,
     gridPosition: [2, 1],
     viewSettings: {
       disableTopFadeEffect: true,
     },
+  } as NavigationEntry,
+  NOTIFICATIONS: {
+    component: lazy(() => import('./views/Notifications/NotificationsView')),
+    theme: mainThemes.deepOrange,
+    gridPosition: [0, 2],
   } as NavigationEntry,
 } as const
 
@@ -62,4 +67,5 @@ export default Navigation
 /*-----------------------------------------------
 | DASHBOARD     | ROUTINES      | DATA_MANAGER  |
 | TESTING       | CAPTCHA       | INFO          |
+| NOTIFICATIONS | -             | -             |
 ------------------------------------------------*/

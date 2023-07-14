@@ -29,3 +29,9 @@ export type ExtractTypeByPath<
 export type NumericKeys<T> = {
   [K in keyof T]: T[K] extends number ? K : never
 }[keyof T]
+
+export type AwaitedFunction<T extends (...args: never[]) => Promise<unknown>> = T extends (
+  ...args: never[]
+) => Promise<infer R>
+  ? (...args: Parameters<T>) => R
+  : never

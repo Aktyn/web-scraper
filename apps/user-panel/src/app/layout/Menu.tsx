@@ -2,6 +2,7 @@ import {
   DashboardRounded,
   EngineeringRounded,
   InfoRounded,
+  NotificationsRounded,
   StorageRounded,
 } from '@mui/icons-material'
 import { Box, List, Stack, Typography, useTheme } from '@mui/material'
@@ -9,10 +10,10 @@ import { headerSize } from './Header'
 import { contentAreaBorderRadius } from './Layout'
 import { MenuItem, type MenuItemProps } from './MenuItem'
 import { commonLayoutTransitions } from './helpers'
-import { ScraperTestingSessionsModule } from '../api/ScraperTestingSessionsModule'
 import { RecaptchaIcon } from '../components/icons/RecaptchaIcon'
 import { RoutineIcon } from '../components/icons/RoutineIcon'
 import { ReactComponent as LogoIcon } from '../components/icons/icon.svg'
+import { ScraperTestingSessionsModule } from '../modules/ScraperTestingSessionsModule'
 
 const TestingLabel = () => {
   const testingSessions = ScraperTestingSessionsModule.useTestingSessions()
@@ -36,6 +37,7 @@ const menuEntries: MenuItemProps[] = [
   { label: <TestingLabel />, icon: EngineeringRounded, viewName: 'TESTING' },
   { label: 'Captcha', icon: RecaptchaIcon, viewName: 'CAPTCHA' },
   { label: 'Info', icon: InfoRounded, viewName: 'INFO' },
+  { label: 'Notifications', icon: NotificationsRounded, viewName: 'NOTIFICATIONS' },
 ]
 
 export const Menu = () => {

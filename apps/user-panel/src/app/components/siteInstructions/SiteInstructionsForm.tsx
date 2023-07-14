@@ -23,9 +23,9 @@ import {
 import { FormProvider, useForm } from 'react-hook-form'
 import { ActionsForm } from './ActionsForm'
 import { ProceduresForm } from './ProceduresForm'
-import { ScraperTestingSessionsModule } from '../../api/ScraperTestingSessionsModule'
 import { SiteInstructionsTestingSessionContext } from '../../context/siteInstructionsTestingSessionContext'
 import { useApiRequest } from '../../hooks/useApiRequest'
+import { ScraperTestingSessionsModule } from '../../modules/ScraperTestingSessionsModule'
 import { formatDate } from '../../utils'
 import { UrlButton } from '../common/button/UrlButton'
 

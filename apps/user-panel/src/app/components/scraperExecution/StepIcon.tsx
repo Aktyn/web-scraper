@@ -1,7 +1,21 @@
 import { CheckCircleRounded, CircleRounded, ErrorRounded } from '@mui/icons-material'
-import { type StepIconProps } from '@mui/material'
+import { Skeleton, type StepIconProps } from '@mui/material'
 
 export const StepIcon = (props: StepIconProps) => {
+  if (!props.completed && props.active) {
+    return (
+      <Skeleton
+        className={props.className}
+        variant="circular"
+        width={24}
+        height={24}
+        sx={{
+          ...props.sx,
+        }}
+      />
+    )
+  }
+
   const IconComponent = props.error
     ? ErrorRounded
     : props.completed

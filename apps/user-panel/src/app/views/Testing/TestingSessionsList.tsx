@@ -1,8 +1,8 @@
 import { Stack, Typography } from '@mui/material'
 import { TestingSessionItem } from './TestingSessionItem'
-import { ScraperTestingSessionsModule } from '../../api/ScraperTestingSessionsModule'
 import { TransitionType, ViewTransition } from '../../components/animation/ViewTransition'
 import { commonLayoutTransitions } from '../../layout/helpers'
+import { ScraperTestingSessionsModule } from '../../modules/ScraperTestingSessionsModule'
 
 export const TestingSessionsList = () => {
   const testingSessions = ScraperTestingSessionsModule.useTestingSessions()

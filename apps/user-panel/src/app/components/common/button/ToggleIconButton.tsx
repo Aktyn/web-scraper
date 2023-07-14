@@ -16,17 +16,17 @@ export const ToggleIconButton = ({
   openTooltip,
   closeTooltip,
 }: ToggleIconButtonProps) => {
-  const editButtonRef = useRef<HTMLButtonElement>(null)
+  const buttonRef = useRef<HTMLButtonElement>(null)
 
   useEffect(() => {
     anime({
-      targets: editButtonRef.current?.querySelector('svg:first-of-type'),
+      targets: buttonRef.current?.querySelector('svg:first-of-type'),
       easing: 'spring(0.7, 100, 10, 0)',
       opacity: open ? 0 : 1,
       rotate: open ? -90 : 0,
     })
     anime({
-      targets: editButtonRef.current?.querySelector('svg:last-of-type'),
+      targets: buttonRef.current?.querySelector('svg:last-of-type'),
       easing: 'spring(0.7, 100, 10, 0)',
       opacity: open ? 1 : 0,
       rotate: open ? 0 : 90,
@@ -36,7 +36,7 @@ export const ToggleIconButton = ({
   return (
     <Tooltip title={open ? openTooltip : closeTooltip}>
       <IconButton
-        ref={editButtonRef}
+        ref={buttonRef}
         size="small"
         onClick={() => onToggle((open) => !open)}
         sx={{ position: 'relative', width: '1.75rem', height: '1.75rem' }}

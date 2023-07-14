@@ -148,6 +148,5 @@ function useTestingSessions() {
 
 export const ScraperTestingSessionsModule = {
   Provider: ScraperTestingSessionsProvider,
-  // Context: ScraperTestingSessionsContext,
   useTestingSessions,
 }

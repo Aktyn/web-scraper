@@ -1,5 +1,9 @@
-import { ElectronToRendererMessage } from '@web-scraper/common'
-import { type AnyScraperExecutionType } from '../../api/ScraperExecutionModule'
+import {
+  ActionStepErrorType,
+  ElectronToRendererMessage,
+  ScraperExecutionScope,
+} from '@web-scraper/common'
+import { type AnyScraperExecutionType } from '../../modules/ScraperExecutionModule'
 
 export type ParsedScraperExecution = {
   start: AnyScraperExecutionType & { event: ElectronToRendererMessage.scraperExecutionStarted }
@@ -45,4 +49,27 @@ export function parseScraperExecution(execution: AnyScraperExecutionType[]) {
   }
 
   return parsed
+}
+
+export function executionItemResultFailed(executionItem: ParsedScraperExecution) {
+  if (!executionItem.result) {
+    return false
+  }
+
+  switch (executionItem.result.scope) {
+    case ScraperExecutionScope.ACTION_STEP:
+      return executionItem.result.actionStepResult.errorType !== ActionStepErrorType.NO_ERROR
+    case ScraperExecutionScope.ACTION:
+      return executionItem.result.actionResult.some((actionStepResult) => {
+        return actionStepResult.result.errorType !== ActionStepErrorType.NO_ERROR
+      })
+    case ScraperExecutionScope.FLOW:
+      return executionItem.result.flowResult.some((flowStepResult) => !flowStepResult.succeeded)
+    case ScraperExecutionScope.PROCEDURE:
+      return 'errorType' in executionItem.result.procedureResult
+        ? executionItem.result.procedureResult.errorType !== ActionStepErrorType.NO_ERROR
+        : executionItem.result.procedureResult.flowStepsResults.some((result) => !result.succeeded)
+  }
+
+  return false
 }

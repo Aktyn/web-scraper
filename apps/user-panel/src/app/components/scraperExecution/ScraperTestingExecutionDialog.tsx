@@ -1,8 +1,9 @@
-import { Fragment, useEffect, useMemo, useState } from 'react'
+import { Fragment, useEffect, useMemo, useRef, useState } from 'react'
 import {
   CheckRounded,
   CircleRounded,
   CodeRounded,
+  ErrorRounded,
   ExitToAppRounded,
   ExpandMoreRounded,
   FormatListBulletedRounded,
@@ -26,11 +27,19 @@ import {
   Typography,
   type TextFieldProps,
 } from '@mui/material'
-import { ScraperExecutionScope } from '@web-scraper/common'
+import { ActionStepErrorType, ScraperExecutionScope } from '@web-scraper/common'
 import { StepIcon } from './StepIcon'
-import { parseScraperExecution, type ParsedScraperExecution } from './helpers'
-import { ScraperExecutionModule, type ScraperExecutionLite } from '../../api/ScraperExecutionModule'
 import {
+  parseScraperExecution,
+  type ParsedScraperExecution,
+  executionItemResultFailed,
+} from './helpers'
+import {
+  ScraperExecutionModule,
+  type ScraperExecutionLite,
+} from '../../modules/ScraperExecutionModule'
+import {
+  actionStepErrorTypeNames,
   actionStepTypeNames,
   procedureTypeNames,
   scraperExecutionScopeNames,
@@ -55,12 +64,21 @@ export const ScraperTestingExecutionDialog = ({
   open,
   onClose,
 }: ScraperTestingExecutionDialogProps) => {
+  const executionFinishedInfoRef = useRef<HTMLDivElement | null>(null)
+
   const executionData = ScraperExecutionModule.useScraperExecution(scraperId, mode)
 
   const execution = useMemo(
     () => parseScraperExecution(executionData?.execution ?? []),
     [executionData?.execution],
   )
+
+  useEffect(() => {
+    if (!executionFinishedInfoRef.current || !executionData?.finished) {
+      return
+    }
+    executionFinishedInfoRef.current.scrollIntoView({ behavior: 'smooth' })
+  }, [executionData?.finished])
 
   return (
     <Dialog open={open}>
@@ -73,7 +91,12 @@ export const ScraperTestingExecutionDialog = ({
         <Stack gap={2}>
           <ExecutionStepper execution={execution} ignoreScopes={actionStepScopes} />
           {executionData?.finished && (
-            <Typography variant="h6" fontWeight="bold" color="success.main">
+            <Typography
+              ref={executionFinishedInfoRef}
+              variant="h6"
+              fontWeight="bold"
+              color="success.main"
+            >
               Execution finished <CheckRounded sx={{ verticalAlign: 'text-bottom' }} />
             </Typography>
           )}
@@ -125,12 +148,16 @@ const ExecutionStepper = ({ execution, ignoreScopes = [] }: ExecutionStepperProp
             : null
 
         return (
-          // TODO: handle execution finished with error
           <Step key={executionItem.start.id} completed={!!executionItem.finish}>
-            <StepLabel StepIconComponent={StepIcon}>
+            <StepLabel
+              StepIconComponent={StepIcon}
+              onClick={() => setActiveStep(index)}
+              error={executionItemResultFailed(executionItem)}
+              sx={{ cursor: 'pointer' }}
+            >
               <Stack direction="row" alignItems="center" gap={1}>
                 <ScraperExecutionItemLabel item={executionItem} />
-                <IconButton disabled={activeStep === index} onClick={() => setActiveStep(index)}>
+                <IconButton disabled={activeStep === index}>
                   <ExpandMoreRounded fontSize="inherit" />
                 </IconButton>
               </Stack>
@@ -166,12 +193,20 @@ const ScraperExecutionItemLabel = ({ item }: ScraperExecutionItemProps) => {
 }
 
 const ScraperExecutionItemContent = ({ item }: ScraperExecutionItemProps) => {
+  const containerRef = useRef<HTMLDivElement | null>(null)
+
+  useEffect(() => {
+    setTimeout(() => {
+      if (containerRef.current) {
+        containerRef.current.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
+      }
+    }, 200)
+  }, [])
+
   const start = item.start
 
-  //TODO: spinner
-
   return (
-    <Stack width="100%">
+    <Stack ref={containerRef} width="100%">
       {start.scope === ScraperExecutionScope.PROCEDURE && (
         <>
           <ReadonlyField
@@ -232,6 +267,15 @@ const ScraperExecutionItemContent = ({ item }: ScraperExecutionItemProps) => {
               ))}
             </Fragment>
           ) : null,
+        )}
+      {item.result?.scope === ScraperExecutionScope.ACTION_STEP &&
+        item.result.actionStepResult.errorType !== ActionStepErrorType.NO_ERROR && (
+          <ReadonlyField
+            label="Action error"
+            value={actionStepErrorTypeNames[item.result.actionStepResult.errorType]}
+            icon={<ErrorRounded color="error" />}
+            error
+          />
         )}
     </Stack>
   )
