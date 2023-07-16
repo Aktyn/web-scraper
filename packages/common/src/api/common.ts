@@ -31,7 +31,7 @@ type StringFilter = {
 
 type TypedFilter<ValueType> = ValueType extends string ? StringFilter : never
 
-type DataFilter<DataType> = Partial<{
+export type DataFilter<DataType> = Partial<{
   [key in keyof DataType]: DataType[key] | TypedFilter<DataType[key]>
 }>
 

@@ -1,33 +1,58 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
-import { Box, Divider, Stack } from '@mui/material'
+import { type MutableRefObject, memo, useCallback, useEffect, useRef, useState } from 'react'
+import { RefreshRounded, SelectAllRounded } from '@mui/icons-material'
+import { Box, Button, Divider, Grow, Stack, Tooltip, Typography, alpha } from '@mui/material'
 import { useSnackbar } from 'notistack'
 import { FixedSizeList, type ListOnScrollProps } from 'react-window'
 import { NotificationItem } from './NotificationItem'
 import {
   notificationItemHeight,
+  notificationTypeProps,
   notificationsFetchChunkSize,
   notificationsListInfiniteLoadOffset,
 } from './helpers'
 import { TransitionType, ViewTransition } from '../../components/animation/ViewTransition'
 import { AutoSizer } from '../../components/common/AutoSizer'
 import { ToggleButton } from '../../components/common/button/ToggleButton'
+import { FullViewLoader } from '../../components/common/loader/FullViewLoader'
+import { MultiSelect, type OptionSchema } from '../../components/common/select/MultiSelect'
 import { useDebounce } from '../../hooks/useDebounce'
-import { NotificationsModule, type NotificationData } from '../../modules/NotificationsModule'
+import {
+  NotificationsModule,
+  type NotificationData,
+  NotificationType,
+} from '../../modules/NotificationsModule'
 import { errorLabels } from '../../utils'
 
 type FiltersSchema = Partial<{
   onlyUnread: boolean
+  types: NotificationType[]
 }>
 
-export const NotificationsList = () => {
+export const NotificationsList = memo(() => {
   const listRef = useRef<HTMLDivElement | null>(null)
   const { enqueueSnackbar } = useSnackbar()
-
-  const { getNotifications } = NotificationsModule.useNotifications()
 
   const [notifications, setNotifications] = useState<NotificationData[]>([])
   const [cursor, setCursor] = useState<NotificationData['index'] | null>(null)
   const [filters, setFilters] = useState<FiltersSchema>({})
+  const [loading, setLoading] = useState(true)
+  const [newNotificationsWaiting, setNewNotificationsWaiting] = useState(false)
+
+  const { getNotifications, markAllNotificationsAsRead, setAsRead, unreadNotificationsCount } =
+    NotificationsModule.useNotifications(
+      (newNotification) => {
+        const [filteredNotification] = NotificationsModule.filterNotifications(
+          [newNotification],
+          parseFilters(filters),
+        )
+        if (!filteredNotification) {
+          return
+        }
+
+        setNewNotificationsWaiting(true)
+      },
+      [filters],
+    )
 
   const load = useDebounce(
     (internalCursor = cursor, internalFilters = filters) => {
@@ -35,16 +60,14 @@ export const NotificationsList = () => {
         return
       }
 
-      console.info(`Loading ${notificationsFetchChunkSize} notifications`)
       const response = getNotifications({
         count: notificationsFetchChunkSize,
         cursor: typeof internalCursor === 'number' ? { index: internalCursor } : undefined,
-        filters: [
-          {
-            read: internalFilters.onlyUnread === true ? false : undefined,
-          },
-        ],
+        filters: parseFilters(internalFilters),
       })
+
+      setLoading(false)
+      setNewNotificationsWaiting(false)
 
       if ('errorCode' in response) {
         enqueueSnackbar({ variant: 'error', message: errorLabels[response.errorCode] })
@@ -64,7 +87,7 @@ export const NotificationsList = () => {
           return data
         }
 
-        return [...data, ...response.data.reverse()]
+        return [...data, ...[...response.data].reverse()]
       })
       setCursor(response.cursor?.index ?? null)
     },
@@ -104,10 +127,6 @@ export const NotificationsList = () => {
     [load],
   )
 
-  const buildItemKey = useCallback((index: number, data: NotificationData[]) => {
-    return data[index].index
-  }, [])
-
   return (
     <Box
       sx={{
@@ -119,42 +138,196 @@ export const NotificationsList = () => {
         justifyContent: 'stretch',
       }}
     >
-      <ViewTransition type={TransitionType.DEFAULT}>
-        <Stack direction="row" alignItems="center" justifyContent="flex-start" p={2}>
+      <ViewTransition
+        type={TransitionType.DEFAULT}
+        targets={(element) => element.querySelectorAll(':scope > *')}
+      >
+        <Stack
+          direction="row"
+          flexWrap="wrap"
+          alignItems="center"
+          justifyContent="flex-start"
+          p={2}
+          gap={2}
+        >
           <ToggleButton
             active={filters.onlyUnread === true}
             onToggle={(active) => reload({ ...filters, onlyUnread: active })}
           >
             Show only unread
           </ToggleButton>
-          {/* TODO: list of checkboxes for each notification type to show only selected types */}
+          <MultiSelect
+            options={typeOptions}
+            selectedValues={filters.types ?? []}
+            onChange={(types) => reload({ ...filters, types: types.length ? types : undefined })}
+          />
+          <Button
+            onClick={() => {
+              markAllNotificationsAsRead()
+              reload(filters)
+            }}
+            endIcon={<SelectAllRounded />}
+            disabled={!unreadNotificationsCount}
+          >
+            Mark all as read
+          </Button>
+          <Grow in={newNotificationsWaiting}>
+            <Tooltip title="Refresh list to show new notifications">
+              <Button
+                onClick={() => reload(filters)}
+                endIcon={<RefreshRounded />}
+                sx={{ ml: 'auto' }}
+              >
+                New notifications
+              </Button>
+            </Tooltip>
+          </Grow>
         </Stack>
       </ViewTransition>
       <ViewTransition type={TransitionType.SCALE_X}>
         <Divider />
       </ViewTransition>
       <ViewTransition type={TransitionType.FADE}>
-        <Box>
-          <AutoSizer>
-            {({ height }) => (
-              <FixedSizeList<NotificationData[]>
-                innerRef={listRef}
-                itemData={notifications}
-                height={height}
-                width="100%"
-                layout="vertical"
-                itemKey={buildItemKey}
-                itemSize={notificationItemHeight}
-                itemCount={notifications.length}
-                overscanCount={2}
-                onScroll={handleScroll}
-              >
-                {(props) => <NotificationItem {...props} />}
-              </FixedSizeList>
-            )}
-          </AutoSizer>
-        </Box>
+        {notifications.length > 0 ? (
+          <Box>
+            <AutoSizer>
+              {({ height }) => (
+                <MemoizedList
+                  key={height.toString()}
+                  listRef={listRef}
+                  height={height}
+                  notifications={notifications}
+                  handleScroll={handleScroll}
+                  setAsRead={setAsRead}
+                />
+              )}
+            </AutoSizer>
+          </Box>
+        ) : loading ? (
+          <FullViewLoader />
+        ) : (
+          <Typography
+            variant="h6"
+            fontWeight="bold"
+            textAlign="center"
+            color="text.secondary"
+            p={2}
+          >
+            No notifications
+          </Typography>
+        )}
       </ViewTransition>
     </Box>
   )
+})
+
+interface MemoizedListProps {
+  listRef: MutableRefObject<HTMLDivElement | null>
+  height: number
+  notifications: NotificationData[]
+  handleScroll: (props: ListOnScrollProps) => void
+  setAsRead: (index: number, onFinish: () => void) => void
 }
+
+const MemoizedList = memo<MemoizedListProps>(
+  ({ listRef, height, notifications, handleScroll, setAsRead }) => (
+    <FixedSizeList<NotificationData[]>
+      innerRef={listRef}
+      itemData={notifications}
+      height={height}
+      width="100%"
+      layout="vertical"
+      itemKey={buildItemKey}
+      itemSize={notificationItemHeight}
+      itemCount={notifications.length}
+      overscanCount={2}
+      onScroll={handleScroll}
+    >
+      {(props) => (
+        <NotificationItem
+          key={props.data[props.index].index.toString()}
+          setAsRead={setAsRead}
+          {...props}
+        />
+      )}
+    </FixedSizeList>
+  ),
+)
+
+function buildItemKey(index: number, data: NotificationData[]) {
+  return data[index].index.toString()
+}
+
+function parseFilters(filters: FiltersSchema) {
+  return [
+    {
+      read: filters.onlyUnread === true ? false : undefined,
+      type: filters.types?.length ? { in: filters.types } : undefined,
+    },
+  ]
+}
+
+const TypeItem = ({ type, label }: { type: NotificationType; label: string }) => {
+  const notificationProps = notificationTypeProps[type]
+
+  return (
+    <Stack
+      direction="row"
+      alignItems="center"
+      gap={0.5}
+      pr={0.5}
+      color={notificationProps.colorAccent[100]}
+    >
+      <notificationProps.icon sx={{ color: notificationProps.colorAccent[200] }} />
+      {label}
+    </Stack>
+  )
+}
+
+const typeOptions: OptionSchema<NotificationType>[] = [
+  {
+    value: NotificationType.SUCCESS,
+    label: <TypeItem type={NotificationType.SUCCESS} label="Success" />,
+    chipProps: {
+      sx: {
+        backgroundColor: alpha(
+          notificationTypeProps[NotificationType.SUCCESS].colorAccent[100],
+          0.15,
+        ),
+      },
+    },
+  },
+  {
+    value: NotificationType.INFO,
+    label: <TypeItem type={NotificationType.INFO} label="Info" />,
+    chipProps: {
+      sx: {
+        backgroundColor: alpha(notificationTypeProps[NotificationType.INFO].colorAccent[100], 0.15),
+      },
+    },
+  },
+  {
+    value: NotificationType.WARNING,
+    label: <TypeItem type={NotificationType.WARNING} label="Warning" />,
+    chipProps: {
+      sx: {
+        backgroundColor: alpha(
+          notificationTypeProps[NotificationType.WARNING].colorAccent[100],
+          0.15,
+        ),
+      },
+    },
+  },
+  {
+    value: NotificationType.ERROR,
+    label: <TypeItem type={NotificationType.ERROR} label="Error" />,
+    chipProps: {
+      sx: {
+        backgroundColor: alpha(
+          notificationTypeProps[NotificationType.ERROR].colorAccent[100],
+          0.15,
+        ),
+      },
+    },
+  },
+]

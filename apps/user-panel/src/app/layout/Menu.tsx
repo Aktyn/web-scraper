@@ -1,3 +1,4 @@
+import { memo } from 'react'
 import {
   DashboardRounded,
   EngineeringRounded,
@@ -13,9 +14,10 @@ import { commonLayoutTransitions } from './helpers'
 import { RecaptchaIcon } from '../components/icons/RecaptchaIcon'
 import { RoutineIcon } from '../components/icons/RoutineIcon'
 import { ReactComponent as LogoIcon } from '../components/icons/icon.svg'
+import { NotificationsModule } from '../modules/NotificationsModule'
 import { ScraperTestingSessionsModule } from '../modules/ScraperTestingSessionsModule'
 
-const TestingLabel = () => {
+const TestingLabel = memo(() => {
   const testingSessions = ScraperTestingSessionsModule.useTestingSessions()
 
   return (
@@ -28,7 +30,22 @@ const TestingLabel = () => {
       )}
     </Box>
   )
-}
+})
+
+const NotificationsLabel = memo(() => {
+  const { unreadNotificationsCount } = NotificationsModule.useNotifications()
+
+  return (
+    <Box component="span">
+      Notifications
+      {unreadNotificationsCount > 0 && (
+        <Box component="span" sx={{ fontSize: 'smaller', ml: '0.25rem', opacity: 0.5 }}>
+          ({unreadNotificationsCount > 99 ? '>99' : unreadNotificationsCount})
+        </Box>
+      )}
+    </Box>
+  )
+})
 
 const menuEntries: MenuItemProps[] = [
   { label: 'Dashboard', icon: DashboardRounded, viewName: 'DASHBOARD' },
@@ -37,7 +54,7 @@ const menuEntries: MenuItemProps[] = [
   { label: <TestingLabel />, icon: EngineeringRounded, viewName: 'TESTING' },
   { label: 'Captcha', icon: RecaptchaIcon, viewName: 'CAPTCHA' },
   { label: 'Info', icon: InfoRounded, viewName: 'INFO' },
-  { label: 'Notifications', icon: NotificationsRounded, viewName: 'NOTIFICATIONS' },
+  { label: <NotificationsLabel />, icon: NotificationsRounded, viewName: 'NOTIFICATIONS' },
 ]
 
 export const Menu = () => {

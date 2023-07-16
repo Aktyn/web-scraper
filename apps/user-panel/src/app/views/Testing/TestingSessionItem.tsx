@@ -5,6 +5,7 @@ import { Box, Card, CardActions, CardContent, Stack, Typography } from '@mui/mat
 import type { Site } from '@web-scraper/common'
 import type { CustomDrawerRef } from '../../components/common/CustomDrawer'
 import { CustomDrawer } from '../../components/common/CustomDrawer'
+import { HorizontallyScrollableContainer } from '../../components/common/HorizontallyScrollableContainer'
 import { TermInfo } from '../../components/common/TermInfo'
 import { UrlButton } from '../../components/common/button/UrlButton'
 import { OpenSiteInstructionsFormButton } from '../../components/site/OpenSiteInstructionsFormButton'
@@ -46,9 +47,14 @@ export const TestingSessionItem = ({ session }: TestingSessionItemProps) => {
                 {session.site.language}
               </Typography>
             </Stack>
-            <Stack direction="row" alignItems="center" justifyContent="flex-start" gap={1}>
+            <HorizontallyScrollableContainer
+              alignItems="center"
+              justifyContent="flex-start"
+              gap={1}
+              maxWidth="100%"
+            >
               <TagsCellValue tags={session.site.tags} />
-            </Stack>
+            </HorizontallyScrollableContainer>
           </Stack>
         </CardContent>
         <CardActions sx={{ justifyContent: 'space-between' }}>

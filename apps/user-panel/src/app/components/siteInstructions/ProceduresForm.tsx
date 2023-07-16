@@ -12,6 +12,7 @@ import { actionSchemaToExecutableAction } from './ActionsForm'
 import { FlowStepForm, flowSchemaToExecutableFlow } from './FlowStepForm'
 import { SiteInstructionsTestingSessionContext } from '../../context/siteInstructionsTestingSessionContext'
 import { useApiRequest } from '../../hooks/useApiRequest'
+import { NotificationType, NotificationsModule } from '../../modules/NotificationsModule'
 import { actionStepErrorTypeNames, procedureTypeNames } from '../../utils/dictionaries'
 import { TermInfo } from '../common/TermInfo'
 import { ItemTitle } from '../common/treeStructure/ItemTitle'
@@ -28,6 +29,7 @@ export const ProceduresForm = () => {
   const { submit: submitTestProcedure, submitting: testingProcedure } = useApiRequest(
     window.electronAPI.testProcedure,
   )
+  const { pushNotification } = NotificationsModule.useNotifications()
 
   const testingSession = useContext(SiteInstructionsTestingSessionContext)
 
@@ -49,6 +51,13 @@ export const ProceduresForm = () => {
         `Manually executing procedure (${procedureTypeNames[procedure.type]}):`,
         procedure,
       )
+      pushNotification({
+        type: NotificationType.INFO,
+        title: 'Procedure execution',
+        content: `Executing procedure. Type: ${procedureTypeNames[procedure.type]}. Id: ${
+          procedure.id
+        }`,
+      })
 
       const actions = getValues().actions.reduce((acc, actionSchema) => {
         const action = actionSchemaToExecutableAction(actionSchema)
@@ -73,6 +82,13 @@ export const ProceduresForm = () => {
                   actionStepErrorTypeNames[procedureExecutionResult.flowExecutionResult.errorType]
                 }`,
               })
+              pushNotification({
+                type: NotificationType.ERROR,
+                title: 'Procedure execution',
+                content: `Procedure execution failed. Error: ${
+                  actionStepErrorTypeNames[procedureExecutionResult.flowExecutionResult.errorType]
+                }; Procedure id: ${procedure.id}`,
+              })
             } else {
               const failed =
                 !procedureExecutionResult.flowExecutionResult.flowStepsResults.at(-1)?.succeeded
@@ -96,12 +112,26 @@ export const ProceduresForm = () => {
                     returnedValues?.join(', ') ?? '-'
                   })`,
                 })
+                pushNotification({
+                  type: NotificationType.SUCCESS,
+                  title: 'Procedure execution',
+                  content: `Procedure succeeded. Returned values: ${
+                    returnedValues?.join(', ') ?? '-'
+                  }; Procedure id: ${procedure.id}`,
+                })
               } else {
                 enqueueSnackbar({
                   variant: 'error',
                   message: `Procedure execution failed (returned values: ${
                     returnedValues?.join(', ') ?? '-'
                   })`,
+                })
+                pushNotification({
+                  type: NotificationType.WARNING,
+                  title: 'Procedure execution',
+                  content: `Procedure ended unsuccessfully. Returned values: ${
+                    returnedValues?.join(', ') ?? '-'
+                  }; Procedure id: ${procedure.id}`,
                 })
               }
             }
@@ -112,7 +142,7 @@ export const ProceduresForm = () => {
         actions,
       )
     },
-    [getValues, submitTestProcedure, testingSession],
+    [getValues, pushNotification, submitTestProcedure, testingSession],
   )
 
   return (
