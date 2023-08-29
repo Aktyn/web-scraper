@@ -52,8 +52,8 @@ export function sortNumbers<DataType extends object>(
   direction: 'asc' | 'desc' = 'asc',
 ) {
   return (a: DataType, b: DataType) => {
-    const aValue = a[key]
-    const bValue = b[key]
+    const aValue = a[key] as number
+    const bValue = b[key] as number
     return direction === 'asc' ? aValue - bValue : bValue - aValue
   }
 }
