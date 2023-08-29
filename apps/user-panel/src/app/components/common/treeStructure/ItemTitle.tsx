@@ -1,5 +1,4 @@
-import type { TypographyProps } from '@mui/material'
-import { Typography } from '@mui/material'
+import { Typography, type TypographyProps } from '@mui/material'
 
 export const ItemTitle = ({
   children,

@@ -1,5 +1,4 @@
-import { useMemo } from 'react'
-import type { DependencyList, ReactNode } from 'react'
+import { useMemo, type DependencyList, type ReactNode } from 'react'
 import type { TableCellProps } from '@mui/material'
 import type { Path } from '@web-scraper/common'
 

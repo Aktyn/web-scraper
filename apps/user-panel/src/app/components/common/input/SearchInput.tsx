@@ -1,6 +1,5 @@
 import { SearchRounded } from '@mui/icons-material'
-import type { TextFieldProps } from '@mui/material'
-import { InputAdornment, TextField } from '@mui/material'
+import { InputAdornment, TextField, type TextFieldProps } from '@mui/material'
 
 interface SearchInputProps {
   value: string

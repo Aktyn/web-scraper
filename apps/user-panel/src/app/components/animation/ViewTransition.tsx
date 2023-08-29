@@ -1,5 +1,14 @@
-import type { ForwardedRef, ReactElement, RefObject } from 'react'
-import { cloneElement, forwardRef, isValidElement, memo, useLayoutEffect, useRef } from 'react'
+import {
+  cloneElement,
+  forwardRef,
+  isValidElement,
+  memo,
+  useLayoutEffect,
+  useRef,
+  type ForwardedRef,
+  type ReactElement,
+  type RefObject,
+} from 'react'
 import anime from 'animejs'
 import { useView } from 'src/app/hooks/useView'
 import { Config } from '../../config'

@@ -1,5 +1,4 @@
-import type { ApiError } from '@web-scraper/common'
-import { ErrorCode } from '@web-scraper/common'
+import { ErrorCode, type ApiError } from '@web-scraper/common'
 
 export const errorLabels: { [key in ErrorCode]: string } = {
   [ErrorCode.NO_ERROR]: 'No error',

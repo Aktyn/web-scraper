@@ -1,5 +1,4 @@
-import type { ReactNode } from 'react'
-import { Fragment } from 'react'
+import { Fragment, type ReactNode } from 'react'
 import { Divider, dividerClasses, Stack, Typography } from '@mui/material'
 import { TransitionType, ViewTransition } from '../../components/animation/ViewTransition'
 

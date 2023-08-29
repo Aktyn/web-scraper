@@ -1,5 +1,4 @@
-import { useEffect, useRef } from 'react'
-import type { PropsWithChildren } from 'react'
+import { useEffect, useRef, type PropsWithChildren } from 'react'
 import { ChevronLeftRounded, ChevronRightRounded } from '@mui/icons-material'
 import { Button, type ButtonProps, Stack } from '@mui/material'
 import anime from 'animejs'

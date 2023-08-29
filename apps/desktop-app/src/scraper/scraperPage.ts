@@ -130,8 +130,11 @@ export class ScraperPage implements Pick<Page, 'on' | 'off'> {
     }
   }
 
-  public exposed = ScraperPage.exposedMethods.reduce((acc, method) => {
-    acc[method] = this.page[method].bind(this.page) as never
-    return acc
-  }, {} as { [K in (typeof ScraperPage.exposedMethods)[number]]: Page[K] })
+  public exposed = ScraperPage.exposedMethods.reduce(
+    (acc, method) => {
+      acc[method] = this.page[method].bind(this.page) as never
+      return acc
+    },
+    {} as { [K in (typeof ScraperPage.exposedMethods)[number]]: Page[K] },
+  )
 }

@@ -5,8 +5,13 @@ import { DataObjectRounded } from '@mui/icons-material'
 import { alpha, Box, Button, FormControl, FormHelperText, Stack, useTheme } from '@mui/material'
 import { getDeepProperty, tryParseJSON } from '@web-scraper/common'
 import * as prism from 'prismjs'
-import { Controller } from 'react-hook-form'
-import type { PathValue, FieldPath, GlobalError, UseFormReturn } from 'react-hook-form'
+import {
+  Controller,
+  type PathValue,
+  type FieldPath,
+  type GlobalError,
+  type UseFormReturn,
+} from 'react-hook-form'
 import Editor from 'react-simple-code-editor'
 import { JsonValue } from '../common/JsonValue'
 import { NestedDrawer } from '../common/NestedDrawer'

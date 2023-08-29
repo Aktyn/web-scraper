@@ -86,7 +86,10 @@ export class Scraper<ModeType extends ScraperMode> {
   constructor(mode: ScraperMode.DEFAULT)
   constructor(mode: ScraperMode.TESTING, options: ScraperOptions<ScraperMode.TESTING>)
   constructor(mode: ScraperMode.PREVIEW, options: ScraperOptions<ScraperMode.PREVIEW>)
-  constructor(public readonly mode: ModeType, options?: ScraperOptions<ModeType>) {
+  constructor(
+    public readonly mode: ModeType,
+    options?: ScraperOptions<ModeType>,
+  ) {
     this.options = options as never
     this.logger = new Logger(
       `[Scraper (mode: ${ScraperMode[this.mode]}) (id: ${this.id.substring(0, 8)})]`,

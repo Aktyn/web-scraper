@@ -1,6 +1,5 @@
 import { OpenInNewRounded } from '@mui/icons-material'
-import { Box, Link, Stack } from '@mui/material'
-import type { LinkProps } from '@mui/material'
+import { Box, Link, Stack, type LinkProps } from '@mui/material'
 
 interface UrlButtonProps extends LinkProps {
   children: string

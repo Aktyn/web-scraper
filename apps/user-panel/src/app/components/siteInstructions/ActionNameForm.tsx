@@ -10,8 +10,12 @@ import {
   Typography,
   FormHelperText,
 } from '@mui/material'
-import type { GLOBAL_ACTION_PREFIX, UpsertSiteInstructionsSchema } from '@web-scraper/common'
-import { GlobalActionType, REGULAR_ACTION_PREFIX } from '@web-scraper/common'
+import {
+  GlobalActionType,
+  REGULAR_ACTION_PREFIX,
+  type GLOBAL_ACTION_PREFIX,
+  type UpsertSiteInstructionsSchema,
+} from '@web-scraper/common'
 import { useFormContext, Controller } from 'react-hook-form'
 import { globalActionTypeNames } from '../../utils/dictionaries'
 

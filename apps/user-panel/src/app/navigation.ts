@@ -1,5 +1,4 @@
-import type { FunctionComponent, LazyExoticComponent } from 'react'
-import { lazy } from 'react'
+import { lazy, type FunctionComponent, type LazyExoticComponent } from 'react'
 import type { Theme } from '@mui/material'
 import { mainThemes } from './themes'
 

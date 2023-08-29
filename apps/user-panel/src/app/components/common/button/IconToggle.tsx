@@ -1,7 +1,13 @@
-import type { ReactElement, ReactNode } from 'react'
-import { useEffect, useRef } from 'react'
-import type { SvgIconTypeMap, SxProps } from '@mui/material'
-import { alpha, IconButton, Stack, Tooltip, useTheme } from '@mui/material'
+import { useEffect, useRef, type ReactElement, type ReactNode } from 'react'
+import {
+  alpha,
+  IconButton,
+  Stack,
+  Tooltip,
+  useTheme,
+  type SvgIconTypeMap,
+  type SxProps,
+} from '@mui/material'
 import anime from 'animejs'
 
 const sizeRem = 1.875

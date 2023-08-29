@@ -259,7 +259,10 @@ class Particle {
     random(-AbstractBackground.particleSizeBase * 0.5, AbstractBackground.particleSizeBase * 0.5)
   public readonly rotation = Math.PI * Math.random()
 
-  constructor(private width: number, private height: number) {
+  constructor(
+    private width: number,
+    private height: number,
+  ) {
     this.randomizePosition(true)
   }
 

@@ -1,9 +1,10 @@
 import type { Account as DatabaseAccount } from '@prisma/client'
-import { ErrorCode, upsertAccountSchema } from '@web-scraper/common'
-import type {
-  ElectronApi,
-  RendererToElectronMessage,
-  UpsertAccountSchema,
+import {
+  ErrorCode,
+  upsertAccountSchema,
+  type ElectronApi,
+  type RendererToElectronMessage,
+  type UpsertAccountSchema,
 } from '@web-scraper/common'
 
 import { encrypt } from '../utils'

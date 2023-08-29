@@ -1,4 +1,3 @@
-import type { CSSInterpolation, ThemeOptions } from '@mui/material'
 import {
   alpha,
   createTheme,
@@ -7,6 +6,8 @@ import {
   drawerClasses,
   lighten,
   tableRowClasses,
+  type CSSInterpolation,
+  type ThemeOptions,
 } from '@mui/material'
 import { common, green, grey, lightBlue, lightGreen, orange, red } from '@mui/material/colors'
 import deepmerge from 'deepmerge'

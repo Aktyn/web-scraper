@@ -1,6 +1,5 @@
 import { forwardRef, type PropsWithChildren, useImperativeHandle, useState } from 'react'
-import type { PopoverProps } from '@mui/material'
-import { Popover } from '@mui/material'
+import { Popover, type PopoverProps } from '@mui/material'
 
 export interface CustomPopoverRef {
   open: (anchorElement: HTMLButtonElement) => void

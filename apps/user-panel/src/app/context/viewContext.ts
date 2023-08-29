@@ -1,6 +1,5 @@
 import { createContext } from 'react'
-import type Navigation from '../navigation'
-import type { ViewSettingsSchema } from '../navigation'
+import type Navigation, { type ViewSettingsSchema } from '../navigation'
 import { noop } from '../utils'
 
 export enum ViewTransitionState {

@@ -1,6 +1,5 @@
 import { forwardRef, useEffect, useRef, useState } from 'react'
 import { OpenInFullRounded } from '@mui/icons-material'
-import type { StackProps } from '@mui/material'
 import {
   alpha,
   Backdrop,
@@ -10,6 +9,7 @@ import {
   IconButton,
   Stack,
   Typography,
+  type StackProps,
 } from '@mui/material'
 import { common } from '@mui/material/colors'
 import { upsertSiteSchema } from '@web-scraper/common'

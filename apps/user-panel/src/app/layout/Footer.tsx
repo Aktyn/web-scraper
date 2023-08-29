@@ -1,7 +1,6 @@
 import { memo } from 'react'
 import { LinkRounded } from '@mui/icons-material'
-import type { Theme } from '@mui/material'
-import { darken, Link, Stack, Typography } from '@mui/material'
+import { darken, Link, Stack, Typography, type Theme } from '@mui/material'
 import { commonLayoutTransitions } from './helpers'
 
 export const Footer = memo(() => {

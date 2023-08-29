@@ -15,8 +15,7 @@ import {
 import anime from 'animejs'
 import { commonLayoutTransitions } from './helpers'
 import { Config } from '../config'
-import type { ViewName } from '../context/viewContext'
-import { ViewTransitionState } from '../context/viewContext'
+import { ViewTransitionState, type ViewName } from '../context/viewContext'
 import { useView } from '../hooks/useView'
 
 export interface MenuItemProps {

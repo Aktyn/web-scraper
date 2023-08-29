@@ -2,8 +2,7 @@ import { useMemo } from 'react'
 import { Accounts } from './Accounts'
 import { SiteTags } from './SiteTags'
 import { Sites } from './Sites'
-import type { TabSchema } from '../../components/common/TabsView'
-import { TabsView } from '../../components/common/TabsView'
+import { TabsView, type TabSchema } from '../../components/common/TabsView'
 import type { ViewComponentProps } from '../helpers'
 
 enum DataManagerTab {

@@ -1,5 +1,4 @@
-import type { PropsWithChildren } from 'react'
-import { memo } from 'react'
+import { memo, type PropsWithChildren } from 'react'
 import { createPortal } from 'react-dom'
 
 interface PortalBaseProps {
