@@ -13,7 +13,7 @@ import anime from 'animejs'
 import { useView } from 'src/app/hooks/useView'
 import { Config } from '../../config'
 import { ViewTransitionState } from '../../context/viewContext'
-import Navigation from '../../navigation'
+import { Navigation } from '../../navigation'
 
 export enum TransitionType {
   DEFAULT,

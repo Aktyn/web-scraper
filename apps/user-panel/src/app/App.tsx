@@ -13,7 +13,7 @@ import { ApiModule } from './modules/ApiModule'
 import { NotificationsModule } from './modules/NotificationsModule'
 import { ScraperExecutionModule } from './modules/ScraperExecutionModule'
 import { ScraperTestingSessionsModule } from './modules/ScraperTestingSessionsModule'
-import Navigation from './navigation'
+import { Navigation } from './navigation'
 import { baseTheme } from './themes'
 import { UserDataProvider } from './userData/UserDataProvider'
 

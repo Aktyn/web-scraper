@@ -16,7 +16,7 @@ interface NavigationEntry {
   viewSettings?: ViewSettingsSchema
 }
 
-const Navigation = {
+export const Navigation = {
   DASHBOARD: {
     component: lazy(() => import('./views/Dashboard/DashboardView')),
     theme: mainThemes.deepPurple,
@@ -59,8 +59,6 @@ const Navigation = {
     gridPosition: [0, 2],
   } as NavigationEntry,
 } as const
-
-export default Navigation
 
 /** Grid visualization for transition purposes **/
 /*-----------------------------------------------
