@@ -33,7 +33,7 @@
     "seed": "ts-node prisma/seed/index.ts"
   },
   "dependencies": {
-    "@prisma/client": "^4.16.2",
+    "@prisma/client": "^5.2.0",
     "@prisma/generator-helper": "^5.2.0",
     "@web-scraper/common": "^1.0.0",
     "dotenv": "^16.3.1",
