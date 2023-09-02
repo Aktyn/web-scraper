@@ -1,4 +1,9 @@
-import type { ElectronApi, ElectronToRendererMessage } from '@web-scraper/common'
+import {
+  WindowStateChange,
+  ElectronToRendererMessage,
+  type IpcRendererEventPolyfill,
+  type ElectronApi,
+} from '@web-scraper/common'
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { BrowserWindow } from 'electron'
 
@@ -17,12 +22,24 @@ export class ExtendedBrowserWindow extends BrowserWindow {
     this.on('closed', () => {
       ExtendedBrowserWindow.instances.delete(this.id)
     })
+    this.on('maximize', () => {
+      this.sendMessage(ElectronToRendererMessage.windowStateChanged, WindowStateChange.MAXIMIZE)
+    })
+    this.on('unmaximize', () => {
+      this.sendMessage(ElectronToRendererMessage.windowStateChanged, WindowStateChange.UNMAXIMIZE)
+    })
+    this.on('minimize', () => {
+      this.sendMessage(ElectronToRendererMessage.windowStateChanged, WindowStateChange.MINIMIZE)
+    })
+    this.on('restore', () => {
+      this.sendMessage(ElectronToRendererMessage.windowStateChanged, WindowStateChange.RESTORE)
+    })
   }
 
   sendMessage<Message extends ElectronToRendererMessage>(
     message: Message,
     ...args: ElectronApi[Message] extends (
-      callback: (event: Event, ...args: infer T) => void,
+      callback: (event: IpcRendererEventPolyfill, ...args: infer T) => void,
     ) => void
       ? T
       : never

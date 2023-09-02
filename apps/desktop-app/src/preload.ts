@@ -4,6 +4,7 @@ import type { ElectronApi } from '@web-scraper/common'
 import { contextBridge, ipcRenderer, type IpcRendererEvent } from 'electron'
 
 const electronToRendererMessageNames = [
+  'windowStateChanged',
   'siteInstructionsTestingSessionOpen',
   'siteInstructionsTestingSessionClosed',
   'scraperExecutionStarted',
@@ -12,6 +13,8 @@ const electronToRendererMessageNames = [
   'requestManualDataForActionStep',
 ] as const
 const rendererToElectronMessageNames = [
+  'changeWindowState',
+
   'getUserSettings',
   'setUserSetting',
 

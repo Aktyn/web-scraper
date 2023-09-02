@@ -28,15 +28,24 @@ function createWindow() {
     height: 720,
     minWidth: 640,
     minHeight: 360,
+    frame: false,
     useContentSize: true,
     center: true,
     autoHideMenuBar: true,
-    backgroundColor: '#0d3235',
+    backgroundColor: '#0d323500',
+    transparent: true,
     roundedCorners: true,
     darkTheme: true,
+    maximizable: true,
+    minimizable: true,
+    resizable: true,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
     },
+  })
+
+  mainWindow.once('ready-to-show', () => {
+    mainWindow.maximize()
   })
 
   mainWindow.webContents.setWindowOpenHandler((data) => {

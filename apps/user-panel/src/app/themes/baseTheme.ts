@@ -37,6 +37,9 @@ export const baseThemeOptions: ThemeOptions = {
             borderRadius: 8,
           },
         },
+        body: {
+          backgroundColor: 'transparent',
+        },
       },
     },
     MuiTooltip: {

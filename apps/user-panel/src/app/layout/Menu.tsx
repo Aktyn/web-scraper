@@ -72,6 +72,10 @@ export const Menu = () => {
         height={`calc(${headerSize} + ${contentAreaBorderRadius})`}
         px="0.5rem"
         spacing={2}
+        sx={{
+          WebkitAppRegion: 'drag',
+          userSelect: 'none',
+        }}
       >
         <LogoIcon
           style={{

@@ -1,4 +1,5 @@
 export * from './electronAPI'
+export * from './window'
 export * from './common'
 export * from './account'
 export * from './site'

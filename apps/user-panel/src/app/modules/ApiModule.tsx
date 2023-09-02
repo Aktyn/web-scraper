@@ -58,6 +58,9 @@ const ApiProvider = ({ children }: PropsWithChildren) => {
         ...args: Parameters<Parameters<ElectronApi[key]>[0]>
       ) => void
     } = {
+      [ElectronToRendererMessage.windowStateChanged]: (_, stateChange) => {
+        console.info(`Window state changed: ${stateChange}`)
+      },
       [ElectronToRendererMessage.siteInstructionsTestingSessionOpen]: (_, sessionId, site) => {
         console.info(
           `Site instructions testing session open (id: ${sessionId}; site url: ${site.url})`,

@@ -1,5 +1,6 @@
-import { memo, type PropsWithChildren } from 'react'
+import { memo, type PropsWithChildren, useState } from 'react'
 import { Box, darken, Stack } from '@mui/material'
+import { ElectronToRendererMessage, WindowStateChange } from '@web-scraper/common'
 import { BackgroundEffect } from './BackgroundEffect'
 import { Footer } from './Footer'
 import { Header } from './Header'
@@ -7,7 +8,9 @@ import { Menu } from './Menu'
 import { commonLayoutTransitions } from './helpers'
 import { ViewTransitionState } from '../context/viewContext'
 import { useView } from '../hooks/useView'
+import { ApiModule } from '../modules/ApiModule'
 
+const nonMaximizedWindowBorderRadius = '1rem'
 export const contentAreaBorderRadius = '1rem'
 const fadeEffectSize = '2rem'
 
@@ -16,11 +19,22 @@ type LayoutProps = PropsWithChildren<object>
 export const Layout = memo<LayoutProps>(({ children }) => {
   const view = useView()
 
+  const [maximized, setMaximized] = useState(false)
+
+  ApiModule.useEvent(ElectronToRendererMessage.windowStateChanged, (_, stateChange) => {
+    if (stateChange === WindowStateChange.MAXIMIZE) {
+      setMaximized(true)
+    }
+    if (stateChange === WindowStateChange.UNMAXIMIZE) {
+      setMaximized(false)
+    }
+  })
+
   return (
     <Box
       overflow="hidden"
       sx={{
-        backgroundColor: (theme) => darken(theme.palette.background.default, 0.2),
+        backgroundColor: (theme) => darken(theme.palette.background.default, 0.15),
         transition: commonLayoutTransitions.backgroundColor,
 
         width: '100vw',
@@ -30,10 +44,14 @@ export const Layout = memo<LayoutProps>(({ children }) => {
         gridTemplateAreas: '"menu header" "menu content" "footer footer"',
         gridTemplateColumns: 'auto 1fr',
         gridTemplateRows: 'auto 1fr auto',
+        border: maximized
+          ? undefined
+          : (theme) => `2px solid ${darken(theme.palette.background.default, 0.25)}`,
+        borderRadius: maximized ? '0rem' : nonMaximizedWindowBorderRadius,
       }}
     >
       <Menu />
-      <Header />
+      <Header maximized={maximized} />
       <Stack
         flexGrow={1}
         overflow="hidden"

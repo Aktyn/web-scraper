@@ -22,11 +22,14 @@ import type {
 } from './scraper'
 import type { Site, SiteTag, UpsertSiteSchema, UpsertSiteTagSchema } from './site'
 import type { UserSettings } from './user'
+import type { WindowStateChange } from './window'
 
 /**
  * NOTE: ElectronToRendererMessage and RendererToElectronMessage keys must equal to its corresponding values and be written in camelCase
  */
 export enum ElectronToRendererMessage {
+  windowStateChanged = 'windowStateChanged',
+
   siteInstructionsTestingSessionOpen = 'siteInstructionsTestingSessionOpen',
   siteInstructionsTestingSessionClosed = 'siteInstructionsTestingSessionClosed',
   scraperExecutionStarted = 'scraperExecutionStarted',
@@ -36,6 +39,8 @@ export enum ElectronToRendererMessage {
 }
 
 export enum RendererToElectronMessage {
+  changeWindowState = 'changeWindowState',
+
   getUserSettings = 'getUserSettings',
   setUserSetting = 'setUserSetting',
 
@@ -95,6 +100,9 @@ export type RendererToElectronResponseBlueprint<
 > = (originMessage: OriginMessageType, requestId: string, ...args: Args) => Promise<ApiError>
 
 export type ElectronApi = {
+  [ElectronToRendererMessage.windowStateChanged]: ElectronToRendererMessageBlueprint<
+    [stateChange: WindowStateChange]
+  >
   [ElectronToRendererMessage.siteInstructionsTestingSessionOpen]: ElectronToRendererMessageBlueprint<
     [sessionId: string, site: Site]
   >
@@ -129,6 +137,9 @@ export type ElectronApi = {
     [actionStep: ActionStep, valueQuery: string]
   >
 
+  [RendererToElectronMessage.changeWindowState]: (
+    stateChange: WindowStateChange,
+  ) => Promise<ApiError>
   [RendererToElectronMessage.getUserSettings]: () => Promise<UserSettings | ApiError>
   [RendererToElectronMessage.setUserSetting]: <KeyType extends keyof UserSettings>(
     key: KeyType,

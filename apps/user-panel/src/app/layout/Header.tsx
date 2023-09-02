@@ -6,8 +6,9 @@ import {
   ReorderRounded,
   TableRowsRounded,
 } from '@mui/icons-material'
-import { Box, IconButton, Stack, Tooltip } from '@mui/material'
+import { Box, Divider, IconButton, Stack, Tooltip } from '@mui/material'
 import anime from 'animejs'
+import { WindowStateOptions } from './WindowStateOptions'
 import { CustomPopover, type CustomPopoverRef } from '../components/common/CustomPopover'
 import { IconToggle } from '../components/common/button/IconToggle'
 import { UserDataContext } from '../context/userDataContext'
@@ -15,7 +16,7 @@ import { EncryptionPasswordForm } from '../forms/EncryptionPasswordForm'
 
 export const headerSize = '3rem'
 
-export const Header = () => {
+export const Header = ({ maximized }: { maximized: boolean }) => {
   const encryptionPopoverRef = useRef<CustomPopoverRef>(null)
   const settingsContainer = useRef<HTMLDivElement>(null)
 
@@ -43,6 +44,13 @@ export const Header = () => {
       gap={2}
       height={headerSize}
       gridArea="header"
+      sx={{
+        WebkitAppRegion: 'drag',
+        userSelect: 'none',
+        '& button': {
+          WebkitAppRegion: 'no-drag',
+        },
+      }}
     >
       {!loading && (
         <Stack ref={settingsContainer} direction="row" alignItems="center" gap={2}>
@@ -83,6 +91,8 @@ export const Header = () => {
       >
         <EncryptionPasswordForm onSave={encryptionPopoverRef.current?.close} />
       </CustomPopover>
+      <Divider orientation="vertical" flexItem />
+      <WindowStateOptions maximized={maximized} />
     </Stack>
   )
 }
