@@ -34,7 +34,7 @@
     },
     "baseUrl": ".",
     "types": [
-      "node"
+      "node", "jest", "@testing-library/jest-dom"
     ],
     "jsxImportSource": "@emotion/react"
   },
