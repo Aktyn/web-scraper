@@ -49,10 +49,10 @@
   "devDependencies": {
     "@mermaid-js/mermaid-cli": "^10.3.1",
     "@types/random-useragent": "^0.3.1",
-    "@types/uuid": "^9.0.2",
+    "@types/uuid": "^9.0.3",
     "@typescript-eslint/eslint-plugin": "^5.62.0",
     "@typescript-eslint/parser": "^5.60.1",
-    "@vitest/coverage-v8": "^0.32.4",
+    "@vitest/coverage-v8": "^0.34.3",
     "cross-env": "^7.0.3",
     "electron": "26.1.0",
     "electron-builder": "^24.6.3",
@@ -67,7 +67,7 @@
     "shx": "^0.3.4",
     "ts-node": "^10.9.1",
     "typescript": "^5.2.2",
-    "vitest": "^0.32.4",
-    "vitest-mock-extended": "^1.2.0"
+    "vitest": "^0.34.3",
+    "vitest-mock-extended": "^1.2.1"
   }
 }
