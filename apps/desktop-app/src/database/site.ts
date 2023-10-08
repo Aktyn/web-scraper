@@ -16,7 +16,7 @@ export function getSites(request: PaginatedRequest<Site, 'id'>) {
     cursor: request.cursor,
     where: request.filters?.length
       ? {
-          AND: request.filters,
+          AND: request.filters as never,
         }
       : undefined,
     include: {
