@@ -1,7 +1,6 @@
 import { ErrorCode, RendererToElectronMessage, type ElectronApi } from '@web-scraper/common'
 import { beforeEach, describe, expect, it } from 'vitest'
-import type { DeepMockProxy } from 'vitest-mock-extended'
-import { mockReset } from 'vitest-mock-extended'
+import { mockReset, type DeepMockProxy } from 'vitest-mock-extended'
 import '../../test-utils/electronMock'
 
 import { databaseMock, mockData } from '../../test-utils/databaseMock'
@@ -79,129 +78,6 @@ describe('registerRequestsHandler', () => {
       where: { key: 'tablesCompactMode' },
       update: { value: 'false' },
       create: { key: 'tablesCompactMode', value: 'false' },
-    })
-  })
-
-  it('should return decrypted accounts', async () => {
-    databaseMock.account.findMany.mockResolvedValue(mockData.accounts)
-
-    registerRequestsHandler()
-
-    const getAccounts = handlers.get(
-      'getAccounts',
-    ) as HandlersInterface[RendererToElectronMessage.getAccounts]
-
-    expect(getAccounts).toBeDefined()
-    await expect(getAccounts(null as never, { count: 20 }, 'mock-password')).resolves.toEqual({
-      cursor: undefined,
-      data: decryptedAccounts,
-    })
-  })
-
-  it('should return accounts with empty strings for encrypted fields when no password is provided', async () => {
-    databaseMock.account.findMany.mockResolvedValue(mockData.accounts)
-
-    registerRequestsHandler()
-
-    const getAccounts = handlers.get(
-      'getAccounts',
-    ) as HandlersInterface[RendererToElectronMessage.getAccounts]
-
-    expect(getAccounts).toBeDefined()
-    await expect(getAccounts(null as never, { count: 20 }, null)).resolves.toEqual({
-      cursor: undefined,
-      data: decryptedAccounts.map((account) => ({
-        ...account,
-        loginOrEmail: '',
-        password: '',
-        additionalCredentialsData: account.additionalCredentialsData ? '' : null,
-      })),
-    })
-  })
-
-  it('should return created account', async () => {
-    databaseMock.account.create.mockResolvedValue({
-      ...mockData.accounts[0],
-    })
-
-    registerRequestsHandler()
-
-    const createAccount = handlers.get(
-      'createAccount',
-    ) as HandlersInterface[RendererToElectronMessage.createAccount]
-
-    expect(createAccount).toBeDefined()
-    await expect(
-      createAccount(
-        null as never,
-        {
-          loginOrEmail: 'Mock-username-1',
-          password: 'Mock-password-1',
-          additionalCredentialsData: null,
-          siteId: 1,
-        },
-        'mock-password',
-      ),
-    ).resolves.toEqual({
-      id: 1,
-      createdAt: new Date('2023-02-19T23:40:10.302Z'),
-      loginOrEmail: 'Mock-username-1',
-      password: 'Mock-password-1',
-      additionalCredentialsData: null,
-      lastUsed: new Date('2023-02-19T23:40:10.302Z'),
-      active: true,
-      siteId: 1,
-    })
-  })
-
-  it('should delete account with given id', async () => {
-    databaseMock.account.delete.mockResolvedValue(mockData.accounts[0])
-
-    registerRequestsHandler()
-
-    const deleteAccount = handlers.get(
-      'deleteAccount',
-    ) as HandlersInterface[RendererToElectronMessage.deleteAccount]
-
-    expect(deleteAccount).toBeDefined()
-    await expect(deleteAccount(null as never, 1)).resolves.toEqual({
-      errorCode: ErrorCode.NO_ERROR,
-    })
-  })
-
-  it('should update account and return it', async () => {
-    databaseMock.account.update.mockResolvedValue({
-      ...mockData.accounts[0],
-    })
-
-    registerRequestsHandler()
-
-    const updateAccount = handlers.get(
-      'updateAccount',
-    ) as HandlersInterface[RendererToElectronMessage.updateAccount]
-
-    expect(updateAccount).toBeDefined()
-    await expect(
-      updateAccount(
-        null as never,
-        1,
-        {
-          loginOrEmail: 'Mock-username-1',
-          password: 'Mock-password-1',
-          additionalCredentialsData: null,
-          siteId: 1,
-        },
-        'mock-password',
-      ),
-    ).resolves.toEqual({
-      id: 1,
-      createdAt: new Date('2023-02-19T23:40:10.302Z'),
-      loginOrEmail: 'Mock-username-1',
-      password: 'Mock-password-1',
-      additionalCredentialsData: null,
-      lastUsed: new Date('2023-02-19T23:40:10.302Z'),
-      active: true,
-      siteId: 1,
     })
   })
 
@@ -571,26 +447,3 @@ describe('registerRequestsHandler', () => {
   //   await expect(getSiteInstructionsTestingSessions(null as never)).resolves.toEqual([])
   // })
 })
-
-const decryptedAccounts = [
-  {
-    id: 1,
-    createdAt: new Date('2023-02-19T23:40:10.302Z'),
-    loginOrEmail: 'Mock-username-1',
-    password: 'Mock-password-1',
-    additionalCredentialsData: null,
-    lastUsed: new Date('2023-02-19T23:40:10.302Z'),
-    active: true,
-    siteId: 1,
-  },
-  {
-    id: 2,
-    createdAt: new Date('2023-02-22T23:40:10.302Z'),
-    loginOrEmail: 'Mock-username-2',
-    password: 'Mock-password-2',
-    additionalCredentialsData: '{"value": "mock-data"}',
-    lastUsed: new Date('2023-02-22T23:40:10.302Z'),
-    active: true,
-    siteId: 1,
-  },
-]

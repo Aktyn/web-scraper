@@ -1,9 +1,4 @@
-import type { Account, UpsertAccountSchema } from './account'
-import type {
-  ApiError,
-  PaginatedApiFunction,
-  PaginatedApiFunctionWithEncryptedData,
-} from './common'
+import type { ApiError, PaginatedApiFunction } from './common'
 import type {
   Action,
   ActionExecutionResult,
@@ -43,11 +38,6 @@ export enum RendererToElectronMessage {
 
   getUserSettings = 'getUserSettings',
   setUserSetting = 'setUserSetting',
-
-  getAccounts = 'getAccounts',
-  createAccount = 'createAccount',
-  deleteAccount = 'deleteAccount',
-  updateAccount = 'updateAccount',
 
   getSiteTags = 'getSiteTags',
   deleteSiteTag = 'deleteSiteTag',
@@ -145,22 +135,6 @@ export type ElectronApi = {
     key: KeyType,
     value: UserSettings[KeyType],
   ) => Promise<ApiError>
-
-  [RendererToElectronMessage.getAccounts]: PaginatedApiFunctionWithEncryptedData<
-    Account,
-    'id',
-    'loginOrEmail' | 'password' | 'additionalCredentialsData'
-  >
-  [RendererToElectronMessage.createAccount]: (
-    data: UpsertAccountSchema,
-    password: string,
-  ) => Promise<Account | ApiError>
-  [RendererToElectronMessage.deleteAccount]: (accountId: Account['id']) => Promise<ApiError>
-  [RendererToElectronMessage.updateAccount]: (
-    accountId: Account['id'],
-    data: UpsertAccountSchema,
-    password: string,
-  ) => Promise<Account | ApiError>
 
   [RendererToElectronMessage.getSiteTags]: PaginatedApiFunction<SiteTag, 'id'>
   [RendererToElectronMessage.deleteSiteTag]: (siteTagId: SiteTag['id']) => Promise<ApiError>

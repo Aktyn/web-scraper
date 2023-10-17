@@ -4,7 +4,6 @@ import { ipcMain } from 'electron'
 
 import { ExtendedBrowserWindow } from '../../extendedBrowserWindow'
 
-import { accountHandler } from './handlers/account.handler'
 import { scraperSessionHandler } from './handlers/scraperSession.handler'
 import { siteHandler } from './handlers/site.handler'
 import { siteInstructionsHandler } from './handlers/siteInstructions.handler'
@@ -35,7 +34,6 @@ export function registerRequestsHandler() {
       },
     ),
     ...userSettingsHandler,
-    ...accountHandler,
     ...siteTagHandler,
     ...siteHandler,
     ...siteInstructionsHandler,

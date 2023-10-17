@@ -22,10 +22,8 @@ import anime from 'animejs'
 import { useFieldArray, useForm } from 'react-hook-form'
 import { useApiRequest } from '../../hooks/useApiRequest'
 import { formatDate } from '../../utils'
-import { SiteAccounts } from '../account/SiteAccounts'
 import { NestedDrawer } from '../common/NestedDrawer'
 import { UrlPreview } from '../common/UrlPreview'
-import { DrawerToggle } from '../common/button/DrawerToggle'
 import { FormInput } from '../form/FormInput'
 import { SiteTagForm } from '../siteTag/SiteTagForm'
 
@@ -57,7 +55,6 @@ export const SiteForm = ({ site, onSuccess }: SiteFormProps) => {
     keyName: 'fieldKey',
   })
 
-  const [showSiteAccounts, setShowSiteAccounts] = useState(false)
   const [openSiteTagForm, setOpenSiteTagForm] = useState(false)
 
   const url = form.watch('url')
@@ -117,15 +114,6 @@ export const SiteForm = ({ site, onSuccess }: SiteFormProps) => {
           onAssign={(tag) => siteTagsFields.append(tag)}
         />
       </NestedDrawer>
-      {site && (
-        <NestedDrawer
-          title="Site accounts"
-          onClose={() => setShowSiteAccounts(false)}
-          open={showSiteAccounts}
-        >
-          <SiteAccounts site={site} />
-        </NestedDrawer>
-      )}
       <Stack
         flexGrow={1}
         justifyContent="space-between"
@@ -212,11 +200,6 @@ export const SiteForm = ({ site, onSuccess }: SiteFormProps) => {
               </IconButton>
             </Tooltip>
           </Stack>
-          {site && (
-            <DrawerToggle open={showSiteAccounts} onToggle={setShowSiteAccounts}>
-              Preview accounts
-            </DrawerToggle>
-          )}
         </Stack>
         <UrlPreview url={form.watch('url')} width={256} maxHeight={414} />
         <Stack direction="row" alignItems="center" justifyContent="center">

@@ -21,7 +21,6 @@ model Site {
   language         String?
   //
   Tags             SiteTagsRelation[]
-  Accounts         Account[]
   SiteInstructions SiteInstructions?
 }
 
@@ -39,22 +38,6 @@ model SiteTagsRelation {
   Site   Site    @relation(fields: [siteId], references: [id], onDelete: Cascade)
 
   @@id([tagId, siteId])
-}
-
-model Account {
-  id                        Int       @id @default(autoincrement())
-  createdAt                 DateTime  @default(now())
-  loginOrEmail              Bytes // encrypted
-  password                  Bytes // encrypted
-  additionalCredentialsData Bytes? // encrypted
-  lastUsed                  DateTime?
-  active                    Boolean?  @default(true)
-  // TODO: email account relation
-  //
-  siteId                    Int
-  Site                      Site      @relation(fields: [siteId], references: [id], onDelete: Cascade)
-
-  @@unique([siteId, loginOrEmail])
 }
 
 model SiteInstructions {
