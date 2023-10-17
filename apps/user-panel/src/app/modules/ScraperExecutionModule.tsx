@@ -215,7 +215,7 @@ const ScraperExecutionProvider = ({ children }: PropsWithChildren) => {
             onClose={() => {
               const executionData = scraperExecutionsRef.current[mode].get(execution.scraperId)
               if (!executionData?.finished) {
-                throw new Error('Scraping is not finished')
+                console.error('Scraping is not finished')
               }
 
               scraperExecutionsRef.current[mode].delete(execution.scraperId)

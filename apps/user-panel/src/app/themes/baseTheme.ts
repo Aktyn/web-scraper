@@ -44,7 +44,8 @@ export const baseThemeOptions: ThemeOptions = {
     },
     MuiTooltip: {
       defaultProps: {
-        disableInteractive: true,
+        // disableInteractive: true,
+        // disableFocusListener: true,
       },
     },
     MuiTypography: {

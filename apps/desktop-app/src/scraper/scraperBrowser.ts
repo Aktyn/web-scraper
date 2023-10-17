@@ -3,7 +3,13 @@ import path from 'path'
 
 import { cacheable, safePromise, waitFor } from '@web-scraper/common'
 import isDev from 'electron-is-dev'
-import type { Viewport, Browser, EventType, Handler, PuppeteerLaunchOptions } from 'puppeteer'
+import {
+  type Browser,
+  type EventType,
+  type Handler,
+  type PuppeteerLaunchOptions,
+  type Viewport,
+} from 'puppeteer'
 import puppeteer from 'puppeteer-extra'
 import StealthPlugin from 'puppeteer-extra-plugin-stealth'
 import { getRandom as getRandomUserAgent } from 'random-useragent'
@@ -43,13 +49,14 @@ export default class ScraperBrowser {
 
     void safePromise(
       puppeteer.launch({
-        // executablePath: executablePath(),
+        // executablePath: executablePath('chrome'), //TODO: test executablePath('chrome') on system without chrome
         //TODO: allow different arguments
         args: [
           // ...(process.env.TOR_PROXY_SERVER
           //   ? [`--proxy-server=${process.env.TOR_PROXY_SERVER}`]
           //   : []),
           // '--start-maximized',
+
           '--disable-infobars',
           '--no-default-browser-check',
           '--lang=en-US,en',

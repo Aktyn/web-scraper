@@ -45,7 +45,9 @@ function createWindow() {
   })
 
   mainWindow.once('ready-to-show', () => {
-    mainWindow.maximize()
+    if (!isDev) {
+      mainWindow.maximize()
+    }
   })
 
   mainWindow.webContents.setWindowOpenHandler((data) => {

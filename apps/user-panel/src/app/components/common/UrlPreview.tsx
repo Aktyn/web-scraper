@@ -1,16 +1,7 @@
-import { forwardRef, useEffect, useRef, useState } from 'react'
-import { OpenInFullRounded } from '@mui/icons-material'
-import {
-  alpha,
-  Backdrop,
-  Box,
-  CircularProgress,
-  Fade,
-  IconButton,
-  Stack,
-  Typography,
-  type StackProps,
-} from '@mui/material'
+import { forwardRef, useCallback, useRef, useState } from 'react'
+import { OpenInFullRounded, PreviewRounded } from '@mui/icons-material'
+import { LoadingButton } from '@mui/lab'
+import { alpha, Backdrop, Box, IconButton, Stack, type StackProps } from '@mui/material'
 import { common } from '@mui/material/colors'
 import { upsertSiteSchema } from '@web-scraper/common'
 import { RootPortal } from './portal/RootPortal'
@@ -64,12 +55,14 @@ export const UrlPreview = ({ url, width, maxHeight }: UrlPreviewProps) => {
     [cancellable],
   )
 
-  useEffect(() => {
+  const loadSitePreview = useCallback(() => {
     try {
       setMaximizePreview(false)
       upsertSiteSchema.validateSyncAt('url', { url })
+      setLoading(true)
       loadPreviewDebounced(url)
-    } catch {
+    } catch (error) {
+      console.error(error)
       setImagePreviewSrc('')
       setLoading(false)
     }
@@ -115,13 +108,18 @@ export const UrlPreview = ({ url, width, maxHeight }: UrlPreviewProps) => {
               <img alt="Site preview" src={imagePreviewSrc} width={width} />
             </Stack>
           ) : (
-            !loading && (
-              <AbsoluteOverlay>
-                <Typography variant="body1" fontWeight={900} color="text.secondary">
-                  Site Preview
-                </Typography>
-              </AbsoluteOverlay>
-            )
+            <AbsoluteOverlay>
+              <LoadingButton
+                variant="outlined"
+                color="secondary"
+                endIcon={<PreviewRounded />}
+                loading={loading}
+                loadingPosition="end"
+                onClick={loadSitePreview}
+              >
+                Load site preview
+              </LoadingButton>
+            </AbsoluteOverlay>
           )}
         </Box>
         {imagePreviewSrc && (
@@ -149,11 +147,11 @@ export const UrlPreview = ({ url, width, maxHeight }: UrlPreviewProps) => {
             </Box>
           </AbsoluteOverlay>
         )}
-        <Fade in={loading}>
-          <AbsoluteOverlay justifyContent="flex-start" pt={2}>
-            <CircularProgress color="primary" size="2rem" />
-          </AbsoluteOverlay>
-        </Fade>
+        {/*<Fade in={loading}>*/}
+        {/*  <AbsoluteOverlay justifyContent="flex-start" pt={2}>*/}
+        {/*    <CircularProgress color="primary" size="2rem" />*/}
+        {/*  </AbsoluteOverlay>*/}
+        {/*</Fade>*/}
       </Stack>
       {imagePreviewSrc && (
         <RootPortal>

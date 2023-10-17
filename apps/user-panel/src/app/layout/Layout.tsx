@@ -1,17 +1,19 @@
-import { memo, type PropsWithChildren, useState } from 'react'
-import { Box, darken, Stack } from '@mui/material'
+import { memo, useState, type PropsWithChildren } from 'react'
+import { Box, GlobalStyles, Stack, backdropClasses, darken } from '@mui/material'
 import { ElectronToRendererMessage, WindowStateChange } from '@web-scraper/common'
 import { BackgroundEffect } from './BackgroundEffect'
 import { Footer } from './Footer'
 import { Header } from './Header'
 import { Menu } from './Menu'
-import { commonLayoutTransitions } from './helpers'
+import {
+  commonLayoutTransitions,
+  contentAreaBorderRadius,
+  nonMaximizedWindowBorderRadius,
+} from './helpers'
 import { ViewTransitionState } from '../context/viewContext'
 import { useView } from '../hooks/useView'
 import { ApiModule } from '../modules/ApiModule'
 
-const nonMaximizedWindowBorderRadius = '1rem'
-export const contentAreaBorderRadius = '1rem'
 const fadeEffectSize = '2rem'
 
 type LayoutProps = PropsWithChildren<object>
@@ -35,7 +37,10 @@ export const Layout = memo<LayoutProps>(({ children }) => {
       overflow="hidden"
       sx={{
         backgroundColor: (theme) => darken(theme.palette.background.default, 0.15),
-        transition: commonLayoutTransitions.backgroundColor,
+        border: maximized
+          ? undefined
+          : (theme) => `2px solid ${darken(theme.palette.background.default, 0.25)}`,
+        transition: commonLayoutTransitions.backgroundAndBorderColor,
 
         width: '100vw',
         height: '100vh',
@@ -44,12 +49,16 @@ export const Layout = memo<LayoutProps>(({ children }) => {
         gridTemplateAreas: '"menu header" "menu content" "footer footer"',
         gridTemplateColumns: 'auto 1fr',
         gridTemplateRows: 'auto 1fr auto',
-        border: maximized
-          ? undefined
-          : (theme) => `2px solid ${darken(theme.palette.background.default, 0.25)}`,
         borderRadius: maximized ? '0rem' : nonMaximizedWindowBorderRadius,
       }}
     >
+      <GlobalStyles
+        styles={{
+          [`.${backdropClasses.root}`]: {
+            borderRadius: maximized ? '0rem' : nonMaximizedWindowBorderRadius,
+          },
+        }}
+      />
       <Menu />
       <Header maximized={maximized} />
       <Stack

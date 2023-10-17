@@ -13,4 +13,8 @@ export const commonLayoutTransitions = {
   fill: viewTransitionFactory('fill'),
   opacity: viewTransitionFactory('opacity'),
   backgroundColor: viewTransitionFactory('background-color'),
+  backgroundAndBorderColor: viewTransitionFactory(['background-color', 'border-color']),
 }
+
+export const nonMaximizedWindowBorderRadius = '1rem'
+export const contentAreaBorderRadius = '1rem'
