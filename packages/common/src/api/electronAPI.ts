@@ -1,5 +1,10 @@
 import type { ApiError, PaginatedApiFunction } from './common'
 import type {
+  DataSourceItem,
+  DataSourceStructure,
+  UpsertDataSourceStructureSchema,
+} from './dataSource'
+import type {
   Action,
   ActionExecutionResult,
   ActionStep,
@@ -38,6 +43,12 @@ export enum RendererToElectronMessage {
 
   getUserSettings = 'getUserSettings',
   setUserSetting = 'setUserSetting',
+
+  getDataSources = 'getDataSources',
+  deleteDataSource = 'deleteDataSource',
+  updateDataSource = 'updateDataSource',
+  createDataSource = 'createDataSource',
+  getDataSourceItems = 'getDataSourceItems',
 
   getSiteTags = 'getSiteTags',
   deleteSiteTag = 'deleteSiteTag',
@@ -135,6 +146,19 @@ export type ElectronApi = {
     key: KeyType,
     value: UserSettings[KeyType],
   ) => Promise<ApiError>
+
+  [RendererToElectronMessage.getDataSources]: () => Promise<DataSourceStructure[] | ApiError> //TODO: paginate
+  [RendererToElectronMessage.deleteDataSource]: (
+    dataSourceName: DataSourceStructure['name'],
+  ) => Promise<ApiError>
+  [RendererToElectronMessage.updateDataSource]: (
+    originalDataSourceName: DataSourceStructure['name'],
+    data: UpsertDataSourceStructureSchema,
+  ) => Promise<DataSourceStructure | ApiError>
+  [RendererToElectronMessage.createDataSource]: (
+    data: UpsertDataSourceStructureSchema,
+  ) => Promise<DataSourceStructure | ApiError>
+  [RendererToElectronMessage.getDataSourceItems]: PaginatedApiFunction<DataSourceItem, 'id'>
 
   [RendererToElectronMessage.getSiteTags]: PaginatedApiFunction<SiteTag, 'id'>
   [RendererToElectronMessage.deleteSiteTag]: (siteTagId: SiteTag['id']) => Promise<ApiError>

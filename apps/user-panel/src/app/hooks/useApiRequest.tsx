@@ -44,24 +44,7 @@ export function useApiRequest<RequestFunctionType extends AnyApiFunction>(
             const showErrorSnackbar = () =>
               enqueueSnackbar({
                 variant: 'error',
-                message: (
-                  <Stack alignItems="flex-start" gap={0}>
-                    <Typography variant="body2">{errorLabels[data.errorCode]}</Typography>
-                    {data.error && (
-                      <Typography
-                        variant="caption"
-                        sx={{
-                          maxWidth: '16rem',
-                          maxHeight: '8rem',
-                          overflow: 'hidden',
-                          textOverflow: 'ellipsis',
-                        }}
-                      >
-                        ({parseError(data.error)})
-                      </Typography>
-                    )}
-                  </Stack>
-                ),
+                message: <ApiErrorSnackbarMessage data={data} />,
               })
 
             if (config.onError) {
@@ -77,12 +60,12 @@ export function useApiRequest<RequestFunctionType extends AnyApiFunction>(
           config.onEnd?.()
         })
         .catch((error) => {
-          if (error) {
-            console.error(error)
-          } else {
-            setSubmitting(false)
-            setSubmittingData(null)
+          if (!error) {
+            return
           }
+          console.error(error)
+          setSubmitting(false)
+          setSubmittingData(null)
         })
     },
     [cancellable, enqueueSnackbar, request],
@@ -98,3 +81,22 @@ export function useApiRequest<RequestFunctionType extends AnyApiFunction>(
     [data, submit, submitting, submittingData],
   )
 }
+
+export const ApiErrorSnackbarMessage = ({ data }: { data: ApiError }) => (
+  <Stack alignItems="flex-start" gap={0}>
+    <Typography variant="body2">{errorLabels[data.errorCode]}</Typography>
+    {data.error && (
+      <Typography
+        variant="caption"
+        sx={{
+          maxWidth: '16rem',
+          maxHeight: '8rem',
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
+        }}
+      >
+        ({parseError(data.error)})
+      </Typography>
+    )}
+  </Stack>
+)

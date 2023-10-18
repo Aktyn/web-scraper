@@ -111,6 +111,14 @@ export const baseThemeOptions: ThemeOptions = {
         },
       },
     },
+    MuiChip: {
+      styleOverrides: {
+        sizeSmall: {
+          height: '1.5rem',
+          lineHeight: '1.5rem',
+        },
+      },
+    },
     MuiPaper: {
       styleOverrides: {
         root: {

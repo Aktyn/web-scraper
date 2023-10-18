@@ -7,7 +7,20 @@ import {
   useRef,
   useState,
 } from 'react'
-import { Box, type BoxProps, Stack, Tab, tabClasses, Tabs, tabsClasses } from '@mui/material'
+import { AddRounded } from '@mui/icons-material'
+import {
+  Box,
+  type BoxProps,
+  Divider,
+  IconButton,
+  Stack,
+  Tab,
+  tabClasses,
+  type TabProps,
+  Tabs,
+  tabsClasses,
+  Tooltip,
+} from '@mui/material'
 import anime from 'animejs'
 import { usePersistentState } from '../../hooks/usePersistentState'
 import { genericForwardRef, genericMemo } from '../../utils'
@@ -17,12 +30,15 @@ export interface TabSchema<ValueType> {
   value: ValueType
   label: ReactNode
   content: ReactNode
+  tabComponentProps?: Omit<TabProps, 'value' | 'label' | 'key'>
 }
 
 interface TabsViewProps<ValueType> {
   name: string
   defaultTab?: ValueType
   tabs: TabSchema<ValueType>[]
+  addTooltip?: ReactNode
+  onAdd?: () => void
 }
 
 const commonTabContentStyles: BoxProps['sx'] = {
@@ -38,7 +54,13 @@ const commonTabContentStyles: BoxProps['sx'] = {
 export const TabsView = genericMemo(
   genericForwardRef(
     <ValueType extends string | number>(
-      { name, defaultTab, tabs }: TabsViewProps<ValueType> & RefAttributes<HTMLDivElement>,
+      {
+        name,
+        defaultTab,
+        tabs,
+        addTooltip,
+        onAdd,
+      }: TabsViewProps<ValueType> & RefAttributes<HTMLDivElement>,
       ref: RefAttributes<HTMLDivElement>['ref'],
     ) => {
       const containerRef = useRef<HTMLDivElement>(null)
@@ -129,6 +151,8 @@ export const TabsView = genericMemo(
         [tab, setTab, setTabSwitchIndex, calculateDirection, tabSwitchIndex],
       )
 
+      const activeTab = tabs.some((t) => t.value === tab) ? tab : tabs[0].value
+
       return (
         <Stack
           ref={ref ?? containerRef}
@@ -143,14 +167,52 @@ export const TabsView = genericMemo(
             delay={1}
           >
             <ViewTransition
-              targets={(element) => element.querySelectorAll(`.${tabClasses.root}`)}
+              targets={(element) => [
+                ...element.querySelectorAll(`.${tabClasses.root}`),
+                element.querySelector('.tabs-add-button-separator'),
+                element.querySelector('.tabs-add-button'),
+              ]}
               type={TransitionType.MOVE_TOP}
             >
-              <Tabs value={tab} onChange={handleTabChange}>
-                {tabs.map((tab) => (
-                  <Tab key={tab.value} label={tab.label} value={tab.value} />
-                ))}
-              </Tabs>
+              <Stack direction="row" mr="auto" maxWidth="100%">
+                <Tabs
+                  value={activeTab}
+                  onChange={handleTabChange}
+                  variant="scrollable"
+                  scrollButtons="auto"
+                >
+                  {tabs.map((tab) => (
+                    <Tab
+                      key={tab.value}
+                      label={tab.label}
+                      value={tab.value}
+                      {...tab.tabComponentProps}
+                    />
+                  ))}
+                </Tabs>
+                {onAdd && (
+                  <>
+                    <Divider
+                      className="tabs-add-button-separator"
+                      orientation="vertical"
+                      flexItem
+                    />
+                    <Stack
+                      justifyContent="center"
+                      alignItems="center"
+                      height="100%"
+                      width="3.5rem"
+                      px="0.5rem"
+                    >
+                      <Tooltip title={addTooltip}>
+                        <IconButton className="tabs-add-button" color="inherit" onClick={onAdd}>
+                          <AddRounded />
+                        </IconButton>
+                      </Tooltip>
+                    </Stack>
+                  </>
+                )}
+              </Stack>
             </ViewTransition>
           </ViewTransition>
           <Stack ref={contentContainerRef} alignItems="stretch" flexGrow={1} position="relative">

@@ -1,4 +1,5 @@
 import prisma from './client'
+import * as dataSource from './dataSource'
 import * as site from './site'
 import * as siteInstructions from './siteInstructions'
 import * as siteTag from './siteTag'
@@ -6,6 +7,7 @@ import * as userData from './userData'
 
 const Database = {
   prisma,
+  dataSource,
   site,
   siteTag,
   siteInstructions,

@@ -15,13 +15,13 @@ import { AutoSizer } from '../../components/common/AutoSizer'
 import { ToggleButton } from '../../components/common/button/ToggleButton'
 import { FullViewLoader } from '../../components/common/loader/FullViewLoader'
 import { MultiSelect, type OptionSchema } from '../../components/common/select/MultiSelect'
+import { ApiErrorSnackbarMessage } from '../../hooks/useApiRequest'
 import { useDebounce } from '../../hooks/useDebounce'
 import {
   NotificationsModule,
   type NotificationData,
   NotificationType,
 } from '../../modules/NotificationsModule'
-import { errorLabels } from '../../utils'
 
 type FiltersSchema = Partial<{
   onlyUnread: boolean
@@ -70,7 +70,7 @@ export const NotificationsList = memo(() => {
       setNewNotificationsWaiting(false)
 
       if ('errorCode' in response) {
-        enqueueSnackbar({ variant: 'error', message: errorLabels[response.errorCode] })
+        enqueueSnackbar({ variant: 'error', message: <ApiErrorSnackbarMessage data={response} /> })
         return
       }
 

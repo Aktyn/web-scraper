@@ -18,6 +18,12 @@ const rendererToElectronMessageNames = [
   'getUserSettings',
   'setUserSetting',
 
+  'getDataSources',
+  'deleteDataSource',
+  'updateDataSource',
+  'createDataSource',
+  'getDataSourceItems',
+
   'getSiteTags',
   'deleteSiteTag',
   'updateSiteTag',

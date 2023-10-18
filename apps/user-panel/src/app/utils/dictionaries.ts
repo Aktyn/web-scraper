@@ -2,6 +2,7 @@ import {
   ActionStepErrorType,
   ActionStepType,
   CaptchaSolverType,
+  DataSourceColumnType,
   GlobalActionType,
   ProcedureType,
   ScraperExecutionScope,
@@ -54,4 +55,10 @@ export const scraperExecutionScopeNames: { [key in ScraperExecutionScope]: strin
   [ScraperExecutionScope.ACTION]: 'Action',
   [ScraperExecutionScope.FLOW]: 'Flow',
   [ScraperExecutionScope.PROCEDURE]: 'Procedure',
+}
+
+export const dataSourceColumnTypeNames: { [key in DataSourceColumnType]: string } = {
+  [DataSourceColumnType.TEXT]: 'Text',
+  [DataSourceColumnType.INTEGER]: 'Integer',
+  [DataSourceColumnType.REAL]: 'Real',
 }

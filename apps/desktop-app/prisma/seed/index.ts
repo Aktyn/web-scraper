@@ -1,4 +1,5 @@
 import { PrismaClient } from '@prisma/client'
+import { createAndSeedDataSources } from './dataSources'
 import { seedSite } from './site'
 import { seedSiteInstructions } from './siteInstructions'
 import { seedSiteTag } from './siteTag'
@@ -11,6 +12,7 @@ async function main() {
   await seedSite(prisma)
   await seedSiteTagsRelation(prisma)
   await seedSiteInstructions(prisma)
+  await createAndSeedDataSources(prisma)
 }
 
 main()

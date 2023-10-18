@@ -26,12 +26,16 @@ export const termsDetails = [
   {
     title: 'Routine',
     content:
-      //TODO: describe data source types
       'Sequence of procedures to be performed with given data (optional) for a single site.\nData source can be defined in several ways.\nRoutine can be run manually a selected number of times or for each element in the data source.',
   },
   {
     title: 'Chore',
     content:
       'Scheduled routines. Allows you to run a routine repeatedly at any specified time interval.\nThe chore can be repeated indefinitely or until a specified condition is met.',
+  },
+  {
+    title: 'Data source',
+    content:
+      'Data structure defined by the user to support the execution of site instructions.\nData can be read from and written to the data source.',
   },
 ] as const

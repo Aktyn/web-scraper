@@ -49,7 +49,7 @@ export const UrlPreview = ({ url, width, maxHeight }: UrlPreviewProps) => {
           }
           setImagePreviewSrc('data:image/webp;base64,' + response.imageBase64)
         })
-        .catch((error) => !error && setLoading(false))
+        .catch((error) => error && setLoading(false))
     },
     1000,
     [cancellable],

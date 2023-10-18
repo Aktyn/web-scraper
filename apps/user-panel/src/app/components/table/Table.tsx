@@ -126,7 +126,7 @@ export const Table = genericMemo(
               setCursor(response.cursor)
               setFetchingData(false)
             })
-            .catch((error) => !error && setFetchingData(false))
+            .catch((error) => error && setFetchingData(false))
         },
         [cancellable, cursor, dataSource, enqueueSnackbar, keyProperty],
       )
