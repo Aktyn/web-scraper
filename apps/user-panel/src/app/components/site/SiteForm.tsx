@@ -169,7 +169,12 @@ export const SiteForm = ({ site, onSuccess }: SiteFormProps) => {
             flexWrap="wrap"
             alignItems="center"
             justifyContent="center"
-            gap={1}
+            gap="0.5rem"
+            maxWidth="16rem"
+            maxHeight="8rem"
+            sx={{
+              overflowY: 'auto',
+            }}
           >
             {siteTagsFields.fields.length ? (
               siteTagsFields.fields.map((field, index) => (
@@ -189,16 +194,18 @@ export const SiteForm = ({ site, onSuccess }: SiteFormProps) => {
                 No tags
               </Typography>
             )}
-            <Tooltip title="Assign existing tag or create new one">
-              <IconButton
-                size="small"
-                onClick={() => {
-                  setOpenSiteTagForm((open) => !open)
-                }}
-              >
-                <AddRounded ref={addIconRef} />
-              </IconButton>
-            </Tooltip>
+            <Stack alignItems="center" justifySelf="flex-end">
+              <Tooltip title="Assign existing tag or create new one">
+                <IconButton
+                  size="small"
+                  onClick={() => {
+                    setOpenSiteTagForm((open) => !open)
+                  }}
+                >
+                  <AddRounded ref={addIconRef} />
+                </IconButton>
+              </Tooltip>
+            </Stack>
           </Stack>
         </Stack>
         <UrlPreview url={form.watch('url')} width={256} maxHeight={414} />

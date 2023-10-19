@@ -23,6 +23,9 @@ const rendererToElectronMessageNames = [
   'updateDataSource',
   'createDataSource',
   'getDataSourceItems',
+  'deleteDataSourceItem',
+  'updateDataSourceItem',
+  'createDataSourceItem',
 
   'getSiteTags',
   'deleteSiteTag',

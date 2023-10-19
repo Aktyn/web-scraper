@@ -19,7 +19,7 @@ export interface DataSourceStructure {
 
 export interface DataSourceItem {
   id: number
-  [key: string]: number | string
+  data: { columnName: string; value: number | string | null }[]
 }
 
 export const upsertDataSourceStructureSchema = yup.object({
@@ -35,7 +35,8 @@ export const upsertDataSourceStructureSchema = yup.object({
           .min(1, 'Column name is required')
           .max(32)
           .default('')
-          .required('Column name is required'),
+          .required('Column name is required')
+          .notOneOf(['id', 'ID', 'Id', 'iD'], 'id column is reserved'),
         type: yup
           .mixed<DataSourceColumnType>()
           .oneOf(Object.values(DataSourceColumnType))
@@ -45,3 +46,20 @@ export const upsertDataSourceStructureSchema = yup.object({
 })
 
 export type UpsertDataSourceStructureSchema = yup.InferType<typeof upsertDataSourceStructureSchema>
+
+export const upsertDataSourceItemSchema = yup.object({
+  data: yup
+    .array()
+    .required()
+    .min(1)
+    .of(
+      yup.object({
+        columnName: yup.string().min(1).required(),
+        value: yup.lazy((from) =>
+          typeof from === 'string' ? yup.string().nullable() : yup.number().nullable(),
+        ),
+      }),
+    ),
+})
+
+export type UpsertDataSourceItemSchema = yup.InferType<typeof upsertDataSourceItemSchema>

@@ -122,7 +122,7 @@ export const TabsView = genericMemo(
       }, [tabSwitchIndex, previousTab, tab, tabs, calculateDirection])
 
       const handleTabChange = useCallback(
-        (event: SyntheticEvent, newTab: ValueType) => {
+        (_: SyntheticEvent, newTab: ValueType) => {
           setPreviousTab(tab)
           setTab(newTab)
 
@@ -167,11 +167,13 @@ export const TabsView = genericMemo(
             delay={1}
           >
             <ViewTransition
-              targets={(element) => [
-                ...element.querySelectorAll(`.${tabClasses.root}`),
-                element.querySelector('.tabs-add-button-separator'),
-                element.querySelector('.tabs-add-button'),
-              ]}
+              targets={(element) =>
+                [
+                  ...element.querySelectorAll(`.${tabClasses.root}`),
+                  element.querySelector('.tabs-add-button-separator'),
+                  element.querySelector('.tabs-add-button'),
+                ].filter(Boolean)
+              }
               type={TransitionType.MOVE_TOP}
             >
               <Stack direction="row" mr="auto" maxWidth="100%">

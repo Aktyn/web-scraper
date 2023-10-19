@@ -30,9 +30,10 @@ const DataManagerView = ({ doNotRender }: ViewComponentProps) => {
     'data-sources',
     null,
   )
+  const [loadIndex, setLoadIndex] = useState(0)
   const [dataSourceToEdit, setDataSourceToEdit] = useState<DataSourceStructure | null>(null)
 
-  const load = useCallback(() => {
+  const loadDataSources = useCallback(() => {
     setLoadingDataSources(true)
     cancellable(window.electronAPI.getDataSources())
       .then((data) => {
@@ -46,6 +47,7 @@ const DataManagerView = ({ doNotRender }: ViewComponentProps) => {
 
         setLoadingDataSources(false)
         setDataSources(data)
+        setLoadIndex((prev) => prev + 1)
       })
       .catch((error) => {
         if (!error) {
@@ -57,13 +59,13 @@ const DataManagerView = ({ doNotRender }: ViewComponentProps) => {
   }, [cancellable, enqueueSnackbar, setDataSources])
 
   useEffect(() => {
-    load()
-  }, [load])
+    loadDataSources()
+  }, [loadDataSources])
 
   const handleDataSourceSuccess = useCallback(() => {
-    load()
+    loadDataSources()
     dataSourceDrawerRef.current?.close()
-  }, [load])
+  }, [loadDataSources])
 
   const tabs = useMemo(() => {
     const tabsArray: TabSchema<DataManagerTab | `DataSource.${string}`>[] = [
@@ -84,9 +86,9 @@ const DataManagerView = ({ doNotRender }: ViewComponentProps) => {
         ...dataSources.map((dataSource) => ({
           value: `DataSource.${dataSource.name}` as const,
           label: (
-            <Stack key={dataSource.name} direction="row" alignItems="center" columnGap="0.5rem">
+            <Stack key={loadIndex} direction="row" alignItems="center" columnGap="0.5rem">
               <Stack flexGrow={1} alignItems="center" justifyContent="center">
-                <Box>{dataSource.name}</Box>
+                <Box sx={{ textTransform: 'none' }}>{dataSource.name}</Box>
                 <Stack sx={{ height: 0, overflow: 'visible' }}>
                   <Typography
                     variant="caption"
@@ -109,12 +111,12 @@ const DataManagerView = ({ doNotRender }: ViewComponentProps) => {
                     dataSourceDrawerRef.current?.open()
                   }}
                 >
-                  <SettingsRounded />
+                  <SettingsRounded fontSize="inherit" />
                 </IconButton>
               </Tooltip>
             </Stack>
           ),
-          content: <DataSource key={dataSource.name} />,
+          content: <DataSource key={loadIndex} dataSource={dataSource} />,
           tabComponentProps: {
             sx: {
               pr: '0.5rem',
@@ -140,7 +142,7 @@ const DataManagerView = ({ doNotRender }: ViewComponentProps) => {
     }
 
     return tabsArray
-  }, [dataSources, loadingDataSources])
+  }, [dataSources, loadIndex, loadingDataSources])
 
   if (doNotRender) {
     return null

@@ -45,8 +45,6 @@ export const FormInput = genericMemo(
       [],
     )
 
-    Config.FORM_INPUT_DEBOUNCE_TIME
-
     return (
       <TextField
         {...textFieldProps}

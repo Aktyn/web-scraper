@@ -32,7 +32,7 @@ const databaseUrl = url
 console.info('Database URL:', databaseUrl)
 
 const prisma = new PrismaClient({
-  // log: ['query']
+  // log: ['query'],
   datasources: {
     db: {
       url: databaseUrl,

@@ -53,8 +53,10 @@ export type PaginatedApiFunction<
   DataType,
   IdProperty extends keyof DataType,
   OmitInFilters extends keyof DataType = never,
+  AdditionalArgumentType extends Array<unknown> = [],
 > = (
   request: PaginatedRequest<DataType, IdProperty, OmitInFilters>,
+  ...args: AdditionalArgumentType
 ) => Promise<PaginatedApiResponse<DataType, IdProperty>>
 
 export type PaginatedApiFunctionWithEncryptedData<

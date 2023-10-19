@@ -1,8 +1,8 @@
-import { type DataSourceItem, RendererToElectronMessage } from '@web-scraper/common'
+import { RendererToElectronMessage } from '@web-scraper/common'
 
 import Database from '../../../database'
 import { handleApiRequest, type RequestHandlersSchema, successResponse } from '../helpers'
-import { parseDatabaseDataSource } from '../parsers/dataSourceParser'
+import { parseDatabaseDataSource, parseDatabaseDataSourceItem } from '../parsers/dataSourceParser'
 
 export const dataSourceHandler = {
   [RendererToElectronMessage.getDataSources]: handleApiRequest(
@@ -23,16 +23,33 @@ export const dataSourceHandler = {
     RendererToElectronMessage.createDataSource,
     (data) => Database.dataSource.createDataSource(data).then(parseDatabaseDataSource),
   ),
+
   [RendererToElectronMessage.getDataSourceItems]: handleApiRequest(
     RendererToElectronMessage.getDataSourceItems,
-    (request) =>
-      Database.dataSource.getDataSourceItems(request).then((rows) => {
-        console.log(rows) //TODO
-
-        return {
-          data: rows as DataSourceItem[],
-          cursor: Database.utils.extractCursor(rows, 'id', request.count),
-        }
-      }),
+    (request, dataSourceName) =>
+      Database.dataSource
+        .getDataSourceItems(request, dataSourceName)
+        .then((rawItems) => rawItems.map(parseDatabaseDataSourceItem))
+        .then((items) => ({
+          data: items,
+          cursor: Database.utils.extractCursor(items, 'id', request.count),
+        })),
+  ),
+  [RendererToElectronMessage.deleteDataSourceItem]: handleApiRequest(
+    RendererToElectronMessage.deleteDataSourceItem,
+    (dataSourceName, itemId) =>
+      Database.dataSource.deleteDataSourceItem(dataSourceName, itemId).then(() => successResponse),
+  ),
+  [RendererToElectronMessage.updateDataSourceItem]: handleApiRequest(
+    RendererToElectronMessage.updateDataSourceItem,
+    (dataSourceName, itemId, data) =>
+      Database.dataSource
+        .updateDataSourceItem(dataSourceName, itemId, data)
+        .then(parseDatabaseDataSourceItem),
+  ),
+  [RendererToElectronMessage.createDataSourceItem]: handleApiRequest(
+    RendererToElectronMessage.createDataSourceItem,
+    (dataSourceName, data) =>
+      Database.dataSource.createDataSourceItem(dataSourceName, data).then(() => successResponse),
   ),
 } satisfies Partial<RequestHandlersSchema>

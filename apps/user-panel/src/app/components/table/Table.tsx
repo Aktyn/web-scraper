@@ -45,7 +45,7 @@ interface TableProps<DataType extends object, KeyPropertyType extends string & P
   columns: ReturnType<typeof useTableColumns<DataType>>
   headerContent?: ReactNode
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  data: DataType[] | PaginatedApiFunction<DataType, any>
+  data: DataType[] | PaginatedApiFunction<DataType, any, never, any[]>
   onAdd?: ReactNode | (() => void)
   onEdit?: (data: DataType) => void
   onDelete?: (data: DataType) => void

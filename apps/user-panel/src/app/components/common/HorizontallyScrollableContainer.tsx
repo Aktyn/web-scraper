@@ -1,10 +1,19 @@
 import { type PropsWithChildren, useRef, useEffect } from 'react'
 import { Stack, type StackProps } from '@mui/material'
 
+type HorizontallyScrollableContainerProps = PropsWithChildren<
+  {
+    scrollStrengthFactor?: number
+    allowVerticalScroll?: boolean
+  } & Omit<StackProps, 'ref'>
+>
+
 export function HorizontallyScrollableContainer({
   children,
+  scrollStrengthFactor = 1,
+  allowVerticalScroll = false,
   ...stackProps
-}: PropsWithChildren<Omit<StackProps, 'ref'>>) {
+}: HorizontallyScrollableContainerProps) {
   const ref = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -18,8 +27,18 @@ export function HorizontallyScrollableContainer({
       if (!hasVisibleScroll) {
         return
       }
+
+      const hasVisibleVerticalScroll = container.scrollHeight > container.clientHeight
+      if (hasVisibleVerticalScroll && allowVerticalScroll) {
+        return
+      }
+
       event.preventDefault()
-      container.scrollLeft += event.deltaY + event.deltaX
+      event.stopPropagation()
+      container.scrollTo({
+        left: container.scrollLeft + (event.deltaY + event.deltaX) * scrollStrengthFactor,
+        behavior: 'instant',
+      })
     }
 
     container.addEventListener('wheel', onWheel)
@@ -27,7 +46,7 @@ export function HorizontallyScrollableContainer({
     return () => {
       container.removeEventListener('wheel', onWheel)
     }
-  }, [])
+  }, [allowVerticalScroll, scrollStrengthFactor])
 
   return (
     <Stack

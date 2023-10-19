@@ -4,6 +4,8 @@ import {
   type DataSourceStructure,
   ErrorCode,
   type PaginatedRequest,
+  upsertDataSourceItemSchema,
+  type UpsertDataSourceItemSchema,
   upsertDataSourceStructureSchema,
   type UpsertDataSourceStructureSchema,
 } from '@web-scraper/common'
@@ -11,6 +13,9 @@ import {
 import Database from './index'
 
 type RawDataSourceTableSchema = { name: string }
+type RawDataSourceItemSchema = { id: number; [_: string]: number | string | null }
+
+//NOTE: $queryRaw cannot be used in some cases due to https://www.prisma.io/docs/concepts/components/prisma-client/raw-database-access#dynamic-table-names-in-postgresql
 
 async function mapDataSourceTables(table: RawDataSourceTableSchema) {
   if (!table.name) {
@@ -33,11 +38,36 @@ export async function getDataSources() {
   return Promise.all(tables.map(mapDataSourceTables))
 }
 
-export function getDataSourceItems(_request: PaginatedRequest<DataSourceItem, 'id'>) {
-  return Promise.resolve([]) //TODO
+export function getDataSourceItems(
+  request: PaginatedRequest<DataSourceItem, 'id'>,
+  dataSourceName: string,
+) {
+  const tableName = 'DataSource.' + dataSourceName
+
+  //TODO: support for request.filters
+
+  if (request.cursor) {
+    return Database.prisma.$queryRawUnsafe<RawDataSourceItemSchema[]>(`
+      SELECT * FROM "${tableName}"
+      WHERE id <= (
+        SELECT id FROM "${tableName}"
+        WHERE id = ${request.cursor.id}
+      )
+      ORDER BY id DESC
+      LIMIT ${request.count}
+      OFFSET 1;
+    `)
+  }
+
+  return Database.prisma.$queryRawUnsafe<RawDataSourceItemSchema[]>(`
+    SELECT * FROM "${tableName}"
+    ORDER BY id DESC
+    LIMIT ${request.count}
+    OFFSET 0
+  `)
 }
 
-function validateUpsertSchema(data: UpsertDataSourceStructureSchema) {
+function validateDataSourceStructureUpsertSchema(data: UpsertDataSourceStructureSchema) {
   try {
     upsertDataSourceStructureSchema.validateSync(data)
   } catch (error) {
@@ -45,8 +75,13 @@ function validateUpsertSchema(data: UpsertDataSourceStructureSchema) {
   }
 }
 
+export function deleteDataSource(dataSourceName: DataSourceStructure['name']) {
+  const tableName = 'DataSource.' + dataSourceName
+  return Database.prisma.$executeRawUnsafe(`DROP TABLE IF EXISTS "${tableName}";`)
+}
+
 export async function createDataSource(data: UpsertDataSourceStructureSchema) {
-  validateUpsertSchema(data)
+  validateDataSourceStructureUpsertSchema(data)
 
   const tableName = 'DataSource.' + data.name
 
@@ -54,15 +89,13 @@ export async function createDataSource(data: UpsertDataSourceStructureSchema) {
     (column) => `"${column.name ?? 'noname'}" ${column.type ?? DataSourceColumnType.TEXT}`,
   )
 
-  const sql = `
+  await Database.prisma.$executeRawUnsafe(`
     CREATE TABLE "${tableName}" (
       "id"	INTEGER,
       ${columnDefinitions.join(',\n')},
       PRIMARY KEY("id" AUTOINCREMENT)
     );
-  `
-
-  await Database.prisma.$executeRawUnsafe(sql)
+  `)
 
   const tables = await Database.prisma.$queryRaw<
     RawDataSourceTableSchema[]
@@ -79,13 +112,84 @@ export async function updateDataSource(
   originalName: DataSourceStructure['name'],
   data: UpsertDataSourceStructureSchema,
 ) {
-  validateUpsertSchema(data)
+  validateDataSourceStructureUpsertSchema(data)
 
   await deleteDataSource(originalName)
   return createDataSource(data)
 }
 
-export function deleteDataSource(name: DataSourceStructure['name']) {
-  const tableName = 'DataSource.' + name
-  return Database.prisma.$executeRawUnsafe(`DROP TABLE IF EXISTS "${tableName}";`)
+function validateDataSourceItemUpsertSchema(data: UpsertDataSourceItemSchema) {
+  try {
+    upsertDataSourceItemSchema.validateSync(data)
+  } catch (error) {
+    throw ErrorCode.INCORRECT_DATA
+  }
+}
+
+export function deleteDataSourceItem(
+  dataSourceName: DataSourceStructure['name'],
+  itemId: DataSourceItem['id'],
+) {
+  const tableName = 'DataSource.' + dataSourceName
+  return Database.prisma.$executeRawUnsafe(`DELETE FROM "${tableName}" WHERE id = ${itemId};`)
+}
+
+/** id column is not included */
+function parseColumnNames(dataSourceItemData: UpsertDataSourceItemSchema) {
+  return dataSourceItemData.data.map(({ columnName }) => `"${columnName}"`).join(', ')
+}
+/** id column is not included */
+function parseColumnValues(dataSourceItemData: UpsertDataSourceItemSchema) {
+  return dataSourceItemData.data
+    .map(({ value }) => {
+      if (value === null || value === undefined || value === '') {
+        return 'NULL'
+      }
+      if (typeof value === 'string') {
+        return `'${value}'`
+      }
+      return value
+    })
+    .join(', ')
+}
+
+export async function createDataSourceItem(
+  dataSourceName: DataSourceStructure['name'],
+  data: UpsertDataSourceItemSchema,
+) {
+  validateDataSourceItemUpsertSchema(data)
+
+  const tableName = 'DataSource.' + dataSourceName
+
+  await Database.prisma.$executeRawUnsafe(`
+    INSERT INTO "${tableName}" (${parseColumnNames(data)})
+    VALUES (${parseColumnValues(data)});
+  `)
+}
+
+export async function updateDataSourceItem(
+  dataSourceName: DataSourceStructure['name'],
+  itemId: DataSourceItem['id'],
+  data: UpsertDataSourceItemSchema,
+) {
+  validateDataSourceItemUpsertSchema(data)
+
+  const tableName = 'DataSource.' + dataSourceName
+
+  await Database.prisma.$executeRawUnsafe(`
+    UPDATE "${tableName}"
+    SET (${parseColumnNames(data)}) = (${parseColumnValues(data)})
+    WHERE id = ${itemId};
+  `)
+
+  const items = await Database.prisma.$queryRawUnsafe<RawDataSourceItemSchema[]>(`
+    SELECT * FROM "${tableName}"
+    WHERE id = ${itemId}
+    LIMIT 1
+  `)
+
+  if (items.length !== 1) {
+    throw ErrorCode.DATABASE_ERROR
+  }
+  return items[0]
 }

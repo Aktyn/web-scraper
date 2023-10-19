@@ -11,11 +11,12 @@ const TestingView = ({ doNotRender }: ViewComponentProps) => {
   return (
     <ViewTransition targets={(element) => element.querySelectorAll('.testing-section')}>
       <Stack
+        flexGrow={1}
         direction="row"
         flexWrap="wrap"
         justifyContent="flex-start"
         maxHeight="100%"
-        overflow="auto"
+        overflow="hidden"
       >
         <TestingSessionsList />
       </Stack>

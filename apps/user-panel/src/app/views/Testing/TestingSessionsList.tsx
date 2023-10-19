@@ -8,7 +8,7 @@ export const TestingSessionsList = () => {
   const testingSessions = ScraperTestingSessionsModule.useTestingSessions()
 
   return (
-    <Stack alignItems="center" gap={2}>
+    <Stack height="100%" alignItems="center" gap="1rem">
       <ViewTransition type={TransitionType.MOVE_TOP}>
         <Typography
           variant="h6"
@@ -27,7 +27,15 @@ export const TestingSessionsList = () => {
           Site instructions testing sessions
         </Typography>
       </ViewTransition>
-      <Stack className="testing-section" alignItems="stretch" p={2} pt={0} gap={1} mx="auto">
+      <Stack
+        className="testing-section"
+        flexGrow={1}
+        alignItems="stretch"
+        p="1rem"
+        pt={0}
+        gap="0.5rem"
+        mx="auto"
+      >
         {testingSessions.sessions.length > 0 ? (
           testingSessions.sessions.map((session) => (
             <TestingSessionItem key={session.sessionId} session={session} />
