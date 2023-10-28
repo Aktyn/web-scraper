@@ -7,8 +7,8 @@ import { DataSource } from './DataSource'
 import { SiteTags } from './SiteTags'
 import { Sites } from './Sites'
 import { CustomDrawer, type CustomDrawerRef } from '../../components/common/CustomDrawer'
-import { type TabSchema, TabsView } from '../../components/common/TabsView'
-import { DataSourceForm } from '../../components/dataSource/DataSourceForm'
+import { type TabSchema, type TabsHandle, TabsView } from '../../components/common/TabsView'
+import { DataSourceForm, DataSourceSuccessAction } from '../../components/dataSource/DataSourceForm'
 import { ApiErrorSnackbarMessage } from '../../hooks/useApiRequest'
 import { useCancellablePromise } from '../../hooks/useCancellablePromise'
 import { usePersistentState } from '../../hooks/usePersistentState'
@@ -22,6 +22,7 @@ enum DataManagerTab {
 
 const DataManagerView = ({ doNotRender }: ViewComponentProps) => {
   const dataSourceDrawerRef = useRef<CustomDrawerRef>(null)
+  const tabsHandleRef = useRef<TabsHandle<DataManagerTab | `DataSource.${string}`>>(null)
   const cancellable = useCancellablePromise()
   const { enqueueSnackbar } = useSnackbar()
 
@@ -35,7 +36,7 @@ const DataManagerView = ({ doNotRender }: ViewComponentProps) => {
 
   const loadDataSources = useCallback(() => {
     setLoadingDataSources(true)
-    cancellable(window.electronAPI.getDataSources())
+    return cancellable(window.electronAPI.getDataSources())
       .then((data) => {
         if ('errorCode' in data) {
           enqueueSnackbar({
@@ -48,24 +49,47 @@ const DataManagerView = ({ doNotRender }: ViewComponentProps) => {
         setLoadingDataSources(false)
         setDataSources(data)
         setLoadIndex((prev) => prev + 1)
+
+        return data
       })
       .catch((error) => {
-        if (!error) {
-          return
+        if (error) {
+          enqueueSnackbar({
+            variant: 'error',
+            message: error instanceof Error ? error.message : String(error),
+          })
+        } else {
+          setLoadingDataSources(false)
         }
-
-        setLoadingDataSources(false)
       })
   }, [cancellable, enqueueSnackbar, setDataSources])
 
   useEffect(() => {
-    loadDataSources()
+    void loadDataSources()
   }, [loadDataSources])
 
-  const handleDataSourceSuccess = useCallback(() => {
-    loadDataSources()
-    dataSourceDrawerRef.current?.close()
-  }, [loadDataSources])
+  const handleDataSourceSuccess = useCallback(
+    (action: DataSourceSuccessAction) => {
+      void loadDataSources().then((dataSources) => {
+        switch (action) {
+          case DataSourceSuccessAction.DELETED:
+          case DataSourceSuccessAction.CREATED:
+          case DataSourceSuccessAction.UPDATED:
+            {
+              const lastDataSource = dataSources?.at(-1)
+              if (lastDataSource) {
+                tabsHandleRef.current?.changeTab(`DataSource.${lastDataSource.name}`)
+              } else {
+                tabsHandleRef.current?.changeTab(DataManagerTab.SITES)
+              }
+            }
+            break
+        }
+      })
+      dataSourceDrawerRef.current?.close()
+    },
+    [loadDataSources],
+  )
 
   const tabs = useMemo(() => {
     const tabsArray: TabSchema<DataManagerTab | `DataSource.${string}`>[] = [
@@ -151,6 +175,7 @@ const DataManagerView = ({ doNotRender }: ViewComponentProps) => {
   return (
     <>
       <TabsView
+        handleRef={tabsHandleRef}
         name="data-manager"
         tabs={tabs}
         addTooltip="Add data source"

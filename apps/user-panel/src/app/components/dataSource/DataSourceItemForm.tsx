@@ -116,21 +116,31 @@ const ColumnsValuesForm = ({ dataSource }: { dataSource: DataSourceStructure }) 
   return (
     <FormControl error={!!error}>
       <Stack justifyContent="flex-start" alignItems="stretch" rowGap="0.5rem">
-        {columnsFields.fields.map((field, index) => (
-          <FormInput
-            key={field.id}
-            name={`data.${index}.value`}
-            form={form}
-            label={columnsFields.fields[index].columnName}
-            type={
-              [DataSourceColumnType.INTEGER, DataSourceColumnType.REAL].includes(
-                getColumnType(dataSource, field.columnName) ?? DataSourceColumnType.TEXT,
-              )
-                ? 'number'
-                : 'text'
-            }
-          />
-        ))}
+        {columnsFields.fields.map((field, index) => {
+          const columnType =
+            getColumnType(dataSource, field.columnName) ?? DataSourceColumnType.TEXT
+
+          return (
+            <FormInput
+              key={field.id}
+              name={`data.${index}.value`}
+              form={form}
+              label={columnsFields.fields[index].columnName}
+              type={
+                [DataSourceColumnType.INTEGER, DataSourceColumnType.REAL].includes(columnType)
+                  ? 'number'
+                  : 'text'
+              }
+              inputProps={
+                columnType === DataSourceColumnType.REAL
+                  ? {
+                      step: 'any',
+                    }
+                  : {}
+              }
+            />
+          )
+        })}
       </Stack>
       {error && <FormHelperText>{error.message}</FormHelperText>}
     </FormControl>

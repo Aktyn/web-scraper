@@ -89,7 +89,10 @@ export const DataSource = ({ dataSource }: DataSourceProps) => {
 
   return (
     <>
-      <CustomDrawer ref={dataSourceItemDrawerRef} title="Update data source item">
+      <CustomDrawer
+        ref={dataSourceItemDrawerRef}
+        title={`${dataSourceItemToEdit ? 'Edit' : 'Add'} data source item`}
+      >
         <DataSourceItemForm
           dataSource={dataSource}
           dataSourceItem={dataSourceItemToEdit}

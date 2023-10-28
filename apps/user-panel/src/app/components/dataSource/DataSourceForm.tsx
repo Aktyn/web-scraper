@@ -29,9 +29,15 @@ import { dataSourceColumnTypeNames } from '../../utils/dictionaries'
 import { ConfirmableButton } from '../common/button/ConfirmableButton'
 import { FormInput } from '../form/FormInput'
 
+export enum DataSourceSuccessAction {
+  CREATED = 'created',
+  UPDATED = 'updated',
+  DELETED = 'deleted',
+}
+
 interface DataSourceFormProps {
   dataSource?: DataSourceStructure
-  onSuccess?: () => void
+  onSuccess?: (action: DataSourceSuccessAction) => void
 }
 
 export const DataSourceForm = ({ dataSource, onSuccess }: DataSourceFormProps) => {
@@ -56,7 +62,7 @@ export const DataSourceForm = ({ dataSource, onSuccess }: DataSourceFormProps) =
           {
             onSuccess: (_, { enqueueSnackbar }) => {
               enqueueSnackbar({ variant: 'success', message: 'Data source modified' })
-              onSuccess?.()
+              onSuccess?.(DataSourceSuccessAction.UPDATED)
             },
           },
           dataSource.name,
@@ -67,7 +73,7 @@ export const DataSourceForm = ({ dataSource, onSuccess }: DataSourceFormProps) =
           {
             onSuccess: (_, { enqueueSnackbar }) => {
               enqueueSnackbar({ variant: 'success', message: 'Data source created' })
-              onSuccess?.()
+              onSuccess?.(DataSourceSuccessAction.CREATED)
             },
           },
           data,
@@ -83,7 +89,7 @@ export const DataSourceForm = ({ dataSource, onSuccess }: DataSourceFormProps) =
         {
           onSuccess: (_, { enqueueSnackbar }) => {
             enqueueSnackbar({ variant: 'success', message: 'Data source deleted' })
-            onSuccess?.()
+            onSuccess?.(DataSourceSuccessAction.DELETED)
           },
         },
         dataSource.name,

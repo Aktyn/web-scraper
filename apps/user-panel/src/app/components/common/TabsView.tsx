@@ -1,9 +1,11 @@
 import {
   type ReactNode,
+  type Ref,
   type RefAttributes,
   type SyntheticEvent,
   useCallback,
   useEffect,
+  useImperativeHandle,
   useRef,
   useState,
 } from 'react'
@@ -26,6 +28,10 @@ import { usePersistentState } from '../../hooks/usePersistentState'
 import { genericForwardRef, genericMemo } from '../../utils'
 import { TransitionType, ViewTransition } from '../animation/ViewTransition'
 
+export interface TabsHandle<ValueType> {
+  changeTab: (tab: ValueType) => void
+}
+
 export interface TabSchema<ValueType> {
   value: ValueType
   label: ReactNode
@@ -39,6 +45,7 @@ interface TabsViewProps<ValueType> {
   tabs: TabSchema<ValueType>[]
   addTooltip?: ReactNode
   onAdd?: () => void
+  handleRef?: Ref<TabsHandle<ValueType>>
 }
 
 const commonTabContentStyles: BoxProps['sx'] = {
@@ -60,6 +67,7 @@ export const TabsView = genericMemo(
         tabs,
         addTooltip,
         onAdd,
+        handleRef,
       }: TabsViewProps<ValueType> & RefAttributes<HTMLDivElement>,
       ref: RefAttributes<HTMLDivElement>['ref'],
     ) => {
@@ -122,33 +130,44 @@ export const TabsView = genericMemo(
       }, [tabSwitchIndex, previousTab, tab, tabs, calculateDirection])
 
       const handleTabChange = useCallback(
-        (_: SyntheticEvent, newTab: ValueType) => {
-          setPreviousTab(tab)
-          setTab(newTab)
+        (_: SyntheticEvent | null, newTab: ValueType) => {
+          setTab((currentTab) => {
+            setPreviousTab(currentTab)
 
-          if (contentContainerRef.current && !isAnimatingRef.current) {
-            const direction = calculateDirection(tab, newTab)
+            if (contentContainerRef.current && !isAnimatingRef.current) {
+              const direction = calculateDirection(currentTab, newTab)
 
-            const tabContentTarget = contentContainerRef.current.querySelector(
-              '.tab-content-1',
-            ) as HTMLDivElement
-            if (tabContentTarget) {
-              tabContentTarget.style.transform =
-                tabSwitchIndex % 2 === 0 ? 'translateX(0%)' : `translateX(${100 * direction}%)`
+              const tabContentTarget = contentContainerRef.current.querySelector(
+                '.tab-content-1',
+              ) as HTMLDivElement
+              if (tabContentTarget) {
+                tabContentTarget.style.transform =
+                  tabSwitchIndex % 2 === 0 ? 'translateX(0%)' : `translateX(${100 * direction}%)`
+              }
+
+              const previousTabContentTarget = contentContainerRef.current.querySelector(
+                '.tab-content-2',
+              ) as HTMLDivElement
+              if (previousTabContentTarget) {
+                previousTabContentTarget.style.transform =
+                  tabSwitchIndex % 2 === 0 ? `translateX(${100 * direction}%)` : 'translateX(0%)'
+              }
             }
 
-            const previousTabContentTarget = contentContainerRef.current.querySelector(
-              '.tab-content-2',
-            ) as HTMLDivElement
-            if (previousTabContentTarget) {
-              previousTabContentTarget.style.transform =
-                tabSwitchIndex % 2 === 0 ? `translateX(${100 * direction}%)` : 'translateX(0%)'
-            }
-          }
+            setTabSwitchIndex((index) => index + 1)
 
-          setTabSwitchIndex((index) => index + 1)
+            return newTab
+          })
         },
-        [tab, setTab, setTabSwitchIndex, calculateDirection, tabSwitchIndex],
+        [calculateDirection, setTab, setTabSwitchIndex, tabSwitchIndex],
+      )
+
+      useImperativeHandle(
+        handleRef,
+        () => ({
+          changeTab: (tab) => handleTabChange(null, tab),
+        }),
+        [handleTabChange],
       )
 
       const activeTab = tabs.some((t) => t.value === tab) ? tab : tabs[0].value
