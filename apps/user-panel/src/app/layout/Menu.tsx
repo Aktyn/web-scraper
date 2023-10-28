@@ -4,12 +4,12 @@ import {
   EngineeringRounded,
   InfoRounded,
   NotificationsRounded,
-  StorageRounded,
 } from '@mui/icons-material'
 import { Box, List, Stack, Typography, useTheme } from '@mui/material'
 import { headerSize } from './Header'
 import { MenuItem, type MenuItemProps } from './MenuItem'
 import { commonLayoutTransitions, contentAreaBorderRadius } from './helpers'
+import { DatabaseIcon } from '../components/icons/DatabaseIcon'
 import { RecaptchaIcon } from '../components/icons/RecaptchaIcon'
 import { RoutineIcon } from '../components/icons/RoutineIcon'
 import { ReactComponent as LogoIcon } from '../components/icons/icon.svg'
@@ -49,7 +49,7 @@ const NotificationsLabel = memo(() => {
 const menuEntries: MenuItemProps[] = [
   { label: 'Dashboard', icon: DashboardRounded, viewName: 'DASHBOARD' },
   { label: 'Routines', icon: RoutineIcon, viewName: 'ROUTINES' },
-  { label: 'Data manager', icon: StorageRounded, viewName: 'DATA_MANAGER' },
+  { label: 'Data manager', icon: DatabaseIcon, viewName: 'DATA_MANAGER' },
   { label: <TestingLabel />, icon: EngineeringRounded, viewName: 'TESTING' },
   { label: 'Captcha', icon: RecaptchaIcon, viewName: 'CAPTCHA' },
   { label: 'Info', icon: InfoRounded, viewName: 'INFO' },

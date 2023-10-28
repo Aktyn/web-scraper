@@ -4,16 +4,19 @@ import {
   type DataSourceStructure,
   ErrorCode,
   type PaginatedRequest,
+  safePromise,
   upsertDataSourceItemSchema,
   type UpsertDataSourceItemSchema,
   upsertDataSourceStructureSchema,
   type UpsertDataSourceStructureSchema,
 } from '@web-scraper/common'
 
+import { parseDatabaseDataSourceItem } from '../api/internal/parsers/dataSourceParser'
+
 import Database from './index'
 
 type RawDataSourceTableSchema = { name: string }
-type RawDataSourceItemSchema = { id: number; [_: string]: number | string | null }
+export type RawDataSourceItemSchema = { id: number; [_: string]: number | string | null }
 
 //NOTE: $queryRaw cannot be used in some cases due to https://www.prisma.io/docs/concepts/components/prisma-client/raw-database-access#dynamic-table-names-in-postgresql
 
@@ -64,6 +67,14 @@ export function getDataSourceItems(
     ORDER BY id DESC
     LIMIT ${request.count}
     OFFSET 0
+  `)
+}
+
+export function getAllDataSourceItems(dataSourceName: string) {
+  const tableName = 'DataSource.' + dataSourceName
+
+  return Database.prisma.$queryRawUnsafe<RawDataSourceItemSchema[]>(`
+    SELECT * FROM "${tableName}"
   `)
 }
 
@@ -134,6 +145,16 @@ export function deleteDataSourceItem(
   return Database.prisma.$executeRawUnsafe(`DELETE FROM "${tableName}" WHERE id = ${itemId};`)
 }
 
+export async function clearDataSourceItems(dataSourceName: DataSourceStructure['name']) {
+  const tableName = 'DataSource.' + dataSourceName
+  await Database.prisma.$executeRawUnsafe(`DELETE FROM "${tableName}";`)
+  await safePromise(
+    Database.prisma.$executeRawUnsafe(
+      `UPDATE SQLITE_SEQUENCE SET seq = 0 WHERE name = "${tableName}";`,
+    ),
+  )
+}
+
 /** id column is not included */
 function parseColumnNames(dataSourceItemData: UpsertDataSourceItemSchema) {
   return dataSourceItemData.data.map(({ columnName }) => `"${columnName}"`).join(', ')
@@ -165,6 +186,30 @@ export async function createDataSourceItem(
     INSERT INTO "${tableName}" (${parseColumnNames(data)})
     VALUES (${parseColumnValues(data)});
   `)
+}
+
+export async function insertRawDataSourceItems(
+  dataSourceName: DataSourceStructure['name'],
+  rawItems: RawDataSourceItemSchema[],
+) {
+  let totalAffectedRows = 0
+
+  const tableName = 'DataSource.' + dataSourceName
+
+  for (const item of rawItems) {
+    try {
+      const affectedRows = await Database.prisma.$executeRawUnsafe(`
+    INSERT INTO "${tableName}" VALUES (${item.id}, ${parseColumnValues(
+      parseDatabaseDataSourceItem(item),
+    )});
+  `)
+      totalAffectedRows += affectedRows
+    } catch {
+      /* empty */
+    }
+  }
+
+  return totalAffectedRows
 }
 
 export async function updateDataSourceItem(

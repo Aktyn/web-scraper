@@ -7,5 +7,7 @@ export enum ErrorCode {
   INCORRECT_DATA = 102,
   ENTRY_ALREADY_EXISTS = 103,
 
+  ACTION_CANCELLED_BY_USER = 200,
+
   NOT_FOUND = 404,
 }

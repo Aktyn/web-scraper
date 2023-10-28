@@ -50,10 +50,13 @@ export enum RendererToElectronMessage {
   updateDataSource = 'updateDataSource',
   createDataSource = 'createDataSource',
 
-  getDataSourceItems = 'getDataSourceItems',
   deleteDataSourceItem = 'deleteDataSourceItem',
   updateDataSourceItem = 'updateDataSourceItem',
   createDataSourceItem = 'createDataSourceItem',
+  getDataSourceItems = 'getDataSourceItems',
+  clearDataSourceItems = 'clearDataSourceItems',
+  exportDataSourceItems = 'exportDataSourceItems',
+  importDataSourceItems = 'importDataSourceItems',
 
   getSiteTags = 'getSiteTags',
   deleteSiteTag = 'deleteSiteTag',
@@ -164,12 +167,6 @@ export type ElectronApi = {
     data: UpsertDataSourceStructureSchema,
   ) => Promise<DataSourceStructure | ApiError>
 
-  [RendererToElectronMessage.getDataSourceItems]: PaginatedApiFunction<
-    DataSourceItem,
-    'id',
-    never,
-    [dataSourceName: string]
-  >
   [RendererToElectronMessage.deleteDataSourceItem]: (
     dataSourceName: DataSourceStructure['name'],
     itemId: DataSourceItem['id'],
@@ -183,6 +180,22 @@ export type ElectronApi = {
     dataSourceName: DataSourceStructure['name'],
     data: UpsertDataSourceItemSchema,
   ) => Promise<ApiError>
+  [RendererToElectronMessage.getDataSourceItems]: PaginatedApiFunction<
+    DataSourceItem,
+    'id',
+    never,
+    [dataSourceName: string]
+  >
+  [RendererToElectronMessage.clearDataSourceItems]: (
+    dataSourceName: DataSourceStructure['name'],
+  ) => Promise<ApiError>
+  [RendererToElectronMessage.exportDataSourceItems]: (
+    dataSourceName: DataSourceStructure['name'],
+  ) => Promise<{ exportedRowsCount: number } | ApiError>
+  [RendererToElectronMessage.importDataSourceItems]: (
+    dataSourceName: DataSourceStructure['name'],
+    //TODO: option for ignoring id column
+  ) => Promise<{ importedRowsCount: number; failedRowsCount: number } | ApiError>
 
   [RendererToElectronMessage.getSiteTags]: PaginatedApiFunction<SiteTag, 'id'>
   [RendererToElectronMessage.deleteSiteTag]: (siteTagId: SiteTag['id']) => Promise<ApiError>

@@ -1,5 +1,6 @@
 import { useCallback, useRef, useState } from 'react'
-import { Box } from '@mui/material'
+import { DeleteSweepRounded, FileDownloadRounded, FileUploadRounded } from '@mui/icons-material'
+import { Box, IconButton, Stack, Tooltip } from '@mui/material'
 import { type DataSourceItem, type DataSourceStructure } from '@web-scraper/common'
 import {
   type ColumnDefinition,
@@ -10,6 +11,8 @@ import {
 import { TransitionType, ViewTransition } from '../../components/animation/ViewTransition'
 import { ConfirmationDialog } from '../../components/common/ConfirmationDialog'
 import { CustomDrawer, type CustomDrawerRef } from '../../components/common/CustomDrawer'
+import { ConfirmableButton } from '../../components/common/button/ConfirmableButton'
+import { DataSourceColumnTypeIcon } from '../../components/dataSource/DataSourceColumnTypeIcon'
 import { DataSourceItemForm } from '../../components/dataSource/DataSourceItemForm'
 import { useApiRequest } from '../../hooks/useApiRequest'
 
@@ -22,6 +25,10 @@ export const DataSource = ({ dataSource }: DataSourceProps) => {
   const dataSourceItemDrawerRef = useRef<CustomDrawerRef>(null)
 
   const deleteDataSourceItemRequest = useApiRequest(window.electronAPI.deleteDataSourceItem)
+  const clearDataSourceRequest = useApiRequest(window.electronAPI.clearDataSourceItems)
+  const exportDataSourceRequest = useApiRequest(window.electronAPI.exportDataSourceItems)
+  const importDataSourceRequest = useApiRequest(window.electronAPI.importDataSourceItems)
+
   const columns = useTableColumns<DataSourceItem>({
     definitions: [
       {
@@ -33,7 +40,17 @@ export const DataSource = ({ dataSource }: DataSourceProps) => {
         (column) =>
           ({
             id: column.name,
-            header: column.name,
+            header: (
+              <Stack
+                direction="row"
+                alignItems="center"
+                justifyContent="flex-start"
+                columnGap="0.25rem"
+              >
+                <DataSourceColumnTypeIcon type={column.type} sx={{ opacity: 0.5 }} />
+                <Box>{column.name}</Box>
+              </Stack>
+            ),
             accessor: (item) =>
               item.data.find((entry) => entry.columnName === column.name)?.value?.toString() ??
               null,
@@ -50,13 +67,13 @@ export const DataSource = ({ dataSource }: DataSourceProps) => {
     setDataSourceItemToDelete(item)
     setOpenDataSourceItemDeleteDialog(true)
   }, [])
-  const handleDeleteConfirm = useCallback(() => {
+  const deleteDataSourceItem = useCallback(() => {
     if (!dataSourceItemToDelete) {
       return
     }
     deleteDataSourceItemRequest.submit(
       {
-        onSuccess: (res, { enqueueSnackbar }) => {
+        onSuccess: (_res, { enqueueSnackbar }) => {
           setOpenDataSourceItemDeleteDialog(false)
           tableRef.current?.refresh()
           enqueueSnackbar({ variant: 'success', message: 'Data source item deleted successfully' })
@@ -80,6 +97,47 @@ export const DataSource = ({ dataSource }: DataSourceProps) => {
     tableRef.current?.refresh()
   }, [])
 
+  const exportDataSource = useCallback(() => {
+    exportDataSourceRequest.submit(
+      {
+        onSuccess: (res, { enqueueSnackbar }) => {
+          enqueueSnackbar({
+            variant: 'success',
+            message: `${res.exportedRowsCount} rows has been exported`,
+          })
+        },
+      },
+      dataSource.name,
+    )
+  }, [dataSource.name, exportDataSourceRequest])
+
+  const importDataSource = useCallback(() => {
+    importDataSourceRequest.submit(
+      {
+        onSuccess: (res, { enqueueSnackbar }) => {
+          tableRef.current?.refresh()
+          enqueueSnackbar({
+            variant: res.importedRowsCount > 0 ? 'success' : 'info',
+            message: `${res.importedRowsCount} rows has been imported (${res.failedRowsCount} failed)`,
+          })
+        },
+      },
+      dataSource.name,
+    )
+  }, [dataSource.name, importDataSourceRequest])
+
+  const clearDataSource = useCallback(() => {
+    clearDataSourceRequest.submit(
+      {
+        onSuccess: (_res, { enqueueSnackbar }) => {
+          tableRef.current?.refresh()
+          enqueueSnackbar({ variant: 'success', message: 'Data source has been cleared' })
+        },
+      },
+      dataSource.name,
+    )
+  }, [clearDataSourceRequest, dataSource.name])
+
   const dataFetcher = useCallback<typeof window.electronAPI.getDataSourceItems>(
     (request) => {
       return window.electronAPI.getDataSourceItems(request, dataSource.name)
@@ -102,7 +160,7 @@ export const DataSource = ({ dataSource }: DataSourceProps) => {
       <ConfirmationDialog
         open={openDataSourceItemDeleteDialog}
         onClose={() => setOpenDataSourceItemDeleteDialog(false)}
-        onConfirm={handleDeleteConfirm}
+        onConfirm={deleteDataSourceItem}
         loading={deleteDataSourceItemRequest.submitting}
         titleContent="Confirm action"
         confirmButtonText="Delete"
@@ -119,6 +177,34 @@ export const DataSource = ({ dataSource }: DataSourceProps) => {
             onAdd={handleAdd}
             onEdit={handleEdit}
             onDelete={handleDelete}
+            headerContent={
+              <Stack
+                direction="row"
+                alignItems="center"
+                justifyContent="flex-start"
+                columnGap="0.5rem"
+              >
+                <Tooltip title="Export data source to JSON file">
+                  <IconButton onClick={exportDataSource}>
+                    <FileDownloadRounded />
+                  </IconButton>
+                </Tooltip>
+                <Tooltip title="Import data from JSON file">
+                  <IconButton onClick={importDataSource}>
+                    <FileUploadRounded />
+                  </IconButton>
+                </Tooltip>
+                <ConfirmableButton
+                  variant="outlined"
+                  color="primary"
+                  size="small"
+                  endIcon={<DeleteSweepRounded />}
+                  onConfirm={clearDataSource}
+                >
+                  Clear data source
+                </ConfirmableButton>
+              </Stack>
+            }
           />
         </Box>
       </ViewTransition>

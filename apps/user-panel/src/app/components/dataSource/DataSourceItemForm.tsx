@@ -2,7 +2,7 @@ import { useCallback } from 'react'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { AddRounded } from '@mui/icons-material'
 import { LoadingButton } from '@mui/lab'
-import { FormControl, FormHelperText, Stack } from '@mui/material'
+import { FormControl, FormHelperText, InputAdornment, Stack } from '@mui/material'
 import {
   DataSourceColumnType,
   type DataSourceItem,
@@ -11,6 +11,7 @@ import {
   type UpsertDataSourceItemSchema,
 } from '@web-scraper/common'
 import { FormProvider, useFieldArray, useForm, useFormContext } from 'react-hook-form'
+import { DataSourceColumnTypeIcon } from './DataSourceColumnTypeIcon'
 import { useApiRequest } from '../../hooks/useApiRequest'
 import { FormInput } from '../form/FormInput'
 
@@ -131,6 +132,13 @@ const ColumnsValuesForm = ({ dataSource }: { dataSource: DataSourceStructure }) 
                   ? 'number'
                   : 'text'
               }
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <DataSourceColumnTypeIcon type={columnType} />
+                  </InputAdornment>
+                ),
+              }}
               inputProps={
                 columnType === DataSourceColumnType.REAL
                   ? {

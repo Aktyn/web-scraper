@@ -7,6 +7,7 @@ export const errorLabels: { [key in ErrorCode]: string } = {
   [ErrorCode.DATABASE_ERROR]: 'Database error',
   [ErrorCode.INCORRECT_DATA]: 'Incorrect data',
   [ErrorCode.ENTRY_ALREADY_EXISTS]: 'Entry already exists',
+  [ErrorCode.ACTION_CANCELLED_BY_USER]: 'Action cancelled by user',
   [ErrorCode.NOT_FOUND]: 'Not found',
 }
 

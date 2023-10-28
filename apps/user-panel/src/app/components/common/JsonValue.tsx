@@ -64,9 +64,11 @@ export const JsonValue = ({ children: value, disablePreview }: JsonValueProps) =
               vertical: 'center',
               horizontal: 'center',
             }}
-            PaperProps={{
-              sx: {
-                display: 'flex',
+            slotProps={{
+              paper: {
+                sx: {
+                  display: 'flex',
+                },
               },
             }}
           >
