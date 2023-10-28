@@ -26,7 +26,7 @@ import {
   ScraperMode,
 } from '@web-scraper/common'
 import type { ElementHandle, Page } from 'puppeteer'
-import * as uuid from 'uuid'
+import { v4 as uuidV4 } from 'uuid'
 
 import { broadcastMessage } from '../api/internal/helpers'
 import { parseUserSettings } from '../api/internal/parsers/userSettingsParser'
@@ -73,7 +73,7 @@ export class Scraper<ModeType extends ScraperMode> {
   }
 
   private destroyed = false
-  public readonly id = uuid.v4()
+  public readonly id = uuidV4()
   protected readonly logger: Logger
 
   private readonly browser: ScraperBrowser
@@ -234,7 +234,7 @@ export class Scraper<ModeType extends ScraperMode> {
     actions: Action[],
     onDataRequest: RequestDataCallback,
   ): Promise<ProcedureExecutionResult> {
-    const executionId = uuid.v4()
+    const executionId = uuidV4()
     try {
       this.logger.info('Performing procedure:', procedure.type)
       broadcastMessage(
@@ -319,7 +319,7 @@ export class Scraper<ModeType extends ScraperMode> {
     actions: Action[],
     onDataRequest: RequestDataCallback,
   ): Promise<FlowExecutionResult> {
-    const executionId = uuid.v4()
+    const executionId = uuidV4()
     try {
       this.logger.info('Performing flow starting with action:', flow.actionName)
       broadcastMessage(
@@ -449,7 +449,7 @@ export class Scraper<ModeType extends ScraperMode> {
     action: Action,
     onDataRequest: RequestDataCallback,
   ): Promise<ActionExecutionResult> {
-    const executionId = uuid.v4()
+    const executionId = uuidV4()
     try {
       this.logger.info('Performing action:', action.name)
       broadcastMessage(
@@ -516,7 +516,7 @@ export class Scraper<ModeType extends ScraperMode> {
     actionStep: ActionStep,
     onDataRequest: RequestDataCallback,
   ): Promise<MapSiteError> {
-    const executionId = uuid.v4()
+    const executionId = uuidV4()
     try {
       this.logger.info('Performing action step:', actionStep.type)
       broadcastMessage(

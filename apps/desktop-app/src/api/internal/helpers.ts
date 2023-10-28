@@ -10,7 +10,7 @@ import {
 } from '@web-scraper/common'
 import type { IpcMainInvokeEvent } from 'electron'
 import isDev from 'electron-is-dev'
-import * as uuid from 'uuid'
+import { v4 as uuidV4 } from 'uuid'
 
 import { ExtendedBrowserWindow } from '../../extendedBrowserWindow'
 
@@ -94,13 +94,12 @@ export function broadcastMessageWithResponseRequest<MessageType extends Electron
     ? T
     : never
 ) {
-  const requestId = uuid.v4()
+  const requestId = uuidV4()
 
   ExtendedBrowserWindow.getInstances().forEach((windowInstance) => {
     windowInstance.sendMessage(message, requestId, ...(args as never))
   })
 
-  // awaitingResponses.set(requestId, new Set())
   return new Promise<MessageResponseData<MessageType>>((resolve, reject) => {
     const timeout = setTimeout(() => {
       awaitingMessageResponses.delete(requestId)
