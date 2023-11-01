@@ -20,7 +20,7 @@
     "@fontsource-variable/roboto-flex": "^5.0.8",
     "@hookform/resolvers": "^3.3.2",
     "@mui/icons-material": "^5.14.15",
-    "@mui/lab": "5.0.0-alpha.150",
+    "@mui/lab": "5.0.0-alpha.151",
     "@mui/material": "^5.14.15",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^14.0.0",
