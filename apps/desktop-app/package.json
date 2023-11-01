@@ -47,7 +47,7 @@
     "uuid": "^9.0.1"
   },
   "devDependencies": {
-    "@mermaid-js/mermaid-cli": "^10.3.1",
+    "@mermaid-js/mermaid-cli": "^10.6.0",
     "@types/random-useragent": "^0.3.2",
     "@types/uuid": "^9.0.6",
     "@typescript-eslint/eslint-plugin": "^6.9.0",
