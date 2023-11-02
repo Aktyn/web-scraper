@@ -23,8 +23,6 @@ export const CustomPopover = forwardRef<CustomPopoverRef, PropsWithChildren<Cust
 
     const handleClose = () => setAnchorEl(null)
 
-    //TODO: title, content entry animations
-
     return (
       <Popover {...popoverProps} open={!!anchorEl} anchorEl={anchorEl} onClose={handleClose}>
         {children}

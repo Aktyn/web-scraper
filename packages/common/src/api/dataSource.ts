@@ -1,5 +1,7 @@
 import * as yup from 'yup'
 
+import { transformNanToUndefined } from './common'
+
 //NOTE: values must be proper SQLite types
 export enum DataSourceColumnType {
   TEXT = 'TEXT',
@@ -56,7 +58,14 @@ export const upsertDataSourceItemSchema = yup.object({
       yup.object({
         columnName: yup.string().min(1).required(),
         value: yup.lazy((from) =>
-          typeof from === 'string' ? yup.string().nullable() : yup.number().nullable(),
+          typeof from === 'string'
+            ? yup.string().nullable().default(null).notRequired()
+            : yup
+                .number()
+                .transform(transformNanToUndefined)
+                .nullable()
+                .default(null)
+                .notRequired(),
         ),
       }),
     ),

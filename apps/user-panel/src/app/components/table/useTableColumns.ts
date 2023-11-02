@@ -10,7 +10,6 @@ export interface ColumnDefinition<DataType> {
   encrypted?: boolean
   jsonString?: boolean
   cellSx?: TableCellProps['sx']
-  // width?: number
   // sortable?: boolean
   // filter?: (props: FilterPropsBase<any>) => React.ReactElement<FilterPropsBase<any>>
 }

@@ -35,6 +35,7 @@ export const DataSource = ({ dataSource }: DataSourceProps) => {
         id: 'id',
         header: 'ID',
         accessor: 'id',
+        cellSx: { width: '4rem' },
       },
       ...dataSource.columns.map(
         (column) =>

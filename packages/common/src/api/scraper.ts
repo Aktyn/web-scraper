@@ -1,5 +1,7 @@
 import * as yup from 'yup'
 
+import { transformNanToUndefined } from './common'
+
 export enum ScraperMode {
   DEFAULT,
   TESTING,
@@ -228,8 +230,6 @@ const mapSiteErrorSchema = yup.object({
     .oneOf(Object.values(ActionStepErrorType))
     .required('Error type is required'),
 })
-
-const transformNanToUndefined = (value: number) => (isNaN(value) ? undefined : value)
 
 export const upsertActionStepSchema = yup.object({
   type: yup

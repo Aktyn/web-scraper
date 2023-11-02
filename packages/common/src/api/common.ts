@@ -1,5 +1,7 @@
 import type { ErrorCode } from '../error'
 
+export const transformNanToUndefined = (value: number) => (isNaN(value) ? undefined : value)
+
 export interface ApiError {
   errorCode: ErrorCode
   error?: Error | string | null
