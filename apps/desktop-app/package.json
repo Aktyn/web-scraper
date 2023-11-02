@@ -47,14 +47,14 @@
     "uuid": "^9.0.1"
   },
   "devDependencies": {
-    "@mermaid-js/mermaid-cli": "^10.3.1",
+    "@mermaid-js/mermaid-cli": "^10.6.0",
     "@types/random-useragent": "^0.3.2",
     "@types/uuid": "^9.0.6",
-    "@typescript-eslint/eslint-plugin": "^6.9.0",
-    "@typescript-eslint/parser": "^6.9.0",
+    "@typescript-eslint/eslint-plugin": "^6.9.1",
+    "@typescript-eslint/parser": "^6.9.1",
     "@vitest/coverage-v8": "^0.34.6",
     "cross-env": "^7.0.3",
-    "electron": "26.3.0",
+    "electron": "27.0.3",
     "electron-builder": "^24.6.4",
     "eslint": "^8.52.0",
     "eslint-config-prettier": "^9.0.0",
