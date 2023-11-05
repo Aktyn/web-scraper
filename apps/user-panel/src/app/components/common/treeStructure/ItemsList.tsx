@@ -1,5 +1,12 @@
 import { useState, type Key, type ReactNode } from 'react'
-import { AddRounded, DeleteRounded, ExpandMoreRounded, PlayArrowRounded } from '@mui/icons-material'
+import {
+  AddRounded,
+  DeleteRounded,
+  ExpandMoreRounded,
+  KeyboardArrowDown,
+  KeyboardArrowUp,
+  PlayArrowRounded,
+} from '@mui/icons-material'
 import {
   Accordion,
   AccordionDetails,
@@ -27,6 +34,7 @@ interface ItemsListProps<ItemType extends object | string | number> {
   disabled?: boolean
   onAdd?: () => void
   onDelete?: (item: ItemType, index: number) => void
+  onSwap?: (index1: number, index2: number) => void
   onPlay?: (item: ItemType, index: number) => void
   onPlayTooltip?: ReactNode
   disablePlayButtons?: boolean
@@ -41,6 +49,7 @@ export const ItemsList = <ItemType extends object | string | number>({
   disabled,
   onAdd,
   onDelete,
+  onSwap,
   onPlay,
   onPlayTooltip = 'Play',
   disablePlayButtons,
@@ -138,6 +147,7 @@ export const ItemsList = <ItemType extends object | string | number>({
       <AccordionDetails
         sx={{
           pl: level > 0 ? 0 : '0.5rem',
+          pr: level === 0 ? '0.5rem' : '0.75rem',
         }}
       >
         <Stack
@@ -174,55 +184,89 @@ export const ItemsList = <ItemType extends object | string | number>({
                     borderTopRightRadius: '0.5rem',
                   }}
                 />
-                {(onDelete || onPlay) && (
+                {(onDelete || onPlay || onSwap) && (
                   <>
                     <Box
                       sx={{
                         position: 'absolute',
                         top: 0,
                         left: 'calc(50% - 1px)',
-                        right: onDelete && onPlay ? '4.25rem' : '2.125rem',
+                        right: `calc(2.125rem * ${
+                          Number(Boolean(onDelete)) +
+                          Number(Boolean(onPlay)) +
+                          Number(Boolean(onSwap)) * 2
+                        })`,
                         height: '0.5rem',
                         borderTop: borderStyle,
                         borderLeft: borderStyle,
                         borderTopLeftRadius: '0.5rem',
                       }}
                     />
-                    {onPlay && (
-                      <Grow in>
-                        <Tooltip title={onPlayTooltip}>
-                          <LoadingIconButton
-                            size="small"
-                            onClick={() => onPlay(field, index)}
-                            sx={{
-                              position: 'absolute',
-                              top: '-1.075rem',
-                              right: onDelete ? '2.125rem' : '0',
-                              zIndex: 1,
-                            }}
-                            disabled={disablePlayButtons}
-                            loading={loadingPlayButtonIndex === index}
-                          >
-                            <PlayArrowRounded />
-                          </LoadingIconButton>
+                    <Stack
+                      direction="row"
+                      alignItems="center"
+                      sx={{
+                        position: 'absolute',
+                        top: '-1.075rem',
+                        right: '0',
+                        zIndex: 1,
+                      }}
+                    >
+                      {onPlay && (
+                        <Grow in>
+                          <Tooltip title={onPlayTooltip}>
+                            <LoadingIconButton
+                              size="small"
+                              onClick={() => onPlay(field, index)}
+                              disabled={disablePlayButtons}
+                              loading={loadingPlayButtonIndex === index}
+                            >
+                              <PlayArrowRounded />
+                            </LoadingIconButton>
+                          </Tooltip>
+                        </Grow>
+                      )}
+                      {onSwap && (
+                        <>
+                          <Tooltip title="Move down">
+                            <Box>
+                              <IconButton
+                                size="small"
+                                disabled={disabled || index === items.length - 1}
+                                onClick={() => onSwap(index, index + 1)}
+                              >
+                                <KeyboardArrowDown />
+                              </IconButton>
+                            </Box>
+                          </Tooltip>
+                          <Tooltip title="Move up">
+                            <Box>
+                              <IconButton
+                                size="small"
+                                disabled={disabled || index === 0}
+                                onClick={() => onSwap(index, index - 1)}
+                              >
+                                <KeyboardArrowUp />
+                              </IconButton>
+                            </Box>
+                          </Tooltip>
+                        </>
+                      )}
+                      {onDelete && (
+                        <Tooltip title="Delete">
+                          {/* TODO: simple confirmation; tooltip "Press again to confirm action" */}
+                          <Box>
+                            <IconButton
+                              size="small"
+                              disabled={disabled}
+                              onClick={() => onDelete(field, index)}
+                            >
+                              <DeleteRounded />
+                            </IconButton>
+                          </Box>
                         </Tooltip>
-                      </Grow>
-                    )}
-                    {onDelete && (
-                      <IconButton
-                        size="small"
-                        disabled={disabled}
-                        onClick={() => onDelete(field, index)}
-                        sx={{
-                          position: 'absolute',
-                          top: '-1.075rem',
-                          right: '0',
-                          zIndex: 1,
-                        }}
-                      >
-                        <DeleteRounded />
-                      </IconButton>
-                    )}
+                      )}
+                    </Stack>
                   </>
                 )}
                 <Stack justifyContent="flex-start" alignItems="stretch" px="1rem" pt="0.5rem">

@@ -1,5 +1,6 @@
 import type { ErrorCode } from '../error'
 
+export const MAX_SQLITE_INTEGER = 2147483647 as const
 export const transformNanToUndefined = (value: number) => (isNaN(value) ? undefined : value)
 
 export interface ApiError {

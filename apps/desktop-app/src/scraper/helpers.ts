@@ -3,6 +3,8 @@ import {
   type ActionStep,
   type ActionStepType,
   type ValueQuery,
+  type DataSourceValueQuery,
+  type DataSourceItem,
 } from '@web-scraper/common'
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { Notification } from 'electron'
@@ -18,6 +20,11 @@ export type RequestDataCallback = (
   valueQuery: ValueQuery,
   actionStep: ActionStep,
 ) => Promise<string | number | null>
+
+export type RequestDataSourceItemIdCallback = (
+  dataSourceValueQuery: DataSourceValueQuery,
+  actionStep: ActionStep,
+) => Promise<DataSourceItem['id'] | null>
 
 export const getFlowFinishedNotification = cacheable(() => {
   const notification = new Notification({

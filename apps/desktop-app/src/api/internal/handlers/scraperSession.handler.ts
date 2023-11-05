@@ -1,4 +1,5 @@
 import {
+  dataSourceQueryRegex,
   ElectronToRendererMessage,
   ErrorCode,
   RendererToElectronMessage,
@@ -6,14 +7,18 @@ import {
 } from '@web-scraper/common'
 
 import Database from '../../../database'
-import { type RequestDataCallback, Scraper } from '../../../scraper'
+import {
+  type RequestDataCallback,
+  type RequestDataSourceItemIdCallback,
+  Scraper,
+} from '../../../scraper'
 import {
   broadcastMessage,
-  handleApiRequest,
-  successResponse,
-  type RequestHandlersSchema,
   broadcastMessageWithResponseRequest,
+  handleApiRequest,
+  type RequestHandlersSchema,
   responseToBroadcastedMessage,
+  successResponse,
 } from '../helpers'
 import { parseDatabaseSite } from '../parsers/siteParser'
 
@@ -88,7 +93,7 @@ export const scraperSessionHandler = {
         throw ErrorCode.NOT_FOUND
       }
 
-      return scraper.performActionStep(actionStep, onDataRequest)
+      return scraper.performActionStep(actionStep, onDataRequest, onDataSourceItemIdRequest)
     },
   ),
   [RendererToElectronMessage.testAction]: handleApiRequest(
@@ -99,7 +104,7 @@ export const scraperSessionHandler = {
         throw ErrorCode.NOT_FOUND
       }
 
-      return scraper.performAction(action, onDataRequest)
+      return scraper.performAction(action, onDataRequest, onDataSourceItemIdRequest)
     },
   ),
   [RendererToElectronMessage.testFlow]: handleApiRequest(
@@ -110,7 +115,7 @@ export const scraperSessionHandler = {
         throw ErrorCode.NOT_FOUND
       }
 
-      return scraper.performFlow(flow, actions, onDataRequest)
+      return scraper.performFlow(flow, actions, onDataRequest, onDataSourceItemIdRequest)
     },
   ),
   [RendererToElectronMessage.testProcedure]: handleApiRequest(
@@ -121,13 +126,20 @@ export const scraperSessionHandler = {
         throw ErrorCode.NOT_FOUND
       }
 
-      return scraper.performProcedure(procedure, actions, onDataRequest)
+      return scraper.performProcedure(procedure, actions, onDataRequest, onDataSourceItemIdRequest)
     },
   ),
   [RendererToElectronMessage.returnManualDataForActionStep]: handleApiRequest(
     RendererToElectronMessage.returnManualDataForActionStep,
     async (originMessage, requestId, value) => {
       await responseToBroadcastedMessage(originMessage, requestId, value)
+      return successResponse
+    },
+  ),
+  [RendererToElectronMessage.returnDataSourceItemIdForActionStep]: handleApiRequest(
+    RendererToElectronMessage.returnDataSourceItemIdForActionStep,
+    async (originMessage, requestId, itemId) => {
+      await responseToBroadcastedMessage(originMessage, requestId, itemId)
       return successResponse
     },
   ),
@@ -142,6 +154,22 @@ const onDataRequest: RequestDataCallback = async (valueQuery, actionStep) => {
     ElectronToRendererMessage.requestManualDataForActionStep,
     actionStep,
     valueQuery,
+  )
+  return value
+}
+
+const onDataSourceItemIdRequest: RequestDataSourceItemIdCallback = async (
+  dataSourceValueQuery,
+  actionStep,
+) => {
+  if (!dataSourceValueQuery.match(dataSourceQueryRegex)) {
+    return null
+  }
+
+  const [value] = await broadcastMessageWithResponseRequest(
+    ElectronToRendererMessage.requestDataSourceItemIdForActionStep,
+    actionStep,
+    dataSourceValueQuery,
   )
   return value
 }

@@ -32,7 +32,11 @@ import { broadcastMessage } from '../api/internal/helpers'
 import { parseUserSettings } from '../api/internal/parsers/userSettingsParser'
 import Database from '../database'
 
-import { getFlowFinishedNotification, type RequestDataCallback } from '.'
+import {
+  getFlowFinishedNotification,
+  type RequestDataCallback,
+  type RequestDataSourceItemIdCallback,
+} from '.'
 import ScraperBrowser from './scraperBrowser'
 import type { ScraperPage } from './scraperPage'
 import {
@@ -44,6 +48,7 @@ import {
   waitForElementStep,
   waitStep,
 } from './steps'
+import { saveToDataSourceStep } from './steps/saveToDataSource.step'
 
 type ScraperOptions<ModeType extends ScraperMode> = (ModeType extends ScraperMode.TESTING
   ? { siteId: Site['id']; lockURL: string }
@@ -181,6 +186,7 @@ export class Scraper<ModeType extends ScraperMode> {
       }
       await this.initTestingMode(self)
     })
+    // noinspection SpellCheckingInspection
     self.mainPage!.on('framenavigated', async (frame) => {
       const url = new URL(self.mainPage!.exposed.url())
       if (
@@ -197,6 +203,7 @@ export class Scraper<ModeType extends ScraperMode> {
     })
 
     //Close any new page opened
+    // noinspection SpellCheckingInspection
     await this.browser.on('targetcreated', async (target) => {
       if (target.type() === 'page' && !this.destroyed) {
         const newPage: Page = await target.page()
@@ -233,6 +240,7 @@ export class Scraper<ModeType extends ScraperMode> {
     procedure: Procedure,
     actions: Action[],
     onDataRequest: RequestDataCallback,
+    onDataSourceItemIdRequest: RequestDataSourceItemIdCallback,
   ): Promise<ProcedureExecutionResult> {
     const executionId = uuidV4()
     try {
@@ -283,7 +291,12 @@ export class Scraper<ModeType extends ScraperMode> {
         }
       }
 
-      const flowExecutionResult = await this.performFlow(procedure.flow, actions, onDataRequest)
+      const flowExecutionResult = await this.performFlow(
+        procedure.flow,
+        actions,
+        onDataRequest,
+        onDataSourceItemIdRequest,
+      )
 
       broadcastMessage(
         ElectronToRendererMessage.scraperExecutionResult,
@@ -318,6 +331,7 @@ export class Scraper<ModeType extends ScraperMode> {
     flow: FlowStep,
     actions: Action[],
     onDataRequest: RequestDataCallback,
+    onDataSourceItemIdRequest: RequestDataSourceItemIdCallback,
   ): Promise<FlowExecutionResult> {
     const executionId = uuidV4()
     try {
@@ -342,7 +356,11 @@ export class Scraper<ModeType extends ScraperMode> {
           throw new Error(`Action ${actionName} not found`)
         }
 
-        const actionResult = await this.performAction(action, onDataRequest)
+        const actionResult = await this.performAction(
+          action,
+          onDataRequest,
+          onDataSourceItemIdRequest,
+        )
         const actionSucceeded = actionResult.actionStepsResults.every(
           (stepResult) => stepResult.result.errorType === ActionStepErrorType.NO_ERROR,
         )
@@ -358,13 +376,23 @@ export class Scraper<ModeType extends ScraperMode> {
           if (!flow.onSuccess) {
             throw new Error(`Flow ${flow.actionName} has no onSuccess flow`)
           }
-          const successResult = await this.performFlow(flow.onSuccess, actions, onDataRequest)
+          const successResult = await this.performFlow(
+            flow.onSuccess,
+            actions,
+            onDataRequest,
+            onDataSourceItemIdRequest,
+          )
           flowStepsResults.push(...successResult.flowStepsResults)
         } else {
           if (!flow.onFailure) {
             throw new Error(`Flow ${flow.actionName} has no onFailure flow`)
           }
-          const failureResult = await this.performFlow(flow.onFailure, actions, onDataRequest)
+          const failureResult = await this.performFlow(
+            flow.onFailure,
+            actions,
+            onDataRequest,
+            onDataSourceItemIdRequest,
+          )
           flowStepsResults.push(...failureResult.flowStepsResults)
         }
       } else if (isGlobalAction(flow.actionName)) {
@@ -448,6 +476,7 @@ export class Scraper<ModeType extends ScraperMode> {
   public async performAction(
     action: Action,
     onDataRequest: RequestDataCallback,
+    onDataSourceItemIdRequest: RequestDataSourceItemIdCallback,
   ): Promise<ActionExecutionResult> {
     const executionId = uuidV4()
     try {
@@ -480,7 +509,7 @@ export class Scraper<ModeType extends ScraperMode> {
 
       const steps = action.actionSteps.sort(sortNumbers('orderIndex', 'asc'))
       for (const step of steps) {
-        const result = await this.performActionStep(step, onDataRequest)
+        const result = await this.performActionStep(step, onDataRequest, onDataSourceItemIdRequest)
         actionStepsResults.push({ step, result })
       }
 
@@ -515,6 +544,7 @@ export class Scraper<ModeType extends ScraperMode> {
   public async performActionStep(
     actionStep: ActionStep,
     onDataRequest: RequestDataCallback,
+    onDataSourceItemIdRequest: RequestDataSourceItemIdCallback,
   ): Promise<MapSiteError> {
     const executionId = uuidV4()
     try {
@@ -530,7 +560,11 @@ export class Scraper<ModeType extends ScraperMode> {
         },
       )
 
-      const result = await this.getActionStepResult(actionStep, onDataRequest)
+      const result = await this.getActionStepResult(
+        actionStep,
+        onDataRequest,
+        onDataSourceItemIdRequest,
+      )
 
       broadcastMessage(
         ElectronToRendererMessage.scraperExecutionResult,
@@ -560,18 +594,21 @@ export class Scraper<ModeType extends ScraperMode> {
   private async getActionStepResult(
     actionStep: ActionStep,
     onDataRequest: RequestDataCallback,
+    onDataSourceItemIdRequest: RequestDataSourceItemIdCallback,
   ): Promise<MapSiteError> {
     switch (actionStep.type) {
       case ActionStepType.WAIT:
         return await this.waitStep(actionStep)
       case ActionStepType.WAIT_FOR_ELEMENT:
         return await this.waitForElementStep(actionStep)
-      case ActionStepType.PRESS_BUTTON:
-        return await this.pressButtonStep(actionStep)
       case ActionStepType.FILL_INPUT:
         return await this.fillInputStep(actionStep, onDataRequest)
       case ActionStepType.SELECT_OPTION:
         return await this.selectOptionStep(actionStep, onDataRequest)
+      case ActionStepType.PRESS_BUTTON:
+        return await this.pressButtonStep(actionStep)
+      case ActionStepType.SAVE_TO_DATA_SOURCE:
+        return await this.saveToDataSourceStep(actionStep, onDataSourceItemIdRequest)
       case ActionStepType.CHECK_ERROR:
         return this.checkErrorStep(actionStep)
       case ActionStepType.CHECK_SUCCESS:
@@ -589,9 +626,10 @@ export class Scraper<ModeType extends ScraperMode> {
   // Steps implemented in separated files
   private waitStep = waitStep
   private waitForElementStep = waitForElementStep
-  private pressButtonStep = pressButtonStep
   private fillInputStep = fillInputStep
   private selectOptionStep = selectOptionStep
+  private pressButtonStep = pressButtonStep
+  private saveToDataSourceStep = saveToDataSourceStep
   private checkErrorStep = checkErrorStep
   private checkSuccessStep = checkSuccessStep
 

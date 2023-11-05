@@ -1,19 +1,21 @@
 import {
-  type PropsWithChildren,
   createContext,
+  type PropsWithChildren,
   useCallback,
+  useContext,
   useEffect,
   useMemo,
   useState,
-  useContext,
 } from 'react'
 import {
-  ElectronToRendererMessage,
   type ActionStep,
+  type DataSourceValueQuery,
+  ElectronToRendererMessage,
   type Site,
   type ValueQuery,
 } from '@web-scraper/common'
 import { ApiModule } from './ApiModule'
+import { DataSourceItemForActionStepDialog } from '../components/siteInstructions/DataSourceItemForActionStepDialog'
 import { ManualDataForActionStepDialog } from '../components/siteInstructions/ManualDataForActionStepDialog'
 import { useApiRequest } from '../hooks/useApiRequest'
 
@@ -35,6 +37,16 @@ function ScraperTestingSessionsProvider({ children }: PropsWithChildren) {
       requestId: string
       actionStep: ActionStep
       valueQuery: ValueQuery
+    }[]
+  >([])
+  const [
+    dataSourceItemIdForActionStepResponseQueue,
+    setDataSourceItemIdForActionStepResponseQueue,
+  ] = useState<
+    {
+      requestId: string
+      actionStep: ActionStep
+      dataSourceQuery: DataSourceValueQuery
     }[]
   >([])
 
@@ -59,6 +71,15 @@ function ScraperTestingSessionsProvider({ children }: PropsWithChildren) {
       ])
     },
   )
+  ApiModule.useEvent(
+    ElectronToRendererMessage.requestDataSourceItemIdForActionStep,
+    (_, requestId, actionStep, dataSourceQuery) => {
+      setDataSourceItemIdForActionStepResponseQueue((queue) => [
+        ...queue,
+        { requestId, actionStep, dataSourceQuery },
+      ])
+    },
+  )
 
   useEffect(() => {
     getSiteInstructionsTestingSessions({
@@ -74,6 +95,15 @@ function ScraperTestingSessionsProvider({ children }: PropsWithChildren) {
         data={manualDataForActionStepResponseQueue.at(0)}
         onResponseSent={(handledData) =>
           setManualDataForActionStepResponseQueue((queue) =>
+            queue.filter((item) => item !== handledData),
+          )
+        }
+      />
+      <DataSourceItemForActionStepDialog
+        open={dataSourceItemIdForActionStepResponseQueue.length > 0}
+        data={dataSourceItemIdForActionStepResponseQueue.at(0)}
+        onResponseSent={(handledData) =>
+          setDataSourceItemIdForActionStepResponseQueue((queue) =>
             queue.filter((item) => item !== handledData),
           )
         }

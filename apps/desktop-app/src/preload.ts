@@ -11,6 +11,7 @@ const electronToRendererMessageNames = [
   'scraperExecutionResult',
   'scraperExecutionFinished',
   'requestManualDataForActionStep',
+  'requestDataSourceItemIdForActionStep',
 ] as const
 const rendererToElectronMessageNames = [
   'changeWindowState',
@@ -54,6 +55,7 @@ const rendererToElectronMessageNames = [
   'testFlow',
   'testProcedure',
   'returnManualDataForActionStep',
+  'returnDataSourceItemIdForActionStep',
 ] as const
 
 const api = {

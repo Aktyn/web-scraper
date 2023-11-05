@@ -5,6 +5,7 @@ import {
   DataSourceColumnType,
   GlobalActionType,
   ProcedureType,
+  SaveDataType,
   ScraperExecutionScope,
 } from '@web-scraper/common'
 
@@ -14,6 +15,7 @@ export const actionStepTypeNames: { [key in ActionStepType]: string } = {
   [ActionStepType.FILL_INPUT]: 'Fill input',
   [ActionStepType.SELECT_OPTION]: 'Select option',
   [ActionStepType.PRESS_BUTTON]: 'Press button',
+  [ActionStepType.SAVE_TO_DATA_SOURCE]: 'Save to data source',
   [ActionStepType.CHECK_ERROR]: 'Check error',
   [ActionStepType.CHECK_SUCCESS]: 'Check success',
 }
@@ -31,6 +33,8 @@ export const actionStepErrorTypeNames: { [key in ActionStepErrorType]: string } 
   [ActionStepErrorType.UNKNOWN_INTERNAL_ERROR]: 'Unknown internal error',
   [ActionStepErrorType.INCORRECT_DATA]: 'Incorrect data',
   [ActionStepErrorType.OPTION_NOT_SELECTED]: 'Option not selected',
+  [ActionStepErrorType.DATA_SOURCE_NOT_FOUND]: 'Data source not found',
+  [ActionStepErrorType.DATA_SOURCE_COLUMN_NOT_FOUND]: 'Data source column not found',
 }
 
 export const captchaSolverTypeNames: { [key in CaptchaSolverType]: string } = {
@@ -61,4 +65,11 @@ export const dataSourceColumnTypeNames: { [key in DataSourceColumnType]: string 
   [DataSourceColumnType.TEXT]: 'Text',
   [DataSourceColumnType.INTEGER]: 'Integer',
   [DataSourceColumnType.REAL]: 'Real',
+}
+
+export const saveDataTypeNames: { [key in SaveDataType]: string } = {
+  [SaveDataType.CURRENT_TIMESTAMP]: 'Current timestamp',
+  [SaveDataType.CUSTOM]: 'Custom',
+  [SaveDataType.ELEMENT_CONTENT]: 'Element content',
+  [SaveDataType.SET_NULL]: 'Set null',
 }

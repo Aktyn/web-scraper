@@ -10,7 +10,6 @@ import {
   Stack,
   TextField,
   Tooltip,
-  Typography,
 } from '@mui/material'
 import {
   type UpsertSiteInstructionsSchema,
@@ -18,6 +17,7 @@ import {
   ValueQueryType,
 } from '@web-scraper/common'
 import { Controller, useFormContext } from 'react-hook-form'
+import { DotSeparator } from './DotSeparator'
 import { DataSourcesContext } from '../../context/dataSourcesContext'
 import { DataSourceColumnTypeIcon } from '../dataSource/DataSourceColumnTypeIcon'
 
@@ -29,7 +29,7 @@ export const ValueQueryInput = ({ fieldName }: ValueQueryInputProps) => {
   const form = useFormContext<UpsertSiteInstructionsSchema>()
   const dataSources = useContext(DataSourcesContext)
 
-  const queryValue = (form.watch(`${fieldName}.value`) ?? '') as ValueQuery | ''
+  const queryValue = (form.watch(`${fieldName}.valueQuery`) ?? '') as ValueQuery | ''
 
   useEffect(() => {
     if (
@@ -37,13 +37,13 @@ export const ValueQueryInput = ({ fieldName }: ValueQueryInputProps) => {
         new RegExp(`^(${ValueQueryType.DATA_SOURCE}|${ValueQueryType.CUSTOM})\\..*$`, 'u'),
       )
     ) {
-      form.setValue(`${fieldName}.value`, `${ValueQueryType.CUSTOM}.`)
+      form.setValue(`${fieldName}.valueQuery`, `${ValueQueryType.CUSTOM}.`)
     }
   }, [fieldName, form, queryValue])
 
   return (
     <Controller
-      name={`${fieldName}.value`}
+      name={`${fieldName}.valueQuery`}
       control={form.control}
       render={({ field, fieldState }) => {
         const queryType =
@@ -203,14 +203,3 @@ export const ValueQueryInput = ({ fieldName }: ValueQueryInputProps) => {
     />
   )
 }
-
-const DotSeparator = () => (
-  <Typography
-    variant="body1"
-    fontWeight="bold"
-    color="text.secondary"
-    sx={{ alignSelf: 'flex-end' }}
-  >
-    .
-  </Typography>
-)

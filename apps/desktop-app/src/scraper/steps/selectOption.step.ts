@@ -22,7 +22,7 @@ export async function selectOptionStep<ModeType extends ScraperMode>(
   }
 
   const result = await selectHandle.select(
-    await requestData(actionStep.data.value, actionStep).then((res) => res?.toString() ?? ''),
+    await requestData(actionStep.data.valueQuery, actionStep).then((res) => res?.toString() ?? ''),
   )
   if (!result.length) {
     return { errorType: ActionStepErrorType.OPTION_NOT_SELECTED }

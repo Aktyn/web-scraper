@@ -9,6 +9,7 @@ import type {
   Action,
   ActionExecutionResult,
   ActionStep,
+  DataSourceValueQuery,
   FlowExecutionResult,
   FlowStep,
   MapSiteError,
@@ -38,6 +39,7 @@ export enum ElectronToRendererMessage {
   scraperExecutionResult = 'scraperExecutionResult',
   scraperExecutionFinished = 'scraperExecutionFinished',
   requestManualDataForActionStep = 'requestManualDataForActionStep',
+  requestDataSourceItemIdForActionStep = 'requestDataSourceItemIdForActionStep',
 }
 
 export enum RendererToElectronMessage {
@@ -83,6 +85,7 @@ export enum RendererToElectronMessage {
   testFlow = 'testFlow',
   testProcedure = 'testProcedure',
   returnManualDataForActionStep = 'returnManualDataForActionStep',
+  returnDataSourceItemIdForActionStep = 'returnDataSourceItemIdForActionStep',
 }
 
 // eslint-disable-next-line @typescript-eslint/ban-types
@@ -145,6 +148,9 @@ export type ElectronApi = {
   >
   [ElectronToRendererMessage.requestManualDataForActionStep]: ElectronToRendererMessageWithResponseRequestBlueprint<
     [actionStep: ActionStep, valueQuery: ValueQuery]
+  >
+  [ElectronToRendererMessage.requestDataSourceItemIdForActionStep]: ElectronToRendererMessageWithResponseRequestBlueprint<
+    [actionStep: ActionStep, dataSourceValueQuery: DataSourceValueQuery]
   >
 
   [RendererToElectronMessage.changeWindowState]: (
@@ -261,5 +267,9 @@ export type ElectronApi = {
   [RendererToElectronMessage.returnManualDataForActionStep]: RendererToElectronResponseBlueprint<
     ElectronToRendererMessage.requestManualDataForActionStep,
     [value: string | number | null]
+  >
+  [RendererToElectronMessage.returnDataSourceItemIdForActionStep]: RendererToElectronResponseBlueprint<
+    ElectronToRendererMessage.requestDataSourceItemIdForActionStep,
+    [itemId: DataSourceItem['id']]
   >
 }

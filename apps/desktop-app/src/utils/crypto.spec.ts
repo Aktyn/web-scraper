@@ -4,7 +4,9 @@ import { decrypt, encrypt, sha256 } from './crypto'
 
 describe('sha256', () => {
   it('should generate sha256 string based on given input', () => {
+    // noinspection SpellCheckingInspection
     expect(sha256('mock input')).toBe('kYj+IeHC42Mv/SiKsMhO7Nt9U+Cf6vgixZHNbR1LTrA=')
+    // noinspection SpellCheckingInspection
     expect(sha256('mock input 2')).toBe('nNMLmgEDJRm0ph8Rx/tGhCWzx6WeLonE1hWKlzAZlfg=')
   })
 })

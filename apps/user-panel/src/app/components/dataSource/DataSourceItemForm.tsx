@@ -61,7 +61,7 @@ export const DataSourceItemForm = ({
         createDataSourceItemRequest.submit(
           {
             onSuccess: (_, { enqueueSnackbar }) => {
-              enqueueSnackbar({ variant: 'success', message: 'Site tag created' })
+              enqueueSnackbar({ variant: 'success', message: 'Data source item created' })
               onSuccess?.()
             },
           },

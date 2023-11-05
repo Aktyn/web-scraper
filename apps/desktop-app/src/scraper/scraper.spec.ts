@@ -17,7 +17,7 @@ import {
 import express from 'express'
 import { afterAll, beforeAll, describe, expect, it, vi, type Mock } from 'vitest'
 
-import { type RequestDataCallback } from '.'
+import { type RequestDataCallback, type RequestDataSourceItemIdCallback } from '.'
 import '../test-utils/electronMock'
 import { Scraper } from './scraper'
 
@@ -43,6 +43,7 @@ const actionStepBase = {
 } as const satisfies Partial<ActionStep>
 
 const dummyRequestDataCallback: RequestDataCallback = () => Promise.resolve('mock-value')
+const dummyDataSourceItemIdRequest: RequestDataSourceItemIdCallback = () => Promise.resolve(1)
 
 const withScraperTestingMode = async (
   callback: (
@@ -124,6 +125,7 @@ describe('Scraper.TESTING action steps', () => {
           },
         },
         dummyRequestDataCallback,
+        dummyDataSourceItemIdRequest,
       )
       expect(result).toEqual({ errorType: ActionStepErrorType.NO_ERROR })
     })
@@ -140,6 +142,7 @@ describe('Scraper.TESTING action steps', () => {
           },
         },
         dummyRequestDataCallback,
+        dummyDataSourceItemIdRequest,
       )
       expect(result).toEqual({ errorType: ActionStepErrorType.NO_ERROR })
     })
@@ -159,6 +162,7 @@ describe('Scraper.TESTING action steps', () => {
             },
           },
           dummyRequestDataCallback,
+          dummyDataSourceItemIdRequest,
         )
         expect(result).toEqual({
           errorType: ActionStepErrorType.ELEMENT_NOT_FOUND,
@@ -180,6 +184,7 @@ describe('Scraper.TESTING action steps', () => {
           },
         },
         dummyRequestDataCallback,
+        dummyDataSourceItemIdRequest,
       )
       expect(result).toEqual({ errorType: ActionStepErrorType.NO_ERROR })
     })
@@ -200,6 +205,7 @@ describe('Scraper.TESTING action steps', () => {
             },
           },
           dummyRequestDataCallback,
+          dummyDataSourceItemIdRequest,
         )
         expect(result).toEqual({ errorType: ActionStepErrorType.ELEMENT_NOT_FOUND })
       })
@@ -227,6 +233,7 @@ describe('Scraper.TESTING action steps', () => {
             },
           },
           dummyRequestDataCallback,
+          dummyDataSourceItemIdRequest,
         )
         expect(errorResult).toEqual({
           errorType: ActionStepErrorType.UNKNOWN,
@@ -248,6 +255,7 @@ describe('Scraper.TESTING action steps', () => {
             },
           },
           dummyRequestDataCallback,
+          dummyDataSourceItemIdRequest,
         )
         expect(successResult).toEqual({ errorType: ActionStepErrorType.NO_ERROR })
       })
@@ -270,6 +278,7 @@ describe('Scraper.TESTING action steps', () => {
             },
           },
           dummyRequestDataCallback,
+          dummyDataSourceItemIdRequest,
         )
         expect(result).toEqual({ errorType: ActionStepErrorType.NO_ERROR })
       })
@@ -292,6 +301,7 @@ describe('Scraper.TESTING action steps', () => {
             },
           },
           dummyRequestDataCallback,
+          dummyDataSourceItemIdRequest,
         )
         expect(result).toEqual({ errorType: ActionStepErrorType.ELEMENT_NOT_FOUND })
       })
@@ -311,11 +321,12 @@ describe('Scraper.TESTING action steps', () => {
             type: ActionStepType.FILL_INPUT,
             data: {
               element: 'body > input',
-              value: 'Custom.mock value',
+              valueQuery: 'Custom.mock value',
               waitForElementTimeout: 2_000,
             },
           },
           onDataRequest,
+          dummyDataSourceItemIdRequest,
         )
 
         expect(result).toEqual({ errorType: ActionStepErrorType.NO_ERROR })
@@ -336,11 +347,12 @@ describe('Scraper.TESTING action steps', () => {
             type: ActionStepType.FILL_INPUT,
             data: {
               element: 'non existing input selector',
-              value: 'Custom.mock value',
+              valueQuery: 'Custom.mock value',
               waitForElementTimeout: 2_000,
             },
           },
           dummyRequestDataCallback,
+          dummyDataSourceItemIdRequest,
         )
         expect(result).toEqual({ errorType: ActionStepErrorType.ELEMENT_NOT_FOUND })
       })
@@ -360,11 +372,12 @@ describe('Scraper.TESTING action steps', () => {
             type: ActionStepType.SELECT_OPTION,
             data: {
               element: 'body > select',
-              value: 'Custom.mock option',
+              valueQuery: 'Custom.mock option',
               waitForElementTimeout: 2_000,
             },
           },
           onDataRequest,
+          dummyDataSourceItemIdRequest,
         )
 
         expect(result).toEqual({ errorType: ActionStepErrorType.NO_ERROR })
@@ -384,11 +397,12 @@ describe('Scraper.TESTING action steps', () => {
             type: ActionStepType.SELECT_OPTION,
             data: {
               element: 'body > select',
-              value: 'Custom.non existing option',
+              valueQuery: 'Custom.non existing option',
               waitForElementTimeout: 2_000,
             },
           },
           onDataRequest,
+          dummyDataSourceItemIdRequest,
         )
 
         expect(result).toEqual({ errorType: ActionStepErrorType.OPTION_NOT_SELECTED })
@@ -478,7 +492,11 @@ describe('Scraper.TESTING action', () => {
         actionSteps: steps,
       }
 
-      const actionExecutionResult = await scraper.performAction(action, dummyRequestDataCallback)
+      const actionExecutionResult = await scraper.performAction(
+        action,
+        dummyRequestDataCallback,
+        dummyDataSourceItemIdRequest,
+      )
       expect(actionExecutionResult).toEqual({
         action,
         actionStepsResults: steps.map((step) => ({
@@ -602,6 +620,7 @@ describe('Scraper.TESTING procedure', () => {
         procedure,
         [action],
         dummyRequestDataCallback,
+        dummyDataSourceItemIdRequest,
       )
       expect(procedureExecutionResult).toEqual({
         procedure,

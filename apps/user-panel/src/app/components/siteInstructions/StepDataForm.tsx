@@ -11,11 +11,14 @@ import {
 import {
   ActionStepErrorType,
   ActionStepType,
+  SaveDataType,
   type UpsertSiteInstructionsSchema,
 } from '@web-scraper/common'
 import { Controller, useFieldArray, useFormContext } from 'react-hook-form'
+import { DataSourceQuerySelect } from './DataSourceQuerySelect'
+import { SaveToDataSourceValueInput } from './SaveToDataSourceValueInput'
 import { ValueQueryInput } from './ValueQueryInput'
-import { actionStepErrorTypeNames } from '../../utils/dictionaries'
+import { actionStepErrorTypeNames, saveDataTypeNames } from '../../utils/dictionaries'
 import { ItemsList } from '../common/treeStructure/ItemsList'
 import { FormInput } from '../form/FormInput'
 
@@ -60,6 +63,34 @@ export const StepDataForm = ({ stepFieldName, ...fieldFormProps }: StepDataFormP
           <WaitForNavigationFormInput {...fieldFormProps} />
           <DurationFormInput {...fieldFormProps} type="waitForElementTimeout" />
           <DurationFormInput {...fieldFormProps} type="waitForNavigationTimeout" />
+        </>
+      )
+    case ActionStepType.SAVE_TO_DATA_SOURCE:
+      return (
+        <>
+          <DataSourceQuerySelect {...fieldFormProps} />
+          <FormInput
+            form={form}
+            name={`${fieldFormProps.fieldName}.saveDataType`}
+            variant="standard"
+            label="Data type"
+            select
+            defaultValue={form.getValues(`${fieldFormProps.fieldName}.saveDataType`) ?? ''}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <FormatListBulletedRounded />
+                </InputAdornment>
+              ),
+            }}
+          >
+            {Object.values(SaveDataType).map((saveDataType) => (
+              <MenuItem key={saveDataType} value={saveDataType}>
+                {saveDataTypeNames[saveDataType]}
+              </MenuItem>
+            ))}
+          </FormInput>
+          <SaveToDataSourceValueInput {...fieldFormProps} />
         </>
       )
     //TODO
@@ -179,7 +210,7 @@ const WaitForNavigationFormInput = ({ fieldName }: DataFieldFormProps) => {
 //           variant="standard"
 //           label="Captcha solver"
 //           select
-//           value={field.value ?? ''}
+//?          value={{field.value ?? ''}}
 //           onChange={(e) => field.onChange(e.target.value)}
 //           onBlur={field.onBlur}
 //           InputProps={{

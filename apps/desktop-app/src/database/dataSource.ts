@@ -3,6 +3,7 @@ import {
   type DataSourceItem,
   type DataSourceStructure,
   ErrorCode,
+  MAX_SQLITE_INTEGER,
   type PaginatedRequest,
   safePromise,
   upsertDataSourceItemSchema,
@@ -39,6 +40,19 @@ export async function getDataSources() {
   >`SELECT name FROM sqlite_master WHERE type = "table" AND name LIKE 'DataSource.%';`
 
   return Promise.all(tables.map(mapDataSourceTables))
+}
+
+export async function getDataSource(dataSourceName: string) {
+  const tableName = 'DataSource.' + dataSourceName
+
+  const res = await Database.prisma.$queryRawUnsafe<RawDataSourceTableSchema[]>(
+    `SELECT name FROM sqlite_master WHERE type = "table" AND name = "${tableName}";`,
+  )
+
+  if (res.length !== 1) {
+    return null
+  }
+  return mapDataSourceTables(res[0])
 }
 
 export function getDataSourceItems(
@@ -159,19 +173,23 @@ export async function clearDataSourceItems(dataSourceName: DataSourceStructure['
 function parseColumnNames(dataSourceItemData: UpsertDataSourceItemSchema) {
   return dataSourceItemData.data.map(({ columnName }) => `"${columnName}"`).join(', ')
 }
+
+function parseColumnValue(value: string | number | null) {
+  if (value === null || value === undefined || value === '') {
+    return 'NULL'
+  }
+  if (typeof value === 'string') {
+    return `'${value}'`
+  }
+  if (value > MAX_SQLITE_INTEGER) {
+    return MAX_SQLITE_INTEGER
+  }
+  return value
+}
+
 /** id column is not included */
 function parseColumnValues(dataSourceItemData: UpsertDataSourceItemSchema) {
-  return dataSourceItemData.data
-    .map(({ value }) => {
-      if (value === null || value === undefined || value === '') {
-        return 'NULL'
-      }
-      if (typeof value === 'string') {
-        return `'${value}'`
-      }
-      return value
-    })
-    .join(', ')
+  return dataSourceItemData.data.map(({ value }) => parseColumnValue(value)).join(', ')
 }
 
 export async function createDataSourceItem(
@@ -237,4 +255,19 @@ export async function updateDataSourceItem(
     throw ErrorCode.DATABASE_ERROR
   }
   return items[0]
+}
+
+export async function updateDataSourceItemColumn(
+  dataSourceName: DataSourceStructure['name'],
+  itemId: DataSourceItem['id'],
+  columnName: string,
+  value: string | number | null,
+) {
+  const tableName = 'DataSource.' + dataSourceName
+
+  await Database.prisma.$executeRawUnsafe(`
+    UPDATE "${tableName}"
+    SET ("${columnName}") = (${parseColumnValue(value)})
+    WHERE id = ${itemId};
+  `)
 }

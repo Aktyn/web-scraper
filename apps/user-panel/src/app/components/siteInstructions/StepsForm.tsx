@@ -5,6 +5,8 @@ import {
   type ActionStep,
   ActionStepErrorType,
   ActionStepType,
+  type DataSourceValueQuery,
+  SaveDataType,
   type UpsertSiteInstructionsSchema,
   type ValueQuery,
   ValueQueryType,
@@ -101,11 +103,13 @@ export const StepsForm = ({ fieldName, testingAction }: StepsFormProps) => {
           type: ActionStepType.WAIT,
           data: {
             duration: 1000,
-            value: `${ValueQueryType.CUSTOM}.`,
+            valueQuery: `${ValueQueryType.CUSTOM}.`,
+            saveDataType: SaveDataType.CURRENT_TIMESTAMP,
           },
         })
       }
       onDelete={(_, index) => stepsFields.remove(index)}
+      onSwap={(index1, index2) => stepsFields.swap(index1, index2)}
       onPlay={!testingSession ? undefined : testActionStep}
       onPlayTooltip="Test step"
       loadingPlayButtonIndex={testingActionStep ? loadingPlayButtonIndex : -1}
@@ -181,7 +185,7 @@ export function actionStepSchemaToExecutableActionStep(
         },
       }
     case ActionStepType.FILL_INPUT:
-      if (!actionStepSchema.data.element || !actionStepSchema.data.value) {
+      if (!actionStepSchema.data.element || !actionStepSchema.data.valueQuery) {
         return null
       }
       return {
@@ -190,7 +194,7 @@ export function actionStepSchemaToExecutableActionStep(
         type: actionStepSchema.type,
         data: {
           element: actionStepSchema.data.element,
-          value: actionStepSchema.data.value as ValueQuery,
+          valueQuery: actionStepSchema.data.valueQuery as ValueQuery,
           waitForElementTimeout: actionStepSchema.data.waitForElementTimeout ?? undefined,
         },
       }
@@ -206,7 +210,7 @@ export function actionStepSchemaToExecutableActionStep(
     //     },
     //   }
     case ActionStepType.SELECT_OPTION:
-      if (!actionStepSchema.data.element || !actionStepSchema.data.value) {
+      if (!actionStepSchema.data.element || !actionStepSchema.data.valueQuery) {
         return null
       }
       return {
@@ -215,7 +219,7 @@ export function actionStepSchemaToExecutableActionStep(
         type: actionStepSchema.type,
         data: {
           element: actionStepSchema.data.element,
-          value: actionStepSchema.data.value as ValueQuery,
+          valueQuery: actionStepSchema.data.valueQuery as ValueQuery,
           waitForElementTimeout: actionStepSchema.data.waitForElementTimeout ?? undefined,
         },
       }
@@ -232,6 +236,20 @@ export function actionStepSchemaToExecutableActionStep(
           waitForNavigation: actionStepSchema.data.waitForNavigation ?? false,
           waitForNavigationTimeout: actionStepSchema.data.waitForNavigationTimeout ?? undefined,
           waitForElementTimeout: actionStepSchema.data.waitForElementTimeout ?? undefined,
+        },
+      }
+    case ActionStepType.SAVE_TO_DATA_SOURCE:
+      if (!actionStepSchema.data.saveDataType || !actionStepSchema.data.dataSourceQuery) {
+        return null
+      }
+      return {
+        ...actionStepSchema,
+        ...zeroIndexes,
+        type: actionStepSchema.type,
+        data: {
+          dataSourceQuery: actionStepSchema.data.dataSourceQuery as DataSourceValueQuery,
+          saveDataType: actionStepSchema.data.saveDataType,
+          saveToDataSourceValue: actionStepSchema.data.saveToDataSourceValue ?? undefined,
         },
       }
     //TODO

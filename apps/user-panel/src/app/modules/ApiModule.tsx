@@ -108,9 +108,24 @@ const ApiProvider = ({ children }: PropsWithChildren) => {
           })`,
         )
       },
-      [ElectronToRendererMessage.requestManualDataForActionStep]: (_, requestId, actionStep) => {
+      [ElectronToRendererMessage.requestManualDataForActionStep]: (
+        _,
+        requestId,
+        actionStep,
+        valueQuery,
+      ) => {
         console.info(
-          `Manual data requested for action step (id: ${requestId}; step type: ${actionStep.type})`,
+          `Manual data requested for action step (id: ${requestId}; step type: ${actionStep.type}; value query: ${valueQuery})`,
+        )
+      },
+      [ElectronToRendererMessage.requestDataSourceItemIdForActionStep]: (
+        _,
+        requestId,
+        actionStep,
+        dataSourceQuery,
+      ) => {
+        console.info(
+          `Manual data requested for action step (id: ${requestId}; step type: ${actionStep.type}; data source query: ${dataSourceQuery})`,
         )
       },
     }

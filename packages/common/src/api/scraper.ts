@@ -33,6 +33,8 @@ export enum ActionStepErrorType {
   UNKNOWN_INTERNAL_ERROR = 'error.internal.unknown',
   INCORRECT_DATA = 'error.internal.incorrectData',
   OPTION_NOT_SELECTED = 'error.common.optionNotSelected',
+  DATA_SOURCE_NOT_FOUND = 'error.common.dataSourceNotFound',
+  DATA_SOURCE_COLUMN_NOT_FOUND = 'error.common.dataSourceColumnNotFound',
 }
 
 export interface MapSiteError {
@@ -49,6 +51,7 @@ export enum ActionStepType {
   SELECT_OPTION = 'selectOption',
   PRESS_BUTTON = 'pressButton',
   // SOLVE_CAPTCHA = 'solveCaptcha', //TODO: support for captcha fields
+  SAVE_TO_DATA_SOURCE = 'saveToDataSource',
   CHECK_ERROR = 'checkError',
   CHECK_SUCCESS = 'checkSuccess',
 }
@@ -61,26 +64,33 @@ type ActionStepBase<Type extends ActionStepType, Data> = {
   actionId: number
 }
 
+export enum SaveDataType {
+  ELEMENT_CONTENT = 'elementContent',
+  CUSTOM = 'custom',
+  CURRENT_TIMESTAMP = 'currentTimestamp',
+  SET_NULL = 'setNull',
+}
+
 export enum ValueQueryType {
   DATA_SOURCE = 'DataSource',
   CUSTOM = 'Custom',
 }
 
-export type ValueQuery =
-  | `${ValueQueryType.DATA_SOURCE}.${string}.${string}`
-  | `${ValueQueryType.CUSTOM}.${string}`
+export type DataSourceValueQuery = `${ValueQueryType.DATA_SOURCE}.${string}.${string}`
+type CustomValueQuery = `${ValueQueryType.CUSTOM}.${string}`
+export type ValueQuery = DataSourceValueQuery | CustomValueQuery
 
 export type ActionStep =
   | ActionStepBase<ActionStepType.WAIT, { duration: number }>
   | ActionStepBase<ActionStepType.WAIT_FOR_ELEMENT, { element: string; timeout?: number }>
   | ActionStepBase<
       ActionStepType.FILL_INPUT,
-      { element: string; value: ValueQuery; waitForElementTimeout?: number }
+      { element: string; valueQuery: ValueQuery; waitForElementTimeout?: number }
     >
   // | ActionStepBase<ActionStepType.UPLOAD_FILE, { element: string; value: string }>
   | ActionStepBase<
       ActionStepType.SELECT_OPTION,
-      { element: string; value: ValueQuery; waitForElementTimeout?: number }
+      { element: string; valueQuery: ValueQuery; waitForElementTimeout?: number }
     >
   | ActionStepBase<
       ActionStepType.PRESS_BUTTON,
@@ -92,6 +102,19 @@ export type ActionStep =
       }
     >
   // | ActionStepBase<ActionStepType.SOLVE_CAPTCHA, { solver: CaptchaSolverType; elements: string[] }>
+  | ActionStepBase<
+      ActionStepType.SAVE_TO_DATA_SOURCE,
+      {
+        dataSourceQuery: DataSourceValueQuery
+        saveDataType: SaveDataType
+        /**
+         ** Element JS path if saveDataType == SaveDataType.ELEMENT_CONTENT
+         ** Any user provided string if saveDataType == SaveDataType.CUSTOM
+         ** Not used for other dataTypes
+         * */
+        saveToDataSourceValue?: string
+      }
+    >
   | ActionStepBase<
       ActionStepType.CHECK_ERROR,
       { element: string; mapError: MapSiteError[]; waitForElementTimeout?: number }
@@ -244,6 +267,10 @@ export const valueQueryRegex = new RegExp(
   `^(${ValueQueryType.DATA_SOURCE}\\.[^.]+\\.[^.]+)|(${ValueQueryType.CUSTOM}\\..*)$`,
   'u',
 )
+export const dataSourceQueryRegex = new RegExp(
+  `^${ValueQueryType.DATA_SOURCE}\\.[^.]+\\.[^.]+$`,
+  'u',
+)
 
 export const upsertActionStepSchema = yup.object({
   type: yup
@@ -259,12 +286,25 @@ export const upsertActionStepSchema = yup.object({
         .default(null)
         .transform(transformNanToUndefined),
       element: yup.string().notRequired().nullable().default(null),
-      value: yup
+      valueQuery: yup
         .string()
         .notRequired()
         .nullable()
         .default(null)
         .matches(valueQueryRegex, 'Must be a path to data source column or Custom.anything'),
+      dataSourceQuery: yup
+        .string()
+        .notRequired()
+        .nullable()
+        .default(null)
+        .matches(dataSourceQueryRegex, 'Must be a path to data source'),
+      saveDataType: yup
+        .mixed<SaveDataType>()
+        .notRequired()
+        .oneOf(Object.values(SaveDataType))
+        .nullable()
+        .default(null),
+      saveToDataSourceValue: yup.string().notRequired().nullable().default(null),
       waitForNavigation: yup.boolean().nullable().default(null).notRequired(),
       solver: yup
         .mixed<CaptchaSolverType>()
