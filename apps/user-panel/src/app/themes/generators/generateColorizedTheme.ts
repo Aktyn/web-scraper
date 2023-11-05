@@ -90,6 +90,9 @@ export function generateColorizedTheme({
           success: {
             main: green[200],
           },
+          action: {
+            focus: primary[200],
+          },
           divider,
         },
         components: {

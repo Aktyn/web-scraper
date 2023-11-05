@@ -1,4 +1,9 @@
-import { cacheable, type ActionStep, type ActionStepType } from '@web-scraper/common'
+import {
+  cacheable,
+  type ActionStep,
+  type ActionStepType,
+  type ValueQuery,
+} from '@web-scraper/common'
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { Notification } from 'electron'
 
@@ -9,7 +14,10 @@ export type PerformableActionStep<Type extends ActionStepType = ActionStepType> 
   'id' | 'orderIndex' | 'actionId'
 >
 
-export type RequestDataCallback = (valueQuery: string, actionStep: ActionStep) => Promise<string>
+export type RequestDataCallback = (
+  valueQuery: ValueQuery,
+  actionStep: ActionStep,
+) => Promise<string | number | null>
 
 export const getFlowFinishedNotification = cacheable(() => {
   const notification = new Notification({

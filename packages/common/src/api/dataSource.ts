@@ -25,7 +25,13 @@ export interface DataSourceItem {
 }
 
 export const upsertDataSourceStructureSchema = yup.object({
-  name: yup.string().min(1).max(32).default('').required(),
+  name: yup
+    .string()
+    .required()
+    .min(1)
+    .max(32)
+    .matches(/^[^.]+$/u, 'Cannot contain dot (.) character')
+    .default(''),
   columns: yup
     .array()
     .required()
@@ -34,15 +40,16 @@ export const upsertDataSourceStructureSchema = yup.object({
       yup.object({
         name: yup
           .string()
+          .required('Column name is required')
           .min(1, 'Column name is required')
           .max(32)
-          .default('')
-          .required('Column name is required')
-          .notOneOf(['id', 'ID', 'Id', 'iD'], 'id column is reserved'),
+          .notOneOf(['id', 'ID', 'Id', 'iD'], 'id column is reserved')
+          .matches(/^[^.]+$/u, 'Cannot contain dot (.) character')
+          .default(''),
         type: yup
           .mixed<DataSourceColumnType>()
-          .oneOf(Object.values(DataSourceColumnType))
-          .required('Type is required'),
+          .required('Type is required')
+          .oneOf(Object.values(DataSourceColumnType)),
       }),
     ),
 })
@@ -56,7 +63,7 @@ export const upsertDataSourceItemSchema = yup.object({
     .min(1)
     .of(
       yup.object({
-        columnName: yup.string().min(1).required(),
+        columnName: yup.string().required().min(1),
         value: yup.lazy((from) =>
           typeof from === 'string'
             ? yup.string().nullable().default(null).notRequired()

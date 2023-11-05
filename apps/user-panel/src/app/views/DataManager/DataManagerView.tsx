@@ -2,16 +2,14 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { SettingsRounded } from '@mui/icons-material'
 import { Box, IconButton, Skeleton, Stack, Tooltip, Typography } from '@mui/material'
 import { type DataSourceStructure } from '@web-scraper/common'
-import { useSnackbar } from 'notistack'
 import { DataSource } from './DataSource'
 import { SiteTags } from './SiteTags'
 import { Sites } from './Sites'
 import { CustomDrawer, type CustomDrawerRef } from '../../components/common/CustomDrawer'
 import { type TabSchema, type TabsHandle, TabsView } from '../../components/common/TabsView'
 import { DataSourceForm, DataSourceSuccessAction } from '../../components/dataSource/DataSourceForm'
-import { ApiErrorSnackbarMessage } from '../../hooks/useApiRequest'
-import { useCancellablePromise } from '../../hooks/useCancellablePromise'
-import { usePersistentState } from '../../hooks/usePersistentState'
+import { DataSourcesContext } from '../../context/dataSourcesContext'
+import { useDataSourcesLoader } from '../../hooks/useDataSourcesLoader'
 import type { ViewComponentProps } from '../helpers'
 
 enum DataManagerTab {
@@ -23,46 +21,10 @@ enum DataManagerTab {
 const DataManagerView = ({ doNotRender }: ViewComponentProps) => {
   const dataSourceDrawerRef = useRef<CustomDrawerRef>(null)
   const tabsHandleRef = useRef<TabsHandle<DataManagerTab | `DataSource.${string}`>>(null)
-  const cancellable = useCancellablePromise()
-  const { enqueueSnackbar } = useSnackbar()
 
-  const [loadingDataSources, setLoadingDataSources] = useState(true)
-  const [dataSources, setDataSources] = usePersistentState<DataSourceStructure[] | null>(
-    'data-sources',
-    null,
-  )
-  const [loadIndex, setLoadIndex] = useState(0)
+  const { loadDataSources, dataSources, loadingDataSources, loadIndex } = useDataSourcesLoader()
+
   const [dataSourceToEdit, setDataSourceToEdit] = useState<DataSourceStructure | null>(null)
-
-  const loadDataSources = useCallback(() => {
-    setLoadingDataSources(true)
-    return cancellable(window.electronAPI.getDataSources())
-      .then((data) => {
-        if ('errorCode' in data) {
-          enqueueSnackbar({
-            variant: 'error',
-            message: <ApiErrorSnackbarMessage data={data} />,
-          })
-          return
-        }
-
-        setLoadingDataSources(false)
-        setDataSources(data)
-        setLoadIndex((prev) => prev + 1)
-
-        return data
-      })
-      .catch((error) => {
-        if (error) {
-          enqueueSnackbar({
-            variant: 'error',
-            message: error instanceof Error ? error.message : String(error),
-          })
-        } else {
-          setLoadingDataSources(false)
-        }
-      })
-  }, [cancellable, enqueueSnackbar, setDataSources])
 
   useEffect(() => {
     void loadDataSources()
@@ -96,7 +58,11 @@ const DataManagerView = ({ doNotRender }: ViewComponentProps) => {
       {
         value: DataManagerTab.SITES,
         label: 'Sites',
-        content: <Sites />,
+        content: (
+          <DataSourcesContext.Provider value={dataSources ?? emptyArray}>
+            <Sites />
+          </DataSourcesContext.Provider>
+        ),
       },
       {
         value: DataManagerTab.SITE_TAGS,
@@ -197,3 +163,5 @@ const DataManagerView = ({ doNotRender }: ViewComponentProps) => {
   )
 }
 export default DataManagerView
+
+const emptyArray = [] as never[]

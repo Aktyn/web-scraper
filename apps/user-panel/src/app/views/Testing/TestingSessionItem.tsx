@@ -31,8 +31,7 @@ export const TestingSessionItem = ({ session }: TestingSessionItemProps) => {
   }, [])
 
   const handleSiteInstructionsSet = useCallback(() => {
-    setSiteToShowInstructions(null)
-    siteInstructionsDrawerRef.current?.close()
+    // noop
   }, [])
 
   return (

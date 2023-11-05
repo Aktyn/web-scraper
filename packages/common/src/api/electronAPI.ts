@@ -20,6 +20,7 @@ import type {
   ScraperMode,
   SiteInstructions,
   UpsertSiteInstructionsSchema,
+  ValueQuery,
 } from './scraper'
 import type { Site, SiteTag, UpsertSiteSchema, UpsertSiteTagSchema } from './site'
 import type { UserSettings } from './user'
@@ -143,7 +144,7 @@ export type ElectronApi = {
     ]
   >
   [ElectronToRendererMessage.requestManualDataForActionStep]: ElectronToRendererMessageWithResponseRequestBlueprint<
-    [actionStep: ActionStep, valueQuery: string]
+    [actionStep: ActionStep, valueQuery: ValueQuery]
   >
 
   [RendererToElectronMessage.changeWindowState]: (
@@ -155,7 +156,7 @@ export type ElectronApi = {
     value: UserSettings[KeyType],
   ) => Promise<ApiError>
 
-  [RendererToElectronMessage.getDataSources]: () => Promise<DataSourceStructure[] | ApiError> //TODO: paginate
+  [RendererToElectronMessage.getDataSources]: () => Promise<DataSourceStructure[] | ApiError>
   [RendererToElectronMessage.deleteDataSource]: (
     dataSourceName: DataSourceStructure['name'],
   ) => Promise<ApiError>
@@ -259,6 +260,6 @@ export type ElectronApi = {
   ) => Promise<ProcedureExecutionResult | ApiError>
   [RendererToElectronMessage.returnManualDataForActionStep]: RendererToElectronResponseBlueprint<
     ElectronToRendererMessage.requestManualDataForActionStep,
-    [value: string]
+    [value: string | number | null]
   >
 }

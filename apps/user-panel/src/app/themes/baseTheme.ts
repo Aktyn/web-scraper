@@ -122,6 +122,7 @@ export const baseThemeOptions: ThemeOptions = {
     MuiPaper: {
       styleOverrides: {
         root: {
+          WebkitAppRegion: 'no-drag',
           backgroundImage: 'none',
         },
       },
@@ -171,6 +172,13 @@ export const baseThemeOptions: ThemeOptions = {
     MuiDialog: {
       styleOverrides: {
         paper: customPaper,
+      },
+    },
+    MuiDialogContent: {
+      styleOverrides: {
+        root: {
+          padding: '1.25rem 1.5rem',
+        },
       },
     },
     MuiAccordion: {

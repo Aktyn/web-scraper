@@ -29,36 +29,39 @@ export const DataSource = ({ dataSource }: DataSourceProps) => {
   const exportDataSourceRequest = useApiRequest(window.electronAPI.exportDataSourceItems)
   const importDataSourceRequest = useApiRequest(window.electronAPI.importDataSourceItems)
 
-  const columns = useTableColumns<DataSourceItem>({
-    definitions: [
-      {
-        id: 'id',
-        header: 'ID',
-        accessor: 'id',
-        cellSx: { width: '4rem' },
-      },
-      ...dataSource.columns.map(
-        (column) =>
-          ({
-            id: column.name,
-            header: (
-              <Stack
-                direction="row"
-                alignItems="center"
-                justifyContent="flex-start"
-                columnGap="0.25rem"
-              >
-                <DataSourceColumnTypeIcon type={column.type} sx={{ opacity: 0.5 }} />
-                <Box>{column.name}</Box>
-              </Stack>
-            ),
-            accessor: (item) =>
-              item.data.find((entry) => entry.columnName === column.name)?.value?.toString() ??
-              null,
-          }) satisfies ColumnDefinition<DataSourceItem>,
-      ),
-    ],
-  })
+  const columns = useTableColumns<DataSourceItem>(
+    {
+      definitions: [
+        {
+          id: 'id',
+          header: 'ID',
+          accessor: 'id',
+          cellSx: { width: '4rem' },
+        },
+        ...dataSource.columns.map(
+          (column) =>
+            ({
+              id: column.name,
+              header: (
+                <Stack
+                  direction="row"
+                  alignItems="center"
+                  justifyContent="flex-start"
+                  columnGap="0.25rem"
+                >
+                  <DataSourceColumnTypeIcon type={column.type} sx={{ opacity: 0.5 }} />
+                  <Box>{column.name}</Box>
+                </Stack>
+              ),
+              accessor: (item) =>
+                item.data.find((entry) => entry.columnName === column.name)?.value?.toString() ??
+                null,
+            }) satisfies ColumnDefinition<DataSourceItem>,
+        ),
+      ],
+    },
+    [dataSource.columns],
+  )
 
   const [dataSourceItemToDelete, setDataSourceItemToDelete] = useState<DataSourceItem | null>(null)
   const [dataSourceItemToEdit, setDataSourceItemToEdit] = useState<DataSourceItem | null>(null)

@@ -5,7 +5,7 @@ import { useMounted } from './useMounted'
 export function useDebounce<T extends (...args: any[]) => void>(
   func: T,
   delay = 0,
-  deps?: DependencyList,
+  deps: DependencyList = [],
 ) {
   const timeout = useRef<NodeJS.Timeout | null>(null)
   const mounted = useMounted()
@@ -26,6 +26,6 @@ export function useDebounce<T extends (...args: any[]) => void>(
       }, delay)
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [delay, ...(deps ?? [func])],
+    [delay, ...deps],
   )
 }

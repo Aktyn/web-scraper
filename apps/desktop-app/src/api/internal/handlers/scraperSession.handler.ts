@@ -2,6 +2,7 @@ import {
   ElectronToRendererMessage,
   ErrorCode,
   RendererToElectronMessage,
+  ValueQueryType,
 } from '@web-scraper/common'
 
 import Database from '../../../database'
@@ -133,6 +134,10 @@ export const scraperSessionHandler = {
 } satisfies Partial<RequestHandlersSchema>
 
 const onDataRequest: RequestDataCallback = async (valueQuery, actionStep) => {
+  if (valueQuery.startsWith(ValueQueryType.CUSTOM + '.')) {
+    return valueQuery.replace(new RegExp(`^${ValueQueryType.CUSTOM}\\.`, 'u'), '')
+  }
+
   const [value] = await broadcastMessageWithResponseRequest(
     ElectronToRendererMessage.requestManualDataForActionStep,
     actionStep,

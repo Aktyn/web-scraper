@@ -1,4 +1,5 @@
 import {
+  type Key,
   type ReactNode,
   type RefAttributes,
   useCallback,
@@ -10,6 +11,7 @@ import {
 } from 'react'
 import { AddRounded, DeleteRounded, EditRounded, RefreshRounded } from '@mui/icons-material'
 import {
+  alpha,
   Box,
   IconButton,
   Stack,
@@ -49,6 +51,9 @@ interface TableProps<DataType extends object, KeyPropertyType extends string & P
   onAdd?: ReactNode | (() => void)
   onEdit?: (data: DataType) => void
   onDelete?: (data: DataType) => void
+  onRowClick?: (row: DataType) => void
+  selectedRowKeys?: ExtractTypeByPath<DataType, KeyPropertyType>[]
+  hideRefreshButton?: boolean
 }
 
 export interface TableRef {
@@ -66,6 +71,9 @@ export const Table = genericMemo(
         onAdd,
         onEdit,
         onDelete,
+        onRowClick,
+        selectedRowKeys = emptyArray,
+        hideRefreshButton,
       }: TableProps<DataType, KeyPropertyType> & RefAttributes<TableRef>,
       ref: RefAttributes<TableRef>['ref'],
     ) => {
@@ -79,9 +87,10 @@ export const Table = genericMemo(
       const [cursor, setCursor] = useState<{ [p: string]: unknown } | undefined | null>(null)
       const [fetchingData, setFetchingData] = useState(false)
 
-      const mainTableHeaderSize = 51
       const hasActionsColumn = !!onDelete || !!onEdit || columns.customActions.length > 0
       const columnsCount = columns.definitions.length + (hasActionsColumn ? 1 : 0)
+      const showMainHeader = Boolean(!hideRefreshButton || headerContent || onAdd)
+      const mainTableHeaderSize = showMainHeader ? 51 : 0
 
       const fetchDataChunk = useCallback(
         (withCursor = cursor, replace = false) => {
@@ -184,34 +193,43 @@ export const Table = genericMemo(
       return (
         <TableContainer ref={tableContainerRef} sx={{ maxHeight: '100%' }}>
           <MuiTable stickyHeader size={settings.tablesCompactMode ? 'small' : 'medium'}>
-            <TableHead>
-              <TableRow>
-                <TableCell colSpan={columnsCount} align="right" sx={{ p: 1 }}>
-                  <Stack direction="row" alignItems="center" justifyContent="space-between" gap={1}>
-                    {headerContent}
+            {showMainHeader && (
+              <TableHead>
+                <TableRow>
+                  <TableCell colSpan={columnsCount} align="right" sx={{ p: 1 }}>
                     <Stack
                       direction="row"
                       alignItems="center"
-                      justifyContent="flex-end"
+                      justifyContent="space-between"
                       gap={1}
-                      ml="auto"
                     >
-                      <LoadingIconButton loading={fetchingData} onClick={refresh} size="small">
-                        <RefreshRounded />
-                      </LoadingIconButton>
-                      {onAdd &&
-                        (typeof onAdd === 'function' ? (
-                          <IconButton onClick={onAdd} size="small">
-                            <AddRounded />
-                          </IconButton>
-                        ) : (
-                          onAdd
-                        ))}
+                      {headerContent}
+                      <Stack
+                        direction="row"
+                        alignItems="center"
+                        justifyContent="flex-end"
+                        gap={1}
+                        ml="auto"
+                      >
+                        {!hideRefreshButton && (
+                          <LoadingIconButton loading={fetchingData} onClick={refresh} size="small">
+                            <RefreshRounded />
+                          </LoadingIconButton>
+                        )}
+                        {onAdd &&
+                          (typeof onAdd === 'function' ? (
+                            <IconButton onClick={onAdd} size="small">
+                              <AddRounded />
+                            </IconButton>
+                          ) : (
+                            onAdd
+                          ))}
+                      </Stack>
                     </Stack>
-                  </Stack>
-                </TableCell>
-              </TableRow>
-            </TableHead>
+                  </TableCell>
+                </TableRow>
+              </TableHead>
+            )}
             <TableHead>
               <TableRow>
                 {columns.definitions.map((columnDefinition) => (
@@ -224,52 +242,72 @@ export const Table = genericMemo(
             </TableHead>
             <TableBody>
               {data.length ? (
-                data.map((row, rowIndex) => (
-                  <TableRow
-                    key={keyProperty ? (getDeepProperty(row, keyProperty) as never) : rowIndex}
-                  >
-                    {columns.definitions.map((columnDefinition) => (
-                      <ValueCell
-                        key={columnDefinition.id}
-                        encrypted={!!columnDefinition.encrypted}
-                        jsonString={!!columnDefinition.jsonString}
-                        sx={columnDefinition.cellSx}
-                      >
-                        {typeof columnDefinition.accessor === 'function'
-                          ? columnDefinition.accessor(row)
-                          : getDeepProperty(row, columnDefinition.accessor)}
-                      </ValueCell>
-                    ))}
-                    {hasActionsColumn && (
-                      <TableCell width="2.5rem" sx={{ top: mainTableHeaderSize, py: 0 }}>
-                        <Stack
-                          direction="row"
-                          alignItems="center"
-                          justifyContent="end-start"
-                          gap={1}
+                data.map((row, rowIndex) => {
+                  const key = keyProperty
+                    ? (getDeepProperty(row, keyProperty) as ExtractTypeByPath<
+                        DataType,
+                        KeyPropertyType
+                      >)
+                    : undefined
+
+                  const selected = !!key && selectedRowKeys?.includes(key)
+                  const clickable = !!onRowClick && !selected
+
+                  return (
+                    <TableRow
+                      key={(key as Key) ?? rowIndex}
+                      hover={clickable}
+                      onClick={clickable ? () => onRowClick?.(row) : undefined}
+                      sx={{
+                        cursor: clickable ? 'pointer' : undefined,
+                        backgroundColor: selected
+                          ? (theme) => `${alpha(theme.palette.action.focus, 0.75)} !important`
+                          : undefined,
+                      }}
+                    >
+                      {columns.definitions.map((columnDefinition) => (
+                        <ValueCell
+                          key={columnDefinition.id}
+                          encrypted={!!columnDefinition.encrypted}
+                          jsonString={!!columnDefinition.jsonString}
+                          sx={columnDefinition.cellSx}
                         >
-                          {columns.customActions.map((customAction) => (
-                            <Box key={customAction.id}>{customAction.accessor(row)}</Box>
-                          ))}
-                          {onEdit && (
-                            <Tooltip title="Edit">
-                              <IconButton size="small" onClick={() => onEdit(row)}>
-                                <EditRounded />
-                              </IconButton>
-                            </Tooltip>
-                          )}
-                          {onDelete && (
-                            <Tooltip title="Delete">
-                              <IconButton size="small" onClick={() => onDelete(row)}>
-                                <DeleteRounded />
-                              </IconButton>
-                            </Tooltip>
-                          )}
-                        </Stack>
-                      </TableCell>
-                    )}
-                  </TableRow>
-                ))
+                          {typeof columnDefinition.accessor === 'function'
+                            ? columnDefinition.accessor(row)
+                            : getDeepProperty(row, columnDefinition.accessor)}
+                        </ValueCell>
+                      ))}
+                      {hasActionsColumn && (
+                        <TableCell width="2.5rem" sx={{ top: mainTableHeaderSize, py: 0 }}>
+                          <Stack
+                            direction="row"
+                            alignItems="center"
+                            justifyContent="end-start"
+                            gap={1}
+                          >
+                            {columns.customActions.map((customAction) => (
+                              <Box key={customAction.id}>{customAction.accessor(row)}</Box>
+                            ))}
+                            {onEdit && (
+                              <Tooltip title="Edit">
+                                <IconButton size="small" onClick={() => onEdit(row)}>
+                                  <EditRounded />
+                                </IconButton>
+                              </Tooltip>
+                            )}
+                            {onDelete && (
+                              <Tooltip title="Delete">
+                                <IconButton size="small" onClick={() => onDelete(row)}>
+                                  <DeleteRounded />
+                                </IconButton>
+                              </Tooltip>
+                            )}
+                          </Stack>
+                        </TableCell>
+                      )}
+                    </TableRow>
+                  )
+                })
               ) : (
                 <TableRow>
                   <TableCell colSpan={columnsCount} align="center" sx={{ py: 2 }}>
@@ -286,3 +324,5 @@ export const Table = genericMemo(
     },
   ),
 )
+
+const emptyArray: never[] = []

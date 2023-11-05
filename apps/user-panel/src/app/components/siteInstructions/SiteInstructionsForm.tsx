@@ -172,11 +172,23 @@ export const SiteInstructionsForm = ({ site, onSuccess }: SiteInstructionsFormPr
                   gap: 0,
                 }}
               >
-                <Stack flexGrow={1} justifyContent="flex-start" overflow="auto">
+                <Stack
+                  flexGrow={1}
+                  justifyContent="flex-start"
+                  overflow="auto"
+                  minWidth="30rem"
+                  sx={{ scrollBehavior: 'smooth' }}
+                >
                   <ProceduresForm />
                 </Stack>
                 <Divider orientation="vertical" flexItem />
-                <Stack flexGrow={1} justifyContent="flex-start" overflow="auto">
+                <Stack
+                  flexGrow={1}
+                  justifyContent="flex-start"
+                  overflow="auto"
+                  minWidth="30rem"
+                  sx={{ scrollBehavior: 'smooth' }}
+                >
                   <ActionsForm />
                 </Stack>
               </Box>
@@ -187,8 +199,8 @@ export const SiteInstructionsForm = ({ site, onSuccess }: SiteInstructionsFormPr
             flexWrap="wrap"
             alignItems="center"
             justifyContent="space-between"
-            p={2}
-            gap={2}
+            p="1rem"
+            gap="1rem"
           >
             <LoadingButton
               variant="outlined"

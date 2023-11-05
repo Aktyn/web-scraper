@@ -2,10 +2,12 @@ import { useCallback, useContext, useState } from 'react'
 import { FormatListBulletedRounded } from '@mui/icons-material'
 import { InputAdornment, MenuItem, Stack } from '@mui/material'
 import {
+  type ActionStep,
   ActionStepErrorType,
   ActionStepType,
-  type ActionStep,
   type UpsertSiteInstructionsSchema,
+  type ValueQuery,
+  ValueQueryType,
 } from '@web-scraper/common'
 import { get, useFieldArray, useFormContext } from 'react-hook-form'
 import { StepDataForm } from './StepDataForm'
@@ -99,6 +101,7 @@ export const StepsForm = ({ fieldName, testingAction }: StepsFormProps) => {
           type: ActionStepType.WAIT,
           data: {
             duration: 1000,
+            value: `${ValueQueryType.CUSTOM}.`,
           },
         })
       }
@@ -187,7 +190,7 @@ export function actionStepSchemaToExecutableActionStep(
         type: actionStepSchema.type,
         data: {
           element: actionStepSchema.data.element,
-          value: actionStepSchema.data.value,
+          value: actionStepSchema.data.value as ValueQuery,
           waitForElementTimeout: actionStepSchema.data.waitForElementTimeout ?? undefined,
         },
       }
@@ -212,7 +215,7 @@ export function actionStepSchemaToExecutableActionStep(
         type: actionStepSchema.type,
         data: {
           element: actionStepSchema.data.element,
-          value: actionStepSchema.data.value,
+          value: actionStepSchema.data.value as ValueQuery,
           waitForElementTimeout: actionStepSchema.data.waitForElementTimeout ?? undefined,
         },
       }

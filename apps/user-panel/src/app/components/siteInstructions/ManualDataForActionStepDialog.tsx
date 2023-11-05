@@ -1,25 +1,40 @@
-import { useCallback, useState } from 'react'
-import { SendRounded } from '@mui/icons-material'
+import { useCallback, useEffect, useMemo, useState } from 'react'
+import { SendRounded, SourceRounded } from '@mui/icons-material'
 import { LoadingButton } from '@mui/lab'
 import {
+  Box,
+  CircularProgress,
   Dialog,
   DialogActions,
   DialogContent,
   DialogContentText,
+  type DialogProps,
   DialogTitle,
   Stack,
-  type DialogProps,
   TextField,
+  Tooltip,
 } from '@mui/material'
-import { ElectronToRendererMessage, type ActionStep } from '@web-scraper/common'
+import {
+  type ActionStep,
+  type ApiError,
+  type DataSourceItem,
+  ElectronToRendererMessage,
+  ErrorCode,
+  type ValueQuery,
+  valueQueryRegex,
+  ValueQueryType,
+} from '@web-scraper/common'
 import { useApiRequest } from '../../hooks/useApiRequest'
+import { useDataSourcesLoader } from '../../hooks/useDataSourcesLoader'
 import { actionStepTypeNames } from '../../utils/dictionaries'
 import { LabeledValuesList } from '../common/LabeledValuesList'
+import { DataSourceColumnTypeIcon } from '../dataSource/DataSourceColumnTypeIcon'
+import { type ColumnDefinition, Table, useTableColumns } from '../table'
 
 interface DataSchema {
   requestId: string
   actionStep: ActionStep
-  valueQuery: string
+  valueQuery: ValueQuery
 }
 
 type ManualDataForActionStepDialogProps = Omit<DialogProps, 'onClose'> & {
@@ -37,7 +52,91 @@ export function ManualDataForActionStepDialog({
     submitting: submittingReturnManualDataForActionStep,
   } = useApiRequest(window.electronAPI.returnManualDataForActionStep)
 
-  const [userValue, setUserValue] = useState('')
+  const { loadDataSources, dataSources, loadingDataSources } = useDataSourcesLoader()
+
+  const [customUserValue, setCustomUserValue] = useState('')
+  const [selectedDataSourceItem, setSelectedDataSourceItem] = useState<DataSourceItem | null>(null)
+
+  const selectedDataSourceIds = useMemo(
+    () => (selectedDataSourceItem ? [selectedDataSourceItem.id] : []),
+    [selectedDataSourceItem],
+  )
+
+  useEffect(() => {
+    void loadDataSources()
+  }, [loadDataSources])
+
+  const [dataSourceFromData, targetColumnName] = useMemo(() => {
+    if (
+      !data?.valueQuery?.match(valueQueryRegex) ||
+      !data?.valueQuery?.startsWith(ValueQueryType.DATA_SOURCE)
+    ) {
+      return [null, null]
+    }
+
+    const [, dataSourceName, columnName] = data.valueQuery.split('.')
+
+    const dataSource = (dataSources ?? []).find(({ name }) => name === dataSourceName)
+    if (!dataSource) {
+      return [null, null]
+    }
+
+    return [dataSource, columnName]
+  }, [data?.valueQuery, dataSources])
+
+  const columns = useTableColumns<DataSourceItem>(
+    {
+      definitions: [
+        {
+          id: 'id',
+          header: 'ID',
+          accessor: 'id',
+          cellSx: { width: '4rem' },
+        },
+        ...(dataSourceFromData?.columns ?? []).map(
+          (column) =>
+            ({
+              id: column.name,
+              header: (
+                <Tooltip
+                  title={column.name === targetColumnName ? 'Source column' : ''}
+                  placement="bottom-start"
+                >
+                  <Stack
+                    direction="row"
+                    alignItems="center"
+                    justifyContent="flex-start"
+                    columnGap="0.25rem"
+                  >
+                    {column.name === targetColumnName && <SourceRounded color="secondary" />}
+                    <DataSourceColumnTypeIcon type={column.type} sx={{ opacity: 0.5 }} />
+                    <Box>{column.name}</Box>
+                  </Stack>
+                </Tooltip>
+              ),
+              accessor: (item) =>
+                item.data.find((entry) => entry.columnName === column.name)?.value?.toString() ??
+                null,
+            }) satisfies ColumnDefinition<DataSourceItem>,
+        ),
+      ],
+    },
+    [dataSourceFromData?.columns],
+  )
+
+  const dataFetcher = useCallback<typeof window.electronAPI.getDataSourceItems>(
+    (request) => {
+      return dataSourceFromData?.name
+        ? window.electronAPI.getDataSourceItems(request, dataSourceFromData.name)
+        : Promise.resolve({ errorCode: ErrorCode.UNKNOWN_ERROR } as ApiError)
+    },
+    [dataSourceFromData?.name],
+  )
+
+  const requestValue =
+    customUserValue ||
+    (selectedDataSourceItem?.data.find((column) => column.columnName === targetColumnName)?.value ??
+      '')
 
   const handleSendData = useCallback(() => {
     if (!data) {
@@ -53,9 +152,9 @@ export function ManualDataForActionStepDialog({
       },
       ElectronToRendererMessage.requestManualDataForActionStep,
       data.requestId,
-      userValue,
+      requestValue,
     )
-  }, [data, onResponseSent, submitReturnManualDataForActionStep, userValue])
+  }, [data, onResponseSent, requestValue, submitReturnManualDataForActionStep])
 
   return (
     <Dialog {...dialogProps}>
@@ -79,16 +178,46 @@ export function ManualDataForActionStepDialog({
             />
           </Stack>
           <DialogContentText color="text.primary" whiteSpace="pre-wrap">
-            Fill data that will be used in action step
+            Select row to send data from column <strong>{targetColumnName}</strong>
+          </DialogContentText>
+          <Box
+            sx={{
+              display: 'grid',
+              gridTemplateRows: '100%',
+              alignSelf: 'stretch',
+              alignItems: 'stretch',
+              maxHeight: '22rem',
+              mx: '-1.5rem',
+            }}
+          >
+            {loadingDataSources ? (
+              <CircularProgress color="primary" size="2rem" sx={{ mx: 'auto' }} />
+            ) : (
+              dataSourceFromData && (
+                <Box sx={{ width: '100%', height: '100%' }}>
+                  <Table
+                    columns={columns}
+                    keyProperty="id"
+                    hideRefreshButton
+                    data={dataFetcher}
+                    selectedRowKeys={selectedDataSourceIds}
+                    onRowClick={setSelectedDataSourceItem}
+                  />
+                </Box>
+              )
+            )}
+          </Box>
+          <DialogContentText color="text.primary" whiteSpace="pre-wrap">
+            Or type a custom value
           </DialogContentText>
           <TextField
             variant="standard"
             required
             autoFocus
             fullWidth
-            label="Value"
-            value={userValue}
-            onChange={(event) => setUserValue(event.target.value)}
+            label="Custom value"
+            value={customUserValue}
+            onChange={(event) => setCustomUserValue(event.target.value)}
             onKeyDown={(event) => {
               if (event.key === 'Enter') {
                 handleSendData()
@@ -102,11 +231,12 @@ export function ManualDataForActionStepDialog({
           variant="outlined"
           color="primary"
           onClick={handleSendData}
+          disabled={!requestValue}
           endIcon={<SendRounded />}
           loading={submittingReturnManualDataForActionStep}
           loadingPosition="end"
         >
-          Send data
+          Send {selectedDataSourceItem && !customUserValue ? 'selected' : 'custom'} value
         </LoadingButton>
       </DialogActions>
     </Dialog>

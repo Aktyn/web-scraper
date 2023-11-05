@@ -61,17 +61,26 @@ type ActionStepBase<Type extends ActionStepType, Data> = {
   actionId: number
 }
 
+export enum ValueQueryType {
+  DATA_SOURCE = 'DataSource',
+  CUSTOM = 'Custom',
+}
+
+export type ValueQuery =
+  | `${ValueQueryType.DATA_SOURCE}.${string}.${string}`
+  | `${ValueQueryType.CUSTOM}.${string}`
+
 export type ActionStep =
   | ActionStepBase<ActionStepType.WAIT, { duration: number }>
   | ActionStepBase<ActionStepType.WAIT_FOR_ELEMENT, { element: string; timeout?: number }>
   | ActionStepBase<
       ActionStepType.FILL_INPUT,
-      { element: string; value: string; waitForElementTimeout?: number }
+      { element: string; value: ValueQuery; waitForElementTimeout?: number }
     >
   // | ActionStepBase<ActionStepType.UPLOAD_FILE, { element: string; value: string }>
   | ActionStepBase<
       ActionStepType.SELECT_OPTION,
-      { element: string; value: string; waitForElementTimeout?: number }
+      { element: string; value: ValueQuery; waitForElementTimeout?: number }
     >
   | ActionStepBase<
       ActionStepType.PRESS_BUTTON,
@@ -231,6 +240,11 @@ const mapSiteErrorSchema = yup.object({
     .required('Error type is required'),
 })
 
+export const valueQueryRegex = new RegExp(
+  `^(${ValueQueryType.DATA_SOURCE}\\.[^.]+\\.[^.]+)|(${ValueQueryType.CUSTOM}\\..*)$`,
+  'u',
+)
+
 export const upsertActionStepSchema = yup.object({
   type: yup
     .mixed<ActionStepType>()
@@ -240,21 +254,26 @@ export const upsertActionStepSchema = yup.object({
     .object({
       duration: yup
         .number()
-        .transform(transformNanToUndefined)
+        .notRequired()
         .nullable()
         .default(null)
-        .notRequired(),
-      element: yup.string().nullable().default(null).notRequired(),
-      value: yup.string().nullable().default(null).notRequired(),
+        .transform(transformNanToUndefined),
+      element: yup.string().notRequired().nullable().default(null),
+      value: yup
+        .string()
+        .notRequired()
+        .nullable()
+        .default(null)
+        .matches(valueQueryRegex, 'Must be a path to data source column or Custom.anything'),
       waitForNavigation: yup.boolean().nullable().default(null).notRequired(),
       solver: yup
         .mixed<CaptchaSolverType>()
+        .notRequired()
         .oneOf(Object.values(CaptchaSolverType))
         .nullable()
-        .default(null)
-        .notRequired(),
-      elements: yup.array().of(yup.string()).nullable().default([]).notRequired(),
-      mapError: yup.array().of(mapSiteErrorSchema).nullable().default([]).notRequired(),
+        .default(null),
+      elements: yup.array().of(yup.string()).notRequired().nullable().default([]),
+      mapError: yup.array().of(mapSiteErrorSchema).notRequired().nullable().default([]),
       mapSuccess: yup
         .array()
         .of(mapSiteErrorSchema.omit(['errorType']))
@@ -319,7 +338,7 @@ type FlowSchemaTypeHelper = yup.ObjectSchema<
 const upsertFlowSchema: FlowSchemaTypeHelper = yup.object({
   actionName: yup
     .string()
-    .matches(/^(action|global)\.[^.].*/, 'Action name is invalid')
+    .matches(/^(action|global)\.[^.]+$/, 'Action name is invalid')
     .required('Action name is required'),
   globalReturnValues: yup
     .array()

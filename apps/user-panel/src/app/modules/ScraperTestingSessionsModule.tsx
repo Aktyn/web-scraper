@@ -7,7 +7,12 @@ import {
   useState,
   useContext,
 } from 'react'
-import { ElectronToRendererMessage, type ActionStep, type Site } from '@web-scraper/common'
+import {
+  ElectronToRendererMessage,
+  type ActionStep,
+  type Site,
+  type ValueQuery,
+} from '@web-scraper/common'
 import { ApiModule } from './ApiModule'
 import { ManualDataForActionStepDialog } from '../components/siteInstructions/ManualDataForActionStepDialog'
 import { useApiRequest } from '../hooks/useApiRequest'
@@ -29,7 +34,7 @@ function ScraperTestingSessionsProvider({ children }: PropsWithChildren) {
     {
       requestId: string
       actionStep: ActionStep
-      valueQuery: string
+      valueQuery: ValueQuery
     }[]
   >([])
 

@@ -9,7 +9,7 @@ import {
   type Action,
 } from '@web-scraper/common'
 import { useFormContext } from 'react-hook-form'
-import { ActionNameForm } from './ActionNameForm'
+import { ActionNameInput } from './ActionNameInput'
 import { actionSchemaToExecutableAction } from './ActionsForm'
 import { GlobalReturnValuesForm } from './GlobalReturnValuesForm'
 import { SiteInstructionsTestingSessionContext } from '../../context/siteInstructionsTestingSessionContext'
@@ -161,7 +161,7 @@ export const FlowStepForm = ({
         return [
           index,
           <Stack key={index} flexGrow={1} gap={2}>
-            <ActionNameForm fieldName={fieldName} />
+            <ActionNameInput fieldName={fieldName} />
             {isGlobalAction(field.actionName as FlowStep['actionName']) && (
               <GlobalReturnValuesForm
                 level={level + 1}

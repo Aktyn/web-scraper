@@ -13,13 +13,13 @@ import {
 import {
   GlobalActionType,
   REGULAR_ACTION_PREFIX,
-  type GLOBAL_ACTION_PREFIX,
+  GLOBAL_ACTION_PREFIX,
   type UpsertSiteInstructionsSchema,
 } from '@web-scraper/common'
 import { useFormContext, Controller } from 'react-hook-form'
 import { globalActionTypeNames } from '../../utils/dictionaries'
 
-export const ActionNameForm = ({ fieldName }: { fieldName: `procedures.${number}.flow` }) => {
+export const ActionNameInput = ({ fieldName }: { fieldName: `procedures.${number}.flow` }) => {
   const form = useFormContext<UpsertSiteInstructionsSchema>()
   const actionNameValue = form.watch(`${fieldName}.actionName`)
   const actions = form.watch('actions')
@@ -46,7 +46,7 @@ export const ActionNameForm = ({ fieldName }: { fieldName: `procedures.${number}
         const handleTypeChange = (
           type: typeof GLOBAL_ACTION_PREFIX | typeof REGULAR_ACTION_PREFIX,
         ) => {
-          if (type === 'global') {
+          if (type === GLOBAL_ACTION_PREFIX) {
             field.onChange(`${type}.${GlobalActionType.FINISH}`)
           } else {
             field.onChange(`${type}.${actionNames[0] ?? ''}`)
@@ -62,14 +62,18 @@ export const ActionNameForm = ({ fieldName }: { fieldName: `procedures.${number}
             <InputLabel variant="standard" margin="dense" shrink>
               Action name
             </InputLabel>
-            <Stack direction="row" alignItems="baseline" spacing={1}>
+            <Stack direction="row" alignItems="stretch" gap="0.5rem">
               <TextField
                 variant="standard"
                 label=" "
                 select
                 error={!!fieldState.error}
                 value={prefix ?? ''}
-                onChange={(e) => handleTypeChange(e.target.value as 'global' | 'action')}
+                onChange={(e) =>
+                  handleTypeChange(
+                    e.target.value as typeof GLOBAL_ACTION_PREFIX | typeof REGULAR_ACTION_PREFIX,
+                  )
+                }
                 onBlur={field.onBlur}
                 InputProps={{
                   startAdornment: (
@@ -79,8 +83,8 @@ export const ActionNameForm = ({ fieldName }: { fieldName: `procedures.${number}
                   ),
                 }}
               >
-                <MenuItem value="global">Global</MenuItem>
-                <MenuItem value="action">Action</MenuItem>
+                <MenuItem value={GLOBAL_ACTION_PREFIX}>Global</MenuItem>
+                <MenuItem value={REGULAR_ACTION_PREFIX}>Action</MenuItem>
               </TextField>
               <Typography
                 variant="body1"
@@ -98,13 +102,7 @@ export const ActionNameForm = ({ fieldName }: { fieldName: `procedures.${number}
                 value={actionName ?? ''}
                 onChange={(e) => handleActionNameChange(e.target.value)}
                 onBlur={field.onBlur}
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <FormatListBulletedRounded />
-                    </InputAdornment>
-                  ),
-                }}
+                sx={{ flexGrow: 1 }}
               >
                 {prefix === 'global'
                   ? Object.values(GlobalActionType).map((type) => (

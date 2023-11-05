@@ -11,6 +11,8 @@ import {
   omit,
   type ProcedureExecutionResult,
   type ScraperMode,
+  type ValueQuery,
+  ValueQueryType,
 } from '@web-scraper/common'
 import express from 'express'
 import { afterAll, beforeAll, describe, expect, it, vi, type Mock } from 'vitest'
@@ -101,6 +103,8 @@ describe('Scraper.PREVIEW', () => {
 describe('Scraper.TESTING action steps', () => {
   const app = express()
   let server: Server | null = null
+  const onDataRequest = (rawValue: ValueQuery) =>
+    Promise.resolve(rawValue.replace(new RegExp(`^${ValueQueryType.CUSTOM}\\.`, 'u'), ''))
 
   beforeAll(() => {
     server = initServer(app)
@@ -307,11 +311,11 @@ describe('Scraper.TESTING action steps', () => {
             type: ActionStepType.FILL_INPUT,
             data: {
               element: 'body > input',
-              value: 'mock value',
+              value: 'Custom.mock value',
               waitForElementTimeout: 2_000,
             },
           },
-          (rawValue) => Promise.resolve(rawValue),
+          onDataRequest,
         )
 
         expect(result).toEqual({ errorType: ActionStepErrorType.NO_ERROR })
@@ -332,7 +336,7 @@ describe('Scraper.TESTING action steps', () => {
             type: ActionStepType.FILL_INPUT,
             data: {
               element: 'non existing input selector',
-              value: 'mock value',
+              value: 'Custom.mock value',
               waitForElementTimeout: 2_000,
             },
           },
@@ -356,11 +360,11 @@ describe('Scraper.TESTING action steps', () => {
             type: ActionStepType.SELECT_OPTION,
             data: {
               element: 'body > select',
-              value: 'mock option',
+              value: 'Custom.mock option',
               waitForElementTimeout: 2_000,
             },
           },
-          (rawValue) => Promise.resolve(rawValue),
+          onDataRequest,
         )
 
         expect(result).toEqual({ errorType: ActionStepErrorType.NO_ERROR })
@@ -380,11 +384,11 @@ describe('Scraper.TESTING action steps', () => {
             type: ActionStepType.SELECT_OPTION,
             data: {
               element: 'body > select',
-              value: 'non existing option',
+              value: 'Custom.non existing option',
               waitForElementTimeout: 2_000,
             },
           },
-          (rawValue) => Promise.resolve(rawValue),
+          onDataRequest,
         )
 
         expect(result).toEqual({ errorType: ActionStepErrorType.OPTION_NOT_SELECTED })

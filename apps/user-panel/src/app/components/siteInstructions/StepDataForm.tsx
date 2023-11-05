@@ -1,10 +1,4 @@
-import type { ReactNode } from 'react'
-import {
-  CircleRounded,
-  CodeRounded,
-  FormatListBulletedRounded,
-  TimerRounded,
-} from '@mui/icons-material'
+import { CodeRounded, FormatListBulletedRounded, TimerRounded } from '@mui/icons-material'
 import {
   FormControl,
   FormControlLabel,
@@ -20,6 +14,7 @@ import {
   type UpsertSiteInstructionsSchema,
 } from '@web-scraper/common'
 import { Controller, useFieldArray, useFormContext } from 'react-hook-form'
+import { ValueQueryInput } from './ValueQueryInput'
 import { actionStepErrorTypeNames } from '../../utils/dictionaries'
 import { ItemsList } from '../common/treeStructure/ItemsList'
 import { FormInput } from '../form/FormInput'
@@ -54,7 +49,7 @@ export const StepDataForm = ({ stepFieldName, ...fieldFormProps }: StepDataFormP
       return (
         <>
           <ElementFormInput {...fieldFormProps} />
-          <ValueFormInput {...fieldFormProps} label="Value query" />
+          <ValueQueryInput {...fieldFormProps} />
           <DurationFormInput {...fieldFormProps} type="waitForElementTimeout" />
         </>
       )
@@ -135,6 +130,7 @@ const ElementFormInput = ({ fieldName }: DataFieldFormProps) => {
       name={`${fieldName}.element`}
       form={form}
       label="Element"
+      placeholder="JS path"
       InputProps={{
         startAdornment: (
           <InputAdornment position="start">
@@ -144,28 +140,6 @@ const ElementFormInput = ({ fieldName }: DataFieldFormProps) => {
       }}
       sx={{
         minWidth: '16rem',
-      }}
-    />
-  )
-}
-
-const ValueFormInput = ({
-  fieldName,
-  label = 'Value',
-}: DataFieldFormProps & { label?: ReactNode }) => {
-  const form = useFormContext<UpsertSiteInstructionsSchema>()
-
-  return (
-    <FormInput
-      name={`${fieldName}.value`}
-      form={form}
-      label={label}
-      InputProps={{
-        startAdornment: (
-          <InputAdornment position="start">
-            <CircleRounded />
-          </InputAdornment>
-        ),
       }}
     />
   )

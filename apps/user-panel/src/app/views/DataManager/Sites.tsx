@@ -9,7 +9,7 @@ import { UrlButton } from '../../components/common/button/UrlButton'
 import { OpenSiteInstructionsFormButton } from '../../components/site/OpenSiteInstructionsFormButton'
 import { SiteForm } from '../../components/site/SiteForm'
 import { SiteInstructionsForm } from '../../components/siteInstructions/SiteInstructionsForm'
-import { Table, useTableColumns, type TableRef } from '../../components/table'
+import { Table, type TableRef, useTableColumns } from '../../components/table'
 import { TagsCellValue } from '../../components/table/TagsCellValue'
 import { useApiRequest } from '../../hooks/useApiRequest'
 import { ScraperTestingSessionsModule } from '../../modules/ScraperTestingSessionsModule'
@@ -113,8 +113,7 @@ export const Sites = () => {
     siteInstructionsDrawerRef.current?.open()
   }, [])
   const handleSiteInstructionsSet = useCallback(() => {
-    setSiteToShowInstructions(null)
-    siteInstructionsDrawerRef.current?.close()
+    // noop
   }, [])
 
   return (
