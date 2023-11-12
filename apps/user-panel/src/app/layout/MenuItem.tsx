@@ -12,15 +12,17 @@ import {
   type SxProps,
   type Theme,
 } from '@mui/material'
+import { common } from '@mui/material/colors'
 import anime from 'animejs'
-import { commonLayoutTransitions } from './helpers'
+import { commonLayoutTransitions, maximizedWindowBorderRadiusPx } from './helpers'
 import { Config } from '../config'
-import { ViewTransitionState, type ViewName } from '../context/viewContext'
+import { type ViewName, ViewTransitionState } from '../context/viewContext'
 import { useView } from '../hooks/useView'
+import { Navigation } from '../navigation'
 
 export interface MenuItemProps {
   label: ReactNode
-  icon: SvgIconComponent | ((svgProps: SvgIconProps) => JSX.Element)
+  icon: SvgIconComponent | ((svgProps: SvgIconProps) => ReactNode)
   viewName: ViewName
 }
 
@@ -38,14 +40,14 @@ export const MenuItem = ({ label, icon: Icon, viewName }: MenuItemProps) => {
   }
 
   useEffect(() => {
-    const show =
+    const selected =
       view.viewName === viewName &&
       [ViewTransitionState.IDLE, ViewTransitionState.ENTERING].includes(view.viewTransitionState)
 
     anime({
       targets: itemRef.current?.querySelector('.indicator'),
-      scaleY: show ? 1 : 0,
-      opacity: show ? 1 : 0,
+      translateX: selected ? '0.3rem' : '0.15rem',
+      opacity: selected ? 1 : 0.5,
       easing: 'easeInOutCirc',
       duration: Math.round(Config.VIEW_TRANSITION_DURATION / 2),
     })
@@ -63,7 +65,27 @@ export const MenuItem = ({ label, icon: Icon, viewName }: MenuItemProps) => {
   }, [])
 
   return (
-    <ListItem ref={itemRef} disablePadding>
+    <ListItem
+      ref={itemRef}
+      disablePadding
+      sx={
+        selected
+          ? {
+              '& .indicator': {
+                borderTopRightRadius: '0.25rem',
+                borderBottomRightRadius: '0.25rem',
+              },
+            }
+          : {
+              '&:first-of-type .indicator': {
+                borderTopRightRadius: '0.125rem',
+              },
+              '&:last-of-type .indicator': {
+                borderBottomRightRadius: '0.125rem',
+              },
+            }
+      }
+    >
       <ListItemButton
         selected={selected}
         disableRipple={selected}
@@ -102,13 +124,17 @@ export const MenuItem = ({ label, icon: Icon, viewName }: MenuItemProps) => {
           className="indicator"
           sx={{
             position: 'absolute',
-            left: 0,
+            left: !view.maximized
+              ? `calc(-0.3rem - ${maximizedWindowBorderRadiusPx}px)`
+              : '-0.3rem',
             top: 0,
             height: '100%',
-            width: '0.125rem',
-            backgroundColor: (theme) => theme.palette.primary.main,
-            transition: commonLayoutTransitions.backgroundColor,
-            borderRadius: '0.125rem',
+            width: '0.3rem',
+            transition: (theme) =>
+              theme.transitions.create('border-radius', {
+                duration: Config.VIEW_TRANSITION_DURATION / 2,
+              }),
+            backgroundColor: Navigation[viewName].theme?.palette.primary.main ?? common.white,
             pointerEvents: 'none',
           }}
         />

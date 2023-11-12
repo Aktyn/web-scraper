@@ -3,11 +3,13 @@ import createCache from '@emotion/cache'
 import { CacheProvider } from '@emotion/react'
 import { CloseRounded } from '@mui/icons-material'
 import { CssBaseline, IconButton, ThemeProvider } from '@mui/material'
+import { ElectronToRendererMessage, WindowStateChange } from '@web-scraper/common'
 import { SnackbarProvider, closeSnackbar } from 'notistack'
 import { FullViewLoader } from './components/common/loader/FullViewLoader'
 import { Config } from './config'
 import { ViewContext, ViewTransitionState, type ViewName } from './context/viewContext'
 import { useMounted } from './hooks/useMounted'
+import { usePersistentState } from './hooks/usePersistentState'
 import { Layout } from './layout/Layout'
 import { ApiModule } from './modules/ApiModule'
 import { NotificationsModule } from './modules/NotificationsModule'
@@ -23,12 +25,21 @@ const emotionCache = createCache({
 })
 
 export const App = () => {
+  return (
+    <ApiModule.Provider>
+      <ViewBase />
+    </ApiModule.Provider>
+  )
+}
+
+function ViewBase() {
   const mounted = useMounted()
 
   const [viewName, setViewName] = useState<ViewName>('DATA_MANAGER') //TODO: restore DASHBOARD
   const [previousViewName, setPreviousViewName] = useState<ViewName | null>(null)
   const [nextViewName, setNextViewName] = useState<ViewName | null>(null)
   const [viewTransitionState, setViewTransitionState] = useState(ViewTransitionState.IDLE)
+  const [maximized, setMaximized] = usePersistentState('window-maximized', 'false', localStorage)
 
   const currentView = Navigation[viewName]
   const nextView = nextViewName ? Navigation[nextViewName] : null
@@ -68,6 +79,15 @@ export const App = () => {
     [viewTransitionState],
   )
 
+  ApiModule.useEvent(ElectronToRendererMessage.windowStateChanged, (_, stateChange) => {
+    if (stateChange === WindowStateChange.MAXIMIZE) {
+      setMaximized('true')
+    }
+    if (stateChange === WindowStateChange.UNMAXIMIZE) {
+      setMaximized('false')
+    }
+  })
+
   return (
     <CacheProvider value={emotionCache}>
       <ThemeProvider theme={currentView.theme ?? baseTheme}>
@@ -93,28 +113,27 @@ export const App = () => {
                 viewTransitionState,
                 requestViewChange: handleViewChange,
                 viewSettings: currentView.viewSettings,
+                maximized: maximized === 'true',
               }}
             >
               <UserDataProvider>
-                <ApiModule.Provider>
-                  <NotificationsModule.Provider>
-                    <ScraperTestingSessionsModule.Provider>
-                      <ScraperExecutionModule.Provider>
-                        <Layout>
-                          <Suspense fallback={<FullViewLoader />}>
-                            <currentView.component key={viewName} />
+                <NotificationsModule.Provider>
+                  <ScraperTestingSessionsModule.Provider>
+                    <ScraperExecutionModule.Provider>
+                      <Layout>
+                        <Suspense fallback={<FullViewLoader />}>
+                          <currentView.component key={viewName} />
+                        </Suspense>
+                        {nextView && (
+                          // Preloads next view file
+                          <Suspense fallback={null}>
+                            <nextView.component key={nextViewName} doNotRender />
                           </Suspense>
-                          {nextView && (
-                            // Preloads next view file
-                            <Suspense fallback={null}>
-                              <nextView.component key={nextViewName} doNotRender />
-                            </Suspense>
-                          )}
-                        </Layout>
-                      </ScraperExecutionModule.Provider>
-                    </ScraperTestingSessionsModule.Provider>
-                  </NotificationsModule.Provider>
-                </ApiModule.Provider>
+                        )}
+                      </Layout>
+                    </ScraperExecutionModule.Provider>
+                  </ScraperTestingSessionsModule.Provider>
+                </NotificationsModule.Provider>
               </UserDataProvider>
             </ViewContext.Provider>
           </SnackbarProvider>

@@ -4,8 +4,11 @@ import { CloseWindowIcon } from '../components/icons/CloseWindowIcon'
 import { MaximizeWindowIcon } from '../components/icons/MaximizeWindowIcon'
 import { MinimizeWindowIcon } from '../components/icons/MinimizeWindowIcon'
 import { RestoreWindowIcon } from '../components/icons/RestoreWindowIcon'
+import { useView } from '../hooks/useView'
 
-export const WindowStateOptions = ({ maximized }: { maximized: boolean }) => {
+export const WindowStateOptions = () => {
+  const view = useView()
+
   return (
     <Stack direction="row" alignItems="center" gap={2}>
       <IconButton
@@ -18,11 +21,11 @@ export const WindowStateOptions = ({ maximized }: { maximized: boolean }) => {
         size="small"
         onClick={() =>
           window.electronAPI.changeWindowState(
-            maximized ? WindowStateChange.UNMAXIMIZE : WindowStateChange.MAXIMIZE,
+            view.maximized ? WindowStateChange.UNMAXIMIZE : WindowStateChange.MAXIMIZE,
           )
         }
       >
-        {maximized ? (
+        {view.maximized ? (
           <RestoreWindowIcon fontSize="inherit" />
         ) : (
           <MaximizeWindowIcon fontSize="inherit" />

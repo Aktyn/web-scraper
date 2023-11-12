@@ -1,6 +1,5 @@
-import { memo, useState, type PropsWithChildren } from 'react'
-import { Box, GlobalStyles, Stack, backdropClasses, darken } from '@mui/material'
-import { ElectronToRendererMessage, WindowStateChange } from '@web-scraper/common'
+import { memo, type PropsWithChildren } from 'react'
+import { backdropClasses, Box, darken, GlobalStyles, Stack } from '@mui/material'
 import { BackgroundEffect } from './BackgroundEffect'
 import { Footer } from './Footer'
 import { Header } from './Header'
@@ -8,11 +7,11 @@ import { Menu } from './Menu'
 import {
   commonLayoutTransitions,
   contentAreaBorderRadius,
+  maximizedWindowBorderRadiusPx,
   nonMaximizedWindowBorderRadius,
 } from './helpers'
 import { ViewTransitionState } from '../context/viewContext'
 import { useView } from '../hooks/useView'
-import { ApiModule } from '../modules/ApiModule'
 
 const fadeEffectSize = '2rem'
 
@@ -21,46 +20,38 @@ type LayoutProps = PropsWithChildren<object>
 export const Layout = memo<LayoutProps>(({ children }) => {
   const view = useView()
 
-  const [maximized, setMaximized] = useState(false)
-
-  ApiModule.useEvent(ElectronToRendererMessage.windowStateChanged, (_, stateChange) => {
-    if (stateChange === WindowStateChange.MAXIMIZE) {
-      setMaximized(true)
-    }
-    if (stateChange === WindowStateChange.UNMAXIMIZE) {
-      setMaximized(false)
-    }
-  })
-
   return (
     <Box
-      overflow="hidden"
       sx={{
         backgroundColor: (theme) => darken(theme.palette.background.default, 0.15),
-        border: maximized
+        border: view.maximized
           ? undefined
-          : (theme) => `2px solid ${darken(theme.palette.background.default, 0.25)}`,
+          : (theme) =>
+              `${maximizedWindowBorderRadiusPx}px solid ${darken(
+                theme.palette.background.default,
+                0.25,
+              )}`,
         transition: commonLayoutTransitions.backgroundAndBorderColor,
 
         width: '100vw',
         height: '100vh',
-        overflow: 'hidden',
+        overflow: view.maximized ? 'hidden' : 'visible',
         display: 'grid',
         gridTemplateAreas: '"menu header" "menu content" "footer footer"',
         gridTemplateColumns: 'auto 1fr',
         gridTemplateRows: 'auto 1fr auto',
-        borderRadius: maximized ? '0rem' : nonMaximizedWindowBorderRadius,
+        borderRadius: view.maximized ? '0rem' : nonMaximizedWindowBorderRadius,
       }}
     >
       <GlobalStyles
         styles={{
           [`.${backdropClasses.root}`]: {
-            borderRadius: maximized ? '0rem' : nonMaximizedWindowBorderRadius,
+            borderRadius: view.maximized ? '0rem' : nonMaximizedWindowBorderRadius,
           },
         }}
       />
       <Menu />
-      <Header maximized={maximized} />
+      <Header />
       <Stack
         flexGrow={1}
         overflow="hidden"

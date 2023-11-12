@@ -18,3 +18,4 @@ export const commonLayoutTransitions = {
 
 export const nonMaximizedWindowBorderRadius = '1rem'
 export const contentAreaBorderRadius = '1rem'
+export const maximizedWindowBorderRadiusPx = 2

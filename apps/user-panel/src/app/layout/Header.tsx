@@ -16,7 +16,7 @@ import { EncryptionPasswordForm } from '../forms/EncryptionPasswordForm'
 
 export const headerSize = '3rem'
 
-export const Header = ({ maximized }: { maximized: boolean }) => {
+export const Header = () => {
   const encryptionPopoverRef = useRef<CustomPopoverRef>(null)
   const settingsContainer = useRef<HTMLDivElement>(null)
 
@@ -92,7 +92,7 @@ export const Header = ({ maximized }: { maximized: boolean }) => {
         <EncryptionPasswordForm onSave={encryptionPopoverRef.current?.close} />
       </CustomPopover>
       <Divider orientation="vertical" flexItem />
-      <WindowStateOptions maximized={maximized} />
+      <WindowStateOptions />
     </Stack>
   )
 }

@@ -17,4 +17,5 @@ export const ViewContext = createContext({
   viewTransitionState: ViewTransitionState.IDLE,
   requestViewChange: noop as (viewName: ViewName) => void,
   viewSettings: undefined as ViewSettingsSchema | undefined,
+  maximized: false,
 })
