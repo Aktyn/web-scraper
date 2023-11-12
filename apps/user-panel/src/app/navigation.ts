@@ -37,12 +37,12 @@ export const Navigation = {
   } as NavigationEntry,
   TESTING: {
     component: lazy(() => import('./views/Testing/TestingView')),
-    theme: mainThemes.purple,
+    theme: mainThemes.cyan,
     gridPosition: [0, 1],
   } as NavigationEntry,
   CAPTCHA: {
     component: lazy(() => import('./views/Captcha/CaptchaView')),
-    theme: mainThemes.cyan,
+    theme: mainThemes.purple,
     gridPosition: [1, 1],
   } as NavigationEntry,
   INFO: {
