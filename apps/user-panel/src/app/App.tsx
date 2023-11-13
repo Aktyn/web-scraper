@@ -39,7 +39,7 @@ function ViewBase() {
   const [previousViewName, setPreviousViewName] = useState<ViewName | null>(null)
   const [nextViewName, setNextViewName] = useState<ViewName | null>(null)
   const [viewTransitionState, setViewTransitionState] = useState(ViewTransitionState.IDLE)
-  const [maximized, setMaximized] = usePersistentState('window-maximized', 'false', localStorage)
+  const [maximized, setMaximized] = usePersistentState('window-maximized', 'false', sessionStorage)
 
   const currentView = Navigation[viewName]
   const nextView = nextViewName ? Navigation[nextViewName] : null

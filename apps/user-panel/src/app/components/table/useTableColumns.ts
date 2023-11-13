@@ -11,7 +11,7 @@ export interface ColumnDefinition<DataType> {
   jsonString?: boolean
   cellSx?: TableCellProps['sx']
   // sortable?: boolean
-  // filter?: (props: FilterPropsBase<any>) => React.ReactElement<FilterPropsBase<any>>
+  // filter?: (props: FilterPropsBase<any>) => ReactElement<FilterPropsBase<any>>
 }
 
 interface CustomActionDefinition<DataType> {

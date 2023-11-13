@@ -175,10 +175,10 @@ export const TabsView = genericMemo(
       return (
         <Stack
           ref={ref ?? containerRef}
+          flexGrow={1}
           alignItems="stretch"
           maxHeight="100%"
           overflow="hidden"
-          flexGrow={1}
         >
           <ViewTransition
             targets={(element) => element.querySelectorAll(`.${tabsClasses.indicator}`)}

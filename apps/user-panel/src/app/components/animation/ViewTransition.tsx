@@ -18,6 +18,7 @@ import { Navigation } from '../../navigation'
 export enum TransitionType {
   DEFAULT,
   MOVE_TOP,
+  MOVE_RIGHT,
   FADE,
   SCALE,
   SCALE_X,
@@ -103,6 +104,17 @@ export const ViewTransition = memo(
                 ...commonAnimeParams,
                 translateY: {
                   value: ['0rem', `${-translationLengthRem}rem`],
+                  delay: staggeredDelay,
+                },
+                opacity: [1, 0],
+              })
+              break
+
+            case TransitionType.MOVE_RIGHT:
+              anime({
+                ...commonAnimeParams,
+                translateX: {
+                  value: ['0rem', `${translationLengthRem}rem`],
                   delay: staggeredDelay,
                 },
                 opacity: [1, 0],

@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useMemo, useRef, useState } from 'react'
+import { Fragment, type ReactNode, useEffect, useMemo, useRef, useState } from 'react'
 import {
   CheckRounded,
   CircleRounded,
@@ -24,19 +24,19 @@ import {
   StepLabel,
   Stepper,
   TextField,
-  Typography,
   type TextFieldProps,
+  Typography,
 } from '@mui/material'
 import { ActionStepErrorType, ScraperExecutionScope } from '@web-scraper/common'
 import { StepIcon } from './StepIcon'
 import {
-  parseScraperExecution,
-  type ParsedScraperExecution,
   executionItemResultFailed,
+  type ParsedScraperExecution,
+  parseScraperExecution,
 } from './helpers'
 import {
-  ScraperExecutionModule,
   type ScraperExecutionLite,
+  ScraperExecutionModule,
 } from '../../modules/ScraperExecutionModule'
 import {
   actionStepErrorTypeNames,
@@ -282,7 +282,7 @@ const ScraperExecutionItemContent = ({ item }: ScraperExecutionItemProps) => {
 }
 
 type ReadonlyFieldProps = TextFieldProps & {
-  icon: React.ReactNode
+  icon: ReactNode
 }
 
 const ReadonlyField = ({ icon, ...props }: ReadonlyFieldProps) => (

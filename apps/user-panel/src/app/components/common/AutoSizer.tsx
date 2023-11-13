@@ -1,9 +1,9 @@
-import React, { useEffect, useRef, useState } from 'react'
+import { type ReactNode, useEffect, useRef, useState } from 'react'
 import { Box } from '@mui/material'
 import { useDebounce } from 'src/app/hooks/useDebounce'
 
 interface AutoSizerProps {
-  children: (size: { width: number; height: number }) => React.ReactNode
+  children: (size: { width: number; height: number }) => ReactNode
   delay?: number
   absolute?: boolean
 }

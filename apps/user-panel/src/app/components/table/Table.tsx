@@ -208,8 +208,10 @@ export const Table = genericMemo(
                         direction="row"
                         alignItems="center"
                         justifyContent="flex-end"
-                        gap={1}
+                        gap="0.5rem"
                         ml="auto"
+                        position="sticky"
+                        right="0.5rem"
                       >
                         {!hideRefreshButton && (
                           <LoadingIconButton loading={fetchingData} onClick={refresh} size="small">
