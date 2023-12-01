@@ -2184,12 +2184,12 @@
   dependencies:
     "@prisma/engines-version" "5.5.1-1.aebc046ce8b88ebbcb45efe31cbe7d06fd6abc0a"
 
-"@prisma/debug@5.5.2":
-  version "5.5.2"
-  resolved "https://registry.yarnpkg.com/@prisma/debug/-/debug-5.5.2.tgz#25fc82ac13dff7491f136fad45a49e114effb148"
-  integrity sha512-OeyuNABo1dgWHIQuJAdvW5qp5ccFfbI0CKNvdg8D34YWOfo6L+4J0gmnRI/j+h40HvM3S5WH2T8e3W9bPa7EVg==
+"@prisma/debug@5.6.0":
+  version "5.6.0"
+  resolved "https://registry.yarnpkg.com/@prisma/debug/-/debug-5.6.0.tgz#e4552d00baa44331352c0e812e46162cc203a645"
+  integrity sha512-rVQuC5/4FvGvAwUEISumRctLnW2VGCzp8yfzqZhupYtKWWjAhP7amAMYg8wjfuBJ9eARfVDTG88sjelBdboy0g==
   dependencies:
-    "@types/debug" "4.1.9"
+    "@types/debug" "4.1.12"
     debug "4.3.4"
     strip-ansi "6.0.1"
 
@@ -2203,13 +2203,13 @@
   resolved "https://registry.yarnpkg.com/@prisma/engines/-/engines-5.5.2.tgz#fe0d2361a48c7d59568ccf0d35c75432594e1ac1"
   integrity sha512-Be5hoNF8k+lkB3uEMiCHbhbfF6aj1GnrTBnn5iYFT7GEr3TsOEp1soviEcBR0tYCgHbxjcIxJMhdbvxALJhAqg==
 
-"@prisma/generator-helper@^4.0.0 || ^5.0.0", "@prisma/generator-helper@^5.5.2":
-  version "5.5.2"
-  resolved "https://registry.yarnpkg.com/@prisma/generator-helper/-/generator-helper-5.5.2.tgz#259089b857bf4a32075e0e4bf76b35add6b81021"
-  integrity sha512-qQz4JfhjjMs+C/dbZUoGAU+JV685Qe72iGonDM0c9H05A5s5MCWj5wV2kVi1/DNiy7jkfqGGM7bX8k0/8yO0FQ==
+"@prisma/generator-helper@^4.0.0 || ^5.0.0", "@prisma/generator-helper@^5.6.0":
+  version "5.6.0"
+  resolved "https://registry.yarnpkg.com/@prisma/generator-helper/-/generator-helper-5.6.0.tgz#bbe5cc586983aad0032da69b67512ac30ab18e2d"
+  integrity sha512-trrLzQQAhVhpmrr+I33QoZXY+4uY3lJL8qUUm8QAtk6iIY0f9Y2zgoEbHa9UfUkHyx1kujRfgi16C0mUeF+DTA==
   dependencies:
-    "@prisma/debug" "5.5.2"
-    "@types/cross-spawn" "6.0.3"
+    "@prisma/debug" "5.6.0"
+    "@types/cross-spawn" "6.0.5"
     cross-spawn "7.0.3"
     kleur "4.1.5"
 
@@ -2608,17 +2608,17 @@
   dependencies:
     "@types/node" "*"
 
-"@types/cross-spawn@6.0.3":
-  version "6.0.3"
-  resolved "https://registry.yarnpkg.com/@types/cross-spawn/-/cross-spawn-6.0.3.tgz#c743cb2608f55860ee9776d8c99135d6032c763c"
-  integrity sha512-BDAkU7WHHRHnvBf5z89lcvACsvkz/n7Tv+HyD/uW76O29HoH1Tk/W6iQrepaZVbisvlEek4ygwT8IW7ow9XLAA==
+"@types/cross-spawn@6.0.5":
+  version "6.0.5"
+  resolved "https://registry.yarnpkg.com/@types/cross-spawn/-/cross-spawn-6.0.5.tgz#1f9a5311e0e54d6f88017ba6d564a958d1aa359f"
+  integrity sha512-wsIMP68FvGXk+RaWhraz6Xp4v7sl4qwzHAmtPaJEN2NRTXXI9LtFawUpeTsBNL/pd6QoLStdytCaAyiK7AEd/Q==
   dependencies:
     "@types/node" "*"
 
-"@types/debug@4.1.9":
-  version "4.1.9"
-  resolved "https://registry.yarnpkg.com/@types/debug/-/debug-4.1.9.tgz#906996938bc672aaf2fb8c0d3733ae1dda05b005"
-  integrity sha512-8Hz50m2eoS56ldRlepxSBa6PWEVCtzUo/92HgLc2qTMnotJNIm7xP+UZhyWoYsyOdd5dxZ+NZLb24rsKyFs2ow==
+"@types/debug@4.1.12":
+  version "4.1.12"
+  resolved "https://registry.yarnpkg.com/@types/debug/-/debug-4.1.12.tgz#a155f21690871953410df4b6b6f53187f0500917"
+  integrity sha512-vIChWdVG3LG1SMxEvI/AK+FWJthlrqlTu7fbrlywTkkaONwk/UAGaULXRlf8vkzFBLVm0zkMdCquhL5aOjhXPQ==
   dependencies:
     "@types/ms" "*"
 
