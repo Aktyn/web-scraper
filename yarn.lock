@@ -2513,10 +2513,10 @@
   resolved "https://registry.yarnpkg.com/@tsconfig/node16/-/node16-1.0.4.tgz#0b92dcc0cc1c81f6f306a381f28e31b1a56536e9"
   integrity sha512-vxhUy4J8lyeyinH7Azl1pdd43GJhZH/tP2weN8TntQblOY+A0XbT8DJk1/oCPuOOyg/Ja757rG0CgHcWC8OfMA==
 
-"@types/animejs@^3.1.11":
-  version "3.1.11"
-  resolved "https://registry.yarnpkg.com/@types/animejs/-/animejs-3.1.11.tgz#15a29bcda3238164500e7608e788ef1044212798"
-  integrity sha512-BIVx60G/eflyqdeKBL4+gZ3L+A0afeo11wo6FpX66bpSUQuI6roei5gYbFaGjbzawOo6hrUVPoDSfS6lwsgn8A==
+"@types/animejs@^3.1.12":
+  version "3.1.12"
+  resolved "https://registry.yarnpkg.com/@types/animejs/-/animejs-3.1.12.tgz#78fcc3df03ac07cbaef50fd37512e5031826dc42"
+  integrity sha512-fpdH+ZtlO0kqjTOqRaBdsEmvpRNOayI8k4EVkEtitL5l6wducDOXk0rgQgfZqWf/ZX9DzXrHf257S5i9xTcISQ==
 
 "@types/aria-query@^5.0.1":
   version "5.0.3"
@@ -3522,10 +3522,10 @@ ajv@^8.0.0, ajv@^8.6.0, ajv@^8.9.0:
     require-from-string "^2.0.2"
     uri-js "^4.2.2"
 
-animejs@^3.2.1:
-  version "3.2.1"
-  resolved "https://registry.yarnpkg.com/animejs/-/animejs-3.2.1.tgz#de9fe2e792f44a777a7fdf6ae160e26604b0cdda"
-  integrity sha512-sWno3ugFryK5nhiDm/2BKeFCpZv7vzerWUcUPyAZLDhMek3+S/p418ldZJbJXo5ZUOpfm2kP2XRO4NJcULMy9A==
+animejs@^3.2.2:
+  version "3.2.2"
+  resolved "https://registry.yarnpkg.com/animejs/-/animejs-3.2.2.tgz#59be98c58834339d5847f4a70ddba74ac75b6afc"
+  integrity sha512-Ao95qWLpDPXXM+WrmwcKbl6uNlC5tjnowlaRYtuVDHHoygjtIPfDUoK9NthrlZsQSKjZXlmji2TrBUAVbiH0LQ==
 
 ansi-escapes@^4.2.1, ansi-escapes@^4.3.1:
   version "4.3.2"
