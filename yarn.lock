@@ -1988,10 +1988,10 @@
     semver "^7.3.5"
     tar "^6.1.11"
 
-"@mermaid-js/mermaid-cli@^10.3.0", "@mermaid-js/mermaid-cli@^10.6.0":
-  version "10.6.0"
-  resolved "https://registry.yarnpkg.com/@mermaid-js/mermaid-cli/-/mermaid-cli-10.6.0.tgz#c365ca6c89aa243c8dc6cbb304cff10061108648"
-  integrity sha512-BFjvlB4YcZKnGy7AO6cl3eXK+SNRW3caCEThfD+ChJ92lFJZ3c4PLOESA3JP/hJ66y5bO63MNa8OtIJo4iEi8w==
+"@mermaid-js/mermaid-cli@^10.3.0", "@mermaid-js/mermaid-cli@^10.6.1":
+  version "10.6.1"
+  resolved "https://registry.yarnpkg.com/@mermaid-js/mermaid-cli/-/mermaid-cli-10.6.1.tgz#4b3a6e7aa4069e7da0da2d21129696c44931df2a"
+  integrity sha512-OH2uOXW3/GBaMGagVF7Fzu/9TJrGge+Bu/+Tm8OyIaRBaKa2NN+3SggJOmr5s51oTPaGKu/X1XBDoauvtlXAPg==
   dependencies:
     chalk "^5.0.1"
     commander "^10.0.0"
