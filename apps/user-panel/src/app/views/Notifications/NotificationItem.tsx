@@ -68,8 +68,8 @@ export const NotificationItem = memo<NotificationItemProps>(
             backgroundColor: isNew
               ? (theme) => alpha(theme.palette.text.primary, 0.1)
               : notification.index % 2 === 0
-              ? alpha(common.white, 0.01)
-              : alpha(common.black, 0.01),
+                ? alpha(common.white, 0.01)
+                : alpha(common.black, 0.01),
             transition: (theme) => theme.transitions.create('background-color'),
 
             '&:not(:last-child)': {

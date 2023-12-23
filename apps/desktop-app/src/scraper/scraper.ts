@@ -53,8 +53,8 @@ import { saveToDataSourceStep } from './steps/saveToDataSource.step'
 type ScraperOptions<ModeType extends ScraperMode> = (ModeType extends ScraperMode.TESTING
   ? { siteId: Site['id']; lockURL: string }
   : ModeType extends ScraperMode.PREVIEW
-  ? { viewportWidth: number; viewportHeight: number }
-  : never) & {
+    ? { viewportWidth: number; viewportHeight: number }
+    : never) & {
   onClose?: () => void
 }
 

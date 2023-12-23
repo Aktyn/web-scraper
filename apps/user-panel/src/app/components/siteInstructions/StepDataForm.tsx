@@ -133,12 +133,12 @@ const DurationFormInput = ({
         type === 'duration'
           ? 'Duration'
           : type === 'timeout'
-          ? 'Timeout'
-          : type === 'waitForElementTimeout'
-          ? 'Wait for element timeout'
-          : type === 'waitForNavigationTimeout'
-          ? 'Wait for navigation timeout'
-          : 'Unknown type'
+            ? 'Timeout'
+            : type === 'waitForElementTimeout'
+              ? 'Wait for element timeout'
+              : type === 'waitForNavigationTimeout'
+                ? 'Wait for navigation timeout'
+                : 'Unknown type'
       }
       type="number"
       InputProps={{

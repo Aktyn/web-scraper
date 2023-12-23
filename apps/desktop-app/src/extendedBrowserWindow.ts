@@ -44,6 +44,6 @@ export class ExtendedBrowserWindow extends BrowserWindow {
       ? T
       : never
   ) {
-    super.webContents.send(message, ...args)
+    this.webContents.send(message, ...args)
   }
 }

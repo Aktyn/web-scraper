@@ -19,8 +19,8 @@ export const StepIcon = (props: StepIconProps) => {
   const IconComponent = props.error
     ? ErrorRounded
     : props.completed
-    ? CheckCircleRounded
-    : CircleRounded
+      ? CheckCircleRounded
+      : CircleRounded
 
   return (
     <IconComponent
@@ -33,8 +33,8 @@ export const StepIcon = (props: StepIconProps) => {
           props.error
             ? theme.palette.error.main
             : props.active
-            ? theme.palette.text.primary
-            : theme.palette.text.secondary,
+              ? theme.palette.text.primary
+              : theme.palette.text.secondary,
       }}
     />
   )
