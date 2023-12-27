@@ -1,27 +1,28 @@
 import {
-  type ReactNode,
-  type Ref,
-  type RefAttributes,
-  type SyntheticEvent,
   useCallback,
   useEffect,
   useImperativeHandle,
   useRef,
   useState,
+  type ReactNode,
+  type Ref,
+  type RefAttributes,
+  type SyntheticEvent,
 } from 'react'
 import { AddRounded } from '@mui/icons-material'
 import {
   Box,
-  type BoxProps,
   Divider,
   IconButton,
   Stack,
   Tab,
-  tabClasses,
-  type TabProps,
   Tabs,
-  tabsClasses,
   Tooltip,
+  tabClasses,
+  tabsClasses,
+  type BoxProps,
+  type TabProps,
+  type TabsProps,
 } from '@mui/material'
 import anime from 'animejs'
 import { usePersistentState } from '../../hooks/usePersistentState'
@@ -46,6 +47,7 @@ interface TabsViewProps<ValueType> {
   addTooltip?: ReactNode
   onAdd?: () => void
   handleRef?: Ref<TabsHandle<ValueType>>
+  tabsProps?: Omit<TabsProps, 'value' | 'onChange'>
 }
 
 const commonTabContentStyles: BoxProps['sx'] = {
@@ -68,6 +70,7 @@ export const TabsView = genericMemo(
         addTooltip,
         onAdd,
         handleRef,
+        tabsProps,
       }: TabsViewProps<ValueType> & RefAttributes<HTMLDivElement>,
       ref: RefAttributes<HTMLDivElement>['ref'],
     ) => {
@@ -201,6 +204,7 @@ export const TabsView = genericMemo(
                   onChange={handleTabChange}
                   variant="scrollable"
                   scrollButtons="auto"
+                  {...tabsProps}
                 >
                   {tabs.map((tab) => (
                     <Tab

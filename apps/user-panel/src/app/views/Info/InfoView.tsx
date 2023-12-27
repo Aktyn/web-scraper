@@ -30,6 +30,6 @@ const InfoView = ({ doNotRender }: ViewComponentProps) => {
     return null
   }
 
-  return <TabsView name="info" tabs={tabs} />
+  return <TabsView name="info" tabs={tabs} tabsProps={{ scrollButtons: false }} />
 }
 export default InfoView
