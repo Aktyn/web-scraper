@@ -1,4 +1,9 @@
 {
+  "ignorePatterns": [
+    "*.config.js",
+    "dist/",
+    "node_modules/"
+  ],
   "plugins": [
     "prettier",
     "import"

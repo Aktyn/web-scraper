@@ -98,8 +98,7 @@ export interface IpcRendererEventPolyfill extends Event {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ports: any[]
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  sender: any
-  senderId: number
+  sender: NodeJS.EventEmitter
 }
 
 type ElectronToRendererMessageBlueprint<Args extends unknown[]> = (

@@ -1,6 +1,5 @@
 import { ErrorCode } from '@web-scraper/common'
-import { beforeEach, describe, expect, it } from 'vitest'
-import { mockReset } from 'vitest-mock-extended'
+import { mockReset } from 'jest-mock-extended'
 
 import { databaseMock, mockData } from '../test-utils/databaseMock'
 

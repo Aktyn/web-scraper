@@ -1,7 +1,6 @@
 import '@fontsource-variable/roboto-flex'
 import { drawerClasses, type CSSInterpolation, type ThemeOptions } from '@mui/material'
 import { createTheme } from '@mui/material/styles'
-// noinspection ES6UnusedImports
 import {} from '@mui/lab/themeAugmentation'
 
 const retinaDisplayMediaQuery = '@media only screen and (-webkit-min-device-pixel-ratio: 2)'

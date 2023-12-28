@@ -1,5 +1,4 @@
-import { beforeEach, describe, expect, it } from 'vitest'
-import { mockReset } from 'vitest-mock-extended'
+import { mockReset } from 'jest-mock-extended'
 
 import { mockData, databaseMock } from '../test-utils/databaseMock'
 

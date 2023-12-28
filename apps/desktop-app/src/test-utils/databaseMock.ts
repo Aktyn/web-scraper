@@ -17,12 +17,11 @@ import {
   GlobalActionType,
   ProcedureType,
 } from '@web-scraper/common'
-import { vi } from 'vitest'
-import { type DeepMockProxy, mockDeep } from 'vitest-mock-extended'
+import { type DeepMockProxy, mockDeep } from 'jest-mock-extended'
 
 import prisma from '../database/client'
 
-vi.mock('../database/client', () => ({
+jest.mock('../database/client', () => ({
   __esModule: true,
   default: mockDeep<PrismaClient>(),
 }))

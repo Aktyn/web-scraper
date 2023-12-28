@@ -102,7 +102,7 @@ export class Scraper<ModeType extends ScraperMode> {
 
     this.browser = new ScraperBrowser({
       headless:
-        [ScraperMode.DEFAULT, ScraperMode.PREVIEW].includes(mode) || process.env.VITEST_WORKER_ID
+        [ScraperMode.DEFAULT, ScraperMode.PREVIEW].includes(mode) || process.env.JEST_WORKER_ID
           ? 'new'
           : false,
       defaultViewport:
@@ -186,7 +186,6 @@ export class Scraper<ModeType extends ScraperMode> {
       }
       await this.initTestingMode(self)
     })
-    // noinspection SpellCheckingInspection
     self.mainPage!.on('framenavigated', async (frame) => {
       const url = new URL(self.mainPage!.exposed.url())
       if (
@@ -203,7 +202,6 @@ export class Scraper<ModeType extends ScraperMode> {
     })
 
     //Close any new page opened
-    // noinspection SpellCheckingInspection
     await this.browser.on('targetcreated', async (target) => {
       if (target.type() === 'page' && !this.destroyed) {
         const newPage: Page = await target.page()

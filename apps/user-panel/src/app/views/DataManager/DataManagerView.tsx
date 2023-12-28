@@ -72,7 +72,6 @@ const DataManagerView = ({ doNotRender }: ViewComponentProps) => {
           case DataSourceSuccessAction.CREATED:
           case DataSourceSuccessAction.UPDATED:
             {
-              // noinspection TypeScriptValidateJSTypes
               const lastDataSource = dataSources?.at(-1)
               if (lastDataSource) {
                 selectItem(`DataSource.${lastDataSource.name}`)

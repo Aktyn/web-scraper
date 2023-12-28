@@ -1,13 +1,11 @@
-/* eslint-disable import/order */
-import { vi } from 'vitest'
-import { mockDeep } from 'vitest-mock-extended'
 import type electron from 'electron'
+import { mockDeep } from 'jest-mock-extended'
 
-vi.mock('electron', () => ({
+jest.mock('electron', () => ({
   __esModule: true,
   default: mockDeep<typeof electron>(),
   ipcMain: {
-    handle: vi.fn(),
+    handle: jest.fn(),
   },
   BrowserWindow: class BrowserWindowMock {
     constructor(_options: electron.BrowserWindowConstructorOptions) {
@@ -16,7 +14,7 @@ vi.mock('electron', () => ({
   },
 }))
 
-vi.mock('electron-is-dev', () => ({
+jest.mock('electron-is-dev', () => ({
   __esModule: true,
   default: true,
 }))

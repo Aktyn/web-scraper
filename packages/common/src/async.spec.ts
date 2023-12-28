@@ -1,11 +1,9 @@
-import { afterAll, describe, expect, it, vi } from 'vitest'
-
 import { debounce, safePromise, wait, waitFor } from './async'
 
 describe('waitFor', () => {
   it('checks condition in given time intervals until the condition resolves to true', async () => {
     let counter = 0
-    const fn = vi.fn()
+    const fn = jest.fn()
 
     await waitFor(() => {
       fn()
@@ -13,7 +11,7 @@ describe('waitFor', () => {
       return Promise.resolve(counter >= 5)
     }, 10)
 
-    expect(fn).toBeCalledTimes(5)
+    expect(fn).toHaveBeenCalledTimes(5)
   })
 })
 

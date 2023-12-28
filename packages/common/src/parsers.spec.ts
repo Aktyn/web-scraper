@@ -1,5 +1,3 @@
-import { describe, expect, it } from 'vitest'
-
 import { float, int, tryParseJSON } from './parsers'
 
 describe('int', () => {

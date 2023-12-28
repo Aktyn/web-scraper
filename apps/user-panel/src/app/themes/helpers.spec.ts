@@ -1,4 +1,3 @@
-import { describe, expect, it } from 'vitest'
 import { generateComplementaryColor, mixColors, rotateHue, setSaturation } from './helpers'
 
 describe('mixColors', () => {

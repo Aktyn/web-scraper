@@ -1,6 +1,5 @@
 import { ErrorCode, RendererToElectronMessage, type ElectronApi } from '@web-scraper/common'
-import { beforeEach, describe, expect, it } from 'vitest'
-import { mockReset, type DeepMockProxy } from 'vitest-mock-extended'
+import { mockReset, type DeepMockProxy } from 'jest-mock-extended'
 import '../../test-utils/electronMock'
 
 import { databaseMock, mockData } from '../../test-utils/databaseMock'
@@ -220,8 +219,7 @@ describe('registerRequestsHandler', () => {
   it('should return site with given id', async () => {
     databaseMock.site.findUnique.mockResolvedValue({
       ...mockData.sites[0],
-      //@ts-expect-error - incomplete mock types
-      Tags: [],
+      Tags: [] as never,
     })
 
     registerRequestsHandler()
@@ -241,8 +239,7 @@ describe('registerRequestsHandler', () => {
   it('should return created site', async () => {
     databaseMock.site.create.mockResolvedValue({
       ...mockData.sites[0],
-      //@ts-expect-error - incomplete mock types
-      Tags: [],
+      Tags: [] as never,
     })
 
     registerRequestsHandler()
@@ -281,8 +278,7 @@ describe('registerRequestsHandler', () => {
   it('should update site and return it', async () => {
     databaseMock.site.update.mockResolvedValue({
       ...mockData.sites[0],
-      //@ts-expect-error - incomplete mock types
-      Tags: [],
+      Tags: [] as never,
     })
 
     registerRequestsHandler()

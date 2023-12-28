@@ -16,6 +16,7 @@ import Editor from 'react-simple-code-editor'
 import { JsonValue } from '../common/JsonValue'
 import { NestedDrawer } from '../common/NestedDrawer'
 import { ToggleIconButton } from '../common/button/ToggleIconButton'
+
 import 'prismjs/components/prism-json.js'
 import 'prismjs/themes/prism-dark.css'
 

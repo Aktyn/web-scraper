@@ -1,5 +1,3 @@
-import { describe, expect, it } from 'vitest'
-
 import { forceArray, getDeepProperty, omit, pick, sortNumbers } from './common'
 
 describe('pick', () => {

@@ -34,13 +34,16 @@
     },
     "baseUrl": ".",
     "types": [
-      "node", "jest", "@testing-library/jest-dom"
+      "node",
+      "jest",
+      "@testing-library/jest-dom"
     ],
     "jsxImportSource": "@emotion/react"
   },
   "include": [
     "**/*.ts",
     "**/*.tsx",
-    ".eslintrc.js"
+    ".eslintrc.js",
+    "./src/app/test-utils/setup.ts"
   ],
 }

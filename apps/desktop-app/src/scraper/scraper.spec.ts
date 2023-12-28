@@ -15,7 +15,6 @@ import {
   ValueQueryType,
 } from '@web-scraper/common'
 import express from 'express'
-import { afterAll, beforeAll, describe, expect, it, vi, type Mock } from 'vitest'
 
 import { type RequestDataCallback, type RequestDataSourceItemIdCallback } from '.'
 import '../test-utils/electronMock'
@@ -48,10 +47,10 @@ const dummyDataSourceItemIdRequest: RequestDataSourceItemIdCallback = () => Prom
 const withScraperTestingMode = async (
   callback: (
     scraper: ExposedScraper<typeof Scraper.Mode.TESTING>,
-    closeListener: Mock<any, any>,
+    closeListener: jest.Mock<any, any>,
   ) => Promise<any>,
 ) => {
-  const closeListener = vi.fn()
+  const closeListener = jest.fn()
 
   const scraper = new ExposedScraper<typeof Scraper.Mode.TESTING>(Scraper.Mode.TESTING, {
     siteId: 1,
@@ -98,7 +97,7 @@ describe('Scraper.PREVIEW', () => {
     expect(isBase64(screenshot)).toBe(true)
 
     await scraper.destroy(true)
-  })
+  }, 60_000)
 })
 
 describe('Scraper.TESTING action steps', () => {
@@ -148,29 +147,25 @@ describe('Scraper.TESTING action steps', () => {
     })
   })
 
-  it(
-    'should return "error.common.elementNotFound" error for "waitForElement" action step with non existing element selector given in testing mode',
-    () => {
-      return withScraperTestingMode(async (scraper) => {
-        const result = await scraper.performActionStep(
-          {
-            ...actionStepBase,
-            type: ActionStepType.WAIT_FOR_ELEMENT,
-            data: {
-              element: 'non existing selector',
-              timeout: 5_000,
-            },
+  it('should return "error.common.elementNotFound" error for "waitForElement" action step with non existing element selector given in testing mode', () => {
+    return withScraperTestingMode(async (scraper) => {
+      const result = await scraper.performActionStep(
+        {
+          ...actionStepBase,
+          type: ActionStepType.WAIT_FOR_ELEMENT,
+          data: {
+            element: 'non existing selector',
+            timeout: 5_000,
           },
-          dummyRequestDataCallback,
-          dummyDataSourceItemIdRequest,
-        )
-        expect(result).toEqual({
-          errorType: ActionStepErrorType.ELEMENT_NOT_FOUND,
-        })
+        },
+        dummyRequestDataCallback,
+        dummyDataSourceItemIdRequest,
+      )
+      expect(result).toEqual({
+        errorType: ActionStepErrorType.ELEMENT_NOT_FOUND,
       })
-    },
-    { timeout: 10_000 },
-  )
+    })
+  }, 10_000)
 
   it('should perform "pressButton" step in testing mode', () => {
     return withScraperTestingMode(async (scraper) => {
@@ -190,227 +185,195 @@ describe('Scraper.TESTING action steps', () => {
     })
   })
 
-  it(
-    'should perform "pressButton" step in testing mode resulting with error for given non existing button selector',
-    () => {
-      return withScraperTestingMode(async (scraper) => {
-        const result = await scraper.performActionStep(
-          {
-            ...actionStepBase,
-            type: ActionStepType.PRESS_BUTTON,
-            data: {
-              element: 'non existing button selector',
-              waitForNavigation: false,
-              waitForElementTimeout: 2_000,
-            },
+  it('should perform "pressButton" step in testing mode resulting with error for given non existing button selector', () => {
+    return withScraperTestingMode(async (scraper) => {
+      const result = await scraper.performActionStep(
+        {
+          ...actionStepBase,
+          type: ActionStepType.PRESS_BUTTON,
+          data: {
+            element: 'non existing button selector',
+            waitForNavigation: false,
+            waitForElementTimeout: 2_000,
           },
-          dummyRequestDataCallback,
-          dummyDataSourceItemIdRequest,
-        )
-        expect(result).toEqual({ errorType: ActionStepErrorType.ELEMENT_NOT_FOUND })
+        },
+        dummyRequestDataCallback,
+        dummyDataSourceItemIdRequest,
+      )
+      expect(result).toEqual({ errorType: ActionStepErrorType.ELEMENT_NOT_FOUND })
+    })
+  }, 10_000)
+
+  it('should perform "checkError" and "checkSuccess" steps in testing mode', () => {
+    return withScraperTestingMode(async (scraper) => {
+      const errorResult = await scraper.performActionStep(
+        {
+          ...actionStepBase,
+          type: ActionStepType.CHECK_ERROR,
+          data: {
+            element: 'body > div#error-message',
+            mapError: [
+              {
+                errorType: ActionStepErrorType.UNKNOWN,
+                content: 'mock error [a-z]+',
+              },
+            ],
+            waitForElementTimeout: 2_000,
+          },
+        },
+        dummyRequestDataCallback,
+        dummyDataSourceItemIdRequest,
+      )
+      expect(errorResult).toEqual({
+        errorType: ActionStepErrorType.UNKNOWN,
+        content: 'mock error [a-z]+',
       })
-    },
-    { timeout: 10_000 },
-  )
 
-  it(
-    'should perform "checkError" and "checkSuccess" steps in testing mode',
-    () => {
-      return withScraperTestingMode(async (scraper) => {
-        const errorResult = await scraper.performActionStep(
-          {
-            ...actionStepBase,
-            type: ActionStepType.CHECK_ERROR,
-            data: {
-              element: 'body > div#error-message',
-              mapError: [
-                {
-                  errorType: ActionStepErrorType.UNKNOWN,
-                  content: 'mock error [a-z]+',
-                },
-              ],
-              waitForElementTimeout: 2_000,
-            },
+      const successResult = await scraper.performActionStep(
+        {
+          ...actionStepBase,
+          type: ActionStepType.CHECK_SUCCESS,
+          data: {
+            element: 'body > div#success-message',
+            mapSuccess: [
+              {
+                content: 'mock success [a-z]+',
+              },
+            ],
+            waitForElementTimeout: 2_000,
           },
-          dummyRequestDataCallback,
-          dummyDataSourceItemIdRequest,
-        )
-        expect(errorResult).toEqual({
-          errorType: ActionStepErrorType.UNKNOWN,
-          content: 'mock error [a-z]+',
-        })
+        },
+        dummyRequestDataCallback,
+        dummyDataSourceItemIdRequest,
+      )
+      expect(successResult).toEqual({ errorType: ActionStepErrorType.NO_ERROR })
+    })
+  }, 10_000)
 
-        const successResult = await scraper.performActionStep(
-          {
-            ...actionStepBase,
-            type: ActionStepType.CHECK_SUCCESS,
-            data: {
-              element: 'body > div#success-message',
-              mapSuccess: [
-                {
-                  content: 'mock success [a-z]+',
-                },
-              ],
-              waitForElementTimeout: 2_000,
-            },
+  it('should return no error if there is no error element found for "checkError" step in testing mode', () => {
+    return withScraperTestingMode(async (scraper) => {
+      const result = await scraper.performActionStep(
+        {
+          ...actionStepBase,
+          type: ActionStepType.CHECK_ERROR,
+          data: {
+            element: 'non existing error selector',
+            mapError: [{ errorType: ActionStepErrorType.UNKNOWN, content: 'noop' }],
+            waitForElementTimeout: 2_000,
           },
-          dummyRequestDataCallback,
-          dummyDataSourceItemIdRequest,
-        )
-        expect(successResult).toEqual({ errorType: ActionStepErrorType.NO_ERROR })
-      })
-    },
-    { timeout: 30_000 },
-  )
+        },
+        dummyRequestDataCallback,
+        dummyDataSourceItemIdRequest,
+      )
+      expect(result).toEqual({ errorType: ActionStepErrorType.NO_ERROR })
+    })
+  }, 10_000)
 
-  it(
-    'should return no error if there is no error element found for "checkError" step in testing mode',
-    () => {
-      return withScraperTestingMode(async (scraper) => {
-        const result = await scraper.performActionStep(
-          {
-            ...actionStepBase,
-            type: ActionStepType.CHECK_ERROR,
-            data: {
-              element: 'non existing error selector',
-              mapError: [{ errorType: ActionStepErrorType.UNKNOWN, content: 'noop' }],
-              waitForElementTimeout: 2_000,
-            },
+  it('should return error if there is no success element found for "checkSuccess" step in testing mode', () => {
+    return withScraperTestingMode(async (scraper) => {
+      const result = await scraper.performActionStep(
+        {
+          ...actionStepBase,
+          type: ActionStepType.CHECK_SUCCESS,
+          data: {
+            element: 'non existing success selector',
+            mapSuccess: [{ content: 'noop' }],
+            waitForElementTimeout: 2_000,
           },
-          dummyRequestDataCallback,
-          dummyDataSourceItemIdRequest,
-        )
-        expect(result).toEqual({ errorType: ActionStepErrorType.NO_ERROR })
-      })
-    },
-    { timeout: 10_000 },
-  )
+        },
+        dummyRequestDataCallback,
+        dummyDataSourceItemIdRequest,
+      )
+      expect(result).toEqual({ errorType: ActionStepErrorType.ELEMENT_NOT_FOUND })
+    })
+  }, 10_000)
 
-  it(
-    'should return error if there is no success element found for "checkSuccess" step in testing mode',
-    () => {
-      return withScraperTestingMode(async (scraper) => {
-        const result = await scraper.performActionStep(
-          {
-            ...actionStepBase,
-            type: ActionStepType.CHECK_SUCCESS,
-            data: {
-              element: 'non existing success selector',
-              mapSuccess: [{ content: 'noop' }],
-              waitForElementTimeout: 2_000,
-            },
+  it('should perform "fillInput" step in testing mode', () => {
+    return withScraperTestingMode(async (scraper) => {
+      expect(await scraper.getInputElementValue('body > input')).toBe('')
+
+      const result = await scraper.performActionStep(
+        {
+          ...actionStepBase,
+          type: ActionStepType.FILL_INPUT,
+          data: {
+            element: 'body > input',
+            valueQuery: 'Custom.mock value',
+            waitForElementTimeout: 2_000,
           },
-          dummyRequestDataCallback,
-          dummyDataSourceItemIdRequest,
-        )
-        expect(result).toEqual({ errorType: ActionStepErrorType.ELEMENT_NOT_FOUND })
-      })
-    },
-    { timeout: 10_000 },
-  )
+        },
+        onDataRequest,
+        dummyDataSourceItemIdRequest,
+      )
 
-  it(
-    'should perform "fillInput" step in testing mode',
-    () => {
-      return withScraperTestingMode(async (scraper) => {
-        expect(await scraper.getInputElementValue('body > input')).toBe('')
+      expect(result).toEqual({ errorType: ActionStepErrorType.NO_ERROR })
 
-        const result = await scraper.performActionStep(
-          {
-            ...actionStepBase,
-            type: ActionStepType.FILL_INPUT,
-            data: {
-              element: 'body > input',
-              valueQuery: 'Custom.mock value',
-              waitForElementTimeout: 2_000,
-            },
+      expect(await scraper.getInputElementValue('body > input')).toBe('mock value')
+    })
+  }, 10_000)
+
+  it('should perform "fillInput" step in testing mode resulting with error for given non existing button selector', () => {
+    return withScraperTestingMode(async (scraper) => {
+      const result = await scraper.performActionStep(
+        {
+          ...actionStepBase,
+          type: ActionStepType.FILL_INPUT,
+          data: {
+            element: 'non existing input selector',
+            valueQuery: 'Custom.mock value',
+            waitForElementTimeout: 2_000,
           },
-          onDataRequest,
-          dummyDataSourceItemIdRequest,
-        )
+        },
+        dummyRequestDataCallback,
+        dummyDataSourceItemIdRequest,
+      )
+      expect(result).toEqual({ errorType: ActionStepErrorType.ELEMENT_NOT_FOUND })
+    })
+  }, 10_000)
 
-        expect(result).toEqual({ errorType: ActionStepErrorType.NO_ERROR })
+  it('should perform "selectOption" step in testing mode', () => {
+    return withScraperTestingMode(async (scraper) => {
+      expect(await scraper.getSelectElementValue('body > select')).toBe('select option')
 
-        expect(await scraper.getInputElementValue('body > input')).toBe('mock value')
-      })
-    },
-    { timeout: 10_000 },
-  )
-
-  it(
-    'should perform "fillInput" step in testing mode resulting with error for given non existing button selector',
-    () => {
-      return withScraperTestingMode(async (scraper) => {
-        const result = await scraper.performActionStep(
-          {
-            ...actionStepBase,
-            type: ActionStepType.FILL_INPUT,
-            data: {
-              element: 'non existing input selector',
-              valueQuery: 'Custom.mock value',
-              waitForElementTimeout: 2_000,
-            },
+      const result = await scraper.performActionStep(
+        {
+          ...actionStepBase,
+          type: ActionStepType.SELECT_OPTION,
+          data: {
+            element: 'body > select',
+            valueQuery: 'Custom.mock option',
+            waitForElementTimeout: 2_000,
           },
-          dummyRequestDataCallback,
-          dummyDataSourceItemIdRequest,
-        )
-        expect(result).toEqual({ errorType: ActionStepErrorType.ELEMENT_NOT_FOUND })
-      })
-    },
-    { timeout: 10_000 },
-  )
+        },
+        onDataRequest,
+        dummyDataSourceItemIdRequest,
+      )
 
-  it(
-    'should perform "selectOption" step in testing mode',
-    () => {
-      return withScraperTestingMode(async (scraper) => {
-        expect(await scraper.getSelectElementValue('body > select')).toBe('select option')
+      expect(result).toEqual({ errorType: ActionStepErrorType.NO_ERROR })
+      expect(await scraper.getSelectElementValue('body > select')).toBe('mock option')
+    })
+  }, 10_000)
 
-        const result = await scraper.performActionStep(
-          {
-            ...actionStepBase,
-            type: ActionStepType.SELECT_OPTION,
-            data: {
-              element: 'body > select',
-              valueQuery: 'Custom.mock option',
-              waitForElementTimeout: 2_000,
-            },
+  it('should perform "selectOption" step in testing mode resulting with proper error for non existing option', () => {
+    return withScraperTestingMode(async (scraper) => {
+      const result = await scraper.performActionStep(
+        {
+          ...actionStepBase,
+          type: ActionStepType.SELECT_OPTION,
+          data: {
+            element: 'body > select',
+            valueQuery: 'Custom.non existing option',
+            waitForElementTimeout: 2_000,
           },
-          onDataRequest,
-          dummyDataSourceItemIdRequest,
-        )
+        },
+        onDataRequest,
+        dummyDataSourceItemIdRequest,
+      )
 
-        expect(result).toEqual({ errorType: ActionStepErrorType.NO_ERROR })
-        expect(await scraper.getSelectElementValue('body > select')).toBe('mock option')
-      })
-    },
-    { timeout: 10_000 },
-  )
-
-  it(
-    'should perform "selectOption" step in testing mode resulting with proper error for non existing option',
-    () => {
-      return withScraperTestingMode(async (scraper) => {
-        const result = await scraper.performActionStep(
-          {
-            ...actionStepBase,
-            type: ActionStepType.SELECT_OPTION,
-            data: {
-              element: 'body > select',
-              valueQuery: 'Custom.non existing option',
-              waitForElementTimeout: 2_000,
-            },
-          },
-          onDataRequest,
-          dummyDataSourceItemIdRequest,
-        )
-
-        expect(result).toEqual({ errorType: ActionStepErrorType.OPTION_NOT_SELECTED })
-        expect(await scraper.getSelectElementValue('body > select')).toBe('select option')
-      })
-    },
-    { timeout: 10_000 },
-  )
+      expect(result).toEqual({ errorType: ActionStepErrorType.OPTION_NOT_SELECTED })
+      expect(await scraper.getSelectElementValue('body > select')).toBe('select option')
+    })
+  }, 10_000)
 })
 
 describe('Scraper.TESTING action', () => {

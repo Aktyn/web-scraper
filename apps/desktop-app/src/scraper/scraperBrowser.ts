@@ -1,7 +1,7 @@
 import * as fs from 'fs'
 import path from 'path'
 
-import { cacheable, safePromise, waitFor } from '@web-scraper/common'
+import { cacheable, waitFor } from '@web-scraper/common'
 import isDev from 'electron-is-dev'
 import {
   type Browser,
@@ -47,9 +47,10 @@ export default class ScraperBrowser {
 
     this.viewport = headless ? options.defaultViewport ?? ScraperBrowser.defaultViewport : null
 
-    void safePromise(
-      puppeteer.launch({
+    puppeteer
+      .launch({
         // executablePath: executablePath('chrome'), //TODO: test executablePath('chrome') on system without chrome
+        channel: 'chrome',
         //TODO: allow different arguments
         args: [
           // ...(process.env.TOR_PROXY_SERVER
@@ -74,12 +75,11 @@ export default class ScraperBrowser {
         timeout: 30_000,
         product: 'chrome',
         userDataDir:
-          isDev && !process.env.VITEST_WORKER_ID
+          isDev && !process.env.JEST_WORKER_ID
             ? path.join(EXTERNAL_DIRECTORY_PATH, 'userData')
             : '',
         ...options,
-      }),
-    )
+      })
       .then(async (browser) => {
         if (!browser) {
           throw new Error('Error during browser initialization')
