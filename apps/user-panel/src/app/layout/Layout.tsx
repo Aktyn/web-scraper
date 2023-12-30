@@ -1,5 +1,5 @@
 import { memo, type PropsWithChildren } from 'react'
-import { backdropClasses, Box, darken, GlobalStyles, Stack } from '@mui/material'
+import { Box, GlobalStyles, Stack, backdropClasses, darken } from '@mui/material'
 import { BackgroundEffect } from './BackgroundEffect'
 import { Footer } from './Footer'
 import { Header } from './Header'

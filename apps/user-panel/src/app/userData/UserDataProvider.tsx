@@ -3,7 +3,11 @@ import type { UserSettings } from '@web-scraper/common'
 import { defaultUserSettings, UserDataContext } from '../context/userDataContext'
 import { useApiRequest } from '../hooks/useApiRequest'
 
-export const UserDataProvider = ({ children }: PropsWithChildren) => {
+export type UserDataProviderProps = PropsWithChildren<{
+  onChange?: (userSettings: typeof defaultUserSettings, reason: 'loaded' | 'updated') => void
+}>
+
+export const UserDataProvider = ({ children, onChange }: UserDataProviderProps) => {
   const getUserSettingsRequest = useApiRequest(window.electronAPI.getUserSettings)
   const setUserSettingsRequest = useApiRequest(window.electronAPI.setUserSetting)
 
@@ -15,7 +19,10 @@ export const UserDataProvider = ({ children }: PropsWithChildren) => {
 
   useEffect(() => {
     getUserSettingsRequest.submit({
-      onSuccess: setSettings,
+      onSuccess: (settings) => {
+        onChange?.(settings, 'loaded')
+        setSettings(settings)
+      },
       onEnd: () => setLoadingSettings(false),
     })
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -25,7 +32,11 @@ export const UserDataProvider = ({ children }: PropsWithChildren) => {
     <KeyType extends keyof UserSettings>(key: KeyType, value: UserSettings[KeyType]) => void
   >(
     (key, value) => {
-      setSettings((prev) => ({ ...prev, [key]: value }))
+      setSettings((prev) => {
+        const newSettings = { ...prev, [key]: value }
+        onChange?.(newSettings, 'updated')
+        return newSettings
+      })
       setUserSettingsRequest.submit({}, key, value)
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps

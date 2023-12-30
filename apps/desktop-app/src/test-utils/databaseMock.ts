@@ -138,5 +138,9 @@ export const mockData = {
       key: 'desktopNotifications',
       value: JSON.stringify(true),
     },
+    {
+      key: 'backgroundSaturation',
+      value: JSON.stringify(0.5),
+    },
   ] satisfies UserData[],
 }

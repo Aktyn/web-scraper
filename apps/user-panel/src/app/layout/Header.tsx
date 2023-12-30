@@ -1,16 +1,20 @@
-import { useContext, useEffect, useRef } from 'react'
+import { useContext, useEffect, useRef, useState } from 'react'
 import {
+  DarkModeRounded,
   KeyRounded,
+  LightModeRounded,
   NotificationsOffRounded,
   NotificationsRounded,
   ReorderRounded,
   TableRowsRounded,
 } from '@mui/icons-material'
-import { Box, Divider, IconButton, Stack, Tooltip } from '@mui/material'
+import { Box, Divider, IconButton, Slider, Stack, Tooltip } from '@mui/material'
 import anime from 'animejs'
 import { WindowStateOptions } from './WindowStateOptions'
 import { CustomPopover, type CustomPopoverRef } from '../components/common/CustomPopover'
+import { HorizontallyScrollableContainer } from '../components/common/HorizontallyScrollableContainer'
 import { IconToggle } from '../components/common/button/IconToggle'
+import { Config } from '../config'
 import { UserDataContext } from '../context/userDataContext'
 import { EncryptionPasswordForm } from '../forms/EncryptionPasswordForm'
 
@@ -22,6 +26,8 @@ export const Header = () => {
 
   const { dataEncryptionPassword, settings, updateSetting, loading } = useContext(UserDataContext)
 
+  const [ready, setReady] = useState(false)
+
   useEffect(() => {
     if (loading || !settingsContainer.current) {
       return
@@ -32,6 +38,7 @@ export const Header = () => {
       translateY: [`-${headerSize}`, '0rem'],
       easing: 'spring(0.7, 100, 10, 0)',
       delay: anime.stagger(300, { from: 'last' }),
+      complete: () => setReady(true),
     })
   }, [loading])
 
@@ -40,20 +47,63 @@ export const Header = () => {
       direction="row"
       alignItems="center"
       justifyContent="flex-end"
-      px={1}
-      gap={2}
+      px="0.5rem"
+      gap="1rem"
       height={headerSize}
       gridArea="header"
-      sx={{
-        WebkitAppRegion: 'drag',
-        userSelect: 'none',
-        '& button': {
-          WebkitAppRegion: 'no-drag',
-        },
-      }}
+      overflow="hidden"
+      sx={
+        ready
+          ? {
+              WebkitAppRegion: 'drag',
+              userSelect: 'none',
+              '& button, & .no-draggable': {
+                WebkitAppRegion: 'no-drag',
+              },
+            }
+          : undefined
+      }
     >
       {!loading && (
-        <Stack ref={settingsContainer} direction="row" alignItems="center" gap={2}>
+        <HorizontallyScrollableContainer
+          ref={settingsContainer}
+          direction="row"
+          alignItems="center"
+          gap="1.5rem"
+          px="1rem"
+          height="100%"
+        >
+          <Tooltip
+            title={
+              <Stack alignItems="center">
+                <Box>
+                  Adjust theme coloring factor (
+                  {Math.round(100 * (settings.backgroundSaturation ?? 0))}%)
+                </Box>
+                <Box>The change will be applied with a next view change</Box>
+              </Stack>
+            }
+            className="no-draggable"
+          >
+            <Stack direction="row" alignItems="center" gap="0.5rem" minWidth="12rem">
+              <DarkModeRounded />
+              <Slider
+                aria-label="Lightness"
+                size="small"
+                value={settings.backgroundSaturation}
+                defaultValue={Config.DEFAULT_BACKGROUND_SATURATION}
+                onChange={(_, value) =>
+                  updateSetting('backgroundSaturation', Array.isArray(value) ? value[0] : value)
+                }
+                valueLabelDisplay="off"
+                step={0.1}
+                marks
+                min={0}
+                max={1}
+              />
+              <LightModeRounded />
+            </Stack>
+          </Tooltip>
           <IconToggle
             tooltipTitle="Toggle desktop notifications"
             options={desktopNotificationsToggleOptions}
@@ -66,7 +116,7 @@ export const Header = () => {
             value={settings.tablesCompactMode ? 'compact' : 'default'}
             onChange={(value) => updateSetting('tablesCompactMode', value === 'compact')}
           />
-        </Stack>
+        </HorizontallyScrollableContainer>
       )}
       <Tooltip title={`${dataEncryptionPassword ? 'Change' : 'Set'} data encryption password`}>
         <Box>

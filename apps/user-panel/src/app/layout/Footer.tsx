@@ -2,6 +2,7 @@ import { memo } from 'react'
 import { LinkRounded } from '@mui/icons-material'
 import { darken, Link, Stack, Typography, type Theme } from '@mui/material'
 import { commonLayoutTransitions } from './helpers'
+import { AktynLogoIcon } from '../components/icons/AktynLogoIcon'
 
 export const Footer = memo(() => {
   const textColor = (theme: Theme) => darken(theme.palette.text.secondary, 0.2)
@@ -30,7 +31,9 @@ export const Footer = memo(() => {
         color={textColor}
         sx={{ transition: commonLayoutTransitions.color, display: 'flex', alignItems: 'center' }}
       >
-        &copy;&nbsp;2023&nbsp;Aktyn&ensp;|&ensp;
+        &copy;&nbsp;2023&nbsp;Aktyn&nbsp;
+        <AktynLogoIcon fontSize="inherit" />
+        &ensp;|&ensp;
         <Link
           href="https://github.com/Aktyn"
           target="_blank"

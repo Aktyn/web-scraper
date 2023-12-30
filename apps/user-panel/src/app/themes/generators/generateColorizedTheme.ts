@@ -11,7 +11,6 @@ import {
 } from '@mui/material'
 import { common, green, grey, lightBlue, lightGreen, orange, red } from '@mui/material/colors'
 import deepmerge from 'deepmerge'
-import { Config } from '../../config'
 import { baseTheme, baseThemeOptions } from '../baseTheme'
 import { generateComplementaryColor, mixColors, setSaturation } from '../helpers'
 
@@ -39,14 +38,17 @@ function convertPrimaryToSecondary(schema: Readonly<ColorSchema>) {
 interface ColorizedThemeProps {
   primary: ColorSchema
   secondary?: ColorSchema
+  /** Value between 0 and 1 */
+  saturation: number
 }
 
 export function generateColorizedTheme({
   primary,
   secondary = convertPrimaryToSecondary(primary),
+  saturation,
 }: ColorizedThemeProps) {
-  const backgroundDefault = setSaturation(primary[800], Config.BACKGROUND_SATURATION)
-  const paperBackgroundDefault = setSaturation(primary[600], Config.BACKGROUND_SATURATION)
+  const backgroundDefault = setSaturation(primary[800], saturation)
+  const paperBackgroundDefault = setSaturation(primary[600], saturation)
 
   const textPrimary = primary[50]
   const textSecondary = mixColors(primary[50], primary[800], 0.4)

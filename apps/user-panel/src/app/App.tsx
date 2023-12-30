@@ -1,11 +1,13 @@
-import { Suspense, useCallback, useState } from 'react'
+import { Suspense, useCallback, useEffect, useRef, useState } from 'react'
 import createCache from '@emotion/cache'
 import { CacheProvider } from '@emotion/react'
 import { CloseRounded } from '@mui/icons-material'
-import { CssBaseline, IconButton, ThemeProvider } from '@mui/material'
+import { CssBaseline, IconButton, Stack, ThemeProvider } from '@mui/material'
 import { ElectronToRendererMessage, WindowStateChange } from '@web-scraper/common'
+import anime from 'animejs'
 import { SnackbarProvider, closeSnackbar } from 'notistack'
 import { FullViewLoader } from './components/common/loader/FullViewLoader'
+import { AktynLogoIcon } from './components/icons/AktynLogoIcon'
 import { Config } from './config'
 import { ViewContext, ViewTransitionState, type ViewName } from './context/viewContext'
 import { useMounted } from './hooks/useMounted'
@@ -16,8 +18,8 @@ import { NotificationsModule } from './modules/NotificationsModule'
 import { ScraperExecutionModule } from './modules/ScraperExecutionModule'
 import { ScraperTestingSessionsModule } from './modules/ScraperTestingSessionsModule'
 import { Navigation } from './navigation'
-import { baseTheme } from './themes'
-import { UserDataProvider } from './userData/UserDataProvider'
+import { baseTheme, updateThemes } from './themes'
+import { UserDataProvider, type UserDataProviderProps } from './userData/UserDataProvider'
 
 const emotionCache = createCache({
   key: 'css',
@@ -34,12 +36,14 @@ export const App = () => {
 
 function ViewBase() {
   const mounted = useMounted()
+  const logoContainerRef = useRef<HTMLDivElement>(null)
 
   const [viewName, setViewName] = useState<ViewName>('DATA_MANAGER') //TODO: restore DASHBOARD
   const [previousViewName, setPreviousViewName] = useState<ViewName | null>(null)
   const [nextViewName, setNextViewName] = useState<ViewName | null>(null)
   const [viewTransitionState, setViewTransitionState] = useState(ViewTransitionState.IDLE)
   const [maximized, setMaximized] = usePersistentState('window-maximized', 'false', sessionStorage)
+  const [loadingUserData, setLoadingUserData] = useState(true)
 
   const currentView = Navigation[viewName]
   const nextView = nextViewName ? Navigation[nextViewName] : null
@@ -88,9 +92,46 @@ function ViewBase() {
     }
   })
 
+  const handleUserDataChange = useCallback<Required<UserDataProviderProps>['onChange']>(
+    (userSettings, reason) => {
+      if (typeof userSettings.backgroundSaturation === 'number') {
+        updateThemes(userSettings.backgroundSaturation)
+      }
+      if (reason === 'loaded') {
+        setLoadingUserData(false)
+      }
+    },
+    [],
+  )
+
+  useEffect(() => {
+    anime({
+      targets: logoContainerRef.current?.querySelector('svg'),
+      scale: [3, 1],
+      opacity: [0, 1],
+      easing: 'spring(0.7, 100, 10, 0)',
+    })
+  }, [])
+
+  useEffect(() => {
+    const containerElement = logoContainerRef.current
+    if (!containerElement) {
+      return
+    }
+
+    anime.remove(containerElement)
+    anime({
+      targets: containerElement,
+      opacity: loadingUserData ? 1 : 0,
+      delay: process.env.NODE_ENV === 'development' ? 0 : 500,
+      easing: 'easeInOutQuad',
+      duration: 500,
+    })
+  }, [loadingUserData])
+
   return (
     <CacheProvider value={emotionCache}>
-      <ThemeProvider theme={currentView.theme ?? baseTheme}>
+      <ThemeProvider key={Number(loadingUserData)} theme={currentView.theme ?? baseTheme}>
         <CssBaseline>
           <SnackbarProvider
             maxSnack={10}
@@ -116,21 +157,45 @@ function ViewBase() {
                 maximized: maximized === 'true',
               }}
             >
-              <UserDataProvider>
+              <UserDataProvider onChange={handleUserDataChange}>
                 <NotificationsModule.Provider>
                   <ScraperTestingSessionsModule.Provider>
                     <ScraperExecutionModule.Provider>
-                      <Layout>
-                        <Suspense fallback={<FullViewLoader />}>
-                          <currentView.component key={viewName} />
-                        </Suspense>
-                        {nextView && (
-                          // Preloads next view file
-                          <Suspense fallback={null}>
-                            <nextView.component key={nextViewName} doNotRender />
+                      {!loadingUserData && (
+                        <Layout>
+                          <Suspense fallback={<FullViewLoader />}>
+                            <currentView.component key={viewName} />
                           </Suspense>
-                        )}
-                      </Layout>
+                          {nextView && (
+                            // Preloads next view file
+                            <Suspense fallback={null}>
+                              <nextView.component key={nextViewName} doNotRender />
+                            </Suspense>
+                          )}
+                        </Layout>
+                      )}
+                      <Stack
+                        ref={logoContainerRef}
+                        position="fixed"
+                        top={0}
+                        left={0}
+                        width="100vw"
+                        height="100vh"
+                        alignItems="center"
+                        justifyContent="center"
+                        bgcolor="#0d3235"
+                        zIndex={99}
+                        sx={{ pointerEvents: 'none' }}
+                      >
+                        <AktynLogoIcon
+                          sx={{
+                            maxWidth: '14rem',
+                            maxHeight: '14rem',
+                            width: 'auto',
+                            height: 'auto',
+                          }}
+                        />
+                      </Stack>
                     </ScraperExecutionModule.Provider>
                   </ScraperTestingSessionsModule.Provider>
                 </NotificationsModule.Provider>
