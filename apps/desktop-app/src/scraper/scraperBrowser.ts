@@ -26,6 +26,7 @@ interface ScraperBrowserOptions {
 }
 
 export default class ScraperBrowser {
+  public static busySlots = new Set<number>()
   public static readonly defaultViewport: Viewport = {
     width: 1280,
     height: 1024,
@@ -34,6 +35,7 @@ export default class ScraperBrowser {
     deviceScaleFactor: 1,
   }
 
+  private readonly instanceSlot: number
   protected browser: Browser | null = null
   private readonly userAgent = getRandomDesktopUserAgentWithChrome()
   private readonly viewport: Viewport | null
@@ -43,6 +45,15 @@ export default class ScraperBrowser {
     onBrowserClosed,
     ...options
   }: Partial<PuppeteerLaunchOptions & ScraperBrowserOptions> = {}) {
+    for (let i = 0; ; i++) {
+      if (!ScraperBrowser.busySlots.has(i)) {
+        this.instanceSlot = i
+        break
+      }
+    }
+
+    ScraperBrowser.busySlots.add(this.instanceSlot)
+
     const headless = options.headless ?? false
 
     this.viewport = headless ? options.defaultViewport ?? ScraperBrowser.defaultViewport : null
@@ -51,6 +62,7 @@ export default class ScraperBrowser {
       .launch({
         // executablePath: executablePath('chrome'), //TODO: test executablePath('chrome') on system without chrome
         channel: 'chrome',
+        product: 'chrome',
         //TODO: allow different arguments
         args: [
           // ...(process.env.TOR_PROXY_SERVER
@@ -73,10 +85,12 @@ export default class ScraperBrowser {
         handleSIGINT: true,
         ignoreHTTPSErrors: true,
         timeout: 30_000,
-        product: 'chrome',
         userDataDir:
           isDev && !process.env.JEST_WORKER_ID
-            ? path.join(EXTERNAL_DIRECTORY_PATH, 'userData')
+            ? path.join(
+                EXTERNAL_DIRECTORY_PATH,
+                `userData${this.instanceSlot > 0 ? this.instanceSlot : ''}`,
+              )
             : '',
         ...options,
       })
@@ -102,12 +116,15 @@ export default class ScraperBrowser {
 
         this.browser = browser
 
-        console.info('Browser initialized with user agent:', this.userAgent)
+        console.info(
+          `Browser initialized with user agent: ${this.userAgent}; slot: ${this.instanceSlot}`,
+        )
       })
-      .catch(console.error)
+      .catch((error) => console.error('Puppeteer launch error', error))
   }
 
   public async destroy() {
+    ScraperBrowser.busySlots.delete(this.instanceSlot)
     await this.browser?.close()
     this.browser = null
   }

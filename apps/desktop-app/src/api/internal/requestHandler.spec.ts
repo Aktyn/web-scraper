@@ -1,12 +1,10 @@
+/* eslint-disable import/order */
+import { databaseMock, mockData } from '../../test-utils/databaseMock'
+import '../../test-utils/electronMock'
 import { ErrorCode, RendererToElectronMessage, type ElectronApi } from '@web-scraper/common'
 import { mockReset, type DeepMockProxy } from 'jest-mock-extended'
-import '../../test-utils/electronMock'
-
-import { databaseMock, mockData } from '../../test-utils/databaseMock'
-
+import { Scraper } from '../../scraper'
 import { registerRequestsHandler } from './requestHandler'
-
-// eslint-disable-next-line import/order
 import { ipcMain, type IpcMainInvokeEvent } from 'electron'
 
 type HandlersInterface = {
@@ -52,6 +50,7 @@ describe('registerRequestsHandler', () => {
     await expect(getUserSettings(null as never)).resolves.toEqual({
       tablesCompactMode: true,
       desktopNotifications: true,
+      backgroundSaturation: 0.5,
     })
   })
 
@@ -211,6 +210,13 @@ describe('registerRequestsHandler', () => {
               description: 'Mocked site 1',
             },
           ],
+        },
+        {
+          id: 2,
+          createdAt: new Date('2023-02-20T23:40:10.302Z'),
+          url: 'http://localhost:1358/mock-testing',
+          language: 'en',
+          tags: [],
         },
       ],
     })
@@ -409,37 +415,35 @@ describe('registerRequestsHandler', () => {
     })
   })
 
-  //TODO: fix this test
-  // it('should get site instructions testing sessions', async () => {
-  //   databaseMock.site.findUnique.mockResolvedValue({
-  //     ...mockData.sites[0],
-  //     //@ts-expect-error - incomplete mock types
-  //     Tags: [],
-  //   })
+  it('should get site instructions testing sessions', async () => {
+    databaseMock.site.findUnique.mockResolvedValue({
+      ...mockData.sites[1],
+      Tags: [] as never,
+    })
 
-  //   registerRequestsHandler()
+    registerRequestsHandler()
 
-  //   const getSiteInstructionsTestingSessions = handlers.get(
-  //     'getSiteInstructionsTestingSessions',
-  //   ) as HandlersInterface[RendererToElectronMessage.getSiteInstructionsTestingSessions]
+    const getSiteInstructionsTestingSessions = handlers.get(
+      'getSiteInstructionsTestingSessions',
+    ) as HandlersInterface[RendererToElectronMessage.getSiteInstructionsTestingSessions]
 
-  //   const siteId = 1
-  //   const scraper = new Scraper(Scraper.Mode.TESTING, {
-  //     siteId,
-  //     lockURL: 'http://localhost:1357/mock-testing',
-  //     onClose: () => void 0,
-  //   })
+    const siteId = 1
+    const scraper = new Scraper(Scraper.Mode.TESTING, {
+      siteId,
+      lockURL: 'http://localhost:1358/mock-testing',
+      onClose: () => void 0,
+    })
 
-  //   expect(getSiteInstructionsTestingSessions).toBeDefined()
-  //   await expect(getSiteInstructionsTestingSessions(null as never)).resolves.toEqual([
-  //     {
-  //       sessionId: scraper.id,
-  //       site: { ...mockData.sites[0], tags: [] },
-  //     },
-  //   ])
+    expect(getSiteInstructionsTestingSessions).toBeDefined()
+    await expect(getSiteInstructionsTestingSessions(null as never)).resolves.toEqual([
+      {
+        sessionId: scraper.id,
+        site: { ...mockData.sites[1], tags: [] },
+      },
+    ])
 
-  //   await scraper.destroy()
+    await scraper.destroy()
 
-  //   await expect(getSiteInstructionsTestingSessions(null as never)).resolves.toEqual([])
-  // })
+    await expect(getSiteInstructionsTestingSessions(null as never)).resolves.toEqual([])
+  })
 })

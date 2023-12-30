@@ -1,20 +1,19 @@
-import type { Server } from 'http'
-
 import {
   ActionStepErrorType,
   ActionStepType,
+  ProcedureType,
+  ValueQueryType,
+  omit,
   type Action,
   type ActionStep,
-  type Procedure,
-  ProcedureType,
   type FlowStep,
-  omit,
+  type Procedure,
   type ProcedureExecutionResult,
   type ScraperMode,
   type ValueQuery,
-  ValueQueryType,
 } from '@web-scraper/common'
-import express from 'express'
+
+import { initServer } from '../test-utils/serverMock'
 
 import { type RequestDataCallback, type RequestDataSourceItemIdCallback } from '.'
 import '../test-utils/electronMock'
@@ -49,12 +48,13 @@ const withScraperTestingMode = async (
     scraper: ExposedScraper<typeof Scraper.Mode.TESTING>,
     closeListener: jest.Mock<any, any>,
   ) => Promise<any>,
+  lockURL = 'http://localhost:1358/mock-testing',
 ) => {
   const closeListener = jest.fn()
 
   const scraper = new ExposedScraper<typeof Scraper.Mode.TESTING>(Scraper.Mode.TESTING, {
     siteId: 1,
-    lockURL: 'http://localhost:1357/mock-testing',
+    lockURL,
     onClose: closeListener,
   })
   await scraper.waitForInit()
@@ -64,23 +64,11 @@ const withScraperTestingMode = async (
   await scraper.destroy(true)
 }
 
-function initServer(app: express.Express) {
-  for (const page of pages) {
-    app.get(page.route, (_req, res) => {
-      res.status(200).type('text/html').send(page.body)
-    })
-  }
-
-  const port = 1357
-  return app.listen(port)
-}
-
 describe('Scraper.PREVIEW', () => {
-  const app = express()
-  let server: Server | null = null
+  let server: ReturnType<typeof initServer> | null = null
 
   beforeAll(() => {
-    server = initServer(app)
+    server = initServer()
   })
   afterAll(() => {
     server?.close()
@@ -93,7 +81,7 @@ describe('Scraper.PREVIEW', () => {
     })
     await scraper.waitForInit()
 
-    const screenshot = await scraper.takeScreenshot('http://localhost:1357/mock-preview')
+    const screenshot = await scraper.takeScreenshot('http://localhost:1358/mock-preview')
     expect(isBase64(screenshot)).toBe(true)
 
     await scraper.destroy(true)
@@ -101,13 +89,12 @@ describe('Scraper.PREVIEW', () => {
 })
 
 describe('Scraper.TESTING action steps', () => {
-  const app = express()
-  let server: Server | null = null
+  let server: ReturnType<typeof initServer> | null = null
   const onDataRequest = (rawValue: ValueQuery) =>
     Promise.resolve(rawValue.replace(new RegExp(`^${ValueQueryType.CUSTOM}\\.`, 'u'), ''))
 
   beforeAll(() => {
-    server = initServer(app)
+    server = initServer()
   })
   afterAll(() => {
     server?.close()
@@ -377,11 +364,10 @@ describe('Scraper.TESTING action steps', () => {
 })
 
 describe('Scraper.TESTING action', () => {
-  const app = express()
-  let server: Server | null = null
+  let server: ReturnType<typeof initServer> | null = null
 
   beforeAll(() => {
-    server = initServer(app)
+    server = initServer()
   })
   afterAll(() => {
     server?.close()
@@ -449,7 +435,7 @@ describe('Scraper.TESTING action', () => {
 
       const action: Action = {
         id: 0,
-        url: 'http://localhost:1357/mock-testing',
+        url: 'http://localhost:1358/mock-testing',
         siteInstructionsId: 0,
         name: 'mock action',
         actionSteps: steps,
@@ -472,11 +458,10 @@ describe('Scraper.TESTING action', () => {
 })
 
 describe('Scraper.TESTING procedure', () => {
-  const app = express()
-  let server: Server | null = null
+  let server: ReturnType<typeof initServer> | null = null
 
   beforeAll(() => {
-    server = initServer(app)
+    server = initServer()
   })
   afterAll(() => {
     server?.close()
@@ -573,7 +558,7 @@ describe('Scraper.TESTING procedure', () => {
       const procedure: Procedure = {
         id: 0,
         type: ProcedureType.ACCOUNT_CHECK,
-        startUrl: 'http://localhost:1357/mock-testing',
+        startUrl: 'http://localhost:1358/mock-testing',
         waitFor: 'body > h1',
         siteInstructionsId: 0,
         flow: mainFlow,
@@ -615,37 +600,49 @@ describe('Scraper.TESTING procedure', () => {
   })
 })
 
-const pages = [
-  {
-    route: '/mock-preview',
-    body: `
-      <html>
-        <body>
-          <p>Mock preview</p>
-        </body>
-      </html>
-    `,
-  },
-  {
-    route: '/mock-testing',
-    body: `
-      <html>
-        <body>
-          <h1>Mock testing</h1>
-          <input type="text" />
-          <select>
-            <option value='select option'>Select option</option>
-            <option value="mock option">Mock option</option>
-            <option value="mock option 2">Mock option 2</option>
-          </select>
-          <button>Mock action</button>
-          <div id="error-message">mock error message</div>
-          <div id="success-message">mock success message</div>
-        </body>
-      </html>
-    `,
-  },
-]
+describe('Scraper.TESTING multiple instances', () => {
+  let server: ReturnType<typeof initServer> | null = null
+
+  beforeAll(() => {
+    server = initServer()
+  })
+  afterAll(() => {
+    server?.close()
+  })
+
+  it('should allow to create multiple instances of scraper in testing mode', () => {
+    return Promise.all([
+      withScraperTestingMode(async (scraper) => {
+        const result = await scraper.performActionStep(
+          {
+            ...actionStepBase,
+            type: ActionStepType.WAIT,
+            data: {
+              duration: 1000,
+            },
+          },
+          dummyRequestDataCallback,
+          dummyDataSourceItemIdRequest,
+        )
+        expect(result).toEqual({ errorType: ActionStepErrorType.NO_ERROR })
+      }),
+      withScraperTestingMode(async (scraper) => {
+        const result = await scraper.performActionStep(
+          {
+            ...actionStepBase,
+            type: ActionStepType.WAIT,
+            data: {
+              duration: 1000,
+            },
+          },
+          dummyRequestDataCallback,
+          dummyDataSourceItemIdRequest,
+        )
+        expect(result).toEqual({ errorType: ActionStepErrorType.NO_ERROR })
+      }, 'http://localhost:1358/mock-preview'),
+    ])
+  })
+})
 
 function isBase64(str: string): boolean {
   try {

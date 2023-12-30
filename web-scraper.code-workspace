@@ -1,0 +1,27 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"name": "common",
+			"path": "./packages/common"
+		},
+		{
+			"name": "Desktop app",
+			"path": "./apps/desktop-app"
+		},
+		{
+			"name": "User panel",
+			"path": "./apps/user-panel"
+		},
+	],
+	"settings": {
+		"typescript.tsdk": "node_modules/typescript/lib",
+		"typescript.preferences.includePackageJsonAutoImports": "on",
+		"testing.automaticallyOpenPeekView": "never",
+		"jest.disabledWorkspaceFolders": [
+			"web-scraper"
+		]
+	}
+}

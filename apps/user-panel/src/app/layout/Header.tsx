@@ -77,10 +77,10 @@ export const Header = () => {
             title={
               <Stack alignItems="center">
                 <Box>
-                  Adjust theme coloring factor (
+                  Adjust theme coloring intensity (
                   {Math.round(100 * (settings.backgroundSaturation ?? 0))}%)
                 </Box>
-                <Box>The change will be applied with a next view change</Box>
+                <Box>The effect will be visible the next time you change view</Box>
               </Stack>
             }
             className="no-draggable"

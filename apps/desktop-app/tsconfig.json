@@ -39,11 +39,6 @@
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "experimentalDecorators": true,
-    //TODO: verify
-    // "types": [
-    //   "node",
-    //   "jest",
-    // ]
   },
   "ts-node": {
     "transpileOnly": true,

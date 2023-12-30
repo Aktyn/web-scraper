@@ -58,6 +58,12 @@ export const mockData = {
       url: 'https://mocked-site.com',
       language: 'en',
     },
+    {
+      id: 2,
+      createdAt: new Date('2023-02-20T23:40:10.302Z'),
+      url: 'http://localhost:1358/mock-testing',
+      language: 'en',
+    },
   ] satisfies Site[],
   siteInstructions: [
     {
