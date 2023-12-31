@@ -65,7 +65,7 @@ type DatabaseFlow = DatabaseFlowStep & {
   OnFailureFlowStep: DatabaseFlow | null
 }
 
-async function getProcedureFlow(flowStep: DatabaseFlowStep): Promise<DatabaseFlow> {
+export async function getProcedureFlow(flowStep: DatabaseFlowStep): Promise<DatabaseFlow> {
   return {
     ...flowStep,
     OnSuccessFlowStep: flowStep.onSuccessFlowStepId
@@ -181,6 +181,7 @@ export async function setSiteInstructions(
       Procedures: {
         create: await Promise.all(
           instructionsSchema.procedures.map(async (procedure) => ({
+            name: procedure.name,
             type: procedure.type,
             startUrl: procedure.startUrl,
             waitFor: procedure.waitFor,

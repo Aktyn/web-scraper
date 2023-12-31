@@ -107,6 +107,7 @@ export const mockData = {
       Procedures: [
         {
           id: 1,
+          name: 'Login',
           type: ProcedureType.ACCOUNT_CHECK,
           startUrl: `{{URL.ORIGIN}}/login`,
           waitFor: 'body > h1',

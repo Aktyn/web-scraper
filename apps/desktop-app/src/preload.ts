@@ -47,6 +47,9 @@ const rendererToElectronMessageNames = [
   'getSiteInstructions',
   'setSiteInstructions',
 
+  'getRoutines',
+  'getRoutine',
+
   'getSiteInstructionsTestingSessions',
   'startSiteInstructionsTestingSession',
   'endSiteInstructionsTestingSession',

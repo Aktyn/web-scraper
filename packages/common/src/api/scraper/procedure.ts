@@ -62,6 +62,7 @@ export interface ProcedureExecutionResult {
 
 export interface Procedure {
   id: number
+  name: string
   type: ProcedureType
   startUrl: string
   waitFor: string | null
@@ -105,6 +106,7 @@ const upsertFlowSchema: FlowSchemaTypeHelper = yup.object({
 })
 
 export const upsertProcedureSchema = yup.object({
+  name: yup.string().required('Name is required'),
   type: yup.mixed<ProcedureType>().oneOf(Object.values(ProcedureType)).required('Type is required'),
   startUrl: yup.string().default('').required('Start URL is required'),
   waitFor: yup.string().nullable().default(null).notRequired(),

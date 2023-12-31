@@ -83,14 +83,17 @@ export const TabsView = genericMemo(
       const isAnimatingRef = useRef(false)
 
       const [previousTab, setPreviousTab] = useState<ValueType | null>(null)
-      const [tab, setTab] = usePersistentState(`${name}-tab`, defaultTab ?? tabs[0].value)
+      const [tab, setTab] = usePersistentState(
+        `${name}-tab`,
+        defaultTab ?? tabs.at(0)?.value ?? null,
+      )
       const [tabSwitchIndex, setTabSwitchIndex] = usePersistentState(`${name}-tab-switch-index`, 0)
 
       const selectedTab = tabs.find(({ value }) => value === tab)
       const previousTabContent = tabs.find(({ value }) => value === previousTab)?.content
 
       const calculateDirection = useCallback(
-        (previous: ValueType, next: ValueType) => {
+        (previous: ValueType | null, next: ValueType | null) => {
           const nextTabIndex = tabs.findIndex(({ value }) => value === next)
           const previousTabIndex = tabs.findIndex(({ value }) => value === previous)
           return previousTabIndex > nextTabIndex ? -1 : 1
@@ -177,7 +180,7 @@ export const TabsView = genericMemo(
         [handleTabChange],
       )
 
-      const activeTab = tabs.some((t) => t.value === tab) ? tab : tabs[0].value
+      const activeTab = tabs.some((t) => t.value === tab) ? tab : tabs.at(0)?.value ?? null
 
       return (
         <Stack

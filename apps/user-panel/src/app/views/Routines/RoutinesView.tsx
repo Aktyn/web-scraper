@@ -1,40 +1,61 @@
-import { useMemo, useState } from 'react'
-import { Stack } from '@mui/material'
+import { useEffect, useMemo, useState } from 'react'
+import { FindInPageRounded } from '@mui/icons-material'
+import { Box, Skeleton, Stack, Typography } from '@mui/material'
+import type { Routine } from '@web-scraper/common'
+import { usePersistentState } from 'src/app/hooks/usePersistentState'
 import { TabsView, type TabSchema } from '../../components/common/TabsView'
+import { useApiRequest } from '../../hooks/useApiRequest'
 import type { ViewComponentProps } from '../helpers'
 
 const RoutinesView = ({ doNotRender }: ViewComponentProps) => {
-  const [tabsReady, setTabsReady] = useState(true)
+  const { submit: getRoutinesRequest } = useApiRequest(window.electronAPI.getRoutines)
 
-  const tabs = useMemo<TabSchema<string>[]>(
-    () => [
-      {
-        value: 'xyz1',
-        label: 'test1',
-        content: <Stack>xyz1</Stack>,
-      },
-      {
-        value: 'xyz2',
-        label: 'test2',
-        content: <Stack>xyz2</Stack>,
-      },
-      {
-        value: 'xyz3',
-        label: 'test3',
-        content: <Stack>xyz3</Stack>,
-      },
-      {
-        value: 'xyz4',
-        label: 'test4',
-        content: <Stack>xyz4</Stack>,
-      },
-      {
-        value: 'xyz5',
-        label: 'test5',
-        content: <Stack>xyz5</Stack>,
-      },
-    ],
+  const [tabsReady, setTabsReady] = useState(true)
+  const [routines, setRoutines] = usePersistentState<Pick<Routine, 'id' | 'name'>[]>(
+    'routines-list',
     [],
+  )
+  const [loadingRoutines, setLoadingSettings] = usePersistentState('routines-list-loading', true)
+
+  useEffect(() => {
+    getRoutinesRequest({
+      onSuccess: setRoutines,
+      onEnd: () => setLoadingSettings(false),
+    })
+  }, [getRoutinesRequest, setLoadingSettings, setRoutines])
+
+  const tabs = useMemo<TabSchema<Routine['id']>[]>(
+    () =>
+      loadingRoutines
+        ? Array.from({ length: 3 }, (_, i) => ({
+            value: -i - 1,
+            label: (
+              <Box minWidth="8rem">
+                <Skeleton variant="rounded" width="100%" height="1.5rem" animation="pulse" />
+              </Box>
+            ),
+            content: null,
+            tabComponentProps: { disabled: true },
+          }))
+        : routines.length > 0
+          ? routines.map((routine) => ({
+              value: routine.id,
+              label: routine.name,
+              content: <Stack>{routine.name}</Stack>,
+            }))
+          : [
+              {
+                value: -1,
+                label: <FindInPageRounded />,
+                content: (
+                  <Stack alignItems="center" py="4rem">
+                    <Typography variant="h5">No routines found</Typography>
+                  </Stack>
+                ),
+                // tabComponentProps: { disabled: true },
+              },
+            ],
+    [loadingRoutines, routines],
   )
 
   if (doNotRender) {
@@ -71,11 +92,5 @@ const RoutinesView = ({ doNotRender }: ViewComponentProps) => {
   //TODO
   // Example self explanatory routine name: Update crypto prices
   // Testing routines will only be option for previewing puppeteer window
-
-  // return (
-  //   <ViewTransition>
-  //     <Stack>xyz</Stack>
-  //   </ViewTransition>
-  // )
 }
 export default RoutinesView

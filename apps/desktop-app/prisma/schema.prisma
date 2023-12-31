@@ -75,16 +75,17 @@ model ActionStep {
 }
 
 model Procedure {
-  id                 Int              @id @default(autoincrement())
+  id                 Int                        @id @default(autoincrement())
+  name               String                     @unique
   type               String // enum value
-  // consider adding "name" or "description" field
   startUrl           String
   waitFor            String?
   //
   siteInstructionsId Int
-  SiteInstructions   SiteInstructions @relation(fields: [siteInstructionsId], references: [id], onDelete: Cascade)
+  SiteInstructions   SiteInstructions           @relation(fields: [siteInstructionsId], references: [id], onDelete: Cascade)
   flowStepId         Int?
-  FlowStep           FlowStep?        @relation(fields: [flowStepId], references: [id], onDelete: SetNull, onUpdate: Cascade)
+  FlowStep           FlowStep?                  @relation(fields: [flowStepId], references: [id], onDelete: SetNull, onUpdate: Cascade)
+  Routines           RoutineProcedureRelation[]
 }
 
 model FlowStep {
@@ -100,6 +101,25 @@ model FlowStep {
   Procedures          Procedure[]
   OnSuccessFlowSteps  FlowStep[]  @relation("NextFlowOnSuccess")
   OnFailureFlowSteps  FlowStep[]  @relation("NextFlowOnFailure")
+}
+
+model Routine {
+  id            Int                        @id @default(autoincrement())
+  name          String                     @unique
+  description   String?
+  stopOnError   Boolean                    @default(false)
+  executionPlan String // Stringified JSON
+  //
+  Procedures    RoutineProcedureRelation[]
+}
+
+model RoutineProcedureRelation {
+  procedureId Int
+  Procedure   Procedure @relation(fields: [procedureId], references: [id])
+  routineId   Int
+  Routine     Routine   @relation(fields: [routineId], references: [id])
+
+  @@id([procedureId, routineId])
 }
 
 model UserData {

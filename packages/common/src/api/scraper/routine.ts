@@ -2,8 +2,9 @@ import type { DataSourceColumnType, DataSourceItem, DataSourceStructure } from '
 import type { Procedure } from './procedure'
 
 export interface Routine {
+  id: number
   name: string
-  description?: string
+  description?: string | null
   stopOnError?: boolean
   procedures: Procedure[]
   executionPlan:

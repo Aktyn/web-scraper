@@ -8,8 +8,8 @@ export type UserDataProviderProps = PropsWithChildren<{
 }>
 
 export const UserDataProvider = ({ children, onChange }: UserDataProviderProps) => {
-  const getUserSettingsRequest = useApiRequest(window.electronAPI.getUserSettings)
-  const setUserSettingsRequest = useApiRequest(window.electronAPI.setUserSetting)
+  const { submit: getUserSettingsRequest } = useApiRequest(window.electronAPI.getUserSettings)
+  const { submit: setUserSettingsRequest } = useApiRequest(window.electronAPI.setUserSetting)
 
   const [dataEncryptionPassword, setDataEncryptionPassword] = useState<string | null>(
     process.env.REACT_APP_ENCRYPTION_PASSWORD ?? null,
@@ -18,15 +18,14 @@ export const UserDataProvider = ({ children, onChange }: UserDataProviderProps) 
   const [loadingSettings, setLoadingSettings] = useState(true)
 
   useEffect(() => {
-    getUserSettingsRequest.submit({
+    getUserSettingsRequest({
       onSuccess: (settings) => {
         onChange?.(settings, 'loaded')
         setSettings(settings)
       },
       onEnd: () => setLoadingSettings(false),
     })
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [getUserSettingsRequest, onChange])
 
   const updateSetting = useCallback<
     <KeyType extends keyof UserSettings>(key: KeyType, value: UserSettings[KeyType]) => void
@@ -37,10 +36,9 @@ export const UserDataProvider = ({ children, onChange }: UserDataProviderProps) 
         onChange?.(newSettings, 'updated')
         return newSettings
       })
-      setUserSettingsRequest.submit({}, key, value)
+      setUserSettingsRequest({}, key, value)
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [],
+    [onChange, setUserSettingsRequest],
   )
 
   return (

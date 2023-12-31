@@ -157,6 +157,7 @@ export const ProceduresForm = () => {
       onAdd={() =>
         proceduresFields.append({
           type: ProcedureType.ACCOUNT_CHECK,
+          name: '',
           startUrl: '',
           waitFor: null,
           flow: null,

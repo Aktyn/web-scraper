@@ -1,5 +1,6 @@
 import prisma from './client'
 import * as dataSource from './dataSource'
+import * as routine from './routine'
 import * as site from './site'
 import * as siteInstructions from './siteInstructions'
 import * as siteTag from './siteTag'
@@ -11,6 +12,7 @@ const Database = {
   site,
   siteTag,
   siteInstructions,
+  routine,
   userData,
 
   disconnect: () => prisma.$disconnect(),

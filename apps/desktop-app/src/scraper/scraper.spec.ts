@@ -557,6 +557,7 @@ describe('Scraper.TESTING procedure', () => {
 
       const procedure: Procedure = {
         id: 0,
+        name: 'mock procedure',
         type: ProcedureType.ACCOUNT_CHECK,
         startUrl: 'http://localhost:1358/mock-testing',
         waitFor: 'body > h1',

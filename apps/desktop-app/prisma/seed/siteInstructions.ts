@@ -64,6 +64,7 @@ export async function seedSiteInstructions(prisma: PrismaClient) {
 
   await prisma.procedure.create({
     data: {
+      name: 'Login',
       type: ProcedureType.ACCOUNT_CHECK,
       startUrl: `{{URL.ORIGIN}}/login`,
       waitFor: 'body > h1',

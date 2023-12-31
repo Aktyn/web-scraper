@@ -40,11 +40,11 @@ function parseDatabaseActionStep(actionStep: DatabaseActionStep): ActionStep {
   }
 }
 
-function parseDatabaseProcedure(
+export function parseDatabaseProcedure(
   procedure: GetSiteInstructionsResponse['Procedures'][number],
 ): Procedure {
   return {
-    ...pick(procedure, 'id', 'startUrl', 'waitFor', 'siteInstructionsId'),
+    ...pick(procedure, 'id', 'name', 'startUrl', 'waitFor', 'siteInstructionsId'),
     type: procedure.type as ProcedureType,
     flow: parseDatabaseFlowStep(procedure.FlowStep),
   }

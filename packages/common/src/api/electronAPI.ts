@@ -11,6 +11,7 @@ import type {
   MapSiteError,
   Procedure,
   ProcedureExecutionResult,
+  Routine,
   ScraperExecutionFinishedSchema,
   ScraperExecutionResultSchema,
   ScraperExecutionStartSchema,
@@ -74,6 +75,9 @@ export enum RendererToElectronMessage {
 
   getSiteInstructions = 'getSiteInstructions',
   setSiteInstructions = 'setSiteInstructions',
+
+  getRoutines = 'getRoutines',
+  getRoutine = 'getRoutine',
 
   getSiteInstructionsTestingSessions = 'getSiteInstructionsTestingSessions',
   startSiteInstructionsTestingSession = 'startSiteInstructionsTestingSession',
@@ -233,6 +237,9 @@ export type ElectronApi = {
     siteId: Site['id'],
     data: UpsertSiteInstructionsSchema,
   ) => Promise<ApiError>
+
+  [RendererToElectronMessage.getRoutines]: () => Promise<Pick<Routine, 'id' | 'name'>[] | ApiError>
+  [RendererToElectronMessage.getRoutine]: (routineId: Routine['id']) => Promise<Routine | ApiError>
 
   [RendererToElectronMessage.getSiteInstructionsTestingSessions]: () => Promise<
     { sessionId: string; site: Site }[] | ApiError
