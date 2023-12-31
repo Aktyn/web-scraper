@@ -1,6 +1,6 @@
 import * as yup from 'yup'
 
-import { MAX_SQLITE_INTEGER, transformNanToUndefined } from './common'
+import { MAX_SQLITE_INTEGER, transformNanToUndefined } from '../common'
 
 //NOTE: values must be proper SQLite types
 export enum DataSourceColumnType {

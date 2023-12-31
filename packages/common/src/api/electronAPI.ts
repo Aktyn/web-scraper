@@ -1,14 +1,10 @@
 import type { ApiError, PaginatedApiFunction } from './common'
 import type {
-  DataSourceItem,
-  DataSourceStructure,
-  UpsertDataSourceItemSchema,
-  UpsertDataSourceStructureSchema,
-} from './dataSource'
-import type {
   Action,
   ActionExecutionResult,
   ActionStep,
+  DataSourceItem,
+  DataSourceStructure,
   DataSourceValueQuery,
   FlowExecutionResult,
   FlowStep,
@@ -20,6 +16,8 @@ import type {
   ScraperExecutionStartSchema,
   ScraperMode,
   SiteInstructions,
+  UpsertDataSourceItemSchema,
+  UpsertDataSourceStructureSchema,
   UpsertSiteInstructionsSchema,
   ValueQuery,
 } from './scraper'

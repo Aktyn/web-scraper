@@ -10,9 +10,10 @@ import {
   type RefObject,
 } from 'react'
 import anime from 'animejs'
-import { useView } from 'src/app/hooks/useView'
 import { Config } from '../../config'
 import { ViewTransitionState } from '../../context/viewContext'
+import { useCancellablePromise } from '../../hooks/useCancellablePromise'
+import { useView } from '../../hooks/useView'
 import { Navigation } from '../../navigation'
 
 export enum TransitionType {
@@ -30,14 +31,27 @@ interface ViewTransitionProps {
   targets?: string | ((element: HTMLElement) => anime.AnimeParams['targets'])
   type?: TransitionType
   delay?: number
+  onAnimationStarted?: () => void
+  onAnimationFinished?: () => void
 }
 
 export const ViewTransition = memo(
   forwardRef<HTMLElement, ViewTransitionProps>(
-    ({ children: child, targets, type = TransitionType.DEFAULT, delay = 0 }, forwardedRef) => {
+    (
+      {
+        children: child,
+        targets,
+        type = TransitionType.DEFAULT,
+        delay = 0,
+        onAnimationStarted,
+        onAnimationFinished,
+      },
+      forwardedRef,
+    ) => {
       const targetRef = useRef<HTMLElement>(null)
       const ref = forwardedRef ?? targetRef
       const view = useView()
+      const cancellable = useCancellablePromise()
 
       useLayoutEffect(() => {
         const animate = () => {
@@ -82,78 +96,83 @@ export const ViewTransition = memo(
             delay: staggeredDelay,
           }
 
-          switch (type) {
-            default:
-            case TransitionType.DEFAULT:
-              anime({
-                ...commonAnimeParams,
-                translateX: {
-                  value: ['0rem', `${-normalizedVectorDifference[0] * translationLengthRem}rem`],
-                  delay: staggeredDelay,
-                },
-                translateY: {
-                  value: ['0rem', `${-normalizedVectorDifference[1] * translationLengthRem}rem`],
-                  delay: staggeredDelay,
-                },
-                opacity: [1, 0],
-              })
-              break
+          const runAnimation = () => {
+            switch (type) {
+              default:
+              case TransitionType.DEFAULT:
+                return anime({
+                  ...commonAnimeParams,
+                  translateX: {
+                    value: ['0rem', `${-normalizedVectorDifference[0] * translationLengthRem}rem`],
+                    delay: staggeredDelay,
+                  },
+                  translateY: {
+                    value: ['0rem', `${-normalizedVectorDifference[1] * translationLengthRem}rem`],
+                    delay: staggeredDelay,
+                  },
+                  opacity: [1, 0],
+                })
 
-            case TransitionType.MOVE_TOP:
-              anime({
-                ...commonAnimeParams,
-                translateY: {
-                  value: ['0rem', `${-translationLengthRem}rem`],
-                  delay: staggeredDelay,
-                },
-                opacity: [1, 0],
-              })
-              break
+              case TransitionType.MOVE_TOP:
+                return anime({
+                  ...commonAnimeParams,
+                  translateY: {
+                    value: ['0rem', `${-translationLengthRem}rem`],
+                    delay: staggeredDelay,
+                  },
+                  opacity: [1, 0],
+                })
 
-            case TransitionType.MOVE_RIGHT:
-              anime({
-                ...commonAnimeParams,
-                translateX: {
-                  value: ['0rem', `${translationLengthRem}rem`],
-                  delay: staggeredDelay,
-                },
-                opacity: [1, 0],
-              })
-              break
+              case TransitionType.MOVE_RIGHT:
+                return anime({
+                  ...commonAnimeParams,
+                  translateX: {
+                    value: ['0rem', `${translationLengthRem}rem`],
+                    delay: staggeredDelay,
+                  },
+                  opacity: [1, 0],
+                })
 
-            case TransitionType.FADE:
-              anime({
-                ...commonAnimeParams,
-                easing: 'easeInQuad',
-                opacity: [1, 0],
-              })
-              break
+              case TransitionType.FADE:
+                return anime({
+                  ...commonAnimeParams,
+                  easing: 'easeInQuad',
+                  opacity: [1, 0],
+                })
 
-            case TransitionType.SCALE:
-              anime({
-                ...commonAnimeParams,
-                easing: 'easeInQuad',
-                scale: commonAnimeScaleProps,
-                opacity: [1, 0],
-              })
-              break
-            case TransitionType.SCALE_X:
-              anime({
-                ...commonAnimeParams,
-                easing: 'easeInQuad',
-                scaleX: commonAnimeScaleProps,
-                opacity: [1, 0],
-              })
-              break
-            case TransitionType.SCALE_Y:
-              anime({
-                ...commonAnimeParams,
-                easing: 'easeInQuad',
-                scaleY: commonAnimeScaleProps,
-                opacity: [1, 0],
-              })
-              break
+              case TransitionType.SCALE:
+                return anime({
+                  ...commonAnimeParams,
+                  easing: 'easeInQuad',
+                  scale: commonAnimeScaleProps,
+                  opacity: [1, 0],
+                })
+              case TransitionType.SCALE_X:
+                return anime({
+                  ...commonAnimeParams,
+                  easing: 'easeInQuad',
+                  scaleX: commonAnimeScaleProps,
+                  opacity: [1, 0],
+                })
+              case TransitionType.SCALE_Y:
+                return anime({
+                  ...commonAnimeParams,
+                  easing: 'easeInQuad',
+                  scaleY: commonAnimeScaleProps,
+                  opacity: [1, 0],
+                })
+            }
           }
+
+          onAnimationStarted?.()
+          const animation = runAnimation()
+          cancellable(animation.finished)
+            .then(onAnimationFinished)
+            .catch((error) => {
+              if (error) {
+                onAnimationFinished?.()
+              }
+            })
         }
 
         if (delay) {

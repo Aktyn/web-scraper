@@ -1,20 +1,8 @@
 import * as yup from 'yup'
 
-import { transformNanToUndefined } from './common'
+import { transformNanToUndefined } from '../common'
 
-export enum ScraperMode {
-  DEFAULT,
-  TESTING,
-  PREVIEW,
-}
-
-export interface SiteInstructions {
-  id: number
-  createdAt: Date
-  siteId: number
-  actions: Action[]
-  procedures: Procedure[]
-}
+import type { MapSiteError } from './common'
 
 export enum CaptchaSolverType {
   SIMPLE = 'simpleCaptchaSolver',
@@ -35,12 +23,6 @@ export enum ActionStepErrorType {
   OPTION_NOT_SELECTED = 'error.common.optionNotSelected',
   DATA_SOURCE_NOT_FOUND = 'error.common.dataSourceNotFound',
   DATA_SOURCE_COLUMN_NOT_FOUND = 'error.common.dataSourceColumnNotFound',
-}
-
-export interface MapSiteError {
-  /** Regexp pattern allowed */
-  content?: string
-  errorType: ActionStepErrorType
 }
 
 export enum ActionStepType {
@@ -64,13 +46,6 @@ type ActionStepBase<Type extends ActionStepType, Data> = {
   actionId: number
 }
 
-export enum SaveDataType {
-  ELEMENT_CONTENT = 'elementContent',
-  CUSTOM = 'custom',
-  CURRENT_TIMESTAMP = 'currentTimestamp',
-  SET_NULL = 'setNull',
-}
-
 export enum ValueQueryType {
   DATA_SOURCE = 'DataSource',
   CUSTOM = 'Custom',
@@ -79,6 +54,13 @@ export enum ValueQueryType {
 export type DataSourceValueQuery = `${ValueQueryType.DATA_SOURCE}.${string}.${string}`
 type CustomValueQuery = `${ValueQueryType.CUSTOM}.${string}`
 export type ValueQuery = DataSourceValueQuery | CustomValueQuery
+
+export enum SaveDataType {
+  ELEMENT_CONTENT = 'elementContent',
+  CUSTOM = 'custom',
+  CURRENT_TIMESTAMP = 'currentTimestamp',
+  SET_NULL = 'setNull',
+}
 
 export type ActionStep =
   | ActionStepBase<ActionStepType.WAIT, { duration: number }>
@@ -144,125 +126,6 @@ export interface Action {
   actionSteps: ActionStep[]
 }
 
-export enum GlobalActionType {
-  FINISH = 'finishProcedure',
-  FINISH_WITH_ERROR = 'finishProcedureWithError',
-  FINISH_WITH_NOTIFICATION = 'finishProcedureWithNotification',
-}
-
-export interface FlowExecutionResult {
-  flow: FlowStep
-  flowStepsResults: {
-    flowStep: ShallowFlowStep
-    actionResult: ActionExecutionResult | null
-    returnedValues: (string | { error: string })[]
-    succeeded: boolean
-  }[]
-}
-
-export const REGULAR_ACTION_PREFIX = 'action' as const
-export const GLOBAL_ACTION_PREFIX = 'global' as const
-
-export function isRegularAction(
-  actionName: FlowStep['actionName'],
-): actionName is FlowStep['actionName'] & `${typeof REGULAR_ACTION_PREFIX}.${string}` {
-  return actionName.startsWith(`${REGULAR_ACTION_PREFIX}.`)
-}
-
-export function isGlobalAction(
-  actionName: FlowStep['actionName'],
-): actionName is FlowStep['actionName'] & `${typeof GLOBAL_ACTION_PREFIX}.${GlobalActionType}` {
-  return actionName.startsWith(`${GLOBAL_ACTION_PREFIX}.`)
-}
-
-export interface FlowStep {
-  id: number
-  actionName:
-    | `${typeof REGULAR_ACTION_PREFIX}.${Action['name']}`
-    | `${typeof GLOBAL_ACTION_PREFIX}.${GlobalActionType}`
-
-  /** Regex pattern allowed */
-  globalReturnValues: string[]
-  onSuccess: FlowStep | null
-  onFailure: FlowStep | null
-}
-
-export type ShallowFlowStep = Omit<FlowStep, 'onSuccess' | 'onFailure'>
-
-export enum ProcedureType {
-  ACCOUNT_CHECK = 'accountCheck',
-  DATA_RETRIEVAL = 'dataRetrieval',
-  MONITORING = 'monitoring',
-  CUSTOM = 'custom',
-}
-
-export interface ProcedureExecutionResult {
-  procedure: Procedure
-  flowExecutionResult: FlowExecutionResult | MapSiteError
-}
-
-export interface Procedure {
-  id: number
-  type: ProcedureType
-  startUrl: string
-  waitFor: string | null
-  siteInstructionsId: number
-  flow: FlowStep | null
-}
-
-export enum ScraperExecutionScope {
-  ACTION_STEP = 'actionStep',
-  ACTION = 'action',
-  FLOW = 'flow',
-  PROCEDURE = 'procedure',
-}
-
-export type ScraperExecutionStartSchema =
-  | {
-      scope: ScraperExecutionScope.ACTION_STEP
-      actionStep: ActionStep
-    }
-  | {
-      scope: ScraperExecutionScope.ACTION
-      action: Action
-    }
-  | {
-      scope: ScraperExecutionScope.FLOW
-      flow: FlowStep
-    }
-  | {
-      scope: ScraperExecutionScope.PROCEDURE
-      procedure: Procedure
-    }
-export type ScraperExecutionResultSchema =
-  | {
-      scope: ScraperExecutionScope.ACTION_STEP
-      actionStepResult: MapSiteError
-    }
-  | {
-      scope: ScraperExecutionScope.ACTION
-      actionResult: ActionExecutionResult['actionStepsResults']
-    }
-  | {
-      scope: ScraperExecutionScope.FLOW
-      flowResult: FlowExecutionResult['flowStepsResults']
-    }
-  | {
-      scope: ScraperExecutionScope.PROCEDURE
-      procedureResult: ProcedureExecutionResult['flowExecutionResult']
-    }
-export type ScraperExecutionFinishedSchema = {
-  scope: ScraperExecutionScope
-}
-
-const mapSiteErrorSchema = yup.object({
-  content: yup.string().required('Content is required'),
-  errorType: yup
-    .mixed<ActionStepErrorType>()
-    .oneOf(Object.values(ActionStepErrorType))
-    .required('Error type is required'),
-})
-
 export const valueQueryRegex = new RegExp(
   `^(${ValueQueryType.DATA_SOURCE}\\.[^.]+\\.[^.]+)|(${ValueQueryType.CUSTOM}\\..*)$`,
   'u',
@@ -271,6 +134,14 @@ export const dataSourceQueryRegex = new RegExp(
   `^${ValueQueryType.DATA_SOURCE}\\.[^.]+\\.[^.]+$`,
   'u',
 )
+
+const mapSiteErrorSchema = yup.object({
+  content: yup.string().required('Content is required'),
+  errorType: yup
+    .mixed<ActionStepErrorType>()
+    .oneOf(Object.values(ActionStepErrorType))
+    .required('Error type is required'),
+})
 
 export const upsertActionStepSchema = yup.object({
   type: yup
@@ -357,66 +228,3 @@ export const upsertActionSchema = yup.object({
     .default([])
     .required(),
 })
-
-type FlowSchemaTypeHelper = yup.ObjectSchema<
-  {
-    actionName: string
-    globalReturnValues: string[]
-    onSuccess: object | null
-    onFailure: object | null
-  },
-  yup.AnyObject,
-  {
-    actionName: undefined
-    globalReturnValues: string[]
-    onSuccess: null
-    onFailure: null
-  },
-  ''
->
-
-const upsertFlowSchema: FlowSchemaTypeHelper = yup.object({
-  actionName: yup
-    .string()
-    .matches(/^(action|global)\.[^.]+$/, 'Action name is invalid')
-    .required('Action name is required'),
-  globalReturnValues: yup
-    .array()
-    .of(yup.string().required('Value is required'))
-    .default([])
-    .required('Global return values are required'),
-  onSuccess: yup.lazy(() =>
-    upsertFlowSchema.nullable().default(null).notRequired(),
-  ) as unknown as yup.ObjectSchema<yup.AnyObject>,
-  onFailure: yup.lazy(() =>
-    upsertFlowSchema.nullable().default(null).notRequired(),
-  ) as unknown as yup.ObjectSchema<yup.AnyObject>,
-})
-
-export const upsertProcedureSchema = yup.object({
-  type: yup.mixed<ProcedureType>().oneOf(Object.values(ProcedureType)).required('Type is required'),
-  startUrl: yup.string().default('').required('Start URL is required'),
-  waitFor: yup.string().nullable().default(null).notRequired(),
-  siteInstructionsId: yup.number().required(),
-  flow: upsertFlowSchema.nullable().default(null).notRequired(),
-})
-
-export const upsertSiteInstructionsSchema = yup
-  .object({
-    procedures: yup
-      .array()
-      .of(upsertProcedureSchema.omit(['siteInstructionsId']))
-      .default([])
-      .required(),
-    actions: yup
-      .array()
-      .of(upsertActionSchema.omit(['siteInstructionsId']))
-      .test('unique', 'Multiple actions with the same name are not allowed', (value) =>
-        value ? value.length === new Set(value.map((v) => v.name))?.size : true,
-      )
-      .default([])
-      .required(),
-  })
-  .required()
-
-export type UpsertSiteInstructionsSchema = yup.InferType<typeof upsertSiteInstructionsSchema>

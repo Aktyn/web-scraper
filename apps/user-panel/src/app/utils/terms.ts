@@ -18,6 +18,11 @@ export const termsDetails = [
     title: 'Site instructions',
     content: 'A set of procedures and actions that are created for a specific site.',
   },
+  {
+    title: 'Data source',
+    content:
+      'Data structure defined by the user to support the execution of site instructions.\nData can be read from and written to the data source.',
+  },
   // TODO: add multi site routine description or remove this comment from code
   // {
   //   title: 'Multi site routine',
@@ -32,10 +37,5 @@ export const termsDetails = [
     title: 'Chore',
     content:
       'Scheduled routines. Allows you to run a routine repeatedly at any specified time interval.\nThe chore can be repeated indefinitely or until a specified condition is met.',
-  },
-  {
-    title: 'Data source',
-    content:
-      'Data structure defined by the user to support the execution of site instructions.\nData can be read from and written to the data source.',
   },
 ] as const

@@ -85,8 +85,19 @@ export const Header = () => {
             }
             className="no-draggable"
           >
-            <Stack direction="row" alignItems="center" gap="0.5rem" minWidth="12rem">
-              <DarkModeRounded />
+            <Stack
+              direction="row"
+              alignItems="center"
+              gap="0.5rem"
+              minWidth="12rem"
+              color="text.primary"
+            >
+              <DarkModeRounded
+                sx={{
+                  opacity: Math.max(0.2, 1 - (settings.backgroundSaturation ?? 1)),
+                  transition: (theme) => theme?.transitions.create('opacity', { easing: 'linear' }),
+                }}
+              />
               <Slider
                 aria-label="Lightness"
                 size="small"
@@ -101,7 +112,12 @@ export const Header = () => {
                 min={0}
                 max={1}
               />
-              <LightModeRounded />
+              <LightModeRounded
+                sx={{
+                  opacity: Math.max(0.2, settings.backgroundSaturation ?? 1),
+                  transition: (theme) => theme?.transitions.create('opacity', { easing: 'linear' }),
+                }}
+              />
             </Stack>
           </Tooltip>
           <IconToggle

@@ -88,7 +88,7 @@ export const dataSourceHandler = {
           defaultPath: `${encodeURI(dataSourceName.replace(/\./g, '-'))}.json`,
         },
         'utf-8',
-      ).then((fileResult) => {
+      ).then(async (fileResult) => {
         if ('errorCode' in fileResult) {
           return fileResult
         }

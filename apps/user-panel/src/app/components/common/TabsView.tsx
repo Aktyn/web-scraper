@@ -48,6 +48,8 @@ interface TabsViewProps<ValueType> {
   onAdd?: () => void
   handleRef?: Ref<TabsHandle<ValueType>>
   tabsProps?: Omit<TabsProps, 'value' | 'onChange'>
+  onTabsEntryAnimationStarted?: () => void
+  onTabsEntryAnimationFinished?: () => void
 }
 
 const commonTabContentStyles: BoxProps['sx'] = {
@@ -71,6 +73,8 @@ export const TabsView = genericMemo(
         onAdd,
         handleRef,
         tabsProps,
+        onTabsEntryAnimationStarted,
+        onTabsEntryAnimationFinished,
       }: TabsViewProps<ValueType> & RefAttributes<HTMLDivElement>,
       ref: RefAttributes<HTMLDivElement>['ref'],
     ) => {
@@ -197,8 +201,10 @@ export const TabsView = genericMemo(
                 ].filter(Boolean)
               }
               type={TransitionType.MOVE_TOP}
+              onAnimationStarted={onTabsEntryAnimationStarted}
+              onAnimationFinished={onTabsEntryAnimationFinished}
             >
-              <Stack direction="row" mr="auto" maxWidth="100%">
+              <Stack direction="row" mr={onAdd ? undefined : 'auto'} maxWidth="100%">
                 <Tabs
                   value={activeTab}
                   onChange={handleTabChange}

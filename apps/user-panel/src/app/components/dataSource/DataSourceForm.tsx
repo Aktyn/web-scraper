@@ -19,9 +19,9 @@ import {
 } from '@mui/material'
 import {
   DataSourceColumnType,
+  upsertDataSourceStructureSchema,
   type DataSourceStructure,
   type UpsertDataSourceStructureSchema,
-  upsertDataSourceStructureSchema,
 } from '@web-scraper/common'
 import { FormProvider, useFieldArray, useForm, useFormContext } from 'react-hook-form'
 import { useApiRequest } from '../../hooks/useApiRequest'
