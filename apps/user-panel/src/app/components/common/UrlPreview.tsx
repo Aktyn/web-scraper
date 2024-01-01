@@ -147,11 +147,6 @@ export const UrlPreview = ({ url, width, maxHeight }: UrlPreviewProps) => {
             </Box>
           </AbsoluteOverlay>
         )}
-        {/*<Fade in={loading}>*/}
-        {/*  <AbsoluteOverlay justifyContent="flex-start" pt={2}>*/}
-        {/*    <CircularProgress color="primary" size="2rem" />*/}
-        {/*  </AbsoluteOverlay>*/}
-        {/*</Fade>*/}
       </Stack>
       {imagePreviewSrc && (
         <RootPortal>

@@ -114,26 +114,26 @@ export function generateColorizedTheme({
                 '& ::-webkit-scrollbar-thumb:hover': {
                   backgroundColor: lighten(backgroundDefault, 0.25),
                 },
-              },
-              '.notistack-MuiContent': {
-                borderRadius: '2rem',
-                border: '1px solid',
-                backdropFilter: 'blur(2px)',
-              },
-              '.notistack-MuiContent-success': {
-                backgroundColor: alpha(lightGreen[400], 0.5),
-                borderColor: lighten(lightGreen[400], 0.1),
-                color: lightGreen[50],
-              },
-              '.notistack-MuiContent-error': {
-                backgroundColor: alpha(red[400], 0.5),
-                borderColor: lighten(red[400], 0.1),
-                color: red[50],
-              },
-              '.notistack-MuiContent-info': {
-                backgroundColor: alpha(lightBlue[400], 0.5),
-                borderColor: lighten(lightBlue[400], 0.1),
-                color: lightBlue[50],
+                '.notistack-MuiContent': {
+                  borderRadius: '2rem',
+                  border: '1px solid',
+                  backdropFilter: 'blur(2px)',
+                },
+                '.notistack-MuiContent-success': {
+                  backgroundColor: alpha(lightGreen[400], 0.5),
+                  borderColor: lighten(lightGreen[400], 0.1),
+                  color: lightGreen[50],
+                },
+                '.notistack-MuiContent-error': {
+                  backgroundColor: alpha(red[400], 0.5),
+                  borderColor: lighten(red[400], 0.1),
+                  color: red[50],
+                },
+                '.notistack-MuiContent-info': {
+                  backgroundColor: alpha(lightBlue[400], 0.5),
+                  borderColor: lighten(lightBlue[400], 0.1),
+                  color: lightBlue[50],
+                },
               },
             },
           },

@@ -137,10 +137,15 @@ export const FormJsonInput = <
                 <JsonValue disablePreview>{field.value}</JsonValue>
               </Stack>
               <ToggleIconButton
+                size="small"
                 open={openEditor}
                 onToggle={setOpenEditor}
                 closeTooltip="Edit JSON"
                 openTooltip="Close editor"
+                sx={{
+                  width: '1.75rem',
+                  height: '1.75rem',
+                }}
               />
             </Stack>
           </>

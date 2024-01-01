@@ -1,13 +1,18 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { FindInPageRounded } from '@mui/icons-material'
-import { Box, Skeleton, Stack, Typography } from '@mui/material'
+import { Box, Grow, Skeleton, Stack, Typography } from '@mui/material'
 import type { Routine } from '@web-scraper/common'
-import { usePersistentState } from 'src/app/hooks/usePersistentState'
+import { ViewTransition } from '../../components/animation/ViewTransition'
+import { CustomDrawer, type CustomDrawerRef } from '../../components/common/CustomDrawer'
 import { TabsView, type TabSchema } from '../../components/common/TabsView'
+import { TermInfo } from '../../components/common/TermInfo'
+import { RoutineForm } from '../../components/routine/RoutineForm'
 import { useApiRequest } from '../../hooks/useApiRequest'
+import { usePersistentState } from '../../hooks/usePersistentState'
 import type { ViewComponentProps } from '../helpers'
 
 const RoutinesView = ({ doNotRender }: ViewComponentProps) => {
+  const siteDrawerRef = useRef<CustomDrawerRef>(null)
   const { submit: getRoutinesRequest } = useApiRequest(window.electronAPI.getRoutines)
 
   const [tabsReady, setTabsReady] = useState(true)
@@ -15,14 +20,18 @@ const RoutinesView = ({ doNotRender }: ViewComponentProps) => {
     'routines-list',
     [],
   )
-  const [loadingRoutines, setLoadingSettings] = usePersistentState('routines-list-loading', true)
+  const [loadingRoutines, setLoadingRoutines] = usePersistentState('routines-list-loading', true)
 
-  useEffect(() => {
+  const loadRoutines = useCallback(() => {
     getRoutinesRequest({
       onSuccess: setRoutines,
-      onEnd: () => setLoadingSettings(false),
+      onEnd: () => setLoadingRoutines(false),
     })
-  }, [getRoutinesRequest, setLoadingSettings, setRoutines])
+  }, [getRoutinesRequest, setLoadingRoutines, setRoutines])
+
+  useEffect(() => {
+    loadRoutines()
+  }, [loadRoutines])
 
   const tabs = useMemo<TabSchema<Routine['id']>[]>(
     () =>
@@ -41,37 +50,63 @@ const RoutinesView = ({ doNotRender }: ViewComponentProps) => {
           ? routines.map((routine) => ({
               value: routine.id,
               label: routine.name,
-              content: <Stack>{routine.name}</Stack>,
+              content: <Stack>{routine.name}</Stack>, //TODO: routine panel
             }))
           : [
               {
                 value: -1,
                 label: <FindInPageRounded />,
                 content: (
-                  <Stack alignItems="center" py="4rem">
-                    <Typography variant="h5">No routines found</Typography>
-                  </Stack>
+                  <ViewTransition>
+                    <Stack alignItems="center" py="4rem">
+                      <Grow in>
+                        <Typography variant="h5">No routines found</Typography>
+                      </Grow>
+                    </Stack>
+                  </ViewTransition>
                 ),
-                // tabComponentProps: { disabled: true },
+                tabComponentProps: { disabled: true },
               },
             ],
     [loadingRoutines, routines],
   )
+
+  const handleAdd = useCallback(() => {
+    siteDrawerRef.current?.open()
+  }, [])
+
+  const handleRoutineAdded = useCallback(() => {
+    siteDrawerRef.current?.close()
+    loadRoutines()
+  }, [loadRoutines])
 
   if (doNotRender) {
     return null
   }
 
   return (
-    <TabsView
-      name="routines"
-      tabs={tabs}
-      onAdd={() => void 0}
-      addTooltip="Add routine"
-      tabsProps={{ scrollButtons: tabsReady ? 'auto' : false, sx: { flexGrow: 1 } }}
-      onTabsEntryAnimationStarted={() => setTabsReady(false)}
-      onTabsEntryAnimationFinished={() => setTabsReady(true)}
-    />
+    <>
+      <CustomDrawer
+        ref={siteDrawerRef}
+        title={
+          <Stack direction="row" alignItems="center" gap="0.5rem">
+            <Box>Create routine</Box>
+            <TermInfo term="Routine" />
+          </Stack>
+        }
+      >
+        <RoutineForm onSuccess={handleRoutineAdded} />
+      </CustomDrawer>
+      <TabsView
+        name="routines"
+        tabs={tabs}
+        onAdd={handleAdd}
+        addTooltip="Add routine"
+        tabsProps={{ scrollButtons: tabsReady ? 'auto' : false, sx: { flexGrow: 1 } }}
+        onTabsEntryAnimationStarted={() => setTabsReady(false)}
+        onTabsEntryAnimationFinished={() => setTabsReady(true)}
+      />
+    </>
   )
 
   // TODO: Create, delete, or modify routines, and select existing data sources or create

@@ -17,8 +17,10 @@ import type {
   ScraperExecutionStartSchema,
   ScraperMode,
   SiteInstructions,
+  SiteProcedures,
   UpsertDataSourceItemSchema,
   UpsertDataSourceStructureSchema,
+  UpsertRoutineSchema,
   UpsertSiteInstructionsSchema,
   ValueQuery,
 } from './scraper'
@@ -75,9 +77,13 @@ export enum RendererToElectronMessage {
 
   getSiteInstructions = 'getSiteInstructions',
   setSiteInstructions = 'setSiteInstructions',
+  getProceduresGroupedBySite = 'getProceduresGroupedBySite',
 
   getRoutines = 'getRoutines',
   getRoutine = 'getRoutine',
+  createRoutine = 'createRoutine',
+  updateRoutine = 'updateRoutine',
+  deleteRoutine = 'deleteRoutine',
 
   getSiteInstructionsTestingSessions = 'getSiteInstructionsTestingSessions',
   startSiteInstructionsTestingSession = 'startSiteInstructionsTestingSession',
@@ -237,9 +243,18 @@ export type ElectronApi = {
     siteId: Site['id'],
     data: UpsertSiteInstructionsSchema,
   ) => Promise<ApiError>
+  [RendererToElectronMessage.getProceduresGroupedBySite]: () => Promise<SiteProcedures[] | ApiError>
 
   [RendererToElectronMessage.getRoutines]: () => Promise<Pick<Routine, 'id' | 'name'>[] | ApiError>
   [RendererToElectronMessage.getRoutine]: (routineId: Routine['id']) => Promise<Routine | ApiError>
+  [RendererToElectronMessage.createRoutine]: (
+    data: UpsertRoutineSchema,
+  ) => Promise<Routine | ApiError>
+  [RendererToElectronMessage.updateRoutine]: (
+    routineId: Routine['id'],
+    data: UpsertRoutineSchema,
+  ) => Promise<Routine | ApiError>
+  [RendererToElectronMessage.deleteRoutine]: (routineId: Routine['id']) => Promise<ApiError>
 
   [RendererToElectronMessage.getSiteInstructionsTestingSessions]: () => Promise<
     { sessionId: string; site: Site }[] | ApiError

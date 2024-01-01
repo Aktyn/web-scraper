@@ -111,9 +111,9 @@ export const SiteInstructionsForm = ({ site, onSuccess }: SiteInstructionsFormPr
                   gridTemplateColumns: instructions ? '1fr 1fr' : 'auto',
                   justifyContent: 'center',
                   alignItems: 'center',
-                  gap: 4,
-                  py: 1,
-                  px: 2,
+                  gap: '2rem',
+                  py: '0.5rem',
+                  px: '1rem',
                 }}
               >
                 <FormControl sx={{ justifySelf: 'flex-end' }}>

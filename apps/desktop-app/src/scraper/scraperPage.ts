@@ -121,9 +121,9 @@ export class ScraperPage implements Pick<Page, 'on' | 'off'> {
       }
       return elementHandle
     } catch (error) {
-      const iframes = this.page.frames()
+      const iFrames = this.page.frames()
 
-      for (const frame of iframes) {
+      for (const frame of iFrames) {
         const elementHandle = await frame
           .waitForSelector(selector, { ...options, timeout: 2_000 })
           .catch(() => null)

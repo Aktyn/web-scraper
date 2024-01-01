@@ -15,7 +15,7 @@ const CaptchaView = ({ doNotRender }: ViewComponentProps) => {
         justifyContent="flex-start"
         maxHeight="100%"
         overflow="auto"
-        p={4}
+        p="2rem"
       >
         TODO - manage the queue of captchas that need to be solved manually
       </Stack>

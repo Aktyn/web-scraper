@@ -1,5 +1,7 @@
 import * as yup from 'yup'
 
+import type { Site } from '../site'
+
 import type { Action, ActionExecutionResult } from './action'
 import type { MapSiteError } from './common'
 
@@ -68,6 +70,11 @@ export interface Procedure {
   waitFor: string | null
   siteInstructionsId: number
   flow: FlowStep | null
+}
+
+export interface SiteProcedures {
+  site: Site
+  procedures: Procedure[]
 }
 
 type FlowSchemaTypeHelper = yup.ObjectSchema<

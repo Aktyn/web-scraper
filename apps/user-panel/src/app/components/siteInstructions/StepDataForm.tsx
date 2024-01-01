@@ -1,13 +1,5 @@
 import { CodeRounded, FormatListBulletedRounded, TimerRounded } from '@mui/icons-material'
-import {
-  FormControl,
-  FormControlLabel,
-  InputAdornment,
-  MenuItem,
-  Stack,
-  Switch,
-  TextField,
-} from '@mui/material'
+import { InputAdornment, MenuItem, Stack, TextField } from '@mui/material'
 import {
   ActionStepErrorType,
   ActionStepType,
@@ -21,6 +13,7 @@ import { ValueQueryInput } from './ValueQueryInput'
 import { actionStepErrorTypeNames, saveDataTypeNames } from '../../utils/dictionaries'
 import { ItemsList } from '../common/treeStructure/ItemsList'
 import { FormInput } from '../form/FormInput'
+import { FormSwitch } from '../form/FormSwitch'
 
 interface DataFieldFormProps {
   fieldName: `actions.${number}.actionSteps.${number}.data`
@@ -177,23 +170,11 @@ const ElementFormInput = ({ fieldName }: DataFieldFormProps) => {
 }
 
 const WaitForNavigationFormInput = ({ fieldName }: DataFieldFormProps) => {
-  const form = useFormContext<UpsertSiteInstructionsSchema>()
-
   return (
-    <FormControl>
-      <Controller
-        name={`${fieldName}.waitForNavigation`}
-        control={form.control}
-        render={({ field }) => (
-          <FormControlLabel
-            control={
-              <Switch checked={!!field.value} onChange={(_, checked) => field.onChange(checked)} />
-            }
-            label="Wait for navigation"
-          />
-        )}
-      />
-    </FormControl>
+    <FormSwitch<UpsertSiteInstructionsSchema>
+      fieldName={`${fieldName}.waitForNavigation`}
+      label="Wait for navigation"
+    />
   )
 }
 

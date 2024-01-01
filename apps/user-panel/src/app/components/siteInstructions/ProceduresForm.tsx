@@ -1,11 +1,16 @@
 import { useCallback, useContext, useState } from 'react'
-import { CodeRounded, FormatListBulletedRounded, LinkRounded } from '@mui/icons-material'
+import {
+  CodeRounded,
+  FormatListBulletedRounded,
+  LabelRounded,
+  LinkRounded,
+} from '@mui/icons-material'
 import { InputAdornment, MenuItem, Stack } from '@mui/material'
 import {
   ProcedureType,
+  type Action,
   type Procedure,
   type UpsertSiteInstructionsSchema,
-  type Action,
 } from '@web-scraper/common'
 import { useFieldArray, useFormContext } from 'react-hook-form'
 import { actionSchemaToExecutableAction } from './ActionsForm'
@@ -148,7 +153,7 @@ export const ProceduresForm = () => {
   return (
     <ItemsList
       title={
-        <Stack direction="row" alignItems="center" spacing={1} mr={2} color="text.secondary">
+        <Stack direction="row" alignItems="center" gap="0.5rem" mr="1rem" color="text.secondary">
           <ItemTitle>Procedures</ItemTitle>
           <TermInfo term="Procedure" sx={{ pointerEvents: 'all' }} />
         </Stack>
@@ -172,6 +177,18 @@ export const ProceduresForm = () => {
       {(field, index) => [
         field.id,
         <Stack key={field.id} flexGrow={1} gap={2}>
+          <FormInput
+            name={`procedures.${index}.name`}
+            form={form}
+            label="Name"
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <LabelRounded />
+                </InputAdornment>
+              ),
+            }}
+          />
           <FormInput
             name={`procedures.${index}.type`}
             form={form}

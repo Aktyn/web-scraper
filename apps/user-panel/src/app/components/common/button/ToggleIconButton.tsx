@@ -1,13 +1,18 @@
-import { type ReactNode, type Dispatch, type SetStateAction, useEffect, useRef } from 'react'
+import { useEffect, useRef, type ReactNode } from 'react'
 import { CloseRounded, EditRounded } from '@mui/icons-material'
-import { IconButton, type SvgIconProps, Tooltip } from '@mui/material'
+import { IconButton, Tooltip, type IconButtonProps, type SvgIconTypeMap } from '@mui/material'
+import { type OverridableComponent } from '@mui/material/OverridableComponent'
 import anime from 'animejs'
+
+type IconComponent = OverridableComponent<SvgIconTypeMap<unknown, 'svg'>> & { muiName: string }
 
 interface ToggleIconButtonProps {
   open: boolean
-  onToggle: Dispatch<SetStateAction<boolean>>
+  onToggle: (open: boolean) => void
   closeTooltip?: ReactNode
   openTooltip?: ReactNode
+  closedStateIcon?: IconComponent
+  openedStateIcon?: IconComponent
 }
 
 export const ToggleIconButton = ({
@@ -15,7 +20,10 @@ export const ToggleIconButton = ({
   onToggle,
   openTooltip,
   closeTooltip,
-}: ToggleIconButtonProps) => {
+  closedStateIcon: ClosedIcon = EditRounded,
+  openedStateIcon: OpenedIcon = CloseRounded,
+  ...iconButtonProps
+}: ToggleIconButtonProps & IconButtonProps) => {
   const buttonRef = useRef<HTMLButtonElement>(null)
 
   useEffect(() => {
@@ -37,25 +45,18 @@ export const ToggleIconButton = ({
     <Tooltip title={open ? openTooltip : closeTooltip}>
       <IconButton
         ref={buttonRef}
-        size="small"
-        onClick={() => onToggle((open) => !open)}
-        sx={{ position: 'relative', width: '1.75rem', height: '1.75rem' }}
+        onClick={() => onToggle(!open)}
+        {...iconButtonProps}
+        sx={{
+          position: 'relative',
+          ...iconButtonProps.sx,
+        }}
       >
-        <EditRounded {...toggleIconProps} />
-        <CloseRounded {...toggleIconProps} />
+        <ClosedIcon />
+        <OpenedIcon
+          sx={{ position: 'absolute', left: 0, top: 0, right: 0, bottom: 0, margin: 'auto' }}
+        />
       </IconButton>
     </Tooltip>
   )
-}
-
-const toggleIconProps: SvgIconProps = {
-  fontSize: 'inherit',
-  sx: {
-    position: 'absolute',
-    left: 0,
-    top: 0,
-    right: 0,
-    bottom: 0,
-    margin: 'auto',
-  },
 }

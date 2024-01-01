@@ -35,8 +35,12 @@ interface SiteFormProps {
 export const SiteForm = ({ site, onSuccess }: SiteFormProps) => {
   const addIconRef = useRef<SVGSVGElement>(null)
 
-  const createSiteRequest = useApiRequest(window.electronAPI.createSite)
-  const updateSiteRequest = useApiRequest(window.electronAPI.updateSite)
+  const { submit: createSiteRequest, submitting: creatingSite } = useApiRequest(
+    window.electronAPI.createSite,
+  )
+  const { submit: updateSiteRequest, submitting: updatingSite } = useApiRequest(
+    window.electronAPI.updateSite,
+  )
 
   const form = useForm({
     mode: 'onTouched',
@@ -63,7 +67,7 @@ export const SiteForm = ({ site, onSuccess }: SiteFormProps) => {
   const onSubmit = useCallback(
     (data: UpsertSiteSchema) => {
       if (siteId) {
-        updateSiteRequest.submit(
+        updateSiteRequest(
           {
             onSuccess: (_, { enqueueSnackbar }) => {
               enqueueSnackbar({ variant: 'success', message: 'Site updated' })
@@ -74,7 +78,7 @@ export const SiteForm = ({ site, onSuccess }: SiteFormProps) => {
           { ...data, language: data.language || null },
         )
       } else {
-        createSiteRequest.submit(
+        createSiteRequest(
           {
             onSuccess: (_, { enqueueSnackbar }) => {
               enqueueSnackbar({ variant: 'success', message: 'Site created' })
@@ -85,7 +89,7 @@ export const SiteForm = ({ site, onSuccess }: SiteFormProps) => {
         )
       }
     },
-    [createSiteRequest, updateSiteRequest, onSuccess, siteId],
+    [createSiteRequest, onSuccess, siteId, updateSiteRequest],
   )
 
   useEffect(() => {
@@ -117,13 +121,13 @@ export const SiteForm = ({ site, onSuccess }: SiteFormProps) => {
       <Stack
         flexGrow={1}
         justifyContent="space-between"
-        p={2}
-        spacing={2}
+        p="1rem"
+        gap="1rem"
         overflow="auto"
         component="form"
         onSubmit={form.handleSubmit(onSubmit)}
       >
-        <Stack spacing={2}>
+        <Stack gap="1rem">
           {site && (
             <TextField
               label="Created"
@@ -216,7 +220,7 @@ export const SiteForm = ({ site, onSuccess }: SiteFormProps) => {
             type="submit"
             endIcon={<SendRounded />}
             disabled={!url}
-            loading={createSiteRequest.submitting || updateSiteRequest.submitting}
+            loading={creatingSite || updatingSite}
             loadingPosition="end"
           >
             {site ? 'Update' : 'Submit'}

@@ -1,4 +1,9 @@
-import { ErrorCode } from '@web-scraper/common'
+import {
+  ErrorCode,
+  type Routine,
+  type UpsertRoutineSchema,
+  upsertRoutineSchema,
+} from '@web-scraper/common'
 
 import Database from './index'
 import { getProcedureFlow } from './siteInstructions'
@@ -48,4 +53,101 @@ export async function getRoutine(routineId: number) {
       })),
     ),
   }
+}
+
+function validateUpsertSchema(data: UpsertRoutineSchema) {
+  try {
+    upsertRoutineSchema.validateSync(data)
+  } catch (error) {
+    throw ErrorCode.INCORRECT_DATA
+  }
+}
+
+async function throwIfNameExists(name: string, omitId?: Routine['id']) {
+  if (omitId) {
+    if (
+      await Database.prisma.routine.findFirst({
+        where: {
+          AND: [{ id: { not: omitId } }, { name }],
+        },
+      })
+    ) {
+      throw ErrorCode.ENTRY_ALREADY_EXISTS
+    }
+  } else if (
+    await Database.prisma.routine.findUnique({
+      where: { name },
+    })
+  ) {
+    throw ErrorCode.ENTRY_ALREADY_EXISTS
+  }
+}
+
+export async function createRoutine(data: UpsertRoutineSchema) {
+  validateUpsertSchema(data)
+  await throwIfNameExists(data.name)
+
+  const newRoutine = await Database.prisma.routine.create({
+    data: {
+      name: data.name,
+      description: data.description,
+      stopOnError: data.stopOnError,
+      executionPlan: JSON.stringify(data.executionPlan),
+      Procedures: {
+        create: data.procedureIds.map((id) => ({
+          procedureId: id,
+        })),
+      },
+    },
+    include: {
+      Procedures: {
+        include: {
+          Procedure: true,
+        },
+      },
+    },
+  })
+
+  return getRoutine(newRoutine.id)
+}
+
+export async function updateRoutine(id: Routine['id'], data: UpsertRoutineSchema) {
+  validateUpsertSchema(data)
+  await throwIfNameExists(data.name, id)
+
+  await Database.prisma.routineProcedureRelation.deleteMany({
+    where: {
+      routineId: id,
+    },
+  })
+
+  const updatedRoutine = await Database.prisma.routine.update({
+    where: { id },
+    data: {
+      name: data.name,
+      description: data.description,
+      stopOnError: data.stopOnError,
+      executionPlan: JSON.stringify(data.executionPlan),
+      Procedures: {
+        create: data.procedureIds.map((id) => ({
+          procedureId: id,
+        })),
+      },
+    },
+    include: {
+      Procedures: {
+        include: {
+          Procedure: true,
+        },
+      },
+    },
+  })
+
+  return getRoutine(updatedRoutine.id)
+}
+
+export function deleteRoutine(id: Routine['id']) {
+  return Database.prisma.routine.delete({
+    where: { id },
+  })
 }

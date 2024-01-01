@@ -205,3 +205,45 @@ export async function setSiteInstructions(
     throw ErrorCode.DATABASE_ERROR
   }
 }
+
+export async function getProceduresGroupedBySite() {
+  const results = await Database.prisma.siteInstructions.findMany({
+    select: {
+      Site: {
+        include: {
+          Tags: {
+            include: {
+              Tag: true,
+            },
+          },
+        },
+      },
+      Procedures: {
+        include: {
+          FlowStep: true,
+        },
+      },
+    },
+    where: {
+      Procedures: {
+        some: {
+          id: {
+            gte: 0,
+          },
+        },
+      },
+    },
+  })
+
+  return Promise.all(
+    results.map(async (result) => ({
+      ...result,
+      Procedures: await Promise.all(
+        result.Procedures.map(async (procedure) => ({
+          ...procedure,
+          FlowStep: procedure.FlowStep ? await getProcedureFlow(procedure.FlowStep) : null,
+        })),
+      ),
+    })),
+  )
+}

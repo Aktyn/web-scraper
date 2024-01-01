@@ -1,4 +1,6 @@
-import type { DataSourceColumnType, DataSourceItem, DataSourceStructure } from './dataSource'
+import * as yup from 'yup'
+
+import type { DataSourceColumnType, DataSourceItem } from './dataSource'
 import type { Procedure } from './procedure'
 
 export interface Routine {
@@ -10,18 +12,13 @@ export interface Routine {
   executionPlan:
     | {
         type: RoutineExecutionType.MATCH_SEQUENTIALLY
-        dataSource: DataSourceStructure
+        dataSourceName: string
         filter: DataSourceFilter
         maximumIterations?: number
       }
     | {
-        type: RoutineExecutionType.SPECIFIC_IDS
-        dataSource: DataSourceStructure
-        ids: DataSourceItem['id'][]
-      }
-    | {
-        type: RoutineExecutionType.EXCEPT_SPECIFIC_IDS
-        dataSource: DataSourceStructure
+        type: RoutineExecutionType.SPECIFIC_IDS | RoutineExecutionType.EXCEPT_SPECIFIC_IDS
+        dataSourceName: string
         ids: DataSourceItem['id'][]
       }
     | {
@@ -96,3 +93,37 @@ type DataSourceNumberFilter =
       gt?: number
       gte?: number
     }
+
+export const upsertRoutineSchema = yup
+  .object({
+    name: yup.string().required('Name is required'),
+    description: yup.string().nullable().default(null).notRequired(),
+    stopOnError: yup.boolean().default(false).required(),
+    procedureIds: yup.array().of(yup.number().min(0).required()).default([]).required(),
+    executionPlan: yup
+      .mixed()
+      .oneOf([
+        yup.object({
+          type: yup.string().oneOf([RoutineExecutionType.MATCH_SEQUENTIALLY]).required(),
+          dataSourceName: yup.string().required(),
+          filter: yup.object().required(), //TODO: more detailed validation
+          maximumIterations: yup.number().integer().min(1).default(1).notRequired(),
+        }),
+        yup.object({
+          type: yup
+            .string()
+            .oneOf([RoutineExecutionType.SPECIFIC_IDS, RoutineExecutionType.EXCEPT_SPECIFIC_IDS])
+            .required(),
+          dataSourceName: yup.string().required(),
+          ids: yup.array().of(yup.number()).required(),
+        }),
+        yup.object({
+          type: yup.string().oneOf([RoutineExecutionType.STANDALONE]).required(),
+          repeat: yup.number().integer().min(1).default(1).notRequired(),
+        }),
+      ])
+      .required(),
+  })
+  .required()
+
+export type UpsertRoutineSchema = yup.InferType<typeof upsertRoutineSchema>
