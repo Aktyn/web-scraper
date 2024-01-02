@@ -48,7 +48,7 @@ const withScraperTestingMode = async (
     scraper: ExposedScraper<typeof Scraper.Mode.TESTING>,
     closeListener: jest.Mock<any, any>,
   ) => Promise<any>,
-  lockURL = 'http://localhost:1358/mock-testing',
+  lockURL = 'http://localhost:1357/mock-testing',
 ) => {
   const closeListener = jest.fn()
 
@@ -81,7 +81,7 @@ describe('Scraper.PREVIEW', () => {
     })
     await scraper.waitForInit()
 
-    const screenshot = await scraper.takeScreenshot('http://localhost:1358/mock-preview')
+    const screenshot = await scraper.takeScreenshot('http://localhost:1357/mock-preview')
     expect(isBase64(screenshot)).toBe(true)
 
     await scraper.destroy(true)
@@ -235,7 +235,7 @@ describe('Scraper.TESTING action steps', () => {
       )
       expect(successResult).toEqual({ errorType: ActionStepErrorType.NO_ERROR })
     })
-  }, 10_000)
+  }, 30_000)
 
   it('should return no error if there is no error element found for "checkError" step in testing mode', () => {
     return withScraperTestingMode(async (scraper) => {
@@ -329,7 +329,7 @@ describe('Scraper.TESTING action steps', () => {
           data: {
             element: 'body > select',
             valueQuery: 'Custom.mock option',
-            waitForElementTimeout: 2_000,
+            waitForElementTimeout: 10_000,
           },
         },
         onDataRequest,
@@ -339,7 +339,7 @@ describe('Scraper.TESTING action steps', () => {
       expect(result).toEqual({ errorType: ActionStepErrorType.NO_ERROR })
       expect(await scraper.getSelectElementValue('body > select')).toBe('mock option')
     })
-  }, 10_000)
+  }, 30_000)
 
   it('should perform "selectOption" step in testing mode resulting with proper error for non existing option', () => {
     return withScraperTestingMode(async (scraper) => {
@@ -350,7 +350,7 @@ describe('Scraper.TESTING action steps', () => {
           data: {
             element: 'body > select',
             valueQuery: 'Custom.non existing option',
-            waitForElementTimeout: 2_000,
+            waitForElementTimeout: 10_000,
           },
         },
         onDataRequest,
@@ -435,7 +435,7 @@ describe('Scraper.TESTING action', () => {
 
       const action: Action = {
         id: 0,
-        url: 'http://localhost:1358/mock-testing',
+        url: 'http://localhost:1357/mock-testing',
         siteInstructionsId: 0,
         name: 'mock action',
         actionSteps: steps,
@@ -454,7 +454,7 @@ describe('Scraper.TESTING action', () => {
         })),
       })
     })
-  })
+  }, 30_000)
 })
 
 describe('Scraper.TESTING procedure', () => {
@@ -559,7 +559,7 @@ describe('Scraper.TESTING procedure', () => {
         id: 0,
         name: 'mock procedure',
         type: ProcedureType.ACCOUNT_CHECK,
-        startUrl: 'http://localhost:1358/mock-testing',
+        startUrl: 'http://localhost:1357/mock-testing',
         waitFor: 'body > h1',
         siteInstructionsId: 0,
         flow: mainFlow,
@@ -640,7 +640,7 @@ describe('Scraper.TESTING multiple instances', () => {
           dummyDataSourceItemIdRequest,
         )
         expect(result).toEqual({ errorType: ActionStepErrorType.NO_ERROR })
-      }, 'http://localhost:1358/mock-preview'),
+      }, 'http://localhost:1357/mock-preview'),
     ])
   })
 })

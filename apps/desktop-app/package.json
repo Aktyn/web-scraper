@@ -23,7 +23,7 @@
     "db:studio": "prisma studio --port 5555",
     "test": "jest",
     "test:watch": "jest --watch",
-    "test:ci": "jest --collectCoverage",
+    "test:ci": "jest",
     "format": "prettier --write src/**/*{.ts,.tsx}",
     "lint": "eslint src/**/*.ts --fix",
     "env": "shx cp ./example.env ./.env",

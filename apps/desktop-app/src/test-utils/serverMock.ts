@@ -7,7 +7,7 @@ export function initServer(app = express()) {
     })
   }
 
-  const port = 1358
+  const port = 1357
   try {
     return app.listen(port)
   } catch {
