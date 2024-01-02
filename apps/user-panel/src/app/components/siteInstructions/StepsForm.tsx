@@ -117,7 +117,7 @@ export const StepsForm = ({ fieldName, testingAction }: StepsFormProps) => {
     >
       {(field, index) => [
         field.id,
-        <Stack key={field.id} flexGrow={1} gap={2}>
+        <Stack key={field.id} flexGrow={1} gap="1rem">
           <FormInput
             name={`${fieldName}.${index}.type`}
             form={form}

@@ -1,24 +1,21 @@
-import {
-  Fragment,
-  useCallback,
-  useMemo,
-  useState,
-  type PropsWithChildren,
-  type ReactNode,
-} from 'react'
+import { useCallback, useMemo, useState, type PropsWithChildren, type ReactNode } from 'react'
 import { yupResolver } from '@hookform/resolvers/yup'
-import { ChecklistRounded, LabelRounded, SendRounded, SouthRounded } from '@mui/icons-material'
+import { ChecklistRounded, LabelRounded, SendRounded } from '@mui/icons-material'
 import { LoadingButton } from '@mui/lab'
-import { Grow, InputAdornment, Skeleton, Stack, Typography } from '@mui/material'
+import { FormHelperText, InputAdornment, Skeleton, Stack, Typography } from '@mui/material'
 import {
   upsertRoutineSchema,
   type Procedure,
+  type Site,
   type SiteProcedures,
   type UpsertRoutineSchema,
+  RoutineExecutionType,
 } from '@web-scraper/common'
 import { FormProvider, useForm } from 'react-hook-form'
 import { usePersistentState } from 'src/app/hooks/usePersistentState'
 import { ProcedureSelectList } from './ProcedureSelectList'
+import { ProceduresSequence } from './ProceduresSequence'
+import { RoutineExecutionPlanForm } from './RoutineExecutionPlanForm'
 import { useApiRequest } from '../../../app/hooks/useApiRequest'
 import { LabeledDivider } from '../common/LabeledDivider'
 import { NestedDrawer } from '../common/NestedDrawer'
@@ -61,6 +58,10 @@ export const RoutineForm = ({ onSuccess }: RoutineFormProps) => {
     resolver: yupResolver(upsertRoutineSchema),
     defaultValues: {
       procedureIds: [],
+      executionPlan: {
+        type: RoutineExecutionType.STANDALONE,
+        repeat: 1,
+      },
     },
     // defaultValues: site
     //   ? {
@@ -78,16 +79,22 @@ export const RoutineForm = ({ onSuccess }: RoutineFormProps) => {
 
   const { setValue } = form
   const procedureIds = form.watch('procedureIds')
+  const proceduresError = form.formState.errors.procedureIds?.message
 
   const selectedProceduresList = useMemo(() => {
-    const procedures = siteProcedures.flatMap((site) => site.procedures)
-    return (procedureIds ?? []).reduce((acc, id) => {
-      const procedure = procedures.find((procedure) => procedure.id === id)
-      if (procedure) {
-        acc.push(procedure)
-      }
-      return acc
-    }, [] as Procedure[])
+    const proceduresWithSites = siteProcedures.flatMap((site) =>
+      site.procedures.map((procedure) => ({ site: site.site, procedure })),
+    )
+    return (procedureIds ?? []).reduce(
+      (acc, id) => {
+        const proceduresWithSite = proceduresWithSites.find(({ procedure }) => procedure.id === id)
+        if (proceduresWithSite) {
+          acc.push(proceduresWithSite)
+        }
+        return acc
+      },
+      [] as { site: Site; procedure: Procedure }[],
+    )
   }, [procedureIds, siteProcedures])
 
   const onSubmit = useCallback(
@@ -112,7 +119,22 @@ export const RoutineForm = ({ onSuccess }: RoutineFormProps) => {
         checked
           ? [...new Set([...(procedureIds ?? []), procedure.id])]
           : (procedureIds ?? []).filter((id) => id !== procedure.id),
+        { shouldValidate: true, shouldDirty: true },
       )
+    },
+    [procedureIds, setValue],
+  )
+
+  const handleSwapSelectedProcedures = useCallback(
+    (index1: number, index2: number) => {
+      if (index1 === index2) {
+        return
+      }
+      const newProcedureIds = [...(procedureIds ?? [])]
+      const temp = newProcedureIds[index1]
+      newProcedureIds[index1] = newProcedureIds[index2]
+      newProcedureIds[index2] = temp
+      setValue('procedureIds', newProcedureIds)
     },
     [procedureIds, setValue],
   )
@@ -183,33 +205,23 @@ export const RoutineForm = ({ onSuccess }: RoutineFormProps) => {
               </Stack>
             }
           >
-            <Stack alignItems="center" gap="0.5rem">
-              {selectedProceduresList?.length ? (
-                <Stack alignItems="center" rowGap="0.5rem" color="text.secondary">
-                  {selectedProceduresList.map((procedure, index) => (
-                    <Fragment key={procedure.id}>
-                      {index > 0 && (
-                        <Grow in>
-                          <SouthRounded color="inherit" />
-                        </Grow>
-                      )}
-                      <Grow in>
-                        <Typography variant="body2" color="text.primary" fontWeight="bold">
-                          {procedure.name}
-                        </Typography>
-                      </Grow>
-                    </Fragment>
-                  ))}
-                </Stack>
-              ) : (
-                <Typography variant="body2" color="text.secondary">
-                  No procedures selected
-                </Typography>
-              )}
-            </Stack>
+            <ProceduresSequence
+              selectedProceduresList={selectedProceduresList}
+              onSwap={handleSwapSelectedProcedures}
+              onRemove={(procedure) => handleProcedureChecked(procedure, false)}
+            />
+            {proceduresError && (
+              <FormHelperText
+                variant="standard"
+                margin="dense"
+                sx={{ color: (theme) => theme.palette.error.main, textAlign: 'center' }}
+              >
+                {proceduresError}
+              </FormHelperText>
+            )}
           </FieldsGroup>
           <FieldsGroup title="Execution plan">
-            <Stack>TODO</Stack>
+            <RoutineExecutionPlanForm />
           </FieldsGroup>
         </Stack>
         <Stack direction="row" alignItems="center" justifyContent="center">
@@ -243,11 +255,13 @@ export const RoutineForm = ({ onSuccess }: RoutineFormProps) => {
             ))}
           </Stack>
         ) : (
-          <ProcedureSelectList
-            siteProcedures={siteProcedures}
-            selectedProcedures={procedureIds}
-            onToggle={handleProcedureChecked}
-          />
+          <Stack overflow="auto">
+            <ProcedureSelectList
+              siteProcedures={siteProcedures}
+              selectedProcedures={procedureIds}
+              onToggle={handleProcedureChecked}
+            />
+          </Stack>
         )}
       </NestedDrawer>
     </FormProvider>

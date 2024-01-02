@@ -1,6 +1,6 @@
 import { useEffect, useRef, type ReactNode } from 'react'
 import { CloseRounded, EditRounded } from '@mui/icons-material'
-import { IconButton, Tooltip, type IconButtonProps, type SvgIconTypeMap } from '@mui/material'
+import { Box, IconButton, Tooltip, type IconButtonProps, type SvgIconTypeMap } from '@mui/material'
 import { type OverridableComponent } from '@mui/material/OverridableComponent'
 import anime from 'animejs'
 
@@ -43,20 +43,22 @@ export const ToggleIconButton = ({
 
   return (
     <Tooltip title={open ? openTooltip : closeTooltip}>
-      <IconButton
-        ref={buttonRef}
-        onClick={() => onToggle(!open)}
-        {...iconButtonProps}
-        sx={{
-          position: 'relative',
-          ...iconButtonProps.sx,
-        }}
-      >
-        <ClosedIcon />
-        <OpenedIcon
-          sx={{ position: 'absolute', left: 0, top: 0, right: 0, bottom: 0, margin: 'auto' }}
-        />
-      </IconButton>
+      <Box>
+        <IconButton
+          ref={buttonRef}
+          onClick={() => onToggle(!open)}
+          {...iconButtonProps}
+          sx={{
+            position: 'relative',
+            ...iconButtonProps.sx,
+          }}
+        >
+          <ClosedIcon />
+          <OpenedIcon
+            sx={{ position: 'absolute', left: 0, top: 0, right: 0, bottom: 0, margin: 'auto' }}
+          />
+        </IconButton>
+      </Box>
     </Tooltip>
   )
 }

@@ -1,5 +1,7 @@
 import * as yup from 'yup'
 
+import { transformNanToUndefined } from '../common'
+
 import type { DataSourceColumnType, DataSourceItem } from './dataSource'
 import type { Procedure } from './procedure'
 
@@ -28,7 +30,7 @@ export interface Routine {
       }
 }
 
-enum RoutineExecutionType {
+export enum RoutineExecutionType {
   /** Executes sequence of procedures sequentially for each filtered item in the data source */
   MATCH_SEQUENTIALLY = 'matchSequentially',
 
@@ -94,35 +96,68 @@ type DataSourceNumberFilter =
       gte?: number
     }
 
+export const upsertMatchSequentiallyExecutionPlanSchema = yup.object({
+  type: yup.string().oneOf([RoutineExecutionType.MATCH_SEQUENTIALLY]).required(),
+  dataSourceName: yup.string().required().default(''),
+  filter: yup.object().required(), //TODO: more detailed validation
+  maximumIterations: yup
+    .number()
+    .integer()
+    .min(1)
+    .default(1)
+    .notRequired()
+    .transform(transformNanToUndefined),
+})
+
+export const upsertSpecificIdsExecutionPlanSchema = yup.object({
+  type: yup
+    .string()
+    .oneOf([RoutineExecutionType.SPECIFIC_IDS, RoutineExecutionType.EXCEPT_SPECIFIC_IDS])
+    .required(),
+  dataSourceName: yup.string().required().default(''),
+  ids: yup
+    .array()
+    .of(yup.number().required())
+    .min(1, 'There must be at least one id selected')
+    .default([])
+    .required(),
+})
+
+export const upsertStandaloneExecutionPlanSchema = yup.object({
+  type: yup.string().oneOf([RoutineExecutionType.STANDALONE]).required(),
+  repeat: yup
+    .number()
+    .integer()
+    .min(1)
+    .default(1)
+    .nullable()
+    .notRequired()
+    .transform(transformNanToUndefined),
+})
+
 export const upsertRoutineSchema = yup
   .object({
     name: yup.string().required('Name is required'),
     description: yup.string().nullable().default(null).notRequired(),
     stopOnError: yup.boolean().default(false).required(),
-    procedureIds: yup.array().of(yup.number().min(0).required()).default([]).required(),
-    executionPlan: yup
-      .mixed()
-      .oneOf([
-        yup.object({
-          type: yup.string().oneOf([RoutineExecutionType.MATCH_SEQUENTIALLY]).required(),
-          dataSourceName: yup.string().required(),
-          filter: yup.object().required(), //TODO: more detailed validation
-          maximumIterations: yup.number().integer().min(1).default(1).notRequired(),
-        }),
-        yup.object({
-          type: yup
-            .string()
-            .oneOf([RoutineExecutionType.SPECIFIC_IDS, RoutineExecutionType.EXCEPT_SPECIFIC_IDS])
-            .required(),
-          dataSourceName: yup.string().required(),
-          ids: yup.array().of(yup.number()).required(),
-        }),
-        yup.object({
-          type: yup.string().oneOf([RoutineExecutionType.STANDALONE]).required(),
-          repeat: yup.number().integer().min(1).default(1).notRequired(),
-        }),
-      ])
+    procedureIds: yup
+      .array()
+      .of(yup.number().min(0).required())
+      .min(1, 'There must be at least one procedure selected')
+      .default([])
       .required(),
+    executionPlan: yup.lazy((value) => {
+      switch (value?.type as RoutineExecutionType) {
+        case RoutineExecutionType.MATCH_SEQUENTIALLY:
+          return upsertMatchSequentiallyExecutionPlanSchema
+        case RoutineExecutionType.SPECIFIC_IDS:
+        case RoutineExecutionType.EXCEPT_SPECIFIC_IDS:
+          return upsertSpecificIdsExecutionPlanSchema
+        case RoutineExecutionType.STANDALONE:
+          return upsertStandaloneExecutionPlanSchema
+      }
+      return yup.object().strip()
+    }),
   })
   .required()
 

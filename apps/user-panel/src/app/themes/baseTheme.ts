@@ -77,7 +77,7 @@ export const baseThemeOptions: ThemeOptions = {
         {
           props: { readOnly: true },
           style: {
-            '&::before, &::after': {
+            '&:not(.always-show-border)::before, &:not(.always-show-border)::after': {
               borderBottom: 'none !important',
             },
           },

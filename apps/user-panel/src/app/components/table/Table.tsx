@@ -52,6 +52,7 @@ interface TableProps<DataType extends object, KeyPropertyType extends string & P
   onEdit?: (data: DataType) => void
   onDelete?: (data: DataType) => void
   onRowClick?: (row: DataType) => void
+  allowUnselect?: boolean
   selectedRowKeys?: ExtractTypeByPath<DataType, KeyPropertyType>[]
   hideRefreshButton?: boolean
 }
@@ -72,6 +73,7 @@ export const Table = genericMemo(
         onEdit,
         onDelete,
         onRowClick,
+        allowUnselect,
         selectedRowKeys = emptyArray,
         hideRefreshButton,
       }: TableProps<DataType, KeyPropertyType> & RefAttributes<TableRef>,
@@ -253,7 +255,7 @@ export const Table = genericMemo(
                     : undefined
 
                   const selected = !!key && selectedRowKeys?.includes(key)
-                  const clickable = !!onRowClick && !selected
+                  const clickable = !!onRowClick && (!selected || allowUnselect)
 
                   return (
                     <TableRow

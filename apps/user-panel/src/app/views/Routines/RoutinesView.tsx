@@ -2,18 +2,21 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { FindInPageRounded } from '@mui/icons-material'
 import { Box, Grow, Skeleton, Stack, Typography } from '@mui/material'
 import type { Routine } from '@web-scraper/common'
+import { DataSourcesContext } from 'src/app/context/dataSourcesContext'
 import { ViewTransition } from '../../components/animation/ViewTransition'
 import { CustomDrawer, type CustomDrawerRef } from '../../components/common/CustomDrawer'
 import { TabsView, type TabSchema } from '../../components/common/TabsView'
 import { TermInfo } from '../../components/common/TermInfo'
 import { RoutineForm } from '../../components/routine/RoutineForm'
 import { useApiRequest } from '../../hooks/useApiRequest'
+import { useDataSourcesLoader } from '../../hooks/useDataSourcesLoader'
 import { usePersistentState } from '../../hooks/usePersistentState'
 import type { ViewComponentProps } from '../helpers'
 
 const RoutinesView = ({ doNotRender }: ViewComponentProps) => {
   const siteDrawerRef = useRef<CustomDrawerRef>(null)
   const { submit: getRoutinesRequest } = useApiRequest(window.electronAPI.getRoutines)
+  const { loadDataSources, dataSources } = useDataSourcesLoader()
 
   const [tabsReady, setTabsReady] = useState(true)
   const [routines, setRoutines] = usePersistentState<Pick<Routine, 'id' | 'name'>[]>(
@@ -21,6 +24,10 @@ const RoutinesView = ({ doNotRender }: ViewComponentProps) => {
     [],
   )
   const [loadingRoutines, setLoadingRoutines] = usePersistentState('routines-list-loading', true)
+
+  useEffect(() => {
+    void loadDataSources()
+  }, [loadDataSources])
 
   const loadRoutines = useCallback(() => {
     getRoutinesRequest({
@@ -85,7 +92,7 @@ const RoutinesView = ({ doNotRender }: ViewComponentProps) => {
   }
 
   return (
-    <>
+    <DataSourcesContext.Provider value={dataSources ?? emptyArray}>
       <CustomDrawer
         ref={siteDrawerRef}
         title={
@@ -106,7 +113,7 @@ const RoutinesView = ({ doNotRender }: ViewComponentProps) => {
         onTabsEntryAnimationStarted={() => setTabsReady(false)}
         onTabsEntryAnimationFinished={() => setTabsReady(true)}
       />
-    </>
+    </DataSourcesContext.Provider>
   )
 
   // TODO: Create, delete, or modify routines, and select existing data sources or create
@@ -129,3 +136,5 @@ const RoutinesView = ({ doNotRender }: ViewComponentProps) => {
   // Testing routines will only be option for previewing puppeteer window
 }
 export default RoutinesView
+
+const emptyArray = [] as never[]

@@ -160,7 +160,7 @@ export const FlowStepForm = ({
 
         return [
           index,
-          <Stack key={index} flexGrow={1} gap={2}>
+          <Stack key={index} flexGrow={1} gap="1rem">
             <ActionNameInput fieldName={fieldName} />
             {isGlobalAction(field.actionName as FlowStep['actionName']) && (
               <GlobalReturnValuesForm

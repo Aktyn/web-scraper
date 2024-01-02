@@ -5,6 +5,7 @@ import {
   DataSourceColumnType,
   GlobalActionType,
   ProcedureType,
+  RoutineExecutionType,
   SaveDataType,
   ScraperExecutionScope,
 } from '@web-scraper/common'
@@ -72,4 +73,11 @@ export const saveDataTypeNames: { [key in SaveDataType]: string } = {
   [SaveDataType.CUSTOM]: 'Custom',
   [SaveDataType.ELEMENT_CONTENT]: 'Element content',
   [SaveDataType.SET_NULL]: 'Set null',
+}
+
+export const routineExecutionTypeNames: { [key in RoutineExecutionType]: string } = {
+  [RoutineExecutionType.MATCH_SEQUENTIALLY]: 'Match sequentially',
+  [RoutineExecutionType.SPECIFIC_IDS]: 'Specific ids',
+  [RoutineExecutionType.EXCEPT_SPECIFIC_IDS]: 'Except specific ids',
+  [RoutineExecutionType.STANDALONE]: 'Standalone',
 }

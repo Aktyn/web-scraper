@@ -2,17 +2,12 @@ import { useCallback, useRef, useState } from 'react'
 import { DeleteSweepRounded, FileDownloadRounded, FileUploadRounded } from '@mui/icons-material'
 import { Box, IconButton, Stack, Tooltip } from '@mui/material'
 import { type DataSourceItem, type DataSourceStructure } from '@web-scraper/common'
-import {
-  type ColumnDefinition,
-  Table,
-  type TableRef,
-  useTableColumns,
-} from 'src/app/components/table'
+import { Table, type TableRef } from 'src/app/components/table'
+import { useDataSourceTableColumns } from 'src/app/hooks/useDataSourceTableColumns'
 import { TransitionType, ViewTransition } from '../../components/animation/ViewTransition'
 import { ConfirmationDialog } from '../../components/common/ConfirmationDialog'
 import { CustomDrawer, type CustomDrawerRef } from '../../components/common/CustomDrawer'
 import { ConfirmableButton } from '../../components/common/button/ConfirmableButton'
-import { DataSourceColumnTypeIcon } from '../../components/dataSource/DataSourceColumnTypeIcon'
 import { DataSourceItemForm } from '../../components/dataSource/DataSourceItemForm'
 import { useApiRequest } from '../../hooks/useApiRequest'
 
@@ -29,39 +24,7 @@ export const DataSource = ({ dataSource }: DataSourceProps) => {
   const exportDataSourceRequest = useApiRequest(window.electronAPI.exportDataSourceItems)
   const importDataSourceRequest = useApiRequest(window.electronAPI.importDataSourceItems)
 
-  const columns = useTableColumns<DataSourceItem>(
-    {
-      definitions: [
-        {
-          id: 'id',
-          header: 'ID',
-          accessor: 'id',
-          cellSx: { width: '4rem' },
-        },
-        ...dataSource.columns.map(
-          (column) =>
-            ({
-              id: column.name,
-              header: (
-                <Stack
-                  direction="row"
-                  alignItems="center"
-                  justifyContent="flex-start"
-                  columnGap="0.25rem"
-                >
-                  <DataSourceColumnTypeIcon type={column.type} sx={{ opacity: 0.5 }} />
-                  <Box>{column.name}</Box>
-                </Stack>
-              ),
-              accessor: (item) =>
-                item.data.find((entry) => entry.columnName === column.name)?.value?.toString() ??
-                null,
-            }) satisfies ColumnDefinition<DataSourceItem>,
-        ),
-      ],
-    },
-    [dataSource.columns],
-  )
+  const columns = useDataSourceTableColumns(dataSource.columns)
 
   const [dataSourceItemToDelete, setDataSourceItemToDelete] = useState<DataSourceItem | null>(null)
   const [dataSourceItemToEdit, setDataSourceItemToEdit] = useState<DataSourceItem | null>(null)

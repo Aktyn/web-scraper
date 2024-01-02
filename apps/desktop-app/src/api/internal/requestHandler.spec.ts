@@ -374,6 +374,7 @@ describe('registerRequestsHandler', () => {
       ],
       procedures: [
         {
+          name: 'Login',
           flow: {
             actionName: 'action.name',
             globalReturnValues: [],

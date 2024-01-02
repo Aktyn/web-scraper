@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { SendRounded, SourceRounded } from '@mui/icons-material'
+import { SendRounded } from '@mui/icons-material'
 import { LoadingButton } from '@mui/lab'
 import {
   Box,
@@ -8,26 +8,25 @@ import {
   DialogActions,
   DialogContent,
   DialogContentText,
-  type DialogProps,
   DialogTitle,
   Stack,
-  Tooltip,
+  type DialogProps,
 } from '@mui/material'
 import {
+  ElectronToRendererMessage,
+  ErrorCode,
+  dataSourceQueryRegex,
   type ActionStep,
   type ApiError,
   type DataSourceItem,
-  dataSourceQueryRegex,
   type DataSourceValueQuery,
-  ElectronToRendererMessage,
-  ErrorCode,
 } from '@web-scraper/common'
 import { useApiRequest } from '../../hooks/useApiRequest'
+import { useDataSourceTableColumns } from '../../hooks/useDataSourceTableColumns'
 import { useDataSourcesLoader } from '../../hooks/useDataSourcesLoader'
 import { actionStepTypeNames } from '../../utils/dictionaries'
 import { LabeledValuesList } from '../common/LabeledValuesList'
-import { DataSourceColumnTypeIcon } from '../dataSource/DataSourceColumnTypeIcon'
-import { type ColumnDefinition, Table, useTableColumns } from '../table'
+import { Table } from '../table'
 
 interface DataSchema {
   requestId: string
@@ -65,58 +64,20 @@ export function DataSourceItemForActionStepDialog({
 
   const [dataSourceFromData, targetColumnName] = useMemo(() => {
     if (!data?.dataSourceQuery?.match(dataSourceQueryRegex)) {
-      return [null, null]
+      return [undefined, undefined]
     }
 
     const [, dataSourceName, columnName] = data.dataSourceQuery.split('.') ?? ['', '', '']
 
     const dataSource = (dataSources ?? []).find(({ name }) => name === dataSourceName)
     if (!dataSource) {
-      return [null, null]
+      return [undefined, undefined]
     }
 
     return [dataSource, columnName]
   }, [data?.dataSourceQuery, dataSources])
 
-  const columns = useTableColumns<DataSourceItem>(
-    {
-      definitions: [
-        {
-          id: 'id',
-          header: 'ID',
-          accessor: 'id',
-          cellSx: { width: '4rem' },
-        },
-        ...(dataSourceFromData?.columns ?? []).map(
-          (column) =>
-            ({
-              id: column.name,
-              header: (
-                <Tooltip
-                  title={column.name === targetColumnName ? 'Source column' : ''}
-                  placement="bottom-start"
-                >
-                  <Stack
-                    direction="row"
-                    alignItems="center"
-                    justifyContent="flex-start"
-                    columnGap="0.25rem"
-                  >
-                    {column.name === targetColumnName && <SourceRounded color="secondary" />}
-                    <DataSourceColumnTypeIcon type={column.type} sx={{ opacity: 0.5 }} />
-                    <Box>{column.name}</Box>
-                  </Stack>
-                </Tooltip>
-              ),
-              accessor: (item) =>
-                item.data.find((entry) => entry.columnName === column.name)?.value?.toString() ??
-                null,
-            }) satisfies ColumnDefinition<DataSourceItem>,
-        ),
-      ],
-    },
-    [dataSourceFromData?.columns],
-  )
+  const columns = useDataSourceTableColumns(dataSourceFromData?.columns, targetColumnName)
 
   const dataFetcher = useCallback<typeof window.electronAPI.getDataSourceItems>(
     (request) => {
@@ -153,7 +114,7 @@ export function DataSourceItemForActionStepDialog({
         </DialogTitle>
       </Stack>
       <DialogContent sx={{ pt: 0 }}>
-        <Stack alignItems="center" rowGap={1}>
+        <Stack alignItems="center" rowGap="0.5rem">
           <LabeledValuesList
             data={[
               {
@@ -167,7 +128,7 @@ export function DataSourceItemForActionStepDialog({
             ]}
           />
           <DialogContentText color="text.primary" whiteSpace="pre-wrap">
-            Select row to update column <strong>{targetColumnName}</strong>
+            Select row <strong>{targetColumnName ?? '-'}</strong>
           </DialogContentText>
           <Box
             sx={{

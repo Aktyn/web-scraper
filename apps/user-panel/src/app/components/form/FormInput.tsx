@@ -16,6 +16,7 @@ interface FormInputProps<FormSchema extends object>
   name: FieldPath<FormSchema>
   form: UseFormReturn<FormSchema>
   required?: boolean
+  disabled?: boolean
   debounceChange?: boolean | number
 }
 
@@ -23,6 +24,7 @@ export const FormInput = <FormSchema extends object>({
   name,
   form,
   required,
+  disabled,
   debounceChange,
   error: externalError,
   ...textFieldProps
@@ -45,6 +47,7 @@ export const FormInput = <FormSchema extends object>({
 
   return (
     <TextField
+      disabled={disabled}
       {...textFieldProps}
       {...props}
       onChange={(event) => debounceOnChange(event, props)}

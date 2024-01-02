@@ -37,7 +37,7 @@ export const ProcedureSelectList = ({
       {siteProcedures.map(({ site, procedures }, index) => (
         <Fragment key={site.id}>
           {index > 0 && <Divider sx={{ my: '0.5rem' }} />}
-          <ListSubheader sx={{ backgroundColor: 'transparent' }}>
+          <ListSubheader disableSticky sx={{ backgroundColor: 'transparent' }}>
             <Typography variant="body1" fontWeight="bold" py="0.5rem">
               <UrlButton readOnly>{site.url}</UrlButton>
             </Typography>
