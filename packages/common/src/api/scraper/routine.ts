@@ -2,7 +2,7 @@ import * as yup from 'yup'
 
 import { transformNanToUndefined } from '../common'
 
-import type { DataSourceColumnType, DataSourceItem } from './dataSource'
+import { DataSourceColumnType, type DataSourceItem } from './dataSource'
 import type { Procedure } from './procedure'
 
 export interface Routine {
@@ -15,7 +15,7 @@ export interface Routine {
     | {
         type: RoutineExecutionType.MATCH_SEQUENTIALLY
         dataSourceName: string
-        filter: DataSourceFilter
+        filters: DataSourceFilter[]
         maximumIterations?: number
       }
     | {
@@ -51,12 +51,12 @@ export enum RoutineExecutionType {
 type DataSourceFilter =
   | {
       columnName: string
-      valueType: DataSourceColumnType.TEXT
+      columnType: DataSourceColumnType.TEXT
       where: DataSourceWhereFilter<DataSourceStringFilter>
     }
   | {
       columnName: string
-      valueType: DataSourceColumnType.INTEGER | DataSourceColumnType.REAL
+      columnType: DataSourceColumnType.INTEGER | DataSourceColumnType.REAL
       where: DataSourceWhereFilter<DataSourceNumberFilter>
     }
 
@@ -69,37 +69,134 @@ type DataSourceStringFilter =
   | string
   | {
       //TODO: remove unsupported filters
-      equals?: string | null
-      notEquals?: string | null
+      equals?: string
+      notEquals?: string
       in?: string[]
       notIn?: string[]
-      lt?: string
-      lte?: string
-      gt?: string
-      gte?: string
       contains?: string
       startsWith?: string
       endsWith?: string
+      null?: true
+      notNull?: true
     }
 
 type DataSourceNumberFilter =
   | string
   | {
       //TODO: remove unsupported filters
-      equals?: number | null
-      notEquals?: number | null
+      equals?: number
+      notEquals?: number
       in?: number[]
       notIn?: number[]
       lt?: number
       lte?: number
       gt?: number
       gte?: number
+      null?: true
+      notNull?: true
     }
+
+const buildWhereFilterSchema = <T extends yup.Lazy<unknown>>(typedSchema: T) =>
+  yup.lazy((value) => {
+    if (!value) {
+      return typedSchema
+    }
+    if ('AND' in value) {
+      return yup.object({
+        //NOTE: yup.object() is meant here to be the upsertDataSourceFilterSchema recursively
+        AND: yup.array().of(yup.object().required()).required().default([]),
+      })
+    } else if ('OR' in value) {
+      return yup.object({
+        //NOTE: yup.object() is meant here to be the upsertDataSourceFilterSchema recursively
+        OR: yup.array().of(yup.object().required()).required().default([]),
+      })
+    }
+    return typedSchema
+  })
+
+const upsertDataSourceStringFilterSchema = yup.lazy((value) => {
+  if (typeof value === 'string') {
+    return yup.string().required().default('')
+  }
+  return yup
+    .object({
+      equals: yup.string(),
+      notEquals: yup.string(),
+      in: yup.array().of(yup.string().default('').required()),
+      notIn: yup.array().of(yup.string().default('').required()),
+      contains: yup.string(),
+      startsWith: yup.string(),
+      endsWith: yup.string(),
+      null: yup.boolean(),
+      notNull: yup.boolean(),
+    })
+    .required()
+})
+export type UpsertDataSourceStringFilterSchema = yup.InferType<
+  typeof upsertDataSourceStringFilterSchema
+>
+
+const upsertDataSourceStringWhereFilterSchema = buildWhereFilterSchema(
+  upsertDataSourceStringFilterSchema,
+)
+
+const upsertDataSourceNumberFilterSchema = yup.lazy((value) => {
+  if (typeof value === 'string') {
+    return yup.string().required().default('')
+  }
+  return yup
+    .object({
+      equals: yup.number().transform(transformNanToUndefined),
+      notEquals: yup.number().transform(transformNanToUndefined),
+      in: yup.array().of(yup.number().default(0).required().transform(transformNanToUndefined)),
+      notIn: yup.array().of(yup.number().default(0).required().transform(transformNanToUndefined)),
+      lt: yup.number().transform(transformNanToUndefined),
+      lte: yup.number().transform(transformNanToUndefined),
+      gt: yup.number().transform(transformNanToUndefined),
+      gte: yup.number().transform(transformNanToUndefined),
+      null: yup.boolean(),
+      notNull: yup.boolean(),
+    })
+    .required()
+})
+export type UpsertDataSourceNumberFilterSchema = yup.InferType<
+  typeof upsertDataSourceNumberFilterSchema
+>
+
+const upsertDataSourceNumberWhereFilterSchema = buildWhereFilterSchema(
+  upsertDataSourceNumberFilterSchema,
+)
+
+const upsertDataSourceFilterSchema = yup.lazy((value) => {
+  const columnNameSchema = yup.string().required().default('')
+
+  switch (value?.columnType as DataSourceColumnType) {
+    case DataSourceColumnType.TEXT:
+      return yup.object({
+        columnName: columnNameSchema,
+        columnType: yup.string().oneOf([DataSourceColumnType.TEXT]).required(),
+        where: upsertDataSourceStringWhereFilterSchema,
+      })
+    case DataSourceColumnType.INTEGER:
+    case DataSourceColumnType.REAL:
+      return yup.object({
+        columnName: columnNameSchema,
+        columnType: yup
+          .string()
+          .oneOf([DataSourceColumnType.INTEGER, DataSourceColumnType.REAL])
+          .required(),
+        where: upsertDataSourceNumberWhereFilterSchema,
+      })
+  }
+  return yup.object().strip()
+})
+
+export type UpsertDataSourceFilterSchema = yup.InferType<typeof upsertDataSourceFilterSchema>
 
 export const upsertMatchSequentiallyExecutionPlanSchema = yup.object({
   type: yup.string().oneOf([RoutineExecutionType.MATCH_SEQUENTIALLY]).required(),
   dataSourceName: yup.string().required().default(''),
-  filter: yup.object().required(), //TODO: more detailed validation
   maximumIterations: yup
     .number()
     .integer()
@@ -107,6 +204,7 @@ export const upsertMatchSequentiallyExecutionPlanSchema = yup.object({
     .default(1)
     .notRequired()
     .transform(transformNanToUndefined),
+  filters: yup.array().of(upsertDataSourceFilterSchema).nullable().default([]).notRequired(),
 })
 
 export const upsertSpecificIdsExecutionPlanSchema = yup.object({

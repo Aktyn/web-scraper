@@ -102,6 +102,15 @@ export const TabsView = genericMemo(
       )
 
       useEffect(() => {
+        if (!tabs.length) {
+          return
+        }
+        if (!tabs.some(({ value }) => value === tab)) {
+          setTab(tabs.at(0)?.value ?? null)
+        }
+      }, [setTab, tab, tabs])
+
+      useEffect(() => {
         if (!contentContainerRef.current || previousTab === null) {
           return
         }

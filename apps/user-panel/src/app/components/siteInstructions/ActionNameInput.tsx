@@ -69,9 +69,11 @@ export const ActionNameInput = ({ fieldName }: { fieldName: `procedures.${number
                 select
                 error={!!fieldState.error}
                 value={prefix ?? ''}
-                onChange={(e) =>
+                onChange={(event) =>
                   handleTypeChange(
-                    e.target.value as typeof GLOBAL_ACTION_PREFIX | typeof REGULAR_ACTION_PREFIX,
+                    event.target.value as
+                      | typeof GLOBAL_ACTION_PREFIX
+                      | typeof REGULAR_ACTION_PREFIX,
                   )
                 }
                 onBlur={field.onBlur}

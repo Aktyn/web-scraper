@@ -5,16 +5,18 @@ import { Controller, type Path, useFormContext } from 'react-hook-form'
 interface FormSwitchProps<FormSchema extends Record<string, unknown>> {
   fieldName: Path<FormSchema>
   label: ReactNode
+  disabled?: boolean
 }
 
 export const FormSwitch = <FormSchema extends Record<string, unknown>>({
   fieldName,
   label,
+  disabled,
 }: FormSwitchProps<FormSchema>) => {
   const form = useFormContext<FormSchema>()
 
   return (
-    <FormControl>
+    <FormControl disabled={disabled}>
       <Controller
         name={fieldName}
         control={form.control}

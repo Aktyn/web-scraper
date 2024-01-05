@@ -3,6 +3,7 @@ import { FindInPageRounded } from '@mui/icons-material'
 import { Box, Grow, Skeleton, Stack, Typography } from '@mui/material'
 import type { Routine } from '@web-scraper/common'
 import { DataSourcesContext } from 'src/app/context/dataSourcesContext'
+import { RoutinePanel } from './RoutinePanel'
 import { ViewTransition } from '../../components/animation/ViewTransition'
 import { CustomDrawer, type CustomDrawerRef } from '../../components/common/CustomDrawer'
 import { TabsView, type TabSchema } from '../../components/common/TabsView'
@@ -14,7 +15,7 @@ import { usePersistentState } from '../../hooks/usePersistentState'
 import type { ViewComponentProps } from '../helpers'
 
 const RoutinesView = ({ doNotRender }: ViewComponentProps) => {
-  const siteDrawerRef = useRef<CustomDrawerRef>(null)
+  const routineDrawerRef = useRef<CustomDrawerRef>(null)
   const { submit: getRoutinesRequest } = useApiRequest(window.electronAPI.getRoutines)
   const { loadDataSources, dataSources } = useDataSourcesLoader()
 
@@ -40,6 +41,15 @@ const RoutinesView = ({ doNotRender }: ViewComponentProps) => {
     loadRoutines()
   }, [loadRoutines])
 
+  const handleAdd = useCallback(() => {
+    routineDrawerRef.current?.open()
+  }, [])
+
+  const handleRoutineAdded = useCallback(() => {
+    routineDrawerRef.current?.close()
+    loadRoutines()
+  }, [loadRoutines])
+
   const tabs = useMemo<TabSchema<Routine['id']>[]>(
     () =>
       loadingRoutines
@@ -47,18 +57,21 @@ const RoutinesView = ({ doNotRender }: ViewComponentProps) => {
             value: -i - 1,
             label: (
               <Box minWidth="8rem">
-                <Skeleton variant="rounded" width="100%" height="1.5rem" animation="pulse" />
+                <Skeleton variant="rounded" width="100%" height="1.75rem" animation="pulse" />
               </Box>
             ),
             content: null,
             tabComponentProps: { disabled: true },
           }))
         : routines.length > 0
-          ? routines.map((routine) => ({
-              value: routine.id,
-              label: routine.name,
-              content: <Stack>{routine.name}</Stack>, //TODO: routine panel
-            }))
+          ? routines.map(
+              (routine) =>
+                ({
+                  value: routine.id,
+                  label: routine.name,
+                  content: <RoutinePanel routineInfo={routine} />,
+                }) satisfies TabSchema<Routine['id']>,
+            )
           : [
               {
                 value: -1,
@@ -78,15 +91,6 @@ const RoutinesView = ({ doNotRender }: ViewComponentProps) => {
     [loadingRoutines, routines],
   )
 
-  const handleAdd = useCallback(() => {
-    siteDrawerRef.current?.open()
-  }, [])
-
-  const handleRoutineAdded = useCallback(() => {
-    siteDrawerRef.current?.close()
-    loadRoutines()
-  }, [loadRoutines])
-
   if (doNotRender) {
     return null
   }
@@ -94,7 +98,7 @@ const RoutinesView = ({ doNotRender }: ViewComponentProps) => {
   return (
     <DataSourcesContext.Provider value={dataSources ?? emptyArray}>
       <CustomDrawer
-        ref={siteDrawerRef}
+        ref={routineDrawerRef}
         title={
           <Stack direction="row" alignItems="center" gap="0.5rem">
             <Box>Create routine</Box>

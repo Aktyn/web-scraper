@@ -4,19 +4,21 @@ import { ChecklistRounded, LabelRounded, SendRounded } from '@mui/icons-material
 import { LoadingButton } from '@mui/lab'
 import { FormHelperText, InputAdornment, Skeleton, Stack, Typography } from '@mui/material'
 import {
+  RoutineExecutionType,
   upsertRoutineSchema,
   type Procedure,
+  type Routine,
   type Site,
   type SiteProcedures,
   type UpsertRoutineSchema,
-  RoutineExecutionType,
+  pick,
 } from '@web-scraper/common'
 import { FormProvider, useForm } from 'react-hook-form'
-import { usePersistentState } from 'src/app/hooks/usePersistentState'
 import { ProcedureSelectList } from './ProcedureSelectList'
 import { ProceduresSequence } from './ProceduresSequence'
 import { RoutineExecutionPlanForm } from './RoutineExecutionPlanForm'
-import { useApiRequest } from '../../../app/hooks/useApiRequest'
+import { useApiRequest } from '../../hooks/useApiRequest'
+import { usePersistentState } from '../../hooks/usePersistentState'
 import { LabeledDivider } from '../common/LabeledDivider'
 import { NestedDrawer } from '../common/NestedDrawer'
 import { ToggleIconButton } from '../common/button/ToggleIconButton'
@@ -25,15 +27,16 @@ import { FormSwitch } from '../form/FormSwitch'
 
 interface RoutineFormProps {
   onSuccess: () => void
+  routine?: Routine | null
 }
 
-export const RoutineForm = ({ onSuccess }: RoutineFormProps) => {
-  // const procedureSelectPopoverRef = useRef<CustomPopoverRef>(null)
-
+export const RoutineForm = ({ onSuccess, routine }: RoutineFormProps) => {
   const { submit: createRoutineRequest, submitting: creatingRoutine } = useApiRequest(
     window.electronAPI.createRoutine,
   )
-  // const {submit: updateSiteRequest} = useApiRequest(window.electronAPI.updateSite)
+  const { submit: updateRoutineRequest, submitting: updatingRoutine } = useApiRequest(
+    window.electronAPI.updateRoutine,
+  )
   const { submit: getGroupedProceduresRequest } = useApiRequest(
     window.electronAPI.getProceduresGroupedBySite,
   )
@@ -56,26 +59,20 @@ export const RoutineForm = ({ onSuccess }: RoutineFormProps) => {
   const form = useForm({
     mode: 'onTouched',
     resolver: yupResolver(upsertRoutineSchema),
-    defaultValues: {
-      procedureIds: [],
-      executionPlan: {
-        type: RoutineExecutionType.STANDALONE,
-        repeat: 1,
-      },
-    },
-    // defaultValues: site
-    //   ? {
-    //       url: site.url,
-    //       language: site.language,
-    //       siteTags: site.tags,
-    //     }
-    //   : undefined,
+    defaultValues: routine
+      ? {
+          ...pick(routine, 'name', 'description', 'stopOnError'),
+          procedureIds: routine.procedures.map((procedure) => procedure.id),
+          executionPlan: routine.executionPlan,
+        }
+      : {
+          procedureIds: [],
+          executionPlan: {
+            type: RoutineExecutionType.STANDALONE,
+            repeat: 1,
+          },
+        },
   })
-  // const siteTagsFields = useFieldArray({
-  //   control: form.control,
-  //   name: 'siteTags',
-  //   keyName: 'fieldKey',
-  // })
 
   const { setValue } = form
   const procedureIds = form.watch('procedureIds')
@@ -99,17 +96,30 @@ export const RoutineForm = ({ onSuccess }: RoutineFormProps) => {
 
   const onSubmit = useCallback(
     (data: UpsertRoutineSchema) => {
-      createRoutineRequest(
-        {
-          onSuccess: (_, { enqueueSnackbar }) => {
-            enqueueSnackbar({ variant: 'success', message: 'Routine created' })
-            onSuccess()
+      if (routine?.id) {
+        updateRoutineRequest(
+          {
+            onSuccess: (_, { enqueueSnackbar }) => {
+              enqueueSnackbar({ variant: 'success', message: 'Routine updated' })
+              onSuccess()
+            },
           },
-        },
-        data,
-      )
+          routine.id,
+          data,
+        )
+      } else {
+        createRoutineRequest(
+          {
+            onSuccess: (_, { enqueueSnackbar }) => {
+              enqueueSnackbar({ variant: 'success', message: 'Routine created' })
+              onSuccess()
+            },
+          },
+          data,
+        )
+      }
     },
-    [createRoutineRequest, onSuccess],
+    [createRoutineRequest, onSuccess, routine?.id, updateRoutineRequest],
   )
 
   const handleProcedureChecked = useCallback(
@@ -230,7 +240,7 @@ export const RoutineForm = ({ onSuccess }: RoutineFormProps) => {
             color="primary"
             type="submit"
             endIcon={<SendRounded />}
-            loading={creatingRoutine}
+            loading={creatingRoutine || updatingRoutine}
             loadingPosition="end"
           >
             Submit

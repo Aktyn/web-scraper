@@ -1,4 +1,4 @@
-import { useContext, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { ChecklistRounded, FormatListBulletedRounded, NumbersRounded } from '@mui/icons-material'
 import {
   FormControl,
@@ -11,11 +11,12 @@ import {
   Tooltip,
 } from '@mui/material'
 import {
-  type DataSourceItem,
   RoutineExecutionType,
+  type DataSourceItem,
   type UpsertRoutineSchema,
 } from '@web-scraper/common'
 import { Controller, useFormContext } from 'react-hook-form'
+import { DataSourceFilterForm } from './DataSourceFilterForm'
 import { DataSourcesContext } from '../../context/dataSourcesContext'
 import { routineExecutionTypeNames } from '../../utils/dictionaries'
 import { ToggleIconButton } from '../common/button/ToggleIconButton'
@@ -26,11 +27,25 @@ export const RoutineExecutionPlanForm = () => {
   const form = useFormContext<UpsertRoutineSchema>()
   const dataSources = useContext(DataSourcesContext)
 
+  const { setValue } = form
   const type = form.watch('executionPlan.type')
   const dataSourceName = form.watch('executionPlan.dataSourceName')
   const dataSourceStructure = dataSources.find((dataSource) => dataSource.name === dataSourceName)
 
   const [openDataSourceRowsSelectDialog, setOpenDataSourceRowsSelectDialog] = useState(false)
+
+  //TODO: skip initial load and fix initial load
+  // useEffect(() => {
+  //   if (type) {
+  //     setValue('executionPlan', { type })
+  //   }
+  // }, [setValue, type])
+
+  useEffect(() => {
+    if (dataSourceName) {
+      setValue('executionPlan.ids', [])
+    }
+  }, [dataSourceName, setValue])
 
   return (
     <Stack gap="1rem">
@@ -39,7 +54,7 @@ export const RoutineExecutionPlanForm = () => {
         name="executionPlan.type"
         label="Type"
         select
-        defaultValue={RoutineExecutionType.STANDALONE}
+        defaultValue={type ?? RoutineExecutionType.STANDALONE}
         InputProps={{
           startAdornment: (
             <InputAdornment position="start">
@@ -54,6 +69,21 @@ export const RoutineExecutionPlanForm = () => {
           </MenuItem>
         ))}
       </FormInput>
+      {type === RoutineExecutionType.MATCH_SEQUENTIALLY && (
+        <FormInput
+          form={form}
+          name="executionPlan.maximumIterations"
+          label="Maximum iterations"
+          type="number"
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <NumbersRounded />
+              </InputAdornment>
+            ),
+          }}
+        />
+      )}
       {type === RoutineExecutionType.STANDALONE && (
         <FormInput
           form={form}
@@ -77,12 +107,13 @@ export const RoutineExecutionPlanForm = () => {
         <Tooltip title={dataSources.length ? '' : 'There are no data sources defined'}>
           <Stack flexGrow={1}>
             <FormInput
+              key={type}
               form={form}
               name="executionPlan.dataSourceName"
               label="Data source"
               select
               disabled={!dataSources.length}
-              defaultValue=""
+              defaultValue={dataSourceName ?? ''}
               required
               fullWidth
               InputProps={{
@@ -178,22 +209,7 @@ export const RoutineExecutionPlanForm = () => {
         />
       )}
       {type === RoutineExecutionType.MATCH_SEQUENTIALLY && (
-        <>
-          <FormInput
-            form={form}
-            name="executionPlan.maximumIterations"
-            label="Maximum iterations"
-            type="number"
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <NumbersRounded />
-                </InputAdornment>
-              ),
-            }}
-          />
-          {/* TODO: filter field */}
-        </>
+        <DataSourceFilterForm dataSourceStructure={dataSourceStructure} />
       )}
     </Stack>
   )
