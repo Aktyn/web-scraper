@@ -1,4 +1,4 @@
-import { Fragment, type ReactNode, useEffect, useMemo, useRef, useState } from 'react'
+import { Fragment, useEffect, useMemo, useRef, useState } from 'react'
 import {
   CheckRounded,
   CircleRounded,
@@ -17,26 +17,23 @@ import {
   DialogContent,
   DialogTitle,
   IconButton,
-  InputAdornment,
   Stack,
   Step,
   StepContent,
   StepLabel,
   Stepper,
-  TextField,
-  type TextFieldProps,
   Typography,
 } from '@mui/material'
 import { ActionStepErrorType, ScraperExecutionScope } from '@web-scraper/common'
 import { StepIcon } from './StepIcon'
 import {
   executionItemResultFailed,
-  type ParsedScraperExecution,
   parseScraperExecution,
+  type ParsedScraperExecution,
 } from './helpers'
 import {
-  type ScraperExecutionLite,
   ScraperExecutionModule,
+  type ScraperExecutionLite,
 } from '../../modules/ScraperExecutionModule'
 import {
   actionStepErrorTypeNames,
@@ -44,6 +41,7 @@ import {
   procedureTypeNames,
   scraperExecutionScopeNames,
 } from '../../utils/dictionaries'
+import { ReadonlyField } from '../common/input/ReadonlyField'
 
 const actionStepScopes = [ScraperExecutionScope.ACTION_STEP]
 const anyScopeExceptActionStep = [
@@ -280,18 +278,3 @@ const ScraperExecutionItemContent = ({ item }: ScraperExecutionItemProps) => {
     </Stack>
   )
 }
-
-type ReadonlyFieldProps = TextFieldProps & {
-  icon: ReactNode
-}
-
-const ReadonlyField = ({ icon, ...props }: ReadonlyFieldProps) => (
-  <TextField
-    variant="standard"
-    InputProps={{
-      readOnly: true,
-      startAdornment: <InputAdornment position="start">{icon}</InputAdornment>,
-    }}
-    {...props}
-  />
-)

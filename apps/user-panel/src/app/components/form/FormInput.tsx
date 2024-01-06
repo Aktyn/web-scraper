@@ -18,6 +18,7 @@ interface FormInputProps<FormSchema extends object>
   required?: boolean
   disabled?: boolean
   debounceChange?: boolean | number
+  onChange?: () => void
 }
 
 export const FormInput = <FormSchema extends object>({
@@ -27,6 +28,7 @@ export const FormInput = <FormSchema extends object>({
   disabled,
   debounceChange,
   error: externalError,
+  onChange,
   ...textFieldProps
 }: FormInputProps<FormSchema>) => {
   const error = getDeepProperty(form.formState.errors, name as never) as GlobalError | undefined
@@ -40,7 +42,9 @@ export const FormInput = <FormSchema extends object>({
     (
       event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
       registeredProps: UseFormRegisterReturn<Path<FormSchema>>,
-    ) => registeredProps.onChange(event),
+    ) => {
+      void registeredProps.onChange(event).then(onChange)
+    },
     debounceDelay,
     [],
   )

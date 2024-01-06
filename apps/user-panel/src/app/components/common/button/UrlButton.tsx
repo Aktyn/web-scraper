@@ -23,7 +23,7 @@ export const UrlButton = ({ children: url, maxWidth, readOnly, ...linkProps }: U
       <Box component="span" sx={{ maxWidth, overflow: 'hidden', textOverflow: 'ellipsis' }}>
         {url}
       </Box>
-      <OpenInNewRounded fontSize="inherit" />
+      {!readOnly && <OpenInNewRounded fontSize="inherit" />}
     </Stack>
   )
 }

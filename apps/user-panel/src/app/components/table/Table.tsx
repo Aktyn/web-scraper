@@ -23,6 +23,7 @@ import {
   TableRow,
   Tooltip,
   Typography,
+  chipClasses,
 } from '@mui/material'
 import {
   type ExtractTypeByPath,
@@ -266,6 +267,11 @@ export const Table = genericMemo(
                         cursor: clickable ? 'pointer' : undefined,
                         backgroundColor: selected
                           ? (theme) => `${alpha(theme.palette.action.focus, 0.75)} !important`
+                          : undefined,
+                        [`& .${chipClasses.root}.no-data-chip`]: selected
+                          ? {
+                              color: 'text.primary',
+                            }
                           : undefined,
                       }}
                     >

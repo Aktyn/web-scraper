@@ -106,7 +106,6 @@ const FilterFields = ({ fieldName, dataSourceStructure, onRemove }: FilterFields
 
   const isNumberColumn =
     column?.type === DataSourceColumnType.INTEGER || column?.type === DataSourceColumnType.REAL
-
   const formWhereCondition =
     (!where || typeof where === 'string' ? undefined : Object.keys(where).at(0)) ?? 'equals'
 
@@ -337,8 +336,8 @@ const FilterFields = ({ fieldName, dataSourceStructure, onRemove }: FilterFields
 
 type ConditionValueFieldType = 'number' | 'text' | 'boolean' | 'string[]' | 'number[]'
 
-type StringConditionKey = keyof Exclude<UpsertDataSourceStringFilterSchema, string>
-const stringConditions: {
+export type StringConditionKey = keyof Exclude<UpsertDataSourceStringFilterSchema, string>
+export const stringConditions: {
   [key in StringConditionKey]: { label: string; valueType: ConditionValueFieldType }
 } = {
   equals: { label: 'Equals', valueType: 'text' },
@@ -352,8 +351,8 @@ const stringConditions: {
   notNull: { label: 'Is not null', valueType: 'boolean' },
 }
 
-type NumberConditionKey = keyof Exclude<UpsertDataSourceNumberFilterSchema, string>
-const numberConditions: {
+export type NumberConditionKey = keyof Exclude<UpsertDataSourceNumberFilterSchema, string>
+export const numberConditions: {
   [key in NumberConditionKey]: { label: string; valueType: ConditionValueFieldType }
 } = {
   equals: { label: 'Equals', valueType: 'number' },

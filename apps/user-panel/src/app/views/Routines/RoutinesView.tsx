@@ -6,18 +6,21 @@ import { DataSourcesContext } from 'src/app/context/dataSourcesContext'
 import { RoutinePanel } from './RoutinePanel'
 import { ViewTransition } from '../../components/animation/ViewTransition'
 import { CustomDrawer, type CustomDrawerRef } from '../../components/common/CustomDrawer'
-import { TabsView, type TabSchema } from '../../components/common/TabsView'
+import { TabsView, type TabSchema, type TabsHandle } from '../../components/common/TabsView'
 import { TermInfo } from '../../components/common/TermInfo'
 import { RoutineForm } from '../../components/routine/RoutineForm'
 import { useApiRequest } from '../../hooks/useApiRequest'
+import { useCancellablePromise } from '../../hooks/useCancellablePromise'
 import { useDataSourcesLoader } from '../../hooks/useDataSourcesLoader'
 import { usePersistentState } from '../../hooks/usePersistentState'
 import type { ViewComponentProps } from '../helpers'
 
 const RoutinesView = ({ doNotRender }: ViewComponentProps) => {
   const routineDrawerRef = useRef<CustomDrawerRef>(null)
+  const tabsRef = useRef<TabsHandle<Routine['id']>>(null)
   const { submit: getRoutinesRequest } = useApiRequest(window.electronAPI.getRoutines)
   const { loadDataSources, dataSources } = useDataSourcesLoader()
+  const cancellable = useCancellablePromise()
 
   const [tabsReady, setTabsReady] = useState(true)
   const [routines, setRoutines] = usePersistentState<Pick<Routine, 'id' | 'name'>[]>(
@@ -31,24 +34,53 @@ const RoutinesView = ({ doNotRender }: ViewComponentProps) => {
   }, [loadDataSources])
 
   const loadRoutines = useCallback(() => {
-    getRoutinesRequest({
-      onSuccess: setRoutines,
-      onEnd: () => setLoadingRoutines(false),
+    return new Promise((resolve, reject) => {
+      getRoutinesRequest({
+        onSuccess: (routines) => {
+          setRoutines(routines)
+          resolve(routines)
+        },
+        onError: (error, { showErrorSnackbar }) => {
+          reject(error)
+          showErrorSnackbar()
+        },
+        onEnd: () => setLoadingRoutines(false),
+      })
     })
   }, [getRoutinesRequest, setLoadingRoutines, setRoutines])
 
   useEffect(() => {
-    loadRoutines()
+    void loadRoutines()
   }, [loadRoutines])
 
   const handleAdd = useCallback(() => {
     routineDrawerRef.current?.open()
   }, [])
 
-  const handleRoutineAdded = useCallback(() => {
-    routineDrawerRef.current?.close()
-    loadRoutines()
-  }, [loadRoutines])
+  const handleRoutineAdded = useCallback(
+    (routine: Routine) => {
+      routineDrawerRef.current?.close()
+      void cancellable(loadRoutines()).then(() => tabsRef.current?.changeTab(routine.id))
+    },
+    [cancellable, loadRoutines],
+  )
+
+  const handleRoutineDeleted = useCallback(
+    (routineId: Routine['id']) => {
+      const deletedRoutineIndex = routines.findIndex((routine) => routine.id === routineId)
+      if (deletedRoutineIndex === -1) {
+        return
+      }
+      if (deletedRoutineIndex < routines.length - 1) {
+        tabsRef.current?.changeTab(routines[deletedRoutineIndex + 1].id)
+      } else if (deletedRoutineIndex > 0) {
+        tabsRef.current?.changeTab(routines[deletedRoutineIndex - 1].id)
+      }
+
+      void loadRoutines()
+    },
+    [loadRoutines, routines],
+  )
 
   const tabs = useMemo<TabSchema<Routine['id']>[]>(
     () =>
@@ -69,7 +101,13 @@ const RoutinesView = ({ doNotRender }: ViewComponentProps) => {
                 ({
                   value: routine.id,
                   label: routine.name,
-                  content: <RoutinePanel routineInfo={routine} />,
+                  content: (
+                    <RoutinePanel
+                      routineInfo={routine}
+                      onDeleted={handleRoutineDeleted}
+                      onNameChanged={loadRoutines}
+                    />
+                  ),
                 }) satisfies TabSchema<Routine['id']>,
             )
           : [
@@ -88,7 +126,7 @@ const RoutinesView = ({ doNotRender }: ViewComponentProps) => {
                 tabComponentProps: { disabled: true },
               },
             ],
-    [loadingRoutines, routines],
+    [handleRoutineDeleted, loadRoutines, loadingRoutines, routines],
   )
 
   if (doNotRender) {
@@ -109,6 +147,7 @@ const RoutinesView = ({ doNotRender }: ViewComponentProps) => {
         <RoutineForm onSuccess={handleRoutineAdded} />
       </CustomDrawer>
       <TabsView
+        handleRef={tabsRef}
         name="routines"
         tabs={tabs}
         onAdd={handleAdd}

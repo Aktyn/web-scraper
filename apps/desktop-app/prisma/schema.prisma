@@ -115,9 +115,9 @@ model Routine {
 
 model RoutineProcedureRelation {
   procedureId Int
-  Procedure   Procedure @relation(fields: [procedureId], references: [id])
+  Procedure   Procedure @relation(fields: [procedureId], references: [id], onDelete: Cascade)
   routineId   Int
-  Routine     Routine   @relation(fields: [routineId], references: [id])
+  Routine     Routine   @relation(fields: [routineId], references: [id], onDelete: Cascade)
 
   @@id([procedureId, routineId])
 }

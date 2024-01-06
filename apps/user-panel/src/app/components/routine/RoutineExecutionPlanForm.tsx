@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from 'react'
+import { useCallback, useContext, useState } from 'react'
 import { ChecklistRounded, FormatListBulletedRounded, NumbersRounded } from '@mui/icons-material'
 import {
   FormControl,
@@ -12,6 +12,9 @@ import {
 } from '@mui/material'
 import {
   RoutineExecutionType,
+  upsertMatchSequentiallyExecutionPlanSchema,
+  upsertSpecificIdsExecutionPlanSchema,
+  upsertStandaloneExecutionPlanSchema,
   type DataSourceItem,
   type UpsertRoutineSchema,
 } from '@web-scraper/common'
@@ -27,25 +30,38 @@ export const RoutineExecutionPlanForm = () => {
   const form = useFormContext<UpsertRoutineSchema>()
   const dataSources = useContext(DataSourcesContext)
 
-  const { setValue } = form
+  const { setValue, getValues } = form
   const type = form.watch('executionPlan.type')
   const dataSourceName = form.watch('executionPlan.dataSourceName')
   const dataSourceStructure = dataSources.find((dataSource) => dataSource.name === dataSourceName)
 
   const [openDataSourceRowsSelectDialog, setOpenDataSourceRowsSelectDialog] = useState(false)
 
-  //TODO: skip initial load and fix initial load
-  // useEffect(() => {
-  //   if (type) {
-  //     setValue('executionPlan', { type })
-  //   }
-  // }, [setValue, type])
+  const handleExecutionTypeManualChange = useCallback(() => {
+    const newType = getValues('executionPlan.type')
 
-  useEffect(() => {
-    if (dataSourceName) {
-      setValue('executionPlan.ids', [])
+    const schema =
+      newType === RoutineExecutionType.MATCH_SEQUENTIALLY
+        ? upsertMatchSequentiallyExecutionPlanSchema
+        : newType === RoutineExecutionType.STANDALONE
+          ? upsertStandaloneExecutionPlanSchema
+          : upsertSpecificIdsExecutionPlanSchema
+
+    setValue('executionPlan', { ...schema.getDefault(), type: newType }, { shouldDirty: true })
+    if (schema !== upsertStandaloneExecutionPlanSchema) {
+      setValue('executionPlan.dataSourceName', '', { shouldDirty: true })
     }
-  }, [dataSourceName, setValue])
+  }, [getValues, setValue])
+
+  const handleDataSourceNameManualChange = useCallback(() => {
+    if (
+      [RoutineExecutionType.SPECIFIC_IDS, RoutineExecutionType.EXCEPT_SPECIFIC_IDS].includes(
+        getValues('executionPlan.type'),
+      )
+    ) {
+      setValue('executionPlan.ids', [], { shouldDirty: true })
+    }
+  }, [getValues, setValue])
 
   return (
     <Stack gap="1rem">
@@ -55,6 +71,7 @@ export const RoutineExecutionPlanForm = () => {
         label="Type"
         select
         defaultValue={type ?? RoutineExecutionType.STANDALONE}
+        onChange={handleExecutionTypeManualChange}
         InputProps={{
           startAdornment: (
             <InputAdornment position="start">
@@ -107,7 +124,7 @@ export const RoutineExecutionPlanForm = () => {
         <Tooltip title={dataSources.length ? '' : 'There are no data sources defined'}>
           <Stack flexGrow={1}>
             <FormInput
-              key={type}
+              key={dataSourceName + type}
               form={form}
               name="executionPlan.dataSourceName"
               label="Data source"
@@ -116,6 +133,7 @@ export const RoutineExecutionPlanForm = () => {
               defaultValue={dataSourceName ?? ''}
               required
               fullWidth
+              onChange={handleDataSourceNameManualChange}
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">

@@ -219,6 +219,7 @@ export function generateColorizedTheme({
           MuiPaper: {
             styleOverrides: {
               root: {
+                ...glassmorphicPaper,
                 [`.${dividerClasses.root}`]: {
                   borderColor: paperDivider,
                 },

@@ -127,7 +127,7 @@ export const FormJsonInput = <
                   onBlur={field.onBlur}
                   required={required}
                   highlight={(code) => prism.highlight(code || '', prism.languages.json, 'json')}
-                  padding={8}
+                  padding="4rem"
                 />
               </Stack>
             </NestedDrawer>

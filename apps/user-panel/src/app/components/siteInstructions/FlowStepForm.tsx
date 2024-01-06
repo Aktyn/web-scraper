@@ -1,12 +1,13 @@
 import { useCallback, useContext, useMemo, useState } from 'react'
 import { Stack } from '@mui/material'
 import {
-  type FlowStep,
-  GlobalActionType,
-  type UpsertSiteInstructionsSchema,
   GLOBAL_ACTION_PREFIX,
+  GlobalActionType,
+  isFinishGlobalAction,
   isGlobalAction,
   type Action,
+  type FlowStep,
+  type UpsertSiteInstructionsSchema,
 } from '@web-scraper/common'
 import { useFormContext } from 'react-hook-form'
 import { ActionNameInput } from './ActionNameInput'
@@ -121,7 +122,6 @@ export const FlowStepForm = ({
 
   return (
     <ItemsList
-      disabled={disabled}
       title={
         title === 'Flow' ? (
           <Stack direction="row" alignItems="center" spacing={1} mr={2} color="text.secondary">
@@ -134,6 +134,7 @@ export const FlowStepForm = ({
       }
       items={items}
       level={level}
+      disabled={disabled}
       onAdd={
         flow
           ? undefined
@@ -152,11 +153,7 @@ export const FlowStepForm = ({
       disablePlayButtons={testingFlow}
     >
       {(field, index) => {
-        const isFinishActionType =
-          field.actionName === `${GLOBAL_ACTION_PREFIX}.${GlobalActionType.FINISH}` ||
-          field.actionName === `${GLOBAL_ACTION_PREFIX}.${GlobalActionType.FINISH_WITH_ERROR}` ||
-          field.actionName ===
-            `${GLOBAL_ACTION_PREFIX}.${GlobalActionType.FINISH_WITH_NOTIFICATION}`
+        const isFinishActionType = isFinishGlobalAction(field.actionName as FlowStep['actionName'])
 
         return [
           index,

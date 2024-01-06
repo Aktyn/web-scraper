@@ -1,4 +1,11 @@
-import { useCallback, useMemo, useState, type PropsWithChildren, type ReactNode } from 'react'
+import {
+  useCallback,
+  useMemo,
+  useState,
+  type PropsWithChildren,
+  type ReactNode,
+  useEffect,
+} from 'react'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { ChecklistRounded, LabelRounded, SendRounded } from '@mui/icons-material'
 import { LoadingButton } from '@mui/lab'
@@ -26,7 +33,7 @@ import { FormInput } from '../form/FormInput'
 import { FormSwitch } from '../form/FormSwitch'
 
 interface RoutineFormProps {
-  onSuccess: () => void
+  onSuccess: (routine: Routine) => void
   routine?: Routine | null
 }
 
@@ -42,19 +49,25 @@ export const RoutineForm = ({ onSuccess, routine }: RoutineFormProps) => {
   )
 
   const [openProceduresSelect, setOpenProceduresSelect] = useState(false)
-  const [loadingProcedures, setLoadingProcedures] = useState(true)
+  const [loadingProcedures, setLoadingProcedures] = usePersistentState(
+    'loading-procedures-grouped-by-site',
+    true,
+  )
   const [siteProcedures, setSiteProcedures] = usePersistentState<SiteProcedures[]>(
     'procedures-grouped-by-site',
     [],
   )
 
   const loadProcedures = useCallback(() => {
-    setLoadingProcedures(true)
     getGroupedProceduresRequest({
       onSuccess: setSiteProcedures,
       onEnd: () => setLoadingProcedures(false),
     })
-  }, [getGroupedProceduresRequest, setSiteProcedures])
+  }, [getGroupedProceduresRequest, setLoadingProcedures, setSiteProcedures])
+
+  useEffect(() => {
+    loadProcedures()
+  }, [loadProcedures])
 
   const form = useForm({
     mode: 'onTouched',
@@ -99,9 +112,9 @@ export const RoutineForm = ({ onSuccess, routine }: RoutineFormProps) => {
       if (routine?.id) {
         updateRoutineRequest(
           {
-            onSuccess: (_, { enqueueSnackbar }) => {
+            onSuccess: (routine, { enqueueSnackbar }) => {
               enqueueSnackbar({ variant: 'success', message: 'Routine updated' })
-              onSuccess()
+              onSuccess(routine)
             },
           },
           routine.id,
@@ -110,9 +123,9 @@ export const RoutineForm = ({ onSuccess, routine }: RoutineFormProps) => {
       } else {
         createRoutineRequest(
           {
-            onSuccess: (_, { enqueueSnackbar }) => {
+            onSuccess: (routine, { enqueueSnackbar }) => {
               enqueueSnackbar({ variant: 'success', message: 'Routine created' })
-              onSuccess()
+              onSuccess(routine)
             },
           },
           data,
@@ -215,11 +228,21 @@ export const RoutineForm = ({ onSuccess, routine }: RoutineFormProps) => {
               </Stack>
             }
           >
-            <ProceduresSequence
-              selectedProceduresList={selectedProceduresList}
-              onSwap={handleSwapSelectedProcedures}
-              onRemove={(procedure) => handleProcedureChecked(procedure, false)}
-            />
+            {loadingProcedures ? (
+              <Skeleton
+                variant="rounded"
+                width="12rem"
+                height="2rem"
+                animation="pulse"
+                sx={{ mx: 'auto', maxWidth: '100%' }}
+              />
+            ) : (
+              <ProceduresSequence
+                selectedProceduresList={selectedProceduresList}
+                onSwap={handleSwapSelectedProcedures}
+                onRemove={(procedure) => handleProcedureChecked(procedure, false)}
+              />
+            )}
             {proceduresError && (
               <FormHelperText
                 variant="standard"

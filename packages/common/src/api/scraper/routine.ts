@@ -48,7 +48,7 @@ export enum RoutineExecutionType {
   STANDALONE = 'standalone',
 }
 
-type DataSourceFilter =
+export type DataSourceFilter =
   | {
       columnName: string
       columnType: DataSourceColumnType.TEXT
@@ -200,8 +200,9 @@ export const upsertMatchSequentiallyExecutionPlanSchema = yup.object({
   maximumIterations: yup
     .number()
     .integer()
+    .nullable()
     .min(1)
-    .default(1)
+    .default(null)
     .notRequired()
     .transform(transformNanToUndefined),
   filters: yup.array().of(upsertDataSourceFilterSchema).nullable().default([]).notRequired(),

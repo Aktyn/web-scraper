@@ -1,7 +1,8 @@
 import '@fontsource-variable/roboto-flex'
-import { drawerClasses, type CSSInterpolation, type ThemeOptions } from '@mui/material'
-import { createTheme } from '@mui/material/styles'
 import {} from '@mui/lab/themeAugmentation'
+import { drawerClasses, type CSSInterpolation, type ThemeOptions } from '@mui/material'
+import { common } from '@mui/material/colors'
+import { alpha, createTheme } from '@mui/material/styles'
 
 const retinaDisplayMediaQuery = '@media only screen and (-webkit-min-device-pixel-ratio: 2)'
 
@@ -77,8 +78,15 @@ export const baseThemeOptions: ThemeOptions = {
         {
           props: { readOnly: true },
           style: {
-            '&:not(.always-show-border)::before, &:not(.always-show-border)::after': {
+            '&::after': {
+              display: 'none',
+            },
+            '&:not(.always-show-border)::before': {
               borderBottom: 'none !important',
+            },
+            '&:hover.always-show-border::before': {
+              borderColor: `${alpha(common.white, 0.7)} !important`,
+              borderWidth: '1px !important',
             },
           },
         },
@@ -121,6 +129,7 @@ export const baseThemeOptions: ThemeOptions = {
     MuiPaper: {
       styleOverrides: {
         root: {
+          ...customPaper,
           WebkitAppRegion: 'no-drag',
           backgroundImage: 'none',
         },
