@@ -59,16 +59,18 @@ export const RoutinePanelHeaderOptions = ({
         alignItems="center"
         gap="0.5rem"
       >
-        <Button
+        <ConfirmableButton
+          variant="outlined"
           size="large"
           disabled={loading || !routine}
           endIcon={<PlayArrowRounded />}
-          onClick={() => {
+          onConfirm={() => {
             //TODO
           }}
+          loadingPosition="end"
         >
           Run
-        </Button>
+        </ConfirmableButton>
         <Button
           size="large"
           disabled={loading || !routine}

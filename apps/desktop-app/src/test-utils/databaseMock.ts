@@ -4,6 +4,7 @@ import type {
   FlowStep,
   PrismaClient,
   Procedure,
+  Routine,
   Site,
   SiteInstructions,
   SiteTag,
@@ -136,6 +137,53 @@ export const mockData = {
       onFailureFlowStepId: null,
     },
   ] satisfies FlowStep[],
+  routines: [
+    {
+      id: 1,
+      name: 'Mocked routine',
+      description: 'Mocked routine description',
+      stopOnError: true,
+      executionPlan: JSON.stringify({
+        filters: [
+          { where: { in: [3, 5, 7] }, columnType: 'REAL', columnName: 'Price' },
+          { columnName: 'Crypto name', columnType: 'TEXT', where: { notNull: false } },
+        ],
+        maximumIterations: 41,
+        dataSourceName: 'Crypto',
+        type: 'matchSequentially',
+        ids: [],
+      }),
+    },
+  ] satisfies Routine[],
+  routinesWithProcedures: [
+    {
+      id: 1,
+      name: 'Mocked routine',
+      description: 'Mocked routine description',
+      stopOnError: false,
+      executionPlan: JSON.stringify({ type: 'standalone', repeat: 3 }),
+      Procedures: [
+        {
+          Procedure: {
+            id: 1,
+            name: 'Login',
+            type: ProcedureType.ACCOUNT_CHECK,
+            startUrl: `{{URL.ORIGIN}}/login`,
+            waitFor: 'body > h1',
+            siteInstructionsId: 1,
+            flowStepId: 1,
+            FlowStep: {
+              id: 1,
+              actionName: 'action.name',
+              globalReturnValues: null,
+              onSuccessFlowStepId: 2,
+              onFailureFlowStepId: null,
+            },
+          },
+        },
+      ],
+    },
+  ],
   userData: [
     {
       key: 'tablesCompactMode',

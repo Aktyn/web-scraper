@@ -79,7 +79,7 @@ export const RoutineForm = ({ onSuccess, routine }: RoutineFormProps) => {
           executionPlan: routine.executionPlan,
         }
       : {
-          procedureIds: [],
+          ...upsertRoutineSchema.getDefault(),
           executionPlan: {
             type: RoutineExecutionType.STANDALONE,
             repeat: 1,

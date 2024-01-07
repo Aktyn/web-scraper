@@ -25,14 +25,14 @@ export const EncryptionPasswordForm = ({ onSave }: { onSave?: () => void }) => {
         onSave?.()
       }}
       alignItems="center"
-      spacing={2}
-      p={2}
+      gap="1rem"
+      p="1rem"
       width="24rem"
       maxWidth="100%"
     >
       <Typography>
-        Some data such as site account credentials must be encrypted with password so that no third
-        party user can access it by stealing database file.
+        Some data such as account credentials must be encrypted with password so that no third party
+        user can access it by stealing database file.
       </Typography>
       <TextField
         value={internalPassword ?? ''}

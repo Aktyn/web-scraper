@@ -238,7 +238,7 @@ export const upsertRoutineSchema = yup
   .object({
     name: yup.string().required('Name is required'),
     description: yup.string().nullable().default(null).notRequired(),
-    stopOnError: yup.boolean().default(false).required(),
+    stopOnError: yup.boolean().default(true).required(),
     procedureIds: yup
       .array()
       .of(yup.number().min(0).required())
