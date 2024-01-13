@@ -51,7 +51,7 @@ export const UrlPreview = ({ url, width, maxHeight }: UrlPreviewProps) => {
         })
         .catch((error) => error && setLoading(false))
     },
-    1000,
+    200,
     [cancellable],
   )
 
@@ -59,7 +59,6 @@ export const UrlPreview = ({ url, width, maxHeight }: UrlPreviewProps) => {
     try {
       setMaximizePreview(false)
       upsertSiteSchema.validateSyncAt('url', { url })
-      setLoading(true)
       loadPreviewDebounced(url)
     } catch (error) {
       console.error(error)
@@ -80,6 +79,7 @@ export const UrlPreview = ({ url, width, maxHeight }: UrlPreviewProps) => {
         maxHeight={`${maxHeight}px`}
         position="relative"
         overflow="hidden"
+        mb="auto"
       >
         <Box
           sx={{

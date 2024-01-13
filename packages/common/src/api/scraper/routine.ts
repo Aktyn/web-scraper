@@ -2,8 +2,9 @@ import * as yup from 'yup'
 
 import { transformNanToUndefined } from '../common'
 
-import { DataSourceColumnType, type DataSourceItem } from './dataSource'
-import type { Procedure } from './procedure'
+import type { MapSiteError } from './common'
+import { DataSourceColumnType, type DataSourceItem, type DataSourceStructure } from './dataSource'
+import type { Procedure, ProcedureExecutionResult } from './procedure'
 
 export interface Routine {
   id: number
@@ -28,6 +29,13 @@ export interface Routine {
         /** @default 1 */
         repeat?: number
       }
+}
+
+/** Result for single iteration of routine execution */
+export interface RoutineExecutionResult {
+  routine: Routine
+  source: { dataSource: DataSourceStructure; item: DataSourceItem } | null
+  proceduresExecutionResults: (ProcedureExecutionResult | MapSiteError)[]
 }
 
 export enum RoutineExecutionType {

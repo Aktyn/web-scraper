@@ -1,6 +1,7 @@
 import {
   ActionStepErrorType,
   ActionStepType,
+  ElectronToRendererMessage,
   GLOBAL_ACTION_PREFIX,
   GlobalActionType,
   isGlobalAction,
@@ -9,6 +10,8 @@ import {
   omit,
   REGULAR_ACTION_PREFIX,
   safePromise,
+  ScraperExecutionScope,
+  ScraperMode,
   sortNumbers,
   wait,
   waitFor,
@@ -20,10 +23,9 @@ import {
   type MapSiteError,
   type Procedure,
   type ProcedureExecutionResult,
+  type Routine,
   type Site,
-  ElectronToRendererMessage,
-  ScraperExecutionScope,
-  ScraperMode,
+  type RoutineExecutionResult,
 } from '@web-scraper/common'
 import type { ElementHandle, Page } from 'puppeteer'
 import { v4 as uuidV4 } from 'uuid'
@@ -50,13 +52,20 @@ import {
 } from './steps'
 import { saveToDataSourceStep } from './steps/saveToDataSource.step'
 
-type ScraperOptions<ModeType extends ScraperMode> = (ModeType extends ScraperMode.TESTING
-  ? { siteId: Site['id']; lockURL: string }
-  : ModeType extends ScraperMode.PREVIEW
-    ? { viewportWidth: number; viewportHeight: number }
-    : never) & {
+type ScraperOptions<ModeType extends ScraperMode> = {
   onClose?: () => void
-}
+} & (ModeType extends ScraperMode.ROUTINE_EXECUTION
+  ? {
+      routine: Routine
+      procedureActions: Map<Procedure['id'], Action[]>
+      preview?: boolean
+      onResult: (result: RoutineExecutionResult) => void
+    }
+  : ModeType extends ScraperMode.TESTING
+    ? { siteId: Site['id']; lockURL: string }
+    : ModeType extends ScraperMode.PREVIEW
+      ? { viewportWidth: number; viewportHeight: number }
+      : never)
 
 export class Scraper<ModeType extends ScraperMode> {
   public static readonly Mode = ScraperMode
@@ -64,7 +73,7 @@ export class Scraper<ModeType extends ScraperMode> {
   private static readonly instancesStore: {
     [ModeKey in ScraperMode]: Map<string, Scraper<ModeKey>>
   } = {
-    [ScraperMode.DEFAULT]: new Map<string, Scraper<ScraperMode.DEFAULT>>(),
+    [ScraperMode.ROUTINE_EXECUTION]: new Map<string, Scraper<ScraperMode.ROUTINE_EXECUTION>>(),
     [ScraperMode.TESTING]: new Map<string, Scraper<ScraperMode.TESTING>>(),
     [ScraperMode.PREVIEW]: new Map<string, Scraper<ScraperMode.PREVIEW>>(),
   }
@@ -83,28 +92,34 @@ export class Scraper<ModeType extends ScraperMode> {
 
   private readonly browser: ScraperBrowser
   protected mainPage: ScraperPage | null = null
-  private readonly options: ModeType extends ScraperMode.DEFAULT
-    ? undefined
-    : ScraperOptions<ModeType>
+  private readonly options: ScraperOptions<ModeType>
   private initialized = false
 
-  constructor(mode: ScraperMode.DEFAULT)
+  constructor(
+    mode: ScraperMode.ROUTINE_EXECUTION,
+    options: ScraperOptions<ScraperMode.ROUTINE_EXECUTION>,
+  )
   constructor(mode: ScraperMode.TESTING, options: ScraperOptions<ScraperMode.TESTING>)
   constructor(mode: ScraperMode.PREVIEW, options: ScraperOptions<ScraperMode.PREVIEW>)
   constructor(
     public readonly mode: ModeType,
-    options?: ScraperOptions<ModeType>,
+    options: ScraperOptions<ModeType>,
   ) {
     this.options = options as never
     this.logger = new Logger(
       `[Scraper (mode: ${ScraperMode[this.mode]}) (id: ${this.id.substring(0, 8)})]`,
     )
 
+    const headless =
+      mode === ScraperMode.PREVIEW ||
+      (mode === ScraperMode.ROUTINE_EXECUTION &&
+        !(this.options as ScraperOptions<ScraperMode.ROUTINE_EXECUTION>).preview) ||
+      process.env.JEST_WORKER_ID
+        ? 'new'
+        : false
+
     this.browser = new ScraperBrowser({
-      headless:
-        [ScraperMode.DEFAULT, ScraperMode.PREVIEW].includes(mode) || process.env.JEST_WORKER_ID
-          ? 'new'
-          : false,
+      headless,
       defaultViewport:
         mode === ScraperMode.PREVIEW
           ? {
@@ -156,8 +171,8 @@ export class Scraper<ModeType extends ScraperMode> {
     }
 
     switch (this.mode) {
-      case ScraperMode.DEFAULT:
-        await this.initDefaultMode()
+      case ScraperMode.ROUTINE_EXECUTION:
+        await this.initRoutineExecutionMode()
         break
       case ScraperMode.TESTING:
         await this.initTestingMode()
@@ -169,7 +184,7 @@ export class Scraper<ModeType extends ScraperMode> {
     this.initialized = true
   }
 
-  private async initDefaultMode(self = this as Scraper<ScraperMode.DEFAULT>) {
+  private async initRoutineExecutionMode(self = this as Scraper<ScraperMode.ROUTINE_EXECUTION>) {
     self.mainPage = await self.browser.newPage()
     await wait(1000)
   }

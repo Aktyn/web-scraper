@@ -3,6 +3,7 @@ import {
   ErrorCode,
   safePromise,
   upsertSiteInstructionsSchema,
+  type Procedure,
   type Site,
   type UpsertSiteInstructionsSchema,
 } from '@web-scraper/common'
@@ -246,4 +247,21 @@ export async function getProceduresGroupedBySite() {
       ),
     })),
   )
+}
+
+export async function getProcedureActions(procedure: Pick<Procedure, 'siteInstructionsId'>) {
+  return Database.prisma.action.findMany({
+    where: {
+      SiteInstructions: {
+        id: procedure.siteInstructionsId,
+      },
+    },
+    include: {
+      ActionSteps: {
+        orderBy: {
+          orderIndex: 'asc',
+        },
+      },
+    },
+  })
 }

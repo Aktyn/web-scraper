@@ -201,6 +201,14 @@ export const baseThemeOptions: ThemeOptions = {
         },
       },
     },
+    MuiLinearProgress: {
+      styleOverrides: {
+        root: {
+          borderRadius: '0.25rem',
+          height: '0.25rem',
+        },
+      },
+    },
   },
 }
 

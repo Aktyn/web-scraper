@@ -7,6 +7,9 @@ const electronToRendererMessageNames = [
   'windowStateChanged',
   'siteInstructionsTestingSessionOpen',
   'siteInstructionsTestingSessionClosed',
+  'routineExecutionStarted',
+  'routineExecutionResult',
+  'routineExecutionFinished',
   'scraperExecutionStarted',
   'scraperExecutionResult',
   'scraperExecutionFinished',
@@ -53,6 +56,7 @@ const rendererToElectronMessageNames = [
   'createRoutine',
   'updateRoutine',
   'deleteRoutine',
+  'executeRoutine',
 
   'getSiteInstructionsTestingSessions',
   'startSiteInstructionsTestingSession',

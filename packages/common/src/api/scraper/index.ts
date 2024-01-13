@@ -6,16 +6,17 @@ import type {
   Procedure,
   ProcedureExecutionResult,
 } from './procedure'
+import type { Routine, RoutineExecutionResult } from './routine'
 
-export * from './common'
 export * from './action'
-export * from './procedure'
-export * from './siteInstructions'
-export * from './routine'
+export * from './common'
 export * from './dataSource'
+export * from './procedure'
+export * from './routine'
+export * from './siteInstructions'
 
 export enum ScraperMode {
-  DEFAULT,
+  ROUTINE_EXECUTION,
   TESTING,
   PREVIEW,
 }
@@ -25,6 +26,7 @@ export enum ScraperExecutionScope {
   ACTION = 'action',
   FLOW = 'flow',
   PROCEDURE = 'procedure',
+  ROUTINE = 'routine',
 }
 
 export type ScraperExecutionStartSchema =
@@ -44,6 +46,10 @@ export type ScraperExecutionStartSchema =
       scope: ScraperExecutionScope.PROCEDURE
       procedure: Procedure
     }
+  | {
+      scope: ScraperExecutionScope.ROUTINE
+      routine: Routine
+    }
 
 export type ScraperExecutionResultSchema =
   | {
@@ -61,6 +67,10 @@ export type ScraperExecutionResultSchema =
   | {
       scope: ScraperExecutionScope.PROCEDURE
       procedureResult: ProcedureExecutionResult['flowExecutionResult']
+    }
+  | {
+      scope: ScraperExecutionScope.ROUTINE
+      routineResult: RoutineExecutionResult
     }
 
 export type ScraperExecutionFinishedSchema = {

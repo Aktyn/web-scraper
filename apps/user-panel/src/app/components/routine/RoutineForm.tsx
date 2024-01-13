@@ -1,31 +1,23 @@
-import {
-  useCallback,
-  useMemo,
-  useState,
-  type PropsWithChildren,
-  type ReactNode,
-  useEffect,
-} from 'react'
+import { useCallback, useMemo, useState, type PropsWithChildren, type ReactNode } from 'react'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { ChecklistRounded, LabelRounded, SendRounded } from '@mui/icons-material'
 import { LoadingButton } from '@mui/lab'
 import { FormHelperText, InputAdornment, Skeleton, Stack, Typography } from '@mui/material'
 import {
   RoutineExecutionType,
+  pick,
   upsertRoutineSchema,
   type Procedure,
   type Routine,
   type Site,
-  type SiteProcedures,
   type UpsertRoutineSchema,
-  pick,
 } from '@web-scraper/common'
 import { FormProvider, useForm } from 'react-hook-form'
 import { ProcedureSelectList } from './ProcedureSelectList'
 import { ProceduresSequence } from './ProceduresSequence'
 import { RoutineExecutionPlanForm } from './RoutineExecutionPlanForm'
 import { useApiRequest } from '../../hooks/useApiRequest'
-import { usePersistentState } from '../../hooks/usePersistentState'
+import { useProceduresGroupedBySite } from '../../hooks/useProceduresGroupedBySite'
 import { LabeledDivider } from '../common/LabeledDivider'
 import { NestedDrawer } from '../common/NestedDrawer'
 import { ToggleIconButton } from '../common/button/ToggleIconButton'
@@ -44,30 +36,11 @@ export const RoutineForm = ({ onSuccess, routine }: RoutineFormProps) => {
   const { submit: updateRoutineRequest, submitting: updatingRoutine } = useApiRequest(
     window.electronAPI.updateRoutine,
   )
-  const { submit: getGroupedProceduresRequest } = useApiRequest(
-    window.electronAPI.getProceduresGroupedBySite,
-  )
 
   const [openProceduresSelect, setOpenProceduresSelect] = useState(false)
-  const [loadingProcedures, setLoadingProcedures] = usePersistentState(
-    'loading-procedures-grouped-by-site',
-    true,
-  )
-  const [siteProcedures, setSiteProcedures] = usePersistentState<SiteProcedures[]>(
-    'procedures-grouped-by-site',
-    [],
-  )
 
-  const loadProcedures = useCallback(() => {
-    getGroupedProceduresRequest({
-      onSuccess: setSiteProcedures,
-      onEnd: () => setLoadingProcedures(false),
-    })
-  }, [getGroupedProceduresRequest, setLoadingProcedures, setSiteProcedures])
-
-  useEffect(() => {
-    loadProcedures()
-  }, [loadProcedures])
+  const { loadGroupedProcedures, loadingGroupedProcedures, groupedSiteProcedures } =
+    useProceduresGroupedBySite(true)
 
   const form = useForm({
     mode: 'onTouched',
@@ -92,7 +65,7 @@ export const RoutineForm = ({ onSuccess, routine }: RoutineFormProps) => {
   const proceduresError = form.formState.errors.procedureIds?.message
 
   const selectedProceduresList = useMemo(() => {
-    const proceduresWithSites = siteProcedures.flatMap((site) =>
+    const proceduresWithSites = groupedSiteProcedures.flatMap((site) =>
       site.procedures.map((procedure) => ({ site: site.site, procedure })),
     )
     return (procedureIds ?? []).reduce(
@@ -105,7 +78,7 @@ export const RoutineForm = ({ onSuccess, routine }: RoutineFormProps) => {
       },
       [] as { site: Site; procedure: Procedure }[],
     )
-  }, [procedureIds, siteProcedures])
+  }, [procedureIds, groupedSiteProcedures])
 
   const onSubmit = useCallback(
     (data: UpsertRoutineSchema) => {
@@ -217,7 +190,7 @@ export const RoutineForm = ({ onSuccess, routine }: RoutineFormProps) => {
                   open={openProceduresSelect}
                   onToggle={(open) => {
                     if (open) {
-                      loadProcedures()
+                      loadGroupedProcedures()
                     }
                     setOpenProceduresSelect(open)
                   }}
@@ -228,7 +201,7 @@ export const RoutineForm = ({ onSuccess, routine }: RoutineFormProps) => {
               </Stack>
             }
           >
-            {loadingProcedures ? (
+            {loadingGroupedProcedures ? (
               <Skeleton
                 variant="rounded"
                 width="12rem"
@@ -275,7 +248,7 @@ export const RoutineForm = ({ onSuccess, routine }: RoutineFormProps) => {
         onClose={() => setOpenProceduresSelect(false)}
         open={openProceduresSelect}
       >
-        {loadingProcedures && !siteProcedures.length ? (
+        {loadingGroupedProcedures && !groupedSiteProcedures.length ? (
           <Stack minWidth="8rem" alignItems="stretch" gap="0.5rem" p="1rem">
             {Array.from({ length: 5 }).map((_, index) => (
               <Skeleton
@@ -290,7 +263,7 @@ export const RoutineForm = ({ onSuccess, routine }: RoutineFormProps) => {
         ) : (
           <Stack overflow="auto">
             <ProcedureSelectList
-              siteProcedures={siteProcedures}
+              siteProcedures={groupedSiteProcedures}
               selectedProcedures={procedureIds}
               onToggle={handleProcedureChecked}
             />

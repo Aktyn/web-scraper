@@ -25,7 +25,9 @@ export function parseDatabaseSiteInstructions(
   }
 }
 
-function parseDatabaseAction(action: GetSiteInstructionsResponse['Actions'][number]): Action {
+export function parseDatabaseAction(
+  action: GetSiteInstructionsResponse['Actions'][number],
+): Action {
   return {
     ...pick(action, 'id', 'name', 'url', 'siteInstructionsId'),
     actionSteps: action.ActionSteps.map(parseDatabaseActionStep),

@@ -1,90 +1,148 @@
-import { useMemo } from 'react'
+import { useCallback, useMemo, useRef, useState } from 'react'
 import { CodeRounded, LabelRounded, LinkRounded } from '@mui/icons-material'
-import { Box, Chip, Paper, Stack, Typography } from '@mui/material'
+import { Box, Chip, LinearProgress, Paper, Skeleton, Stack, Typography } from '@mui/material'
 import {
   GLOBAL_ACTION_PREFIX,
   REGULAR_ACTION_PREFIX,
+  isFinishGlobalAction,
   type GlobalActionType,
   type Procedure,
-  isFinishGlobalAction,
+  type Site,
+  type SiteProcedures,
 } from '@web-scraper/common'
+import { noop } from '../../utils'
 import { globalActionTypeNames, procedureTypeNames } from '../../utils/dictionaries'
+import { CustomDrawer, type CustomDrawerRef } from '../common/CustomDrawer'
 import { TermInfo } from '../common/TermInfo'
+import { UrlButton } from '../common/button/UrlButton'
 import { ReadonlyField } from '../common/input/ReadonlyField'
 import { ItemTitle } from '../common/treeStructure/ItemTitle'
 import { ItemsList } from '../common/treeStructure/ItemsList'
+import { OpenSiteInstructionsFormButtonWithBadge } from '../site/OpenSiteInstructionsFormButton'
+import { SiteInstructionsForm } from '../siteInstructions/SiteInstructionsForm'
 
 interface ProcedureWidgetProps {
   procedure: Procedure
+  groupedSiteProcedures: SiteProcedures[]
 }
 
-export const ProcedureWidget = ({ procedure }: ProcedureWidgetProps) => {
+export const ProcedureWidget = ({ procedure, groupedSiteProcedures }: ProcedureWidgetProps) => {
+  const siteInstructionsDrawerRef = useRef<CustomDrawerRef>(null)
+
+  const [siteToShowInstructions, setSiteToShowInstructions] = useState<Site | null>(null)
+
+  const site = useMemo(() => {
+    const group = groupedSiteProcedures.find((group) =>
+      group.procedures.some(({ id }) => id === procedure.id),
+    )
+    return group?.site
+  }, [groupedSiteProcedures, procedure.id])
+
+  const handleShowInstructions = useCallback(() => {
+    if (!site) {
+      return
+    }
+    setSiteToShowInstructions(site)
+    siteInstructionsDrawerRef.current?.open()
+  }, [site])
+
   return (
-    <Paper
-      variant="elevation"
-      elevation={2}
-      sx={{
-        display: 'inline-flex',
-        flexShrink: 0,
-        flexDirection: 'column',
-        rowGap: '0.5rem',
-        p: '1rem',
-        color: 'text.primary',
-        minWidth: '16.5rem',
-        width: 'auto',
-        overflow: 'visible',
-      }}
-    >
-      <Box
+    <>
+      <Paper
+        variant="elevation"
+        elevation={2}
         sx={{
-          display: 'grid',
-          gridTemplateColumns: '1fr auto',
-          alignItems: 'center',
-          columnGap: '1rem',
+          display: 'inline-flex',
+          flexShrink: 0,
+          flexDirection: 'column',
+          rowGap: '0.5rem',
+          p: '1rem',
+          color: 'text.primary',
+          minWidth: '16.5rem',
+          width: 'auto',
+          overflow: 'visible',
         }}
       >
-        <Typography
-          variant="body1"
-          fontWeight="bold"
-          whiteSpace="nowrap"
-          textOverflow="ellipsis"
-          overflow="hidden"
+        <Box
+          sx={{
+            display: 'grid',
+            gridTemplateColumns: '1fr auto auto',
+            alignItems: 'center',
+            columnGap: '1rem',
+          }}
         >
-          {procedure.name}
-        </Typography>
-        <Chip
-          label={
-            <Stack direction="row" alignItems="center" gap="0.5rem">
-              Procedure <TermInfo term="Procedure" sx={{ pointerEvents: 'all' }} />
-            </Stack>
-          }
-          variant="outlined"
-          size="small"
-          color="primary"
+          <Stack>
+            <Typography
+              variant="body1"
+              fontWeight="bold"
+              whiteSpace="nowrap"
+              textOverflow="ellipsis"
+              overflow="hidden"
+            >
+              {procedure.name}
+            </Typography>
+            {site ? (
+              <UrlButton variant="caption" color="text.secondary">
+                {site.url}
+              </UrlButton>
+            ) : (
+              <LinearProgress />
+            )}
+          </Stack>
+          <Chip
+            label={
+              <Stack direction="row" alignItems="center" gap="0.5rem">
+                Procedure <TermInfo term="Procedure" sx={{ pointerEvents: 'all' }} />
+              </Stack>
+            }
+            variant="outlined"
+            size="small"
+            color="primary"
+          />
+          {site ? (
+            <OpenSiteInstructionsFormButtonWithBadge site={site} onClick={handleShowInstructions} />
+          ) : (
+            <Skeleton variant="circular" width="1.5rem" height="1.5rem" />
+          )}
+        </Box>
+        <ReadonlyField
+          label="Type"
+          value={procedureTypeNames[procedure.type]}
+          showBorder
+          icon={<LabelRounded />}
         />
-      </Box>
-      <ReadonlyField
-        label="Type"
-        value={procedureTypeNames[procedure.type]}
-        showBorder
-        icon={<LabelRounded />}
-      />
-      <ReadonlyField
-        label="Start URL"
-        value={procedure.startUrl}
-        showBorder
-        icon={<LinkRounded />}
-      />
-      <ReadonlyField
-        label="Wait for"
-        value={procedure.waitFor ?? ''}
-        showBorder
-        icon={<CodeRounded />}
-      />
-      <Box mx="-1rem">
-        <FlowBranch flow={procedure.flow} />
-      </Box>
-    </Paper>
+        <ReadonlyField
+          label="Start URL"
+          value={procedure.startUrl}
+          showBorder
+          icon={<LinkRounded />}
+        />
+        <ReadonlyField
+          label="Wait for"
+          value={procedure.waitFor ?? ''}
+          showBorder
+          icon={<CodeRounded />}
+        />
+        <Box mx="-1rem">
+          <FlowBranch flow={procedure.flow} />
+        </Box>
+      </Paper>
+      <CustomDrawer
+        ref={siteInstructionsDrawerRef}
+        title={
+          <>
+            <Box component="span" mr="0.5rem">
+              Site instructions
+            </Box>
+            <TermInfo term="Site instructions" />
+          </>
+        }
+      >
+        {siteToShowInstructions && (
+          <SiteInstructionsForm site={siteToShowInstructions} onSuccess={noop} />
+        )}
+      </CustomDrawer>
+    </>
   )
 }
 

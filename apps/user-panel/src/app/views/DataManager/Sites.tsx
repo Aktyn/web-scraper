@@ -1,18 +1,18 @@
-import { useCallback, useMemo, useRef, useState } from 'react'
-import { Badge, Box } from '@mui/material'
+import { useCallback, useRef, useState } from 'react'
+import { Box } from '@mui/material'
 import type { Site } from '@web-scraper/common'
 import { TermInfo } from 'src/app/components/common/TermInfo'
 import { TransitionType, ViewTransition } from '../../components/animation/ViewTransition'
 import { ConfirmationDialog } from '../../components/common/ConfirmationDialog'
 import { CustomDrawer, type CustomDrawerRef } from '../../components/common/CustomDrawer'
 import { UrlButton } from '../../components/common/button/UrlButton'
-import { OpenSiteInstructionsFormButton } from '../../components/site/OpenSiteInstructionsFormButton'
+import { OpenSiteInstructionsFormButtonWithBadge } from '../../components/site/OpenSiteInstructionsFormButton'
 import { SiteForm } from '../../components/site/SiteForm'
 import { SiteInstructionsForm } from '../../components/siteInstructions/SiteInstructionsForm'
-import { Table, type TableRef, useTableColumns } from '../../components/table'
+import { Table, useTableColumns, type TableRef } from '../../components/table'
 import { TagsCellValue } from '../../components/table/TagsCellValue'
 import { useApiRequest } from '../../hooks/useApiRequest'
-import { ScraperTestingSessionsModule } from '../../modules/ScraperTestingSessionsModule'
+import { noop } from '../../utils'
 
 export const Sites = () => {
   const tableRef = useRef<TableRef>(null)
@@ -112,9 +112,6 @@ export const Sites = () => {
     setSiteToShowInstructions(site)
     siteInstructionsDrawerRef.current?.open()
   }, [])
-  const handleSiteInstructionsSet = useCallback(() => {
-    // noop
-  }, [])
 
   return (
     <>
@@ -125,7 +122,7 @@ export const Sites = () => {
         ref={siteInstructionsDrawerRef}
         title={
           <>
-            <Box component="span" mr={1}>
+            <Box component="span" mr="0.5rem">
               Site instructions
             </Box>
             <TermInfo term="Site instructions" />
@@ -133,10 +130,7 @@ export const Sites = () => {
         }
       >
         {siteToShowInstructions && (
-          <SiteInstructionsForm
-            site={siteToShowInstructions}
-            onSuccess={handleSiteInstructionsSet}
-          />
+          <SiteInstructionsForm site={siteToShowInstructions} onSuccess={noop} />
         )}
       </CustomDrawer>
       <ConfirmationDialog
@@ -164,28 +158,5 @@ export const Sites = () => {
         </Box>
       </ViewTransition>
     </>
-  )
-}
-
-interface OpenSiteInstructionsFormButtonWithBadgeProps {
-  site: Site
-  onClick: () => void
-}
-
-const OpenSiteInstructionsFormButtonWithBadge = ({
-  site,
-  onClick,
-}: OpenSiteInstructionsFormButtonWithBadgeProps) => {
-  const testingSessions = ScraperTestingSessionsModule.useTestingSessions()
-
-  const isSiteSessionActive = useMemo(
-    () => testingSessions.sessions.some((session) => session.site.id === site.id),
-    [site.id, testingSessions.sessions],
-  )
-
-  return (
-    <Badge overlap="circular" variant={isSiteSessionActive ? 'dot' : undefined} color="secondary">
-      <OpenSiteInstructionsFormButton onClick={onClick} />
-    </Badge>
   )
 }

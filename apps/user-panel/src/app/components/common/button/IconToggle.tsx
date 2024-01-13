@@ -7,6 +7,7 @@ import {
   useTheme,
   type SvgIconTypeMap,
   type SxProps,
+  type IconButtonProps,
 } from '@mui/material'
 import anime from 'animejs'
 
@@ -25,6 +26,7 @@ interface IconToggleProps<ValueType extends SupportedValue> {
   value: ValueType
   onChange: (value: ValueType) => void
   sx?: SxProps
+  buttonProps?: IconButtonProps
 }
 
 export const IconToggle = <ValueType extends SupportedValue>({
@@ -33,8 +35,9 @@ export const IconToggle = <ValueType extends SupportedValue>({
   value,
   onChange,
   sx,
+  buttonProps,
 }: IconToggleProps<ValueType>) => {
-  const ref = useRef<HTMLButtonElement>(null)
+  const ref = useRef<HTMLDivElement>(null)
   const theme = useTheme()
 
   useEffect(() => {
@@ -78,7 +81,7 @@ export const IconToggle = <ValueType extends SupportedValue>({
     <Tooltip title={tooltipTitle}>
       <Stack
         ref={ref}
-        component="button"
+        className="no-draggable"
         direction="row"
         alignItems="center"
         height={`${sizeRem}rem`}
@@ -96,13 +99,17 @@ export const IconToggle = <ValueType extends SupportedValue>({
           },
           ...sx,
         }}
-        onClick={() => onChange(value === options[0].value ? options[1].value : options[0].value)}
+        onClick={(event) => {
+          event.stopPropagation()
+          onChange(value === options[0].value ? options[1].value : options[0].value)
+        }}
       >
         {options.map((option) => (
           <IconButton
             component="div"
             size="small"
             key={option.value.toString()}
+            {...buttonProps}
             sx={{
               pointerEvents: 'none',
               position: 'absolute',
@@ -110,6 +117,7 @@ export const IconToggle = <ValueType extends SupportedValue>({
               top: 0,
               bottom: 0,
               border: '1px solid transparent',
+              ...buttonProps?.sx,
             }}
           >
             {option.icon}

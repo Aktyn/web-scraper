@@ -40,7 +40,7 @@ type ScraperExecutionMap = Map<
 >
 
 interface ScraperExecutionsDetails {
-  [ScraperMode.DEFAULT]: ScraperExecutionMap
+  [ScraperMode.ROUTINE_EXECUTION]: ScraperExecutionMap
   [ScraperMode.TESTING]: ScraperExecutionMap
 }
 
@@ -91,7 +91,7 @@ function getCurrentExecution(
 
 const ScraperExecutionProvider = ({ children }: PropsWithChildren) => {
   const scraperExecutionsRef = useRef<ScraperExecutionsDetails>({
-    [ScraperMode.DEFAULT]: new Map(),
+    [ScraperMode.ROUTINE_EXECUTION]: new Map(),
     [ScraperMode.TESTING]: new Map(),
   })
   const scraperExecutionChangeListenersRef = useRef(new Set<ScraperExecutionChangeListenerType>())
@@ -274,6 +274,7 @@ const scraperExecutionScopeLevels: { [key in ScraperExecutionScope]: number } = 
   [ScraperExecutionScope.ACTION]: 1,
   [ScraperExecutionScope.FLOW]: 2,
   [ScraperExecutionScope.PROCEDURE]: 3,
+  [ScraperExecutionScope.ROUTINE]: 4,
 }
 
 function assertScraperMode(condition: boolean): asserts condition {

@@ -69,6 +69,17 @@ const ApiProvider = ({ children }: PropsWithChildren) => {
       [ElectronToRendererMessage.siteInstructionsTestingSessionClosed]: (_, sessionId) => {
         console.info(`Site instructions testing session closed (id: ${sessionId})`)
       },
+      [ElectronToRendererMessage.routineExecutionStarted]: (_, executionId, routine) => {
+        console.info(`Routine execution started (id: ${executionId}; routine: ${routine.name})`)
+      },
+      [ElectronToRendererMessage.routineExecutionResult]: (_, executionId, results) => {
+        console.info(
+          `Routine execution results (execution id: ${executionId}; routine: ${results.routine.name})`,
+        )
+      },
+      [ElectronToRendererMessage.routineExecutionFinished]: (_, executionId) => {
+        console.info(`Routine execution finished (id: ${executionId})`)
+      },
       [ElectronToRendererMessage.scraperExecutionStarted]: (
         _,
         scraperId,

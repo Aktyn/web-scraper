@@ -17,6 +17,7 @@ import { HorizontallyScrollableContainer } from '../../components/common/Horizon
 import { ExecutionPlanText } from '../../components/routine/ExecutionPlanText'
 import { BooleanValue } from '../../components/table/BooleanValue'
 import { useApiRequest } from '../../hooks/useApiRequest'
+import { useProceduresGroupedBySite } from '../../hooks/useProceduresGroupedBySite'
 import { routineExecutionTypeNames } from '../../utils/dictionaries'
 
 interface RoutinePanelProps {
@@ -27,6 +28,8 @@ interface RoutinePanelProps {
 
 export const RoutinePanel = ({ routineInfo, onDeleted, onNameChanged }: RoutinePanelProps) => {
   const { submit: getRoutineRequest } = useApiRequest(window.electronAPI.getRoutine)
+
+  const { groupedSiteProcedures } = useProceduresGroupedBySite(true)
 
   const [routine, setRoutine] = useState<Routine | null>(null)
   const [loadingRoutine, setLoadingRoutine] = useState(true)
@@ -158,7 +161,11 @@ export const RoutinePanel = ({ routineInfo, onDeleted, onNameChanged }: RoutineP
                   {index > 0 && (
                     <EastRounded color="inherit" sx={{ alignSelf: 'flex-start', mt: '1rem' }} />
                   )}
-                  <ProcedureWidget key={procedure.id} procedure={procedure} />
+                  <ProcedureWidget
+                    key={procedure.id}
+                    procedure={procedure}
+                    groupedSiteProcedures={groupedSiteProcedures}
+                  />
                 </Fragment>
               ))}
             </HorizontallyScrollableContainer>

@@ -12,6 +12,7 @@ import type {
   Procedure,
   ProcedureExecutionResult,
   Routine,
+  RoutineExecutionResult,
   ScraperExecutionFinishedSchema,
   ScraperExecutionResultSchema,
   ScraperExecutionStartSchema,
@@ -36,6 +37,9 @@ export enum ElectronToRendererMessage {
 
   siteInstructionsTestingSessionOpen = 'siteInstructionsTestingSessionOpen',
   siteInstructionsTestingSessionClosed = 'siteInstructionsTestingSessionClosed',
+  routineExecutionStarted = 'routineExecutionStarted',
+  routineExecutionResult = 'routineExecutionResult',
+  routineExecutionFinished = 'routineExecutionFinished',
   scraperExecutionStarted = 'scraperExecutionStarted',
   scraperExecutionResult = 'scraperExecutionResult',
   scraperExecutionFinished = 'scraperExecutionFinished',
@@ -84,6 +88,7 @@ export enum RendererToElectronMessage {
   createRoutine = 'createRoutine',
   updateRoutine = 'updateRoutine',
   deleteRoutine = 'deleteRoutine',
+  executeRoutine = 'executeRoutine',
 
   getSiteInstructionsTestingSessions = 'getSiteInstructionsTestingSessions',
   startSiteInstructionsTestingSession = 'startSiteInstructionsTestingSession',
@@ -123,12 +128,24 @@ export type ElectronApi = {
   [ElectronToRendererMessage.windowStateChanged]: ElectronToRendererMessageBlueprint<
     [stateChange: WindowStateChange]
   >
+
   [ElectronToRendererMessage.siteInstructionsTestingSessionOpen]: ElectronToRendererMessageBlueprint<
     [sessionId: string, site: Site]
   >
   [ElectronToRendererMessage.siteInstructionsTestingSessionClosed]: ElectronToRendererMessageBlueprint<
     [sessionId: string]
   >
+
+  [ElectronToRendererMessage.routineExecutionStarted]: ElectronToRendererMessageBlueprint<
+    [executionId: string, routine: Routine]
+  >
+  [ElectronToRendererMessage.routineExecutionResult]: ElectronToRendererMessageBlueprint<
+    [executionId: string, result: RoutineExecutionResult]
+  >
+  [ElectronToRendererMessage.routineExecutionFinished]: ElectronToRendererMessageBlueprint<
+    [executionId: string]
+  >
+
   [ElectronToRendererMessage.scraperExecutionStarted]: ElectronToRendererMessageBlueprint<
     [
       scraperId: string,
@@ -255,6 +272,10 @@ export type ElectronApi = {
     data: UpsertRoutineSchema,
   ) => Promise<Routine | ApiError>
   [RendererToElectronMessage.deleteRoutine]: (routineId: Routine['id']) => Promise<ApiError>
+  [RendererToElectronMessage.executeRoutine]: (
+    routineId: Routine['id'],
+    preview: boolean,
+  ) => Promise<{ executionId: string } | ApiError>
 
   [RendererToElectronMessage.getSiteInstructionsTestingSessions]: () => Promise<
     { sessionId: string; site: Site }[] | ApiError

@@ -1,10 +1,17 @@
-import { useCallback, useRef } from 'react'
-import { DeleteRounded, EditRounded, PlayArrowRounded } from '@mui/icons-material'
+import { useCallback, useRef, useState } from 'react'
+import {
+  DeleteRounded,
+  EditRounded,
+  PlayArrowRounded,
+  VisibilityOffRounded,
+  VisibilityRounded,
+} from '@mui/icons-material'
 import { Box, Button, Stack } from '@mui/material'
 import { type Routine } from '@web-scraper/common'
 import { CustomDrawer, type CustomDrawerRef } from '../../components/common/CustomDrawer'
 import { TermInfo } from '../../components/common/TermInfo'
 import { ConfirmableButton } from '../../components/common/button/ConfirmableButton'
+import { IconToggle } from '../../components/common/button/IconToggle'
 import { RoutineForm } from '../../components/routine/RoutineForm'
 import { useApiRequest } from '../../hooks/useApiRequest'
 
@@ -26,6 +33,11 @@ export const RoutinePanelHeaderOptions = ({
   const { submit: deleteRoutineRequest, submitting: deletingRoutine } = useApiRequest(
     window.electronAPI.deleteRoutine,
   )
+  const { submit: executeRoutineRequest, submitting: runningRoutine } = useApiRequest(
+    window.electronAPI.executeRoutine,
+  )
+
+  const [runWithPreview, setRunWithPreview] = useState(false)
 
   const handleDelete = useCallback(() => {
     if (!routine?.id) {
@@ -50,6 +62,25 @@ export const RoutinePanelHeaderOptions = ({
     [onEdited],
   )
 
+  const handleRunRoutine = useCallback(() => {
+    if (!routine?.id) {
+      return
+    }
+
+    executeRoutineRequest(
+      {
+        onSuccess: (data, { enqueueSnackbar }) => {
+          enqueueSnackbar({
+            variant: 'success',
+            message: `Routine is running with execution id ${data.executionId}`,
+          })
+        },
+      },
+      routine.id,
+      runWithPreview,
+    )
+  }, [executeRoutineRequest, routine?.id, runWithPreview])
+
   return (
     <>
       <Stack
@@ -63,11 +94,22 @@ export const RoutinePanelHeaderOptions = ({
           variant="outlined"
           size="large"
           disabled={loading || !routine}
+          startIcon={
+            <Box sx={{ my: '-7px', ml: 'calc(-21px + 0.5rem)' }}>
+              <IconToggle
+                tooltipTitle="Toggle routine execution preview"
+                options={routineExecutionPreviewToggleOptions}
+                value={runWithPreview}
+                onChange={setRunWithPreview}
+                buttonProps={{ tabIndex: -1, disableRipple: true }}
+                sx={{ backgroundColor: 'transparent' }}
+              />
+            </Box>
+          }
           endIcon={<PlayArrowRounded />}
-          onConfirm={() => {
-            //TODO
-          }}
+          onConfirm={handleRunRoutine}
           loadingPosition="end"
+          loading={runningRoutine}
         >
           Run
         </ConfirmableButton>
@@ -89,8 +131,8 @@ export const RoutinePanelHeaderOptions = ({
           disabled={loading || !routine}
           endIcon={<DeleteRounded />}
           onConfirm={handleDelete}
-          loading={deletingRoutine}
           loadingPosition="end"
+          loading={deletingRoutine}
         >
           Delete
         </ConfirmableButton>
@@ -109,3 +151,14 @@ export const RoutinePanelHeaderOptions = ({
     </>
   )
 }
+
+const routineExecutionPreviewToggleOptions = [
+  {
+    value: true,
+    icon: <VisibilityRounded fontSize="inherit" />,
+  },
+  {
+    value: false,
+    icon: <VisibilityOffRounded fontSize="inherit" />,
+  },
+] as const

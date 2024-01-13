@@ -9,6 +9,7 @@ export const errorLabels: { [key in ErrorCode]: string } = {
   [ErrorCode.ENTRY_ALREADY_EXISTS]: 'Entry already exists',
   [ErrorCode.ACTION_CANCELLED_BY_USER]: 'Action cancelled by user',
   [ErrorCode.NOT_FOUND]: 'Not found',
+  [ErrorCode.ACTION_REQUIRED_BY_PROCEDURE_NOT_FOUND]: 'Action required by procedure not found',
 }
 
 export function parseError(error: ApiError['error']) {

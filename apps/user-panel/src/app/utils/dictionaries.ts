@@ -60,6 +60,7 @@ export const scraperExecutionScopeNames: { [key in ScraperExecutionScope]: strin
   [ScraperExecutionScope.ACTION]: 'Action',
   [ScraperExecutionScope.FLOW]: 'Flow',
   [ScraperExecutionScope.PROCEDURE]: 'Procedure',
+  [ScraperExecutionScope.ROUTINE]: 'Routine',
 }
 
 export const dataSourceColumnTypeNames: { [key in DataSourceColumnType]: string } = {
