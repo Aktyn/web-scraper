@@ -1,6 +1,6 @@
 import { debounce, safePromise, wait, waitFor } from './async'
 
-describe('waitFor', () => {
+describe(waitFor.name, () => {
   it('checks condition in given time intervals until the condition resolves to true', async () => {
     let counter = 0
     const fn = jest.fn()
@@ -15,7 +15,7 @@ describe('waitFor', () => {
   })
 })
 
-describe('safePromise', () => {
+describe(safePromise.name, () => {
   const workingAsyncFunction = async () => 1337
 
   const throwingAsyncFunction = async (): Promise<number> => {
@@ -38,7 +38,7 @@ describe('safePromise', () => {
   })
 })
 
-describe('debounce', () => {
+describe(debounce.name, () => {
   afterAll(async () => {
     await wait(200) // avoid jest open handle error
   })

@@ -67,14 +67,17 @@ export const SiteSelectForm = ({ site: selectedSite, onSelect }: SiteSelectFormP
       searchValue
         ? window.electronAPI.getSites({
             ...request,
-            filters: [
-              ...(request.filters ?? []),
-              {
-                url: {
-                  contains: searchValue,
-                },
-              },
-            ],
+            filters:
+              typeof request.filters === 'string'
+                ? request.filters
+                : [
+                    ...(request.filters ?? []),
+                    {
+                      url: {
+                        contains: searchValue,
+                      },
+                    },
+                  ],
           })
         : window.electronAPI.getSites(request),
     [searchValue],

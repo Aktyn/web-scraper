@@ -14,11 +14,12 @@ export function getSites(request: PaginatedRequest<Site, 'id'>) {
     take: request.count,
     skip: request.cursor ? 1 : 0,
     cursor: request.cursor,
-    where: request.filters?.length
-      ? {
-          AND: request.filters as never,
-        }
-      : undefined,
+    where:
+      Array.isArray(request.filters) && request.filters?.length
+        ? {
+            AND: request.filters as never,
+          }
+        : undefined,
     include: {
       Tags: {
         include: {

@@ -17,7 +17,7 @@
 		},
 	],
 	"settings": {
-		"typescript.tsdk": "node_modules/typescript/lib",
+		"typescript.tsdk": "web-scraper/node_modules/typescript/lib",
 		"typescript.preferences.includePackageJsonAutoImports": "on",
 		"testing.automaticallyOpenPeekView": "never",
 		"jest.disabledWorkspaceFolders": [

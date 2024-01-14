@@ -121,14 +121,17 @@ export const SiteTagForm = ({
       searchValue
         ? window.electronAPI.getSiteTags({
             ...request,
-            filters: [
-              ...(request.filters ?? []),
-              {
-                name: {
-                  contains: searchValue,
-                },
-              },
-            ],
+            filters:
+              typeof request.filters === 'string'
+                ? request.filters
+                : [
+                    ...(request.filters ?? []),
+                    {
+                      name: {
+                        contains: searchValue,
+                      },
+                    },
+                  ],
           })
         : window.electronAPI.getSiteTags(request),
     [searchValue],

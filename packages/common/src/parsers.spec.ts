@@ -1,6 +1,6 @@
 import { float, int, tryParseJSON } from './parsers'
 
-describe('int', () => {
+describe(int.name, () => {
   it('should return 0 when value is undefined', () => {
     expect(int(undefined)).toEqual(0)
   })
@@ -22,7 +22,7 @@ describe('int', () => {
   })
 })
 
-describe('float', () => {
+describe(float.name, () => {
   it('should return 0 when value is undefined', () => {
     expect(float(undefined)).toEqual(0)
   })
@@ -40,7 +40,7 @@ describe('float', () => {
   })
 })
 
-describe('tryParseJSON', () => {
+describe(tryParseJSON.name, () => {
   it('should normally parse correct JSON string', () => {
     expect(tryParseJSON('{"a": 5}')).toStrictEqual({ a: 5 })
   })

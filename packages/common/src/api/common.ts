@@ -18,7 +18,7 @@ export type PaginatedApiResponse<DataType, IdProperty extends keyof DataType> =
     }
 
 // Note: this should be compatible with prisma type of the same name
-type StringFilter =
+export type StringFilter =
   | {
       equals?: string
       in?: string[]
@@ -33,8 +33,18 @@ type StringFilter =
       not?: StringFilter | string
     }
   | string
-
-type TypedFilter<ValueType> = ValueType extends string ? StringFilter : never
+export type NumberFilter =
+  | {
+      //TODO: support for other comparators
+      in?: number[]
+      notIn?: number[]
+    }
+  | number
+type TypedFilter<ValueType> = ValueType extends string
+  ? StringFilter
+  : ValueType extends number
+    ? NumberFilter
+    : never
 
 export type DataFilter<DataType> = Partial<{
   [key in keyof DataType]: DataType[key] | TypedFilter<DataType[key]>
@@ -49,7 +59,7 @@ export type PaginatedRequest<
   cursor?: {
     [key in IdProperty]: DataType[IdProperty]
   }
-  filters?: DataFilter<Omit<DataType, OmitInFilters>>[]
+  filters?: DataFilter<Omit<DataType, OmitInFilters>>[] | string
 }
 
 export type PaginatedApiFunction<

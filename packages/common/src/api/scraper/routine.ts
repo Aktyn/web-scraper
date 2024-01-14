@@ -1,5 +1,6 @@
 import * as yup from 'yup'
 
+import { ErrorCode } from '../../error'
 import { transformNanToUndefined } from '../common'
 
 import type { MapSiteError } from './common'
@@ -50,7 +51,7 @@ export enum RoutineExecutionType {
 
   /**
    * Executes sequence of procedures without input data source.
-   * Action steps relying on data source input will receive null.
+   * Action steps relying on data source input will request user for data (similarly to testing site instructions).
    * This type of execution can be used for generating new data source items from static websites.
    */
   STANDALONE = 'standalone',
@@ -60,18 +61,20 @@ export type DataSourceFilter =
   | {
       columnName: string
       columnType: DataSourceColumnType.TEXT
+      /** String value will be interpreted as custom sqlite code */
       where: DataSourceWhereFilter<DataSourceStringFilter>
     }
   | {
       columnName: string
       columnType: DataSourceColumnType.INTEGER | DataSourceColumnType.REAL
+      /** String value will be interpreted as custom sqlite code */
       where: DataSourceWhereFilter<DataSourceNumberFilter>
     }
 
 type DataSourceWhereFilter<TypedFilter> =
   | TypedFilter
-  | { AND: DataSourceWhereFilter<TypedFilter>[] }
-  | { OR: DataSourceWhereFilter<TypedFilter>[] }
+  | { AND: DataSourceFilter[] }
+  | { OR: DataSourceFilter[] }
 
 type DataSourceStringFilter =
   | string
@@ -84,8 +87,7 @@ type DataSourceStringFilter =
       contains?: string
       startsWith?: string
       endsWith?: string
-      null?: true
-      notNull?: true
+      null?: boolean
     }
 
 type DataSourceNumberFilter =
@@ -100,8 +102,7 @@ type DataSourceNumberFilter =
       lte?: number
       gt?: number
       gte?: number
-      null?: true
-      notNull?: true
+      null?: boolean
     }
 
 const buildWhereFilterSchema = <T extends yup.Lazy<unknown>>(typedSchema: T) =>
@@ -137,7 +138,6 @@ const upsertDataSourceStringFilterSchema = yup.lazy((value) => {
       startsWith: yup.string(),
       endsWith: yup.string(),
       null: yup.boolean(),
-      notNull: yup.boolean(),
     })
     .required()
 })
@@ -164,7 +164,6 @@ const upsertDataSourceNumberFilterSchema = yup.lazy((value) => {
       gt: yup.number().transform(transformNanToUndefined),
       gte: yup.number().transform(transformNanToUndefined),
       null: yup.boolean(),
-      notNull: yup.boolean(),
     })
     .required()
 })
@@ -269,3 +268,73 @@ export const upsertRoutineSchema = yup
   .required()
 
 export type UpsertRoutineSchema = yup.InferType<typeof upsertRoutineSchema>
+
+function dataSourceFilterToSqlite(filter: DataSourceFilter) {
+  if (typeof filter.where === 'string') {
+    return filter.where
+  }
+
+  const safeColumnName = `\`${filter.columnName}\``
+
+  if ('AND' in filter.where) {
+    return `(${
+      typeof filter.where.AND === 'string'
+        ? filter.where.AND
+        : dataSourceFiltersToSqlite(filter.where.AND)
+    })`
+  }
+  if ('OR' in filter.where) {
+    return `(${
+      typeof filter.where.OR === 'string'
+        ? filter.where.OR
+        : dataSourceFiltersToSqlite(filter.where.OR, 'OR')
+    })`
+  }
+
+  if (filter.where.null !== undefined) {
+    return `${safeColumnName} IS ${filter.where.null ? 'NULL' : 'NOT NULL'}`
+  }
+
+  switch (filter.columnType) {
+    case DataSourceColumnType.TEXT:
+      if (filter.where.equals !== undefined) return `${safeColumnName} = '${filter.where.equals}'`
+      if (filter.where.notEquals !== undefined)
+        return `${safeColumnName} != '${filter.where.notEquals}'`
+      if (filter.where.in !== undefined)
+        return `${safeColumnName} IN (${filter.where.in.map((v) => `'${v}'`).join(', ')})`
+      if (filter.where.notIn !== undefined)
+        return `${safeColumnName} NOT IN (${filter.where.notIn.map((v) => `'${v}'`).join(', ')})`
+      if (filter.where.contains !== undefined)
+        return `${safeColumnName} LIKE '%${filter.where.contains}%'`
+      if (filter.where.startsWith !== undefined)
+        return `${safeColumnName} LIKE '${filter.where.startsWith}%'`
+      if (filter.where.endsWith !== undefined)
+        return `${safeColumnName} LIKE '%${filter.where.endsWith}'`
+
+      return null
+    case DataSourceColumnType.INTEGER:
+    case DataSourceColumnType.REAL:
+      if (filter.where.equals !== undefined) return `${safeColumnName} = ${filter.where.equals}`
+      if (filter.where.notEquals !== undefined)
+        return `${safeColumnName} != ${filter.where.notEquals}`
+      if (filter.where.in !== undefined)
+        return `${safeColumnName} IN (${filter.where.in.join(', ')})`
+      if (filter.where.notIn !== undefined)
+        return `${safeColumnName} NOT IN (${filter.where.notIn.join(', ')})`
+      if (filter.where.lt !== undefined) return `${safeColumnName} < ${filter.where.lt}`
+      if (filter.where.lte !== undefined) return `${safeColumnName} <= ${filter.where.lte}`
+      if (filter.where.gt !== undefined) return `${safeColumnName} > ${filter.where.gt}`
+      if (filter.where.gte !== undefined) return `${safeColumnName} >= ${filter.where.gte}`
+
+      return null
+  }
+
+  throw { errorCode: ErrorCode.INCORRECT_DATA, error: 'Unknown column type' }
+}
+
+export function dataSourceFiltersToSqlite(
+  filters: DataSourceFilter[],
+  operator: 'AND' | 'OR' = 'AND',
+): string {
+  return filters.map(dataSourceFilterToSqlite).filter(Boolean).join(` ${operator} `)
+}

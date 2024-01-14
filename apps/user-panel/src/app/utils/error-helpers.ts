@@ -10,6 +10,7 @@ export const errorLabels: { [key in ErrorCode]: string } = {
   [ErrorCode.ACTION_CANCELLED_BY_USER]: 'Action cancelled by user',
   [ErrorCode.NOT_FOUND]: 'Not found',
   [ErrorCode.ACTION_REQUIRED_BY_PROCEDURE_NOT_FOUND]: 'Action required by procedure not found',
+  [ErrorCode.SCRAPER_INIT_ERROR]: 'Scraper init error',
 }
 
 export function parseError(error: ApiError['error']) {

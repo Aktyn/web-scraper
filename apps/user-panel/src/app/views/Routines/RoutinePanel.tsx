@@ -6,6 +6,7 @@ import {
   AccordionSummary,
   CircularProgress,
   Stack,
+  Tooltip,
   Typography,
   alpha,
 } from '@mui/material'
@@ -102,16 +103,18 @@ export const RoutinePanel = ({ routineInfo, onDeleted, onNameChanged }: RoutineP
                     {routine.description ?? '-'}
                   </Typography>
                 </HorizontallyScrollableContainer>
-                <Typography variant="body1">
-                  Stop on error:&nbsp;
-                  <BooleanValue
-                    component="span"
-                    value={
-                      routine.stopOnError ?? upsertRoutineSchema.getDefault().stopOnError ?? false
-                    }
-                    sx={{ display: 'inline-flex', verticalAlign: 'bottom' }}
-                  />
-                </Typography>
+                <Tooltip title="Stops execution of next procedure and routine iteration if a procedure finishes with an error">
+                  <Typography variant="body1">
+                    Stop on error:&nbsp;
+                    <BooleanValue
+                      component="span"
+                      value={
+                        routine.stopOnError ?? upsertRoutineSchema.getDefault().stopOnError ?? false
+                      }
+                      sx={{ display: 'inline-flex', verticalAlign: 'bottom' }}
+                    />
+                  </Typography>
+                </Tooltip>
               </>
             )}
           </Stack>

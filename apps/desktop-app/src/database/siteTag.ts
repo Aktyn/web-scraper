@@ -14,11 +14,12 @@ export function getSiteTags(request: PaginatedRequest<SiteTag, 'id'>) {
     take: request.count,
     skip: request.cursor ? 1 : 0,
     cursor: request.cursor,
-    where: request.filters?.length
-      ? {
-          AND: request.filters,
-        }
-      : undefined,
+    where:
+      Array.isArray(request.filters) && request.filters?.length
+        ? {
+            AND: request.filters,
+          }
+        : undefined,
     orderBy: {
       id: 'desc',
     },

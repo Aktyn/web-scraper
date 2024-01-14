@@ -1,6 +1,6 @@
 import { generateComplementaryColor, mixColors, rotateHue, setSaturation } from './helpers'
 
-describe('mixColors', () => {
+describe(mixColors.name, () => {
   it('should return mixed color by given factor', () => {
     expect(mixColors('#ffffff', '#000000', 0.5)).toBe('rgb(127, 127, 127)')
   })
@@ -14,14 +14,14 @@ describe('mixColors', () => {
   })
 })
 
-describe('setSaturation', () => {
+describe(setSaturation.name, () => {
   it('should return color with given saturation', () => {
     expect(setSaturation('#6a1b9a', 0.35)).toBe('rgb(48,29,59)')
     expect(setSaturation('#00838f', 0.15)).toBe('rgb(9,11,12)')
   })
 })
 
-describe('rotateHue', () => {
+describe(rotateHue.name, () => {
   it('should rotate hue by 180 degrees', () => {
     expect(rotateHue('#ff0000', 180)).toBe('#00ffff')
     expect(rotateHue('#00ff00', 180)).toBe('#ff00ff')
@@ -40,7 +40,7 @@ describe('rotateHue', () => {
   })
 })
 
-describe('generateComplementaryColor', () => {
+describe(generateComplementaryColor.name, () => {
   it('should return color with hue rotated by 180 degrees', () => {
     expect(generateComplementaryColor('#90caf9')).toBe('#f9bf90')
     expect(generateComplementaryColor('#90caf937')).toBe('#f9bf9037')

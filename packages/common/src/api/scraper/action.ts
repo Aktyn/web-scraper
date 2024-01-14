@@ -51,9 +51,18 @@ export enum ValueQueryType {
   CUSTOM = 'Custom',
 }
 
+/** DataSource.DataSourceName.ColumnName */
 export type DataSourceValueQuery = `${ValueQueryType.DATA_SOURCE}.${string}.${string}`
 type CustomValueQuery = `${ValueQueryType.CUSTOM}.${string}`
 export type ValueQuery = DataSourceValueQuery | CustomValueQuery
+
+export function isCustomValueQuery(valueQuery: ValueQuery): valueQuery is CustomValueQuery {
+  return valueQuery.startsWith(ValueQueryType.CUSTOM + '.')
+}
+
+export function isDataSourceValueQuery(valueQuery: ValueQuery): valueQuery is DataSourceValueQuery {
+  return valueQuery.startsWith(ValueQueryType.DATA_SOURCE + '.')
+}
 
 export enum SaveDataType {
   ELEMENT_CONTENT = 'elementContent',

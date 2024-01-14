@@ -25,7 +25,7 @@ import {
   type ProcedureExecutionResult,
   type Routine,
   type Site,
-  type RoutineExecutionResult,
+  ErrorCode,
 } from '@web-scraper/common'
 import type { ElementHandle, Page } from 'puppeteer'
 import { v4 as uuidV4 } from 'uuid'
@@ -59,7 +59,7 @@ type ScraperOptions<ModeType extends ScraperMode> = {
       routine: Routine
       procedureActions: Map<Procedure['id'], Action[]>
       preview?: boolean
-      onResult: (result: RoutineExecutionResult) => void
+      // onResult: (result: RoutineExecutionResult) => void //TODO: remove (this is handled via ElectronToRendererMessage.scraperExecutionResult)
     }
   : ModeType extends ScraperMode.TESTING
     ? { siteId: Site['id']; lockURL: string }
@@ -160,7 +160,7 @@ export class Scraper<ModeType extends ScraperMode> {
       await waitFor(() => Promise.resolve(this.initialized), 100, timeout)
     } catch (error) {
       await this.destroy()
-      throw error
+      throw { errorCode: ErrorCode.SCRAPER_INIT_ERROR, error }
     }
   }
 
@@ -185,8 +185,8 @@ export class Scraper<ModeType extends ScraperMode> {
   }
 
   private async initRoutineExecutionMode(self = this as Scraper<ScraperMode.ROUTINE_EXECUTION>) {
-    self.mainPage = await self.browser.newPage()
-    await wait(1000)
+    self.mainPage = await this.browser.getFirstPage()
+    await wait(100)
   }
 
   private async initTestingMode(self = this as Scraper<ScraperMode.TESTING>) {
@@ -246,6 +246,16 @@ export class Scraper<ModeType extends ScraperMode> {
     await safePromise(page.close())
 
     return imageData
+  }
+
+  @assertMainPage
+  public async performRoutineIteration(
+    routine: Routine,
+    _onDataRequest: RequestDataCallback,
+    _onDataSourceItemIdRequest: RequestDataSourceItemIdCallback,
+  ) {
+    //TODO: check if procedure finishes with error and according to routine.stopOnError break the execution chain
+    console.log('TODO: performRoutineIteration', routine.name)
   }
 
   @assertMainPage
@@ -646,8 +656,8 @@ export class Scraper<ModeType extends ScraperMode> {
   private checkErrorStep = checkErrorStep
   private checkSuccessStep = checkSuccessStep
 
-  protected async waitFor(elements: string, timeOut?: number): Promise<AwaitedElementHandle>
-  protected async waitFor(elements: string[], timeOut?: number): Promise<AwaitedElementHandle[]>
+  protected async waitFor(elements: string, timeout?: number): Promise<AwaitedElementHandle>
+  protected async waitFor(elements: string[], timeout?: number): Promise<AwaitedElementHandle[]>
   protected async waitFor(elements: string | string[], timeout = 30_000) {
     try {
       if (Array.isArray(elements)) {

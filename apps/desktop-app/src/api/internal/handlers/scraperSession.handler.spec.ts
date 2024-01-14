@@ -8,7 +8,7 @@ import { registerRequestsHandler } from '../requestHandler'
 import { ipcMain } from 'electron'
 import { Scraper } from '../../../scraper'
 
-describe('userSettingsHandler', () => {
+describe('scraperSession', () => {
   const ipcMainMock = ipcMain as DeepMockProxy<typeof ipcMain>
   const handlers = new Map<string, HandlersInterface[RendererToElectronMessage]>()
 

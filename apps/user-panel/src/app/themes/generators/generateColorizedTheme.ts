@@ -118,6 +118,7 @@ export function generateColorizedTheme({
                   borderRadius: '2rem',
                   border: '1px solid',
                   backdropFilter: 'blur(2px)',
+                  flexWrap: 'nowrap',
                 },
                 '.notistack-MuiContent-success': {
                   backgroundColor: alpha(lightGreen[400], 0.5),

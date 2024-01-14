@@ -7,7 +7,7 @@ import { mockReset, type DeepMockProxy } from 'jest-mock-extended'
 import { registerRequestsHandler } from './requestHandler'
 import { ipcMain } from 'electron'
 
-describe('registerRequestsHandler', () => {
+describe(registerRequestsHandler.name, () => {
   const ipcMainMock = ipcMain as DeepMockProxy<typeof ipcMain>
   const handlers = new Map<string, HandlersInterface[RendererToElectronMessage]>()
 

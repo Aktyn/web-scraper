@@ -133,7 +133,7 @@ function NotificationsProvider({ children }: PropsWithChildren) {
 
   const getNotifications = useCallback<NotificationsContextType['getNotifications']>(
     ({ count, cursor, filters }) => {
-      const filteredNotifications = filters
+      const filteredNotifications = Array.isArray(filters)
         ? filterNotifications(notificationsStore.current, filters)
         : notificationsStore.current
 

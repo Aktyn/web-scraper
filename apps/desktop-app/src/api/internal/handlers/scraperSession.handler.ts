@@ -1,26 +1,21 @@
 import {
-  dataSourceQueryRegex,
   ElectronToRendererMessage,
   ErrorCode,
   RendererToElectronMessage,
-  ValueQueryType,
 } from '@web-scraper/common'
 
 import Database from '../../../database'
-import {
-  type RequestDataCallback,
-  type RequestDataSourceItemIdCallback,
-  Scraper,
-} from '../../../scraper'
+import { Scraper } from '../../../scraper'
 import {
   broadcastMessage,
-  broadcastMessageWithResponseRequest,
   handleApiRequest,
-  type RequestHandlersSchema,
   responseToBroadcastedMessage,
   successResponse,
+  type RequestHandlersSchema,
 } from '../helpers'
 import { parseDatabaseSite } from '../parsers/siteParser'
+
+import { onManualDataRequest, onManualDataSourceItemIdRequest } from './helpers'
 
 export const scraperSessionHandler = {
   [RendererToElectronMessage.getSiteInstructionsTestingSessions]: handleApiRequest(
@@ -93,7 +88,11 @@ export const scraperSessionHandler = {
         throw ErrorCode.NOT_FOUND
       }
 
-      return scraper.performActionStep(actionStep, onDataRequest, onDataSourceItemIdRequest)
+      return scraper.performActionStep(
+        actionStep,
+        onManualDataRequest,
+        onManualDataSourceItemIdRequest,
+      )
     },
   ),
   [RendererToElectronMessage.testAction]: handleApiRequest(
@@ -104,7 +103,7 @@ export const scraperSessionHandler = {
         throw ErrorCode.NOT_FOUND
       }
 
-      return scraper.performAction(action, onDataRequest, onDataSourceItemIdRequest)
+      return scraper.performAction(action, onManualDataRequest, onManualDataSourceItemIdRequest)
     },
   ),
   [RendererToElectronMessage.testFlow]: handleApiRequest(
@@ -115,7 +114,12 @@ export const scraperSessionHandler = {
         throw ErrorCode.NOT_FOUND
       }
 
-      return scraper.performFlow(flow, actions, onDataRequest, onDataSourceItemIdRequest)
+      return scraper.performFlow(
+        flow,
+        actions,
+        onManualDataRequest,
+        onManualDataSourceItemIdRequest,
+      )
     },
   ),
   [RendererToElectronMessage.testProcedure]: handleApiRequest(
@@ -126,7 +130,12 @@ export const scraperSessionHandler = {
         throw ErrorCode.NOT_FOUND
       }
 
-      return scraper.performProcedure(procedure, actions, onDataRequest, onDataSourceItemIdRequest)
+      return scraper.performProcedure(
+        procedure,
+        actions,
+        onManualDataRequest,
+        onManualDataSourceItemIdRequest,
+      )
     },
   ),
   [RendererToElectronMessage.returnManualDataForActionStep]: handleApiRequest(
@@ -144,32 +153,3 @@ export const scraperSessionHandler = {
     },
   ),
 } satisfies Partial<RequestHandlersSchema>
-
-const onDataRequest: RequestDataCallback = async (valueQuery, actionStep) => {
-  if (valueQuery.startsWith(ValueQueryType.CUSTOM + '.')) {
-    return valueQuery.replace(new RegExp(`^${ValueQueryType.CUSTOM}\\.`, 'u'), '')
-  }
-
-  const [value] = await broadcastMessageWithResponseRequest(
-    ElectronToRendererMessage.requestManualDataForActionStep,
-    actionStep,
-    valueQuery,
-  )
-  return value
-}
-
-const onDataSourceItemIdRequest: RequestDataSourceItemIdCallback = async (
-  dataSourceValueQuery,
-  actionStep,
-) => {
-  if (!dataSourceValueQuery.match(dataSourceQueryRegex)) {
-    return null
-  }
-
-  const [value] = await broadcastMessageWithResponseRequest(
-    ElectronToRendererMessage.requestDataSourceItemIdForActionStep,
-    actionStep,
-    dataSourceValueQuery,
-  )
-  return value
-}

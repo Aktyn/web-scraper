@@ -10,6 +10,7 @@ import {
   type UpsertDataSourceItemSchema,
   upsertDataSourceStructureSchema,
   type UpsertDataSourceStructureSchema,
+  type NumberFilter,
 } from '@web-scraper/common'
 
 import { parseDatabaseDataSourceItem } from '../api/internal/parsers/dataSourceParser'
@@ -61,7 +62,35 @@ export function getDataSourceItems(
 ) {
   const tableName = 'DataSource.' + dataSourceName
 
-  //TODO: support for request.filters
+  const whereSql =
+    typeof request.filters === 'string'
+      ? request.filters
+      : request.filters
+          ?.map((filter) => {
+            if (!filter.id) {
+              return null
+            }
+            if (typeof filter.id === 'number') {
+              return `id = ${filter.id}`
+            }
+            const conditions = Object.keys(filter.id)
+              .map((key) => {
+                switch (key as keyof NumberFilter) {
+                  //TODO: support for other conditions
+                  case 'in':
+                    return `id IN (${(filter.id as Exclude<NumberFilter, number>).in?.join(', ')})`
+                  case 'notIn':
+                    return `id NOT IN (${(filter.id as Exclude<NumberFilter, number>).notIn?.join(
+                      ', ',
+                    )})`
+                }
+                return null
+              })
+              .filter(Boolean)
+            return conditions.length ? `(${conditions.join(' AND ')})` : null
+          })
+          .filter(Boolean)
+          .join(' AND ')
 
   if (request.cursor) {
     return Database.prisma.$queryRawUnsafe<RawDataSourceItemSchema[]>(`
@@ -69,7 +98,7 @@ export function getDataSourceItems(
       WHERE id <= (
         SELECT id FROM "${tableName}"
         WHERE id = ${request.cursor.id}
-      )
+      )${whereSql ? ` AND ${whereSql}` : ''}
       ORDER BY id DESC
       LIMIT ${request.count}
       OFFSET 1;
@@ -78,6 +107,7 @@ export function getDataSourceItems(
 
   return Database.prisma.$queryRawUnsafe<RawDataSourceItemSchema[]>(`
     SELECT * FROM "${tableName}"
+    ${whereSql ? `WHERE ${whereSql}` : ''}
     ORDER BY id DESC
     LIMIT ${request.count}
     OFFSET 0

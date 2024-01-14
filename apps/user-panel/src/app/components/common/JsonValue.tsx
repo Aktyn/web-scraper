@@ -108,8 +108,8 @@ const Preview = ({ value }: { value: string | null }) => {
       <Stack
         direction="row"
         alignItems="center"
-        spacing={1}
-        p={2}
+        gap="0.5rem"
+        p="1rem"
         sx={{ color: (theme) => theme.palette.error.main }}
       >
         <ErrorRounded />
@@ -127,7 +127,7 @@ const Preview = ({ value }: { value: string | null }) => {
         component="pre"
         sx={{
           m: 0,
-          p: 2,
+          p: '1rem',
           overflow: 'auto',
           fontSize: '0.875rem',
         }}

@@ -4,7 +4,7 @@ import { mockData, databaseMock } from '../test-utils/databaseMock'
 
 import Database from './index'
 
-describe('Database.siteTags', () => {
+describe('Database.siteTag', () => {
   beforeEach(() => {
     mockReset(databaseMock)
     databaseMock.siteTag.findMany.mockResolvedValue(mockData.siteTags)

@@ -1,12 +1,12 @@
 import { gaussianRandom, gaussianRandomRange, mix, random, randomInt } from './math'
 
-describe('mix', () => {
+describe(mix.name, () => {
   it('should return mix of two values by given factor', () => {
     expect(mix(5, 10, 0.5)).toBe(7.5)
   })
 })
 
-describe('random', () => {
+describe(random.name, () => {
   it('should return a number within the specified range', () => {
     const min = 5
     const max = 10
@@ -33,7 +33,7 @@ describe('random', () => {
   })
 })
 
-describe('randomInt', () => {
+describe(randomInt.name, () => {
   it('should return a random integer between min and max (inclusive)', () => {
     const result = randomInt(1, 10)
     expect(result).toBeGreaterThanOrEqual(1)
@@ -50,7 +50,7 @@ describe('randomInt', () => {
   })
 })
 
-describe('gaussianRandom', () => {
+describe(gaussianRandom.name, () => {
   it('should return a number between 0 and 1', () => {
     const result = gaussianRandom()
     expect(result).toBeGreaterThanOrEqual(0)
@@ -74,7 +74,7 @@ describe('gaussianRandom', () => {
   })
 })
 
-describe('gaussianRandomRange', () => {
+describe(gaussianRandomRange.name, () => {
   it('should return a number within the specified range', () => {
     const min = 5
     const max = 10

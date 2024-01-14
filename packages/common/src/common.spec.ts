@@ -1,18 +1,18 @@
 import { forceArray, getDeepProperty, omit, pick, sortNumbers } from './common'
 
-describe('pick', () => {
+describe(pick.name, () => {
   it('should return object left only with given properties', () => {
     expect(pick({ a: 5, b: 6, c: 7 }, 'a', 'b')).toStrictEqual({ a: 5, b: 6 })
   })
 })
 
-describe('omit', () => {
+describe(omit.name, () => {
   it('should return object without given properties', () => {
     expect(omit({ a: 5, b: 6, c: 7 }, 'a', 'b')).toStrictEqual({ c: 7 })
   })
 })
 
-describe('getDeepProperty', () => {
+describe(getDeepProperty.name, () => {
   it('should return value from nested object by given path string', () => {
     const deepProperty = getDeepProperty(
       {
@@ -54,7 +54,7 @@ describe('getDeepProperty', () => {
   })
 })
 
-describe('forceArray', () => {
+describe(forceArray.name, () => {
   it('should return an array when given a non-array value', () => {
     expect(forceArray('hello')).toStrictEqual(['hello'])
     expect(forceArray(42)).toStrictEqual([42])
@@ -67,7 +67,7 @@ describe('forceArray', () => {
   })
 })
 
-describe('sort', () => {
+describe(sortNumbers.name, () => {
   it('should sort an array of objects in ascending order by a given numeric key', () => {
     const data = [
       { id: 1, value: 5 },

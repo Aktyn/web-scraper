@@ -348,7 +348,6 @@ export const stringConditions: {
   startsWith: { label: 'Starts with', valueType: 'text' },
   endsWith: { label: 'Ends with', valueType: 'text' },
   null: { label: 'Is null', valueType: 'boolean' },
-  notNull: { label: 'Is not null', valueType: 'boolean' },
 }
 
 export type NumberConditionKey = keyof Exclude<UpsertDataSourceNumberFilterSchema, string>
@@ -364,5 +363,4 @@ export const numberConditions: {
   gt: { label: 'Greater than', valueType: 'number' },
   gte: { label: 'Greater than or equal to', valueType: 'number' },
   null: { label: 'Is null', valueType: 'boolean' },
-  notNull: { label: 'Is not null', valueType: 'boolean' },
 }

@@ -1,20 +1,48 @@
-import { Fragment, type ReactNode } from 'react'
-import { Box } from '@mui/material'
+import { Fragment, useCallback, useRef, type ReactNode, useMemo } from 'react'
+import { CodeRounded } from '@mui/icons-material'
+import { Box, Button, Stack, Typography } from '@mui/material'
 import {
   DataSourceColumnType,
   RoutineExecutionType,
   upsertStandaloneExecutionPlanSchema,
   type DataSourceFilter,
   type Routine,
+  dataSourceFiltersToSqlite,
 } from '@web-scraper/common'
+import * as prism from 'prismjs'
 import { numberConditions, stringConditions } from './DataSourceFilterForm'
+import { CustomPopover, type CustomPopoverRef } from '../common/CustomPopover'
 import { BooleanValue } from '../table/BooleanValue'
+
+import 'prismjs/components/prism-sql.js'
+import 'prismjs/themes/prism-dark.css'
 
 interface ExecutionPlanTextProps {
   executionPlan: Routine['executionPlan']
 }
 
 export const ExecutionPlanText = ({ executionPlan }: ExecutionPlanTextProps) => {
+  const sqlitePreviewPopoverRef = useRef<CustomPopoverRef>(null)
+  const sqliteCodeContainerRef = useRef<HTMLPreElement>(null)
+
+  const filters =
+    executionPlan.type === RoutineExecutionType.MATCH_SEQUENTIALLY ? executionPlan.filters : null
+
+  const sql = useMemo(() => {
+    if (!filters) {
+      return ''
+    }
+    return dataSourceFiltersToSqlite(filters)
+  }, [filters])
+
+  const generatePreview = useCallback(() => {
+    if (!sqliteCodeContainerRef.current || !sql) {
+      return
+    }
+
+    sqliteCodeContainerRef.current.innerHTML = prism.highlight(sql, prism.languages.sql, 'sql')
+  }, [sql])
+
   switch (executionPlan.type) {
     case RoutineExecutionType.STANDALONE: {
       const repeat = executionPlan.repeat ?? upsertStandaloneExecutionPlanSchema.getDefault().repeat
@@ -53,6 +81,53 @@ export const ExecutionPlanText = ({ executionPlan }: ExecutionPlanTextProps) => 
             separator=" and "
             lastSeparator=" and "
           />
+          <Button
+            variant="text"
+            size="small"
+            endIcon={<CodeRounded />}
+            onClick={(event) => {
+              sqlitePreviewPopoverRef.current?.open(event.currentTarget)
+              setTimeout(generatePreview, 0)
+            }}
+            sx={{ ml: '0.5rem' }}
+          >
+            Preview SQLite
+          </Button>
+          <CustomPopover
+            ref={sqlitePreviewPopoverRef}
+            TransitionProps={{ unmountOnExit: true }}
+            anchorOrigin={{
+              vertical: 'bottom',
+              horizontal: 'center',
+            }}
+            transformOrigin={{
+              vertical: 'top',
+              horizontal: 'center',
+            }}
+            slotProps={{
+              paper: {
+                sx: {
+                  display: 'flex',
+                },
+              },
+            }}
+          >
+            <Stack
+              gap="0.5rem"
+              component="pre"
+              sx={{
+                m: 0,
+                p: '1rem',
+                overflow: 'auto',
+                fontSize: '0.875rem',
+              }}
+            >
+              <Typography variant="body1" fontWeight="bold">
+                Generated SQLite conditions to filter data source
+              </Typography>
+              <Box ref={sqliteCodeContainerRef}>{sql}</Box>
+            </Stack>
+          </CustomPopover>
           <br />
           Maximum iterations: <Strong>{executionPlan.maximumIterations ?? 'no limit'}</Strong>
         </>

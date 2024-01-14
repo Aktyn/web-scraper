@@ -2,7 +2,7 @@ import { render, screen } from '@testing-library/react'
 import { Table } from './Table'
 import { useTableColumns, type ColumnDefinition } from './useTableColumns'
 
-describe('Table', () => {
+describe(Table.name, () => {
   const mockData = [
     {
       id: 1,
