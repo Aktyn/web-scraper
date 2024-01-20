@@ -55,7 +55,7 @@ export const SiteInstructionsForm = ({ site, onSuccess }: SiteInstructionsFormPr
     getSiteInstructions(
       {
         onSuccess: (instructions) => {
-          resetForm(pick(instructions, 'procedures', 'actions'))
+          resetForm(pick(instructions, 'procedures', 'actions') as never)
           setInstructions(instructions)
         },
         onError: (error, { showErrorSnackbar }) => {

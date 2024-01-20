@@ -73,17 +73,18 @@ export function broadcastMessage<MessageType extends ElectronToRendererMessage>(
   })
 }
 
-type MessageResponseData<MessageType extends ElectronToRendererMessage> = Extract<
-  Parameters<
-    Extract<
-      ElectronApi[RendererToElectronMessage],
-      RendererToElectronResponseBlueprint<MessageType, never[]>
-    >
-  >,
-  Parameters<RendererToElectronResponseBlueprint<MessageType, unknown[]>>
-> extends [unknown, unknown, ...infer T]
-  ? T
-  : never
+type MessageResponseData<MessageType extends ElectronToRendererMessage> =
+  Extract<
+    Parameters<
+      Extract<
+        ElectronApi[RendererToElectronMessage],
+        RendererToElectronResponseBlueprint<MessageType, never[]>
+      >
+    >,
+    Parameters<RendererToElectronResponseBlueprint<MessageType, unknown[]>>
+  > extends [unknown, unknown, ...infer T]
+    ? T
+    : never
 
 const awaitingMessageResponses = new Map<
   string,
