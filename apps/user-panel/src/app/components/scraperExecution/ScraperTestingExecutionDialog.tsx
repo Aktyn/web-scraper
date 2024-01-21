@@ -86,7 +86,7 @@ export const ScraperTestingExecutionDialog = ({
         </DialogTitle>
       </Stack>
       <DialogContent sx={{ pt: 0 }}>
-        <Stack gap={2}>
+        <Stack gap="1rem">
           <ExecutionStepper execution={execution} ignoreScopes={actionStepScopes} />
           {executionData?.finished && (
             <Typography

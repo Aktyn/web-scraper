@@ -37,8 +37,11 @@ export enum ElectronToRendererMessage {
 
   siteInstructionsTestingSessionOpen = 'siteInstructionsTestingSessionOpen',
   siteInstructionsTestingSessionClosed = 'siteInstructionsTestingSessionClosed',
+  /** Start of entire routine chain execution */
   routineExecutionStarted = 'routineExecutionStarted',
+  /** Result of single routine iteration */
   routineExecutionResult = 'routineExecutionResult',
+  /** Result of entire routine chain execution */
   routineExecutionFinished = 'routineExecutionFinished',
   scraperExecutionStarted = 'scraperExecutionStarted',
   scraperExecutionResult = 'scraperExecutionResult',

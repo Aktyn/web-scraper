@@ -26,9 +26,11 @@ export type ExtractTypeByPath<
     ? DataType[PathType]
     : never
 
-export type NumericKeys<T> = {
-  [K in keyof T]: T[K] extends number ? K : never
+export type TypedKeys<T, TargetType> = {
+  [K in keyof T]: T[K] extends TargetType ? K : never
 }[keyof T]
+
+export type NumericKeys<T> = TypedKeys<T, number>
 
 export type AwaitedFunction<T extends (...args: never[]) => Promise<unknown>> = T extends (
   ...args: never[]

@@ -2,6 +2,7 @@ import {
   ActionStepErrorType,
   ActionStepType,
   ElectronToRendererMessage,
+  ErrorCode,
   GLOBAL_ACTION_PREFIX,
   GlobalActionType,
   isGlobalAction,
@@ -18,14 +19,16 @@ import {
   type Action,
   type ActionExecutionResult,
   type ActionStep,
+  type ApiError,
   type FlowExecutionResult,
   type FlowStep,
   type MapSiteError,
   type Procedure,
   type ProcedureExecutionResult,
   type Routine,
+  type RoutineExecutionResult,
   type Site,
-  ErrorCode,
+  hasProcedureExecutionFailed,
 } from '@web-scraper/common'
 import type { ElementHandle, Page } from 'puppeteer'
 import { v4 as uuidV4 } from 'uuid'
@@ -36,6 +39,7 @@ import Database from '../database'
 
 import {
   getFlowFinishedNotification,
+  parseScrapperStringValue,
   type RequestDataCallback,
   type RequestDataSourceItemIdCallback,
 } from '.'
@@ -52,14 +56,16 @@ import {
 } from './steps'
 import { saveToDataSourceStep } from './steps/saveToDataSource.step'
 
+export type ActionsAndSiteGrouped = { actions: Action[]; site: Site }
+
 type ScraperOptions<ModeType extends ScraperMode> = {
   onClose?: () => void
 } & (ModeType extends ScraperMode.ROUTINE_EXECUTION
   ? {
       routine: Routine
-      procedureActions: Map<Procedure['id'], Action[]>
+      actionsAndSiteGroupedByProcedureId: Map<Procedure['id'], ActionsAndSiteGrouped>
       preview?: boolean
-      // onResult: (result: RoutineExecutionResult) => void //TODO: remove (this is handled via ElectronToRendererMessage.scraperExecutionResult)
+      onResult: (result: RoutineExecutionResult) => void
     }
   : ModeType extends ScraperMode.TESTING
     ? { siteId: Site['id']; lockURL: string }
@@ -160,7 +166,10 @@ export class Scraper<ModeType extends ScraperMode> {
       await waitFor(() => Promise.resolve(this.initialized), 100, timeout)
     } catch (error) {
       await this.destroy()
-      throw { errorCode: ErrorCode.SCRAPER_INIT_ERROR, error }
+      throw {
+        errorCode: ErrorCode.SCRAPER_INIT_ERROR,
+        error: error instanceof Error || typeof error === 'string' ? error : null,
+      } satisfies ApiError
     }
   }
 
@@ -250,16 +259,104 @@ export class Scraper<ModeType extends ScraperMode> {
 
   @assertMainPage
   public async performRoutineIteration(
-    routine: Routine,
-    _onDataRequest: RequestDataCallback,
-    _onDataSourceItemIdRequest: RequestDataSourceItemIdCallback,
+    iterationIndex: number,
+    source: RoutineExecutionResult['source'],
+    onDataRequest: RequestDataCallback,
+    onDataSourceItemIdRequest: RequestDataSourceItemIdCallback,
+    self = this as Scraper<ScraperMode.ROUTINE_EXECUTION>,
   ) {
-    //TODO: check if procedure finishes with error and according to routine.stopOnError break the execution chain
-    console.log('TODO: performRoutineIteration', routine.name)
+    if (self.mode !== ScraperMode.ROUTINE_EXECUTION) {
+      throw {
+        errorCode: ErrorCode.UNKNOWN_ERROR,
+        error: 'Scraper is not in routine execution mode',
+      } satisfies ApiError
+    }
+
+    const { routine, actionsAndSiteGroupedByProcedureId } = self.getOptions()
+
+    if (!routine.procedures.length) {
+      throw {
+        errorCode: ErrorCode.INCORRECT_DATA,
+        error: 'Routine has no procedures',
+      } satisfies ApiError
+    }
+
+    this.logger.info(`Performing iteration ${iterationIndex} for routine "${routine.name}"`)
+
+    const executionId = uuidV4()
+    broadcastMessage(
+      ElectronToRendererMessage.scraperExecutionStarted,
+      this.id,
+      this.mode,
+      executionId,
+      {
+        scope: ScraperExecutionScope.ROUTINE,
+        routine,
+        iterationIndex,
+      },
+    )
+
+    const routineResult: RoutineExecutionResult = {
+      routine,
+      source,
+      proceduresExecutionResults: [],
+    }
+
+    //TODO: reset pages on start of each iteration
+
+    for (const procedure of routine.procedures) {
+      // TODO: Run procedure in another tab if the site url origin is different then any of already opened tabs. The idea is to allow support for multiple sites in one routine. For example there could be a three procedures in one routine: one for login to a site A secured with a verification code, second procedure for login to an email account and retrieving the verification code and third procedure continuing on tab with site A that uses the verification code to complete login on site A. This flow requires logic for passing and using returned values from previous procedure execution to the execution of next one.
+
+      const actionsAndSiteGrouped = actionsAndSiteGroupedByProcedureId.get(procedure.id)
+      if (!actionsAndSiteGrouped?.actions?.length) {
+        this.logger.warn(`Procedure "${procedure.name}" has no actions`)
+        continue
+      }
+      const { actions, site } = actionsAndSiteGrouped
+
+      const procedureResult = await this.performProcedure(
+        site.url,
+        procedure,
+        actions,
+        onDataRequest,
+        onDataSourceItemIdRequest,
+      )
+      routineResult.proceduresExecutionResults.push(procedureResult)
+
+      if (hasProcedureExecutionFailed(procedureResult) && routine.stopOnError) {
+        break
+      }
+    }
+
+    broadcastMessage(
+      ElectronToRendererMessage.scraperExecutionResult,
+      this.id,
+      this.mode,
+      executionId,
+      {
+        scope: ScraperExecutionScope.ROUTINE,
+        routineResult,
+        iterationIndex,
+      },
+    )
+    broadcastMessage(
+      ElectronToRendererMessage.scraperExecutionFinished,
+      this.id,
+      this.mode,
+      executionId,
+      {
+        scope: ScraperExecutionScope.ROUTINE,
+        iterationIndex,
+      },
+    )
+
+    self.options.onResult(routineResult)
+    return routineResult
   }
 
   @assertMainPage
   public async performProcedure(
+    siteURL: string,
     procedure: Procedure,
     actions: Action[],
     onDataRequest: RequestDataCallback,
@@ -284,8 +381,9 @@ export class Scraper<ModeType extends ScraperMode> {
       }
 
       try {
-        if (new URL(this.mainPage!.exposed.url()).href !== new URL(procedure.startUrl).href) {
-          await this.mainPage!.goto(procedure.startUrl, null, {
+        const procedureStartURL = parseScrapperStringValue(procedure.startUrl, { siteURL })
+        if (new URL(this.mainPage!.exposed.url()).href !== new URL(procedureStartURL).href) {
+          await this.mainPage!.goto(procedureStartURL, null, {
             timeout: 30_000,
             waitUntil: 'networkidle0',
           })
@@ -317,6 +415,7 @@ export class Scraper<ModeType extends ScraperMode> {
       const flowExecutionResult = await this.performFlow(
         procedure.flow,
         actions,
+        siteURL,
         onDataRequest,
         onDataSourceItemIdRequest,
       )
@@ -353,6 +452,7 @@ export class Scraper<ModeType extends ScraperMode> {
   public async performFlow(
     flow: FlowStep,
     actions: Action[],
+    siteURL: string,
     onDataRequest: RequestDataCallback,
     onDataSourceItemIdRequest: RequestDataSourceItemIdCallback,
   ): Promise<FlowExecutionResult> {
@@ -381,6 +481,7 @@ export class Scraper<ModeType extends ScraperMode> {
 
         const actionResult = await this.performAction(
           action,
+          siteURL,
           onDataRequest,
           onDataSourceItemIdRequest,
         )
@@ -402,6 +503,7 @@ export class Scraper<ModeType extends ScraperMode> {
           const successResult = await this.performFlow(
             flow.onSuccess,
             actions,
+            siteURL,
             onDataRequest,
             onDataSourceItemIdRequest,
           )
@@ -413,6 +515,7 @@ export class Scraper<ModeType extends ScraperMode> {
           const failureResult = await this.performFlow(
             flow.onFailure,
             actions,
+            siteURL,
             onDataRequest,
             onDataSourceItemIdRequest,
           )
@@ -498,6 +601,7 @@ export class Scraper<ModeType extends ScraperMode> {
   @assertMainPage
   public async performAction(
     action: Action,
+    siteURL: string,
     onDataRequest: RequestDataCallback,
     onDataSourceItemIdRequest: RequestDataSourceItemIdCallback,
   ): Promise<ActionExecutionResult> {
@@ -517,8 +621,9 @@ export class Scraper<ModeType extends ScraperMode> {
 
       if (action.url) {
         try {
-          if (new URL(this.mainPage!.exposed.url()).href !== new URL(action.url).href) {
-            await this.mainPage!.goto(action.url, null, {
+          const actionURL = parseScrapperStringValue(action.url, { siteURL })
+          if (new URL(this.mainPage!.exposed.url()).href !== new URL(actionURL).href) {
+            await this.mainPage!.goto(actionURL, null, {
               timeout: 30_000,
               waitUntil: 'networkidle0',
             })

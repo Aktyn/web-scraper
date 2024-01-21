@@ -128,7 +128,7 @@ export function ManualDataForActionStepDialog({
     (request) => {
       return dataSourceFromData?.name
         ? window.electronAPI.getDataSourceItems(request, dataSourceFromData.name)
-        : Promise.resolve({ errorCode: ErrorCode.UNKNOWN_ERROR } as ApiError)
+        : Promise.resolve({ errorCode: ErrorCode.UNKNOWN_ERROR } satisfies ApiError)
     },
     [dataSourceFromData?.name],
   )

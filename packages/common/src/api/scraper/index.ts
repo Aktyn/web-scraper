@@ -49,6 +49,7 @@ export type ScraperExecutionStartSchema =
   | {
       scope: ScraperExecutionScope.ROUTINE
       routine: Routine
+      iterationIndex: number
     }
 
 export type ScraperExecutionResultSchema =
@@ -71,8 +72,14 @@ export type ScraperExecutionResultSchema =
   | {
       scope: ScraperExecutionScope.ROUTINE
       routineResult: RoutineExecutionResult
+      iterationIndex: number
     }
 
-export type ScraperExecutionFinishedSchema = {
-  scope: ScraperExecutionScope
-}
+export type ScraperExecutionFinishedSchema =
+  | {
+      scope: Exclude<ScraperExecutionScope, ScraperExecutionScope.ROUTINE>
+    }
+  | {
+      scope: ScraperExecutionScope.ROUTINE
+      iterationIndex: number
+    }

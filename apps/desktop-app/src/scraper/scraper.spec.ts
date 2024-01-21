@@ -443,6 +443,7 @@ describe('Scraper.TESTING action', () => {
 
       const actionExecutionResult = await scraper.performAction(
         action,
+        'http://localhost:1357',
         dummyRequestDataCallback,
         dummyDataSourceItemIdRequest,
       )
@@ -566,6 +567,7 @@ describe('Scraper.TESTING procedure', () => {
       }
 
       const procedureExecutionResult = await scraper.performProcedure(
+        'http://localhost:1357',
         procedure,
         [action],
         dummyRequestDataCallback,

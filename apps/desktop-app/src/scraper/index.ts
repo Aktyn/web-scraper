@@ -1,2 +1,2 @@
-export { Scraper } from './scraper'
+export * from './scraper'
 export * from './helpers'

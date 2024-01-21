@@ -1,16 +1,24 @@
 import {
-  ElectronToRendererMessage,
-  ValueQueryType,
   dataSourceQueryRegex,
+  ElectronToRendererMessage,
+  ErrorCode,
   isCustomValueQuery,
+  ValueQueryType,
+  type ApiError,
 } from '@web-scraper/common'
 
-import { type RequestDataCallback, type RequestDataSourceItemIdCallback } from '../../../scraper'
+import {
+  parseScrapperStringValue,
+  type RequestDataCallback,
+  type RequestDataSourceItemIdCallback,
+} from '../../../scraper'
 import { broadcastMessageWithResponseRequest } from '../helpers'
 
 export const onManualDataRequest: RequestDataCallback = async (valueQuery, actionStep) => {
   if (isCustomValueQuery(valueQuery)) {
-    return valueQuery.replace(new RegExp(`^${ValueQueryType.CUSTOM}\\.`, 'u'), '')
+    return parseScrapperStringValue(
+      valueQuery.replace(new RegExp(`^${ValueQueryType.CUSTOM}\\.`, 'u'), ''),
+    )
   }
 
   const [value] = await broadcastMessageWithResponseRequest(
@@ -26,7 +34,10 @@ export const onManualDataSourceItemIdRequest: RequestDataSourceItemIdCallback = 
   actionStep,
 ) => {
   if (!dataSourceValueQuery.match(dataSourceQueryRegex)) {
-    return null
+    throw {
+      errorCode: ErrorCode.INCORRECT_DATA,
+      error: `"${dataSourceValueQuery}" is not a proper data source query`,
+    } satisfies ApiError
   }
 
   const [value] = await broadcastMessageWithResponseRequest(

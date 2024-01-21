@@ -20,6 +20,7 @@
     "db:migrate": "prisma migrate dev",
     "db:format": "prisma format",
     "db:seed": "prisma db seed",
+    "db:reset:seed": "cross-env yarn run db:generate:reset && yarn run db:seed",
     "db:studio": "prisma studio --port 5555",
     "test": "jest",
     "test:watch": "jest --watch",

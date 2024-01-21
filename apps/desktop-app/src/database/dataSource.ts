@@ -64,7 +64,7 @@ export function getDataSourceItems(
 
   const whereSql =
     typeof request.filters === 'string'
-      ? request.filters
+      ? `(${request.filters})`
       : request.filters
           ?.map((filter) => {
             if (!filter.id) {

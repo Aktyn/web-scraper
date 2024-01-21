@@ -38,7 +38,7 @@ export const handleApiRequest = <ArgumentsType extends any[], ResponseType exten
       return {
         errorCode: ErrorCode.API_ERROR,
         error: error instanceof Error || typeof error === 'string' ? error : null,
-      }
+      } satisfies ApiError
     }
   }) as unknown as (
     event: IpcMainInvokeEvent,

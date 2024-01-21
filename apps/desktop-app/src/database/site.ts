@@ -1,10 +1,11 @@
 import type { Site as DatabaseSite } from '@prisma/client'
 import {
   ErrorCode,
+  upsertSiteSchema,
   type PaginatedRequest,
   type Site,
+  type SiteInstructions,
   type UpsertSiteSchema,
-  upsertSiteSchema,
 } from '@web-scraper/common'
 
 import Database from './index'
@@ -52,6 +53,23 @@ export async function getSite(id: DatabaseSite['id']) {
   }
 
   return site
+}
+
+export async function getSiteByInstructionsId(siteInstructionsId: SiteInstructions['id']) {
+  return Database.prisma.site.findFirstOrThrow({
+    where: {
+      SiteInstructions: {
+        id: siteInstructionsId,
+      },
+    },
+    include: {
+      Tags: {
+        include: {
+          Tag: true,
+        },
+      },
+    },
+  })
 }
 
 function validateUpsertSchema(data: UpsertSiteSchema) {

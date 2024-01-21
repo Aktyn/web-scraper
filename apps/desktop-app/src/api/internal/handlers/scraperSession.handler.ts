@@ -103,7 +103,12 @@ export const scraperSessionHandler = {
         throw ErrorCode.NOT_FOUND
       }
 
-      return scraper.performAction(action, onManualDataRequest, onManualDataSourceItemIdRequest)
+      return scraper.performAction(
+        action,
+        scraper.getOptions().lockURL,
+        onManualDataRequest,
+        onManualDataSourceItemIdRequest,
+      )
     },
   ),
   [RendererToElectronMessage.testFlow]: handleApiRequest(
@@ -117,6 +122,7 @@ export const scraperSessionHandler = {
       return scraper.performFlow(
         flow,
         actions,
+        scraper.getOptions().lockURL,
         onManualDataRequest,
         onManualDataSourceItemIdRequest,
       )
@@ -131,6 +137,7 @@ export const scraperSessionHandler = {
       }
 
       return scraper.performProcedure(
+        scraper.getOptions().lockURL,
         procedure,
         actions,
         onManualDataRequest,

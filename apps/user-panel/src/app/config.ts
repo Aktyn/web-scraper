@@ -1,16 +1,31 @@
-const nanToNull = (value?: string) => {
-  const num = Number(value)
-  return isNaN(num) ? null : num
+const expectedEnvironmentVariables = [
+  'REACT_APP_VIEW_TRANSITION_DURATION',
+  'REACT_APP_DEFAULT_BACKGROUND_SATURATION',
+  'REACT_APP_PAGINATION_PAGE_SIZE',
+  'REACT_APP_FORM_INPUT_DEBOUNCE_TIME',
+] as const
+for (const variable of expectedEnvironmentVariables) {
+  if (!process.env[variable]) {
+    console.warn(`Missing environment variable: ${variable}`)
+  }
+}
+
+const getNumericEnv = (
+  variable: (typeof expectedEnvironmentVariables)[number],
+  defaultValue: number,
+) => {
+  const num = Number(process.env[variable])
+
+  return isNaN(num) ? defaultValue : num
 }
 
 export const Config = {
   rootElementId: 'root',
 
   /** Milliseconds */
-  VIEW_TRANSITION_DURATION: nanToNull(process.env.REACT_APP_VIEW_TRANSITION_DURATION) ?? 800,
-  DEFAULT_BACKGROUND_SATURATION:
-    nanToNull(process.env.REACT_APP_DEFAULT_BACKGROUND_SATURATION) ?? 0.4,
-  PAGINATION_PAGE_SIZE: nanToNull(process.env.REACT_APP_PAGINATION_PAGE_SIZE) ?? 25,
+  VIEW_TRANSITION_DURATION: getNumericEnv('REACT_APP_VIEW_TRANSITION_DURATION', 800),
+  DEFAULT_BACKGROUND_SATURATION: getNumericEnv('REACT_APP_DEFAULT_BACKGROUND_SATURATION', 0.3),
+  PAGINATION_PAGE_SIZE: getNumericEnv('REACT_APP_PAGINATION_PAGE_SIZE', 25),
 
-  FORM_INPUT_DEBOUNCE_TIME: nanToNull(process.env.REACT_APP_FORM_INPUT_DEBOUNCE_TIME) ?? 500,
+  FORM_INPUT_DEBOUNCE_TIME: getNumericEnv('REACT_APP_FORM_INPUT_DEBOUNCE_TIME', 500),
 } as const

@@ -62,6 +62,12 @@ export interface ProcedureExecutionResult {
   flowExecutionResult: FlowExecutionResult | MapSiteError
 }
 
+export function hasProcedureExecutionFailed(procedureExecutionResult: ProcedureExecutionResult) {
+  return 'errorType' in procedureExecutionResult.flowExecutionResult
+    ? true
+    : !procedureExecutionResult.flowExecutionResult.flowStepsResults.at(-1)?.succeeded
+}
+
 export interface Procedure {
   id: number
   name: string
@@ -115,7 +121,7 @@ const upsertFlowSchema: FlowSchemaTypeHelper = yup.object({
 export const upsertProcedureSchema = yup.object({
   name: yup.string().required('Name is required'),
   type: yup.mixed<ProcedureType>().oneOf(Object.values(ProcedureType)).required('Type is required'),
-  startUrl: yup.string().default('').required('Start URL is required'),
+  startUrl: yup.string().default('{{URL.ORIGIN}}').required('Start URL is required'),
   waitFor: yup.string().nullable().default(null).notRequired(),
   siteInstructionsId: yup.number().required(),
   flow: upsertFlowSchema.nullable().default(null).notRequired(),

@@ -11,7 +11,7 @@ import {
 } from '@web-scraper/common'
 
 import Database from '../../database'
-import { type RequestDataSourceItemIdCallback } from '../helpers'
+import { parseScrapperStringValue, type RequestDataSourceItemIdCallback } from '../helpers'
 import type { Scraper } from '../scraper'
 
 export async function saveToDataSourceStep<ModeType extends ScraperMode>(
@@ -22,7 +22,7 @@ export async function saveToDataSourceStep<ModeType extends ScraperMode>(
   if (!actionStep.data.dataSourceQuery.match(dataSourceQueryRegex)) {
     return {
       errorType: ActionStepErrorType.INCORRECT_DATA,
-      content: "dataSourceQuery doesn't match regex",
+      content: `("${dataSourceQueryRegex}") is not a proper data source query`,
     }
   }
 
@@ -99,7 +99,7 @@ export async function saveToDataSourceStep<ModeType extends ScraperMode>(
         dataSourceName,
         dataSourceItemId,
         dataSourceColumn,
-        actionStep.data.saveToDataSourceValue ?? null,
+        parseScrapperStringValue(actionStep.data.saveToDataSourceValue) || null,
       )
       break
     case SaveDataType.SET_NULL:

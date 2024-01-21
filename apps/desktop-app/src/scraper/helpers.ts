@@ -2,9 +2,10 @@ import {
   cacheable,
   type ActionStep,
   type ActionStepType,
-  type ValueQuery,
-  type DataSourceValueQuery,
   type DataSourceItem,
+  type DataSourceValueQuery,
+  type TypedKeys,
+  type ValueQuery,
 } from '@web-scraper/common'
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { Notification } from 'electron'
@@ -46,3 +47,36 @@ export const getFlowFinishedNotification = cacheable(() => {
 
   return notification
 })
+
+export function parseScrapperStringValue(
+  value: string | null | undefined,
+  helpers: Partial<{ siteURL: string }> = {},
+) {
+  if (typeof value !== 'string') {
+    return ''
+  }
+  return value.replace(/{{([^}]+)}}/g, (_, matchedGroup: string) => {
+    //TODO: add some info/tutorial about supported special values
+    const specialCode = matchedGroup.replace(/\s+/g, '').toUpperCase()
+    if (specialCode === 'URL') {
+      return helpers.siteURL ?? ''
+    }
+    const urlMatch = specialCode.match(/^URL\.(.*)/i)
+    if (urlMatch) {
+      try {
+        const url = new URL(helpers.siteURL ?? '')
+        const urlProperty = urlMatch[1].toLowerCase() as TypedKeys<URL, string>
+        return url[urlProperty] ?? ''
+      } catch {
+        // noop
+      }
+    }
+
+    if (['NOW', 'TIMESTAMP', 'CURRENT_TIMESTAMP'].includes(specialCode)) {
+      return Date.now().toString()
+    }
+
+    console.warn(`Unknown special code: ${specialCode}`)
+    return ''
+  })
+}

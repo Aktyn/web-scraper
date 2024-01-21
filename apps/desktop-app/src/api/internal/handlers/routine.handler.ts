@@ -5,22 +5,23 @@ import {
   RendererToElectronMessage,
   RoutineExecutionType,
   ValueQueryType,
+  dataSourceFiltersToSqlite,
+  dataSourceQueryRegex,
+  hasProcedureExecutionFailed,
   isCustomValueQuery,
   isDataSourceValueQuery,
+  upsertMatchSequentiallyExecutionPlanSchema,
   upsertStandaloneExecutionPlanSchema,
   wait,
-  type Action,
   type ApiError,
   type DataSourceItem,
   type DataSourceValueQuery,
   type Procedure,
-  upsertMatchSequentiallyExecutionPlanSchema,
-  dataSourceFiltersToSqlite,
 } from '@web-scraper/common'
 
 import Database from '../../../database'
 import { type RawDataSourceItemSchema } from '../../../database/dataSource'
-import { Scraper } from '../../../scraper'
+import { Scraper, type ActionsAndSiteGrouped, parseScrapperStringValue } from '../../../scraper'
 import {
   broadcastMessage,
   handleApiRequest,
@@ -30,6 +31,7 @@ import {
 import { parseDatabaseDataSourceItem } from '../parsers/dataSourceParser'
 import { parseDatabaseRoutine } from '../parsers/routineParser'
 import { parseDatabaseAction } from '../parsers/siteInstructionsParser'
+import { parseDatabaseSite } from '../parsers/siteParser'
 
 import { onManualDataRequest, onManualDataSourceItemIdRequest } from './helpers'
 
@@ -71,22 +73,24 @@ export const routineHandler = {
 
       const routine = parseDatabaseRoutine(await Database.routine.getRoutine(routineId))
 
-      const procedureActions = await getProcedureActions(routine.procedures)
+      const actionsAndSiteGroupedByProcedureId = await getActionsAndSiteGroupedByProcedureId(
+        routine.procedures,
+      )
 
       const routineExecutionInstance = new Scraper<typeof Scraper.Mode.ROUTINE_EXECUTION>(
         Scraper.Mode.ROUTINE_EXECUTION,
         {
           routine,
-          procedureActions,
+          actionsAndSiteGroupedByProcedureId,
           preview,
-          // onResult: (result) => {
-          //   //TODO: save RoutineExecutionResult in database before broadcasting message
-          //   broadcastMessage(
-          //     ElectronToRendererMessage.routineExecutionResult,
-          //     routineExecutionInstance.id,
-          //     result,
-          //   )
-          // },
+          onResult: (result) => {
+            //TODO: save RoutineExecutionResult in database before broadcasting message
+            broadcastMessage(
+              ElectronToRendererMessage.routineExecutionResult,
+              routineExecutionInstance.id,
+              result,
+            )
+          },
           onClose: () => {
             broadcastMessage(
               ElectronToRendererMessage.routineExecutionFinished,
@@ -105,15 +109,22 @@ export const routineHandler = {
       await wait(100)
 
       performRoutineExecution(routineExecutionInstance).catch(console.error)
-      // routineExecutionInstance.performRoutine(_, onDataRequest, onDataSourceItemIdRequest)
-
       return { executionId: routineExecutionInstance.id }
     },
   ),
 } satisfies Partial<RequestHandlersSchema>
 
-async function getProcedureActions(procedures: Procedure[]) {
-  const procedureActions = new Map<Procedure['id'], Action[]>()
+async function getActionsAndSiteGroupedByProcedureId(procedures: Procedure[]) {
+  if (!procedures.length) {
+    throw {
+      errorCode: ErrorCode.INCORRECT_DATA,
+      error: 'Routine has no procedures',
+    } satisfies ApiError
+  }
+
+  const actionsAndSiteGroupedByProcedureId = new Map<Procedure['id'], ActionsAndSiteGrouped>()
+  const databaseSite = await Database.site.getSiteByInstructionsId(procedures[0].siteInstructionsId)
+  const site = parseDatabaseSite(databaseSite)
 
   for (const procedure of procedures) {
     const requiredActionNames = listProcedureActionNames(procedure.flow)
@@ -133,10 +144,10 @@ async function getProcedureActions(procedures: Procedure[]) {
       }
     }
 
-    procedureActions.set(procedure.id, actions)
+    actionsAndSiteGroupedByProcedureId.set(procedure.id, { actions, site })
   }
 
-  return procedureActions
+  return actionsAndSiteGroupedByProcedureId
 }
 
 /** Doesn't include global actions */
@@ -169,7 +180,7 @@ function getColumnValue(
     throw {
       errorCode: ErrorCode.INCORRECT_DATA,
       error: `Invalid value query: "${valueQuery}" (column not found)`,
-    }
+    } satisfies ApiError
   }
   return columnData.value
 }
@@ -179,15 +190,25 @@ async function runForEachDataSourceItem(
   dataSourceName: string,
   items: RawDataSourceItemSchema[],
 ) {
-  const { routine } = scraperInstance.getOptions()
+  const dataSource = await Database.dataSource.getDataSource(dataSourceName)
+  if (!dataSource) {
+    throw {
+      errorCode: ErrorCode.INCORRECT_DATA,
+      error: `Data source "${dataSourceName}" not found`,
+    } satisfies ApiError
+  }
 
   const parsedItems = items.map(parseDatabaseDataSourceItem)
+  let iterationIndex = 0
   for (const item of parsedItems) {
-    await scraperInstance.performRoutineIteration(
-      routine,
+    const routineExecutionResult = await scraperInstance.performRoutineIteration(
+      iterationIndex++,
+      { dataSource, item },
       async (valueQuery) => {
         if (isCustomValueQuery(valueQuery)) {
-          return valueQuery.replace(new RegExp(`^${ValueQueryType.CUSTOM}\\.`, 'u'), '')
+          return parseScrapperStringValue(
+            valueQuery.replace(new RegExp(`^${ValueQueryType.CUSTOM}\\.`, 'u'), ''),
+          )
         }
 
         if (isDataSourceValueQuery(valueQuery)) {
@@ -207,7 +228,7 @@ async function runForEachDataSourceItem(
               throw {
                 errorCode: ErrorCode.INCORRECT_DATA,
                 error: `Invalid value query: "${valueQuery}" (item with id ${item.id} not found in data source ${queryDataSourceName})`,
-              }
+              } satisfies ApiError
             }
 
             return getColumnValue(
@@ -221,10 +242,30 @@ async function runForEachDataSourceItem(
         throw {
           errorCode: ErrorCode.INCORRECT_DATA,
           error: `Invalid value query: "${valueQuery}" (incorrect format)`,
-        }
+        } satisfies ApiError
       },
-      async () => item.id,
+      async (dataSourceValueQuery) => {
+        if (!dataSourceValueQuery.match(dataSourceQueryRegex)) {
+          throw {
+            errorCode: ErrorCode.INCORRECT_DATA,
+            error: `"${dataSourceValueQuery}" is not a proper data source query`,
+          } satisfies ApiError
+        }
+
+        const [dataSourceNameFromQuery] = dataSourceValueQuery.split('.').slice(1) ?? ['']
+        if (dataSourceNameFromQuery !== dataSourceName) {
+          return null
+        }
+
+        return item.id
+      },
     )
+    if (
+      routineExecutionResult.routine.stopOnError &&
+      routineExecutionResult.proceduresExecutionResults.some(hasProcedureExecutionFailed)
+    ) {
+      break
+    }
   }
 }
 
@@ -239,11 +280,18 @@ async function performRoutineExecution(
         const repeat =
           routine.executionPlan.repeat ?? upsertStandaloneExecutionPlanSchema.getDefault().repeat
         for (let i = 0; i < repeat; i++) {
-          await scraperInstance.performRoutineIteration(
-            routine,
+          const routineExecutionResult = await scraperInstance.performRoutineIteration(
+            i,
+            null,
             onManualDataRequest,
             onManualDataSourceItemIdRequest,
           )
+          if (
+            routine.stopOnError &&
+            routineExecutionResult.proceduresExecutionResults.some(hasProcedureExecutionFailed)
+          ) {
+            break
+          }
         }
       }
       break

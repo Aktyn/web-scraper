@@ -28,9 +28,7 @@ export async function saveAsFile(
   })
 
   if (file.canceled || !file.filePath) {
-    return {
-      errorCode: ErrorCode.ACTION_CANCELLED_BY_USER,
-    }
+    return { errorCode: ErrorCode.ACTION_CANCELLED_BY_USER } satisfies ApiError
   }
 
   fs.writeFileSync(file.filePath, data, encoding)
@@ -49,9 +47,7 @@ export async function loadFile(
   })
 
   if (file.canceled || !file.filePaths.length) {
-    return {
-      errorCode: ErrorCode.ACTION_CANCELLED_BY_USER,
-    }
+    return { errorCode: ErrorCode.ACTION_CANCELLED_BY_USER } satisfies ApiError
   }
 
   return { data: fs.readFileSync(file.filePaths[0], encoding) }

@@ -1,53 +1,87 @@
 import type { PrismaClient } from '@prisma/client'
 import {
-  ActionStepErrorType,
+  ActionStep,
   ActionStepType,
   GLOBAL_ACTION_PREFIX,
   GlobalActionType,
   ProcedureType,
   REGULAR_ACTION_PREFIX,
+  SaveDataType,
+  ValueQueryType,
 } from '@web-scraper/common'
 
 export async function seedSiteInstructions(prisma: PrismaClient) {
   const instructions1 = await prisma.siteInstructions.create({ data: { siteId: 1 } })
-  const loginAction = await prisma.action.create({
-    data: { name: 'login', siteInstructionsId: instructions1.id, url: '{{URL.ORIGIN}}/login' },
+  const getTitleAction = await prisma.action.create({
+    data: { name: 'Get title', siteInstructionsId: instructions1.id, url: '{{URL.ORIGIN}}' },
   })
   await prisma.actionStep.create({
     data: {
-      type: ActionStepType.FILL_INPUT,
-      data: JSON.stringify({ element: 'body > input[type=text]', value: 'test' }),
-      orderIndex: 1,
-      actionId: loginAction.id,
-    },
-  })
-  await prisma.actionStep.create({
-    data: {
-      type: ActionStepType.PRESS_BUTTON,
-      data: JSON.stringify({ element: 'body > button', waitForNavigation: false }),
-      orderIndex: 2,
-      actionId: loginAction.id,
-    },
-  })
-  await prisma.actionStep.create({
-    data: {
-      type: ActionStepType.CHECK_SUCCESS,
+      type: ActionStepType.SAVE_TO_DATA_SOURCE,
       data: JSON.stringify({
-        element: 'body > div',
-        mapSuccess: [{ content: 'success', errorType: ActionStepErrorType.NO_ERROR }],
-      }),
+        dataSourceQuery: `${ValueQueryType.DATA_SOURCE}.Example.Title`,
+        saveDataType: SaveDataType.ELEMENT_CONTENT,
+        saveToDataSourceValue: 'body > div:nth-child(1) > h1',
+      } satisfies ActionStep['data']),
+      orderIndex: 1,
+      actionId: getTitleAction.id,
+    },
+  })
+  await prisma.actionStep.create({
+    data: {
+      type: ActionStepType.WAIT,
+      data: JSON.stringify({ duration: 5000 } satisfies ActionStep['data']),
+      orderIndex: 2,
+      actionId: getTitleAction.id,
+    },
+  })
+  await prisma.actionStep.create({
+    data: {
+      type: ActionStepType.SAVE_TO_DATA_SOURCE,
+      data: JSON.stringify({
+        dataSourceQuery: `${ValueQueryType.DATA_SOURCE}.Example.Timestamp`,
+        saveDataType: SaveDataType.CURRENT_TIMESTAMP,
+      } satisfies ActionStep['data']),
       orderIndex: 3,
-      actionId: loginAction.id,
+      actionId: getTitleAction.id,
+    },
+  })
+  await prisma.actionStep.create({
+    data: {
+      type: ActionStepType.WAIT,
+      data: JSON.stringify({ duration: 5000 } satisfies ActionStep['data']),
+      orderIndex: 4,
+      actionId: getTitleAction.id,
+    },
+  })
+  await prisma.actionStep.create({
+    data: {
+      type: ActionStepType.SAVE_TO_DATA_SOURCE,
+      data: JSON.stringify({
+        dataSourceQuery: `${ValueQueryType.DATA_SOURCE}.Example.Custom`,
+        saveDataType: SaveDataType.CUSTOM,
+        saveToDataSourceValue: 'Custom value from siteInstructions seed',
+      } satisfies ActionStep['data']),
+      orderIndex: 5,
+      actionId: getTitleAction.id,
+    },
+  })
+  await prisma.actionStep.create({
+    data: {
+      type: ActionStepType.WAIT,
+      data: JSON.stringify({ duration: 5000 } satisfies ActionStep['data']),
+      orderIndex: 6,
+      actionId: getTitleAction.id,
     },
   })
 
-  const successFlowStep2 = await prisma.flowStep.create({
+  const successFlowStep = await prisma.flowStep.create({
     data: {
       actionName: `${GLOBAL_ACTION_PREFIX}.${GlobalActionType.FINISH}`,
     },
   })
 
-  const failureFlowStep2 = await prisma.flowStep.create({
+  const failureFlowStep = await prisma.flowStep.create({
     data: {
       actionName: `${GLOBAL_ACTION_PREFIX}.${GlobalActionType.FINISH_WITH_ERROR}`,
     },
@@ -55,19 +89,19 @@ export async function seedSiteInstructions(prisma: PrismaClient) {
 
   const flowStart = await prisma.flowStep.create({
     data: {
-      actionName: `${REGULAR_ACTION_PREFIX}.${loginAction.name}`,
+      actionName: `${REGULAR_ACTION_PREFIX}.${getTitleAction.name}`,
       globalReturnValues: JSON.stringify([]),
-      onSuccessFlowStepId: successFlowStep2.id,
-      onFailureFlowStepId: failureFlowStep2.id,
+      onSuccessFlowStepId: successFlowStep.id,
+      onFailureFlowStepId: failureFlowStep.id,
     },
   })
 
   await prisma.procedure.create({
     data: {
-      name: 'Login',
-      type: ProcedureType.ACCOUNT_CHECK,
-      startUrl: `{{URL.ORIGIN}}/login`,
-      waitFor: 'body > h1',
+      name: 'Get title from example site',
+      type: ProcedureType.DATA_RETRIEVAL,
+      startUrl: `{{URL.ORIGIN}}`,
+      waitFor: 'body > div:nth-child(1) > h1',
       siteInstructionsId: instructions1.id,
       flowStepId: flowStart.id,
     },

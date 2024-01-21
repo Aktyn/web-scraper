@@ -1,9 +1,8 @@
 import * as yup from 'yup'
 
 import { ErrorCode } from '../../error'
-import { transformNanToUndefined } from '../common'
+import { transformNanToUndefined, type ApiError } from '../common'
 
-import type { MapSiteError } from './common'
 import { DataSourceColumnType, type DataSourceItem, type DataSourceStructure } from './dataSource'
 import type { Procedure, ProcedureExecutionResult } from './procedure'
 
@@ -36,7 +35,7 @@ export interface Routine {
 export interface RoutineExecutionResult {
   routine: Routine
   source: { dataSource: DataSourceStructure; item: DataSourceItem } | null
-  proceduresExecutionResults: (ProcedureExecutionResult | MapSiteError)[]
+  proceduresExecutionResults: ProcedureExecutionResult[]
 }
 
 export enum RoutineExecutionType {
@@ -329,7 +328,7 @@ function dataSourceFilterToSqlite(filter: DataSourceFilter) {
       return null
   }
 
-  throw { errorCode: ErrorCode.INCORRECT_DATA, error: 'Unknown column type' }
+  throw { errorCode: ErrorCode.INCORRECT_DATA, error: 'Unknown column type' } satisfies ApiError
 }
 
 export function dataSourceFiltersToSqlite(

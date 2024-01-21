@@ -15,7 +15,7 @@ import { CustomPopover, type CustomPopoverRef } from '../components/common/Custo
 import { HorizontallyScrollableContainer } from '../components/common/HorizontallyScrollableContainer'
 import { IconToggle } from '../components/common/button/IconToggle'
 import { Config } from '../config'
-import { UserDataContext } from '../context/userDataContext'
+import { UserDataContext, defaultUserSettings } from '../context/userDataContext'
 import { EncryptionPasswordForm } from '../forms/EncryptionPasswordForm'
 
 export const headerSize = '3rem'
@@ -78,7 +78,13 @@ export const Header = () => {
               <Stack alignItems="center">
                 <Box>
                   Adjust theme coloring intensity (
-                  {Math.round(100 * (settings.backgroundSaturation ?? 0))}%)
+                  {Math.round(
+                    100 *
+                      (settings.backgroundSaturation ??
+                        defaultUserSettings.backgroundSaturation ??
+                        0),
+                  )}
+                  %)
                 </Box>
                 <Box>The effect will be visible the next time you change view</Box>
               </Stack>
