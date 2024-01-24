@@ -1,6 +1,6 @@
 {
   "name": "@web-scraper/desktop-app",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Project created to better automate web operations. It can be used for advanced website testing, data mining, scraping, and more.",
   "main": "./dist/main.js",
   "private": true,
