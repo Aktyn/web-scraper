@@ -42,6 +42,9 @@ export const Header = () => {
     })
   }, [loading])
 
+  const backgroundSaturation =
+    settings.backgroundSaturation ?? defaultUserSettings.backgroundSaturation ?? 0
+
   return (
     <Stack
       direction="row"
@@ -77,13 +80,7 @@ export const Header = () => {
             title={
               <Stack alignItems="center">
                 <Box>
-                  Adjust theme coloring intensity (
-                  {Math.round(
-                    100 *
-                      (settings.backgroundSaturation ??
-                        defaultUserSettings.backgroundSaturation ??
-                        0),
-                  )}
+                  Adjust theme coloring intensity ({Math.round(100 * backgroundSaturation)}
                   %)
                 </Box>
                 <Box>The effect will be visible the next time you change view</Box>
@@ -100,14 +97,14 @@ export const Header = () => {
             >
               <DarkModeRounded
                 sx={{
-                  opacity: Math.max(0.2, 1 - (settings.backgroundSaturation ?? 1)),
+                  opacity: Math.max(0.2, 1 - backgroundSaturation),
                   transition: (theme) => theme?.transitions.create('opacity', { easing: 'linear' }),
                 }}
               />
               <Slider
                 aria-label="Lightness"
                 size="small"
-                value={settings.backgroundSaturation}
+                value={backgroundSaturation}
                 defaultValue={Config.DEFAULT_BACKGROUND_SATURATION}
                 onChange={(_, value) =>
                   updateSetting('backgroundSaturation', Array.isArray(value) ? value[0] : value)
@@ -120,7 +117,7 @@ export const Header = () => {
               />
               <LightModeRounded
                 sx={{
-                  opacity: Math.max(0.2, settings.backgroundSaturation ?? 1),
+                  opacity: Math.max(0.2, backgroundSaturation),
                   transition: (theme) => theme?.transitions.create('opacity', { easing: 'linear' }),
                 }}
               />

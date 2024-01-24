@@ -65,7 +65,7 @@ type ScraperOptions<ModeType extends ScraperMode> = {
       routine: Routine
       actionsAndSiteGroupedByProcedureId: Map<Procedure['id'], ActionsAndSiteGrouped>
       preview?: boolean
-      onResult: (result: RoutineExecutionResult) => void
+      onResult: (result: RoutineExecutionResult, iterationIndex: number) => void
     }
   : ModeType extends ScraperMode.TESTING
     ? { siteId: Site['id']; lockURL: string }
@@ -350,7 +350,7 @@ export class Scraper<ModeType extends ScraperMode> {
       },
     )
 
-    self.options.onResult(routineResult)
+    self.options.onResult(routineResult, iterationIndex)
     return routineResult
   }
 

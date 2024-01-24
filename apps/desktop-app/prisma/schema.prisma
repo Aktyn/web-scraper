@@ -124,13 +124,14 @@ model RoutineProcedureRelation {
 }
 
 model RoutineExecutionResult {
-  id        Int      @id @default(autoincrement())
-  createdAt DateTime @default(now())
+  id             Int      @id @default(autoincrement())
+  createdAt      DateTime @default(now())
   //
-  routineId Int
-  Routine   Routine  @relation(fields: [routineId], references: [id], onDelete: Cascade)
+  routineId      Int
+  Routine        Routine  @relation(fields: [routineId], references: [id], onDelete: Cascade)
   //
-  results   String // Stringified RoutineExecutionResult
+  iterationIndex Int
+  results        String // Stringified RoutineExecutionResult
 }
 
 model UserData {

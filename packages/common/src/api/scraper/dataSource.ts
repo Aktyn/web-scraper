@@ -7,6 +7,7 @@ export enum DataSourceColumnType {
   TEXT = 'TEXT',
   INTEGER = 'INTEGER',
   REAL = 'REAL',
+  //TODO: add support for DATETIME type
 }
 
 interface DataSourceColumn {

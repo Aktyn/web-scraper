@@ -3,6 +3,7 @@ import {
   type Routine,
   type UpsertRoutineSchema,
   upsertRoutineSchema,
+  type RoutineExecutionResult,
 } from '@web-scraper/common'
 
 import Database from './index'
@@ -149,5 +150,19 @@ export async function updateRoutine(id: Routine['id'], data: UpsertRoutineSchema
 export function deleteRoutine(id: Routine['id']) {
   return Database.prisma.routine.delete({
     where: { id },
+  })
+}
+
+export function createRoutineExecutionResult(
+  result: RoutineExecutionResult,
+  iterationIndex: number,
+) {
+  return Database.prisma.routineExecutionResult.create({
+    data: {
+      routineId: result.routine.id,
+      createdAt: new Date(),
+      iterationIndex,
+      results: JSON.stringify(result),
+    },
   })
 }

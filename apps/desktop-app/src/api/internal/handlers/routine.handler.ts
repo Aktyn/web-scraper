@@ -83,8 +83,8 @@ export const routineHandler = {
           routine,
           actionsAndSiteGroupedByProcedureId,
           preview,
-          onResult: (result) => {
-            //TODO: save RoutineExecutionResult in database before broadcasting message
+          onResult: async (result, iteration) => {
+            await Database.routine.createRoutineExecutionResult(result, iteration)
             broadcastMessage(
               ElectronToRendererMessage.routineExecutionResult,
               routineExecutionInstance.id,
