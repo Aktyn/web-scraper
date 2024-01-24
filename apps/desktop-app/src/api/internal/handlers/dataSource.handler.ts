@@ -47,13 +47,13 @@ export const dataSourceHandler = {
   [RendererToElectronMessage.getDataSourceItems]: handleApiRequest(
     RendererToElectronMessage.getDataSourceItems,
     (request, dataSourceName) =>
-      Database.dataSource
-        .getDataSourceItems(request, dataSourceName)
-        .then((rawItems) => rawItems.map(parseDatabaseDataSourceItem))
-        .then((items) => ({
+      Database.dataSource.getDataSourceItems(request, dataSourceName).then((rawItems) => {
+        const items = rawItems.map(parseDatabaseDataSourceItem)
+        return {
           data: items,
           cursor: Database.utils.extractCursor(items, 'id', request.count),
-        })),
+        }
+      }),
   ),
   [RendererToElectronMessage.clearDataSourceItems]: handleApiRequest(
     RendererToElectronMessage.clearDataSourceItems,

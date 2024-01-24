@@ -1,20 +1,23 @@
-import { Fragment, useCallback, useEffect, useState } from 'react'
-import { EastRounded, ExpandMoreRounded } from '@mui/icons-material'
+import { Fragment, useCallback, useEffect, useRef, useState } from 'react'
+import { EastRounded, ExpandMoreRounded, PreviewRounded } from '@mui/icons-material'
 import {
   Accordion,
   AccordionDetails,
   AccordionSummary,
   CircularProgress,
+  IconButton,
   Stack,
   Tooltip,
   Typography,
   alpha,
 } from '@mui/material'
-import { upsertRoutineSchema, type Routine } from '@web-scraper/common'
+import { RoutineExecutionType, upsertRoutineSchema, type Routine } from '@web-scraper/common'
 import { ViewTransition } from 'src/app/components/animation/ViewTransition'
 import { ProcedureWidget } from 'src/app/components/procedure/ProcedureWidget'
 import { RoutinePanelHeaderOptions } from './RoutinePanelHeaderOptions'
+import { CustomPopover, type CustomPopoverRef } from '../../components/common/CustomPopover'
 import { HorizontallyScrollableContainer } from '../../components/common/HorizontallyScrollableContainer'
+import { ExecutionPlanRowsPreview } from '../../components/routine/ExecutionPlanRowsPreview'
 import { ExecutionPlanText } from '../../components/routine/ExecutionPlanText'
 import { BooleanValue } from '../../components/table/BooleanValue'
 import { useApiRequest } from '../../hooks/useApiRequest'
@@ -28,6 +31,7 @@ interface RoutinePanelProps {
 }
 
 export const RoutinePanel = ({ routineInfo, onDeleted, onNameChanged }: RoutinePanelProps) => {
+  const executionPlanRowsPreviewPopoverRef = useRef<CustomPopoverRef>(null)
   const { submit: getRoutineRequest } = useApiRequest(window.electronAPI.getRoutine)
 
   const { groupedSiteProcedures } = useProceduresGroupedBySite(true)
@@ -131,17 +135,36 @@ export const RoutinePanel = ({ routineInfo, onDeleted, onNameChanged }: RoutineP
               defaultExpanded
               disableGutters
               elevation={2}
-              TransitionProps={{ unmountOnExit: true }}
+              slotProps={{
+                transition: {
+                  unmountOnExit: true,
+                },
+              }}
               sx={{
                 borderBottomLeftRadius: '1rem !important',
                 borderBottomRightRadius: '1rem !important',
               }}
             >
               <AccordionSummary expandIcon={<ExpandMoreRounded />}>
-                <Typography variant="body1">
-                  Execution plan:{' '}
-                  <strong>{routineExecutionTypeNames[routine.executionPlan.type]}</strong>
-                </Typography>
+                <Stack direction="row" alignItems="center" gap="0.5rem">
+                  <Typography variant="body1">
+                    Execution plan:{' '}
+                    <strong>{routineExecutionTypeNames[routine.executionPlan.type]}</strong>
+                  </Typography>
+                  {routine.executionPlan.type !== RoutineExecutionType.STANDALONE && (
+                    <Tooltip title="Preview rows">
+                      <IconButton
+                        size="small"
+                        onClick={(event) => {
+                          executionPlanRowsPreviewPopoverRef.current?.open(event.currentTarget)
+                          event.stopPropagation()
+                        }}
+                      >
+                        <PreviewRounded fontSize="inherit" />
+                      </IconButton>
+                    </Tooltip>
+                  )}
+                </Stack>
               </AccordionSummary>
               <AccordionDetails>
                 <Typography variant="body1">
@@ -172,6 +195,29 @@ export const RoutinePanel = ({ routineInfo, onDeleted, onNameChanged }: RoutineP
                 </Fragment>
               ))}
             </HorizontallyScrollableContainer>
+            <CustomPopover
+              ref={executionPlanRowsPreviewPopoverRef}
+              TransitionProps={{ unmountOnExit: true }}
+              anchorOrigin={{
+                vertical: 'bottom',
+                horizontal: 'center',
+              }}
+              transformOrigin={{
+                vertical: 'top',
+                horizontal: 'center',
+              }}
+              slotProps={{
+                paper: { sx: { display: 'flex' } },
+              }}
+            >
+              {routine.executionPlan.type === RoutineExecutionType.STANDALONE ? (
+                <Typography variant="body1">
+                  There is no data source input for this routine execution type
+                </Typography>
+              ) : (
+                <ExecutionPlanRowsPreview executionPlan={routine.executionPlan} />
+              )}
+            </CustomPopover>
           </>
         )}
         {loadingRoutine && (

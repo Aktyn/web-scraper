@@ -111,6 +111,7 @@ model Routine {
   executionPlan String // Stringified JSON
   //
   Procedures    RoutineProcedureRelation[]
+  Results       RoutineExecutionResult[]
 }
 
 model RoutineProcedureRelation {
@@ -120,6 +121,16 @@ model RoutineProcedureRelation {
   Routine     Routine   @relation(fields: [routineId], references: [id], onDelete: Cascade)
 
   @@id([procedureId, routineId])
+}
+
+model RoutineExecutionResult {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  //
+  routineId Int
+  Routine   Routine  @relation(fields: [routineId], references: [id], onDelete: Cascade)
+  //
+  results   String // Stringified RoutineExecutionResult
 }
 
 model UserData {
