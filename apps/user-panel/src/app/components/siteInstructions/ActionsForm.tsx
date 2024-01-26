@@ -94,7 +94,7 @@ export const ActionsForm = () => {
         title={
           <Stack direction="row" alignItems="center" spacing={1} mr={2} color="text.secondary">
             <ItemTitle>Actions</ItemTitle>
-            <TermInfo term="Action" sx={{ pointerEvents: 'all' }} />
+            <TermInfo term="action" sx={{ pointerEvents: 'all' }} />
           </Stack>
         }
         items={actionsFields.fields}

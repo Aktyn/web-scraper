@@ -20,16 +20,19 @@ import {
 } from '@web-scraper/common'
 
 import Database from '../../../database'
-import { type RawDataSourceItemSchema } from '../../../database/dataSource'
-import { Scraper, type ActionsAndSiteGrouped, parseScrapperStringValue } from '../../../scraper'
+import type { RawDataSourceItemSchema } from '../../../database/dataSource'
+import { Scraper, parseScrapperStringValue, type ActionsAndSiteGrouped } from '../../../scraper'
 import {
   broadcastMessage,
   handleApiRequest,
   successResponse,
   type RequestHandlersSchema,
 } from '../helpers'
-import { parseDatabaseDataSourceItem } from '../parsers/dataSourceParser'
-import { parseDatabaseRoutine } from '../parsers/routineParser'
+import { parseDatabaseDataSource, parseDatabaseDataSourceItem } from '../parsers/dataSourceParser'
+import {
+  parseDatabaseRoutine,
+  parseDatabaseRoutineExecutionHistory,
+} from '../parsers/routineParser'
 import { parseDatabaseAction } from '../parsers/siteInstructionsParser'
 import { parseDatabaseSite } from '../parsers/siteParser'
 
@@ -111,6 +114,14 @@ export const routineHandler = {
       performRoutineExecution(routineExecutionInstance).catch(console.error)
       return { executionId: routineExecutionInstance.id }
     },
+  ),
+  [RendererToElectronMessage.getRoutineExecutionHistory]: handleApiRequest(
+    RendererToElectronMessage.getRoutineExecutionHistory,
+    (request) =>
+      Database.routine.getRoutineExecutionHistory(request).then((history) => ({
+        data: parseDatabaseRoutineExecutionHistory(history),
+        cursor: Database.utils.extractCursor(history, 'id', request.count),
+      })),
   ),
 } satisfies Partial<RequestHandlersSchema>
 
@@ -203,7 +214,7 @@ async function runForEachDataSourceItem(
   for (const item of parsedItems) {
     const routineExecutionResult = await scraperInstance.performRoutineIteration(
       iterationIndex++,
-      { dataSource, item },
+      { dataSource: parseDatabaseDataSource(dataSource), item },
       async (valueQuery) => {
         if (isCustomValueQuery(valueQuery)) {
           return parseScrapperStringValue(

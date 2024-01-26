@@ -26,7 +26,7 @@ export const ExecutionPlanRowsPreview = ({ executionPlan }: ExecutionPlanRowsPre
     [executionPlan],
   )
 
-  return <Table columns={columns} keyProperty="id" hideRefreshButton data={dataFetcher} />
+  return <Table columns={columns} keyProperty="id" data={dataFetcher} />
 }
 
 type FiltersType = Parameters<typeof window.electronAPI.getDataSourceItems>[0]['filters']

@@ -125,7 +125,7 @@ export const Sites = () => {
             <Box component="span" mr="0.5rem">
               Site instructions
             </Box>
-            <TermInfo term="Site instructions" />
+            <TermInfo term="siteInstructions" />
           </>
         }
       >
@@ -147,6 +147,7 @@ export const Sites = () => {
       <ViewTransition type={TransitionType.FADE}>
         <Box sx={{ height: '100%' }}>
           <Table
+            name="sites"
             ref={tableRef}
             columns={columns}
             keyProperty="id"

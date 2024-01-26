@@ -37,10 +37,13 @@ import type { useTableColumns } from './useTableColumns'
 import { Config } from '../../config'
 import { UserDataContext } from '../../context/userDataContext'
 import { useCancellablePromise } from '../../hooks/useCancellablePromise'
+import { usePersistentState } from '../../hooks/usePersistentState'
 import { errorLabels, genericForwardRef, genericMemo } from '../../utils'
 import { LoadingIconButton } from '../common/button/LoadingIconButton'
 
 interface TableProps<DataType extends object, KeyPropertyType extends string & Path<DataType>> {
+  /** Used for caching data */
+  name?: string | null
   /** Property name with unique values for each row. Used as a key prop for react rows. */
   keyProperty: ExtractTypeByPath<DataType, KeyPropertyType> extends string | number
     ? KeyPropertyType
@@ -66,6 +69,7 @@ export const Table = genericMemo(
   genericForwardRef(
     <DataType extends object, KeyPropertyType extends string & Path<DataType>>(
       {
+        name = null,
         keyProperty,
         columns,
         headerContent,
@@ -86,7 +90,7 @@ export const Table = genericMemo(
       const { enqueueSnackbar } = useSnackbar()
       const { settings } = useContext(UserDataContext)
 
-      const [data, setData] = useState<DataType[]>([])
+      const [data, setData] = usePersistentState<DataType[]>(name, [])
       const [cursor, setCursor] = useState<{ [p: string]: unknown } | undefined | null>(null)
       const [fetchingData, setFetchingData] = useState(false)
 
@@ -140,7 +144,7 @@ export const Table = genericMemo(
             })
             .catch((error) => error && setFetchingData(false))
         },
-        [cancellable, cursor, dataSource, enqueueSnackbar, keyProperty],
+        [cancellable, cursor, dataSource, enqueueSnackbar, keyProperty, setData],
       )
 
       useEffect(() => {

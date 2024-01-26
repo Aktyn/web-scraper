@@ -36,11 +36,13 @@ export const CustomDrawer = forwardRef<CustomDrawerRef, PropsWithChildren<Custom
       [handleClose],
     )
 
+    const anchor = drawerProps.anchor ?? 'right'
+
     return (
-      <Drawer anchor="right" {...drawerProps} open={open} onClose={handleClose}>
-        <Stack height="100%" justifyContent="flex-start">
+      <Drawer anchor={anchor} {...drawerProps} open={open} onClose={handleClose}>
+        <Stack height="100%" justifyContent="flex-start" overflow="hidden">
           <CustomDrawerHeader title={title} onClose={handleClose} />
-          <DrawerContext.Provider value={{ open, deferredOpen, anchor: 'right' }}>
+          <DrawerContext.Provider value={{ open, deferredOpen, anchor }}>
             {children}
           </DrawerContext.Provider>
         </Stack>

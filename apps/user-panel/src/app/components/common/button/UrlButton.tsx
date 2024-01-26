@@ -18,6 +18,7 @@ export const UrlButton = ({ children: url, maxWidth, readOnly, ...linkProps }: U
       direction="row"
       alignItems="center"
       columnGap="0.25rem"
+      onClick={(event: Event) => event.stopPropagation()}
       {...linkProps}
     >
       <Box component="span" sx={{ maxWidth, overflow: 'hidden', textOverflow: 'ellipsis' }}>

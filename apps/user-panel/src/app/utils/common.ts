@@ -23,7 +23,7 @@ const dateFormat: Intl.DateTimeFormatOptions = {
   year: 'numeric',
   month: 'numeric',
   day: '2-digit',
-  hour: 'numeric',
+  hour: '2-digit',
   minute: 'numeric',
   second: 'numeric',
 } as const

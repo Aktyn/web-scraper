@@ -140,7 +140,7 @@ const RoutinesView = ({ doNotRender }: ViewComponentProps) => {
         title={
           <Stack direction="row" alignItems="center" gap="0.5rem">
             <Box>Create routine</Box>
-            <TermInfo term="Routine" />
+            <TermInfo term="routine" />
           </Stack>
         }
       >

@@ -1,9 +1,11 @@
 import {
   ErrorCode,
-  type Routine,
-  type UpsertRoutineSchema,
+  type PaginatedRequest,
+  type RoutineExecutionHistory,
   upsertRoutineSchema,
+  type Routine,
   type RoutineExecutionResult,
+  type UpsertRoutineSchema,
 } from '@web-scraper/common'
 
 import Database from './index'
@@ -163,6 +165,25 @@ export function createRoutineExecutionResult(
       createdAt: new Date(),
       iterationIndex,
       results: JSON.stringify(result),
+    },
+  })
+}
+
+export function getRoutineExecutionHistory(
+  request: PaginatedRequest<RoutineExecutionHistory[number], 'id'>,
+) {
+  return Database.prisma.routineExecutionResult.findMany({
+    take: request.count,
+    skip: request.cursor ? 1 : 0,
+    cursor: request.cursor,
+    where:
+      Array.isArray(request.filters) && request.filters?.length
+        ? {
+            AND: request.filters as never,
+          }
+        : undefined,
+    orderBy: {
+      createdAt: 'desc',
     },
   })
 }

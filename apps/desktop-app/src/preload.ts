@@ -57,6 +57,7 @@ const rendererToElectronMessageNames = [
   'updateRoutine',
   'deleteRoutine',
   'executeRoutine',
+  'getRoutineExecutionHistory',
 
   'getSiteInstructionsTestingSessions',
   'startSiteInstructionsTestingSession',

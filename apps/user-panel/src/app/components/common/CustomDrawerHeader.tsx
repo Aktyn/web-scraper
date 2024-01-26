@@ -14,8 +14,8 @@ export const CustomDrawerHeader = ({ title, onClose }: CustomDrawerHeaderProps) 
         direction="row"
         alignItems="center"
         justifyContent="space-between"
-        gap={2}
-        sx={{ p: 2 }}
+        gap="1rem"
+        sx={{ p: '1rem' }}
       >
         {title ? (
           <Typography

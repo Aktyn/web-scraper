@@ -1,9 +1,11 @@
 import { Fragment, useCallback, useEffect, useRef, useState } from 'react'
-import { EastRounded, ExpandMoreRounded, PreviewRounded } from '@mui/icons-material'
+import { EastRounded, ExpandMoreRounded, HistoryRounded, PreviewRounded } from '@mui/icons-material'
 import {
   Accordion,
   AccordionDetails,
   AccordionSummary,
+  Box,
+  Button,
   CircularProgress,
   IconButton,
   Stack,
@@ -12,13 +14,15 @@ import {
   alpha,
 } from '@mui/material'
 import { RoutineExecutionType, upsertRoutineSchema, type Routine } from '@web-scraper/common'
-import { ViewTransition } from 'src/app/components/animation/ViewTransition'
-import { ProcedureWidget } from 'src/app/components/procedure/ProcedureWidget'
 import { RoutinePanelHeaderOptions } from './RoutinePanelHeaderOptions'
+import { ViewTransition } from '../../components/animation/ViewTransition'
+import { CustomDrawer, type CustomDrawerRef } from '../../components/common/CustomDrawer'
 import { CustomPopover, type CustomPopoverRef } from '../../components/common/CustomPopover'
 import { HorizontallyScrollableContainer } from '../../components/common/HorizontallyScrollableContainer'
+import { ProcedureWidget } from '../../components/procedure/ProcedureWidget'
 import { ExecutionPlanRowsPreview } from '../../components/routine/ExecutionPlanRowsPreview'
 import { ExecutionPlanText } from '../../components/routine/ExecutionPlanText'
+import { RoutineExecutionHistoryTable } from '../../components/routine/executionResults/RoutineExecutionHistoryTable'
 import { BooleanValue } from '../../components/table/BooleanValue'
 import { useApiRequest } from '../../hooks/useApiRequest'
 import { useProceduresGroupedBySite } from '../../hooks/useProceduresGroupedBySite'
@@ -32,6 +36,7 @@ interface RoutinePanelProps {
 
 export const RoutinePanel = ({ routineInfo, onDeleted, onNameChanged }: RoutinePanelProps) => {
   const executionPlanRowsPreviewPopoverRef = useRef<CustomPopoverRef>(null)
+  const executionHistoryDrawerRef = useRef<CustomDrawerRef>(null)
   const { submit: getRoutineRequest } = useApiRequest(window.electronAPI.getRoutine)
 
   const { groupedSiteProcedures } = useProceduresGroupedBySite(true)
@@ -81,6 +86,7 @@ export const RoutinePanel = ({ routineInfo, onDeleted, onNameChanged }: RoutineP
           direction="row"
           justifyContent="space-between"
           alignItems="flex-start"
+          flexWrap="wrap"
           gap="1rem"
           m="-1rem"
           p="1rem"
@@ -122,12 +128,37 @@ export const RoutinePanel = ({ routineInfo, onDeleted, onNameChanged }: RoutineP
               </>
             )}
           </Stack>
-          <RoutinePanelHeaderOptions
-            routine={routine}
-            loading={loadingRoutine}
-            onEdited={handleEdited}
-            onDeleted={onDeleted}
-          />
+          <Stack gap="1rem" alignItems="flex-end">
+            <RoutinePanelHeaderOptions
+              routine={routine}
+              loading={loadingRoutine}
+              onEdited={handleEdited}
+              onDeleted={onDeleted}
+            />
+            <Button
+              size="large"
+              endIcon={<HistoryRounded />}
+              onClick={() => {
+                if (routine) {
+                  executionHistoryDrawerRef.current?.open()
+                }
+              }}
+            >
+              Show execution history
+            </Button>
+            <CustomDrawer
+              ref={executionHistoryDrawerRef}
+              title={
+                <Stack direction="row" alignItems="center" gap="0.5rem">
+                  <Box>Routine execution history</Box>
+                  <Box color="text.primary">{routine?.name}</Box>
+                </Stack>
+              }
+              anchor="bottom"
+            >
+              {routine && <RoutineExecutionHistoryTable routine={routine} />}
+            </CustomDrawer>
+          </Stack>
         </Stack>
         {routine && (
           <>

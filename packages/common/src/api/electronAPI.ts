@@ -12,6 +12,7 @@ import type {
   Procedure,
   ProcedureExecutionResult,
   Routine,
+  RoutineExecutionHistory,
   RoutineExecutionResult,
   ScraperExecutionFinishedSchema,
   ScraperExecutionResultSchema,
@@ -92,6 +93,7 @@ export enum RendererToElectronMessage {
   updateRoutine = 'updateRoutine',
   deleteRoutine = 'deleteRoutine',
   executeRoutine = 'executeRoutine',
+  getRoutineExecutionHistory = 'getRoutineExecutionHistory',
 
   getSiteInstructionsTestingSessions = 'getSiteInstructionsTestingSessions',
   startSiteInstructionsTestingSession = 'startSiteInstructionsTestingSession',
@@ -279,6 +281,10 @@ export type ElectronApi = {
     routineId: Routine['id'],
     preview: boolean,
   ) => Promise<{ executionId: string } | ApiError>
+  [RendererToElectronMessage.getRoutineExecutionHistory]: PaginatedApiFunction<
+    RoutineExecutionHistory[number],
+    'id'
+  >
 
   [RendererToElectronMessage.getSiteInstructionsTestingSessions]: () => Promise<
     { sessionId: string; site: Site }[] | ApiError

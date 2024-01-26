@@ -137,6 +137,7 @@ export const DataSource = ({ dataSource }: DataSourceProps) => {
       <ViewTransition type={TransitionType.FADE}>
         <Box sx={{ height: '100%' }}>
           <Table
+            name={`data-source-${dataSource.name}`}
             ref={tableRef}
             columns={columns}
             keyProperty="id"

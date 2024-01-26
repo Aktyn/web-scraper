@@ -104,6 +104,7 @@ export const SiteTags = () => {
       <ViewTransition type={TransitionType.FADE}>
         <Box sx={{ height: '100%' }}>
           <Table
+            name="site-tags"
             ref={tableRef}
             columns={columns}
             headerContent={

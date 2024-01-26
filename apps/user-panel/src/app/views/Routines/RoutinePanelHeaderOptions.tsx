@@ -142,7 +142,7 @@ export const RoutinePanelHeaderOptions = ({
         title={
           <Stack direction="row" alignItems="center" gap="0.5rem">
             <Box>Edit routine</Box>
-            <TermInfo term="Routine" />
+            <TermInfo term="routine" />
           </Stack>
         }
       >

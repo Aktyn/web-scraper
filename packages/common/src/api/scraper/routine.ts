@@ -38,6 +38,14 @@ export interface RoutineExecutionResult {
   proceduresExecutionResults: ProcedureExecutionResult[]
 }
 
+export type RoutineExecutionHistory = {
+  id: number
+  createdAt: Date
+  routineId: Routine['id']
+  iterationIndex: number
+  results: RoutineExecutionResult
+}[]
+
 export enum RoutineExecutionType {
   /** Executes sequence of procedures sequentially for each filtered item in the data source */
   MATCH_SEQUENTIALLY = 'matchSequentially',

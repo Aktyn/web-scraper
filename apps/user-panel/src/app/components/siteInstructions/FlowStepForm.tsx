@@ -126,7 +126,7 @@ export const FlowStepForm = ({
         title === 'Flow' ? (
           <Stack direction="row" alignItems="center" spacing={1} mr={2} color="text.secondary">
             <ItemTitle>{title}</ItemTitle>
-            <TermInfo term="Flow step" sx={{ pointerEvents: 'all' }} />
+            <TermInfo term="flowStep" sx={{ pointerEvents: 'all' }} />
           </Stack>
         ) : (
           title

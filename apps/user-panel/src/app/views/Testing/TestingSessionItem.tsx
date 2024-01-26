@@ -80,7 +80,7 @@ export const TestingSessionItem = ({ session }: TestingSessionItemProps) => {
             <Box component="span" mr={1}>
               Site instructions
             </Box>
-            <TermInfo term="Site instructions" />
+            <TermInfo term="siteInstructions" />
           </>
         }
       >

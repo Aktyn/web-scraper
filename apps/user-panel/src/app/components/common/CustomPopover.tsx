@@ -1,4 +1,10 @@
-import { forwardRef, type PropsWithChildren, useImperativeHandle, useState } from 'react'
+import {
+  forwardRef,
+  type PropsWithChildren,
+  useImperativeHandle,
+  useState,
+  useCallback,
+} from 'react'
 import { Popover, type PopoverProps } from '@mui/material'
 
 export interface CustomPopoverRef {
@@ -6,10 +12,12 @@ export interface CustomPopoverRef {
   close: () => void
 }
 
-type CustomPopoverProps = Omit<PopoverProps, 'open' | 'anchorEl' | 'onClose'>
+type CustomPopoverProps = Omit<PopoverProps, 'open' | 'anchorEl' | 'onClose'> & {
+  onClose?: () => void
+}
 
 export const CustomPopover = forwardRef<CustomPopoverRef, PropsWithChildren<CustomPopoverProps>>(
-  ({ children, ...popoverProps }, ref) => {
+  ({ children, onClose, ...popoverProps }, ref) => {
     const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null)
 
     useImperativeHandle(
@@ -21,7 +29,10 @@ export const CustomPopover = forwardRef<CustomPopoverRef, PropsWithChildren<Cust
       [],
     )
 
-    const handleClose = () => setAnchorEl(null)
+    const handleClose = useCallback(() => {
+      setAnchorEl(null)
+      onClose?.()
+    }, [onClose])
 
     return (
       <Popover {...popoverProps} open={!!anchorEl} anchorEl={anchorEl} onClose={handleClose}>

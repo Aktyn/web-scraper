@@ -155,7 +155,7 @@ export const ProceduresForm = () => {
       title={
         <Stack direction="row" alignItems="center" gap="0.5rem" mr="1rem" color="text.secondary">
           <ItemTitle>Procedures</ItemTitle>
-          <TermInfo term="Procedure" sx={{ pointerEvents: 'all' }} />
+          <TermInfo term="procedure" sx={{ pointerEvents: 'all' }} />
         </Stack>
       }
       items={proceduresFields.fields}

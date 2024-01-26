@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useRef, useState } from 'react'
 import { CodeRounded, LabelRounded, LinkRounded } from '@mui/icons-material'
-import { Box, Chip, LinearProgress, Paper, Skeleton, Stack, Typography } from '@mui/material'
+import { Box, LinearProgress, Paper, Skeleton, Stack, Typography } from '@mui/material'
 import {
   GLOBAL_ACTION_PREFIX,
   REGULAR_ACTION_PREFIX,
@@ -15,6 +15,7 @@ import { globalActionTypeNames, procedureTypeNames } from '../../utils/dictionar
 import { CustomDrawer, type CustomDrawerRef } from '../common/CustomDrawer'
 import { TermInfo } from '../common/TermInfo'
 import { UrlButton } from '../common/button/UrlButton'
+import { TermChip } from '../common/chip/TermChip'
 import { ReadonlyField } from '../common/input/ReadonlyField'
 import { ItemTitle } from '../common/treeStructure/ItemTitle'
 import { ItemsList } from '../common/treeStructure/ItemsList'
@@ -89,16 +90,7 @@ export const ProcedureWidget = ({ procedure, groupedSiteProcedures }: ProcedureW
               <LinearProgress />
             )}
           </Stack>
-          <Chip
-            label={
-              <Stack direction="row" alignItems="center" gap="0.5rem">
-                Procedure <TermInfo term="Procedure" sx={{ pointerEvents: 'all' }} />
-              </Stack>
-            }
-            variant="outlined"
-            size="small"
-            color="primary"
-          />
+          <TermChip term="procedure" />
           {site ? (
             <OpenSiteInstructionsFormButtonWithBadge site={site} onClick={handleShowInstructions} />
           ) : (
@@ -134,7 +126,7 @@ export const ProcedureWidget = ({ procedure, groupedSiteProcedures }: ProcedureW
             <Box component="span" mr="0.5rem">
               Site instructions
             </Box>
-            <TermInfo term="Site instructions" />
+            <TermInfo term="siteInstructions" />
           </>
         }
       >
@@ -170,7 +162,7 @@ const FlowBranch = ({ flow, title = 'Flow', level = 0, disabled }: FlowBranchPro
             color="text.secondary"
           >
             <ItemTitle>{title}</ItemTitle>
-            <TermInfo term="Flow step" sx={{ pointerEvents: 'all' }} />
+            <TermInfo term="flowStep" sx={{ pointerEvents: 'all' }} />
           </Stack>
         ) : (
           title

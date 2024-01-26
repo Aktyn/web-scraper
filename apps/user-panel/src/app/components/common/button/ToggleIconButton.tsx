@@ -1,6 +1,13 @@
-import { useEffect, useRef, type ReactNode } from 'react'
+import { useEffect, useRef, type ReactNode, type MouseEvent as ReactMouseEvent } from 'react'
 import { CloseRounded, EditRounded } from '@mui/icons-material'
-import { Box, IconButton, Tooltip, type IconButtonProps, type SvgIconTypeMap } from '@mui/material'
+import {
+  Box,
+  IconButton,
+  Tooltip,
+  type IconButtonProps,
+  type SvgIconTypeMap,
+  type BoxProps,
+} from '@mui/material'
 import { type OverridableComponent } from '@mui/material/OverridableComponent'
 import anime from 'animejs'
 
@@ -8,11 +15,12 @@ type IconComponent = OverridableComponent<SvgIconTypeMap<unknown, 'svg'>> & { mu
 
 interface ToggleIconButtonProps {
   open: boolean
-  onToggle: (open: boolean) => void
+  onToggle: (open: boolean, event: ReactMouseEvent<HTMLButtonElement, MouseEvent>) => void
   closeTooltip?: ReactNode
   openTooltip?: ReactNode
   closedStateIcon?: IconComponent
   openedStateIcon?: IconComponent
+  boxProps?: BoxProps
 }
 
 export const ToggleIconButton = ({
@@ -22,6 +30,7 @@ export const ToggleIconButton = ({
   closeTooltip,
   closedStateIcon: ClosedIcon = EditRounded,
   openedStateIcon: OpenedIcon = CloseRounded,
+  boxProps,
   ...iconButtonProps
 }: ToggleIconButtonProps & IconButtonProps) => {
   const buttonRef = useRef<HTMLButtonElement>(null)
@@ -43,10 +52,10 @@ export const ToggleIconButton = ({
 
   return (
     <Tooltip title={open ? openTooltip : closeTooltip}>
-      <Box>
+      <Box {...boxProps}>
         <IconButton
           ref={buttonRef}
-          onClick={() => onToggle(!open)}
+          onClick={(event) => onToggle(!open, event)}
           {...iconButtonProps}
           sx={{
             position: 'relative',
