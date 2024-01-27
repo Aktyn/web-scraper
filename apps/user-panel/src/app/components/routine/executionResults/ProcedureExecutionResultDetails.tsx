@@ -4,7 +4,6 @@ import {
   Accordion,
   AccordionDetails,
   AccordionSummary,
-  Box,
   Chip,
   LinearProgress,
   Stack,
@@ -14,9 +13,9 @@ import {
 import {
   hasProcedureExecutionFailed,
   isMapSiteError,
-  type RoutineExecutionResult,
   type MapSiteError,
   type ProcedureExecutionResult,
+  type RoutineExecutionResult,
 } from '@web-scraper/common'
 import { FlowExecutionResultDetails } from './FlowExecutionResultDetails'
 import { useProceduresGroupedBySite } from '../../../hooks/useProceduresGroupedBySite'
@@ -52,15 +51,16 @@ export const ProcedureExecutionResultDetails = ({
       slotProps={{
         transition: { unmountOnExit: true },
       }}
+      sx={{ width: '100%', maxWidth: '100%', overflow: 'hidden' }}
     >
       <AccordionSummary expandIcon={<ExpandMoreRounded />}>
-        <Box
-          sx={{
-            display: 'grid',
-            gridTemplateColumns: '1fr auto auto',
-            alignItems: 'center',
-            columnGap: '1rem',
-          }}
+        <Stack
+          direction="row"
+          alignItems="center"
+          justifyContent="space-between"
+          columnGap="1rem"
+          width="100%"
+          pr="1rem"
         >
           <Stack alignItems="flex-start">
             <Typography
@@ -87,19 +87,33 @@ export const ProcedureExecutionResultDetails = ({
               type={hasProcedureExecutionFailed(result) ? 'failure' : 'success'}
             />
           </Stack>
-        </Box>
+        </Stack>
       </AccordionSummary>
-      <AccordionDetails sx={{ px: '1rem', pb: 0 }}>
+      <AccordionDetails
+        sx={{
+          px: '1rem',
+          pb: '1rem',
+          display: 'grid',
+          gridTemplateColumns: '100%',
+          justifyContent: 'center',
+        }}
+      >
         <HorizontallyScrollableContainer
           alignItems="center"
           justifyContent="flex-start"
           px="1rem"
           mx="-1rem"
+          pb="1rem"
+          mb="-1rem"
         >
           {isMapSiteError(result.flowExecutionResult) ? (
             <MapSiteErrorBlock term="flowStep" mapSiteError={result.flowExecutionResult} />
           ) : (
-            <FlowExecutionResultDetails result={result.flowExecutionResult} source={source} />
+            <FlowExecutionResultDetails
+              result={result.flowExecutionResult}
+              source={source}
+              site={site}
+            />
           )}
         </HorizontallyScrollableContainer>
       </AccordionDetails>

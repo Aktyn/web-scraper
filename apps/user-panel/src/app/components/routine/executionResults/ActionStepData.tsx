@@ -208,7 +208,7 @@ interface ParsedValueQueryProps {
 const ParsedValueQuery = ({ valueQuery, source }: ParsedValueQueryProps) => {
   if (isCustomValueQuery(valueQuery)) {
     const stringValue = valueQuery.replace(new RegExp(`^${ValueQueryType.CUSTOM}\\.`, 'u'), '')
-    return stringValue //TODO: replace with parseScrapperStringValue(stringValue)
+    return stringValue
   }
 
   const NA = (

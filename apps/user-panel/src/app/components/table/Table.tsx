@@ -9,7 +9,13 @@ import {
   useRef,
   useState,
 } from 'react'
-import { AddRounded, DeleteRounded, EditRounded, RefreshRounded } from '@mui/icons-material'
+import {
+  AddRounded,
+  DeleteRounded,
+  EditRounded,
+  ExpandMoreRounded,
+  RefreshRounded,
+} from '@mui/icons-material'
 import {
   alpha,
   Box,
@@ -24,6 +30,7 @@ import {
   Tooltip,
   Typography,
   chipClasses,
+  Collapse,
 } from '@mui/material'
 import {
   type ExtractTypeByPath,
@@ -41,22 +48,21 @@ import { usePersistentState } from '../../hooks/usePersistentState'
 import { errorLabels, genericForwardRef, genericMemo } from '../../utils'
 import { LoadingIconButton } from '../common/button/LoadingIconButton'
 
-interface TableProps<DataType extends object, KeyPropertyType extends string & Path<DataType>> {
+interface TableProps<DataType extends object, KeyPropertyType extends string & Path<DataType>>
+  extends Omit<
+    RowProps<DataType>,
+    'selected' | 'row' | 'hasActionsColumn' | 'mainTableHeaderSize'
+  > {
   /** Used for caching data */
   name?: string | null
   /** Property name with unique values for each row. Used as a key prop for react rows. */
   keyProperty: ExtractTypeByPath<DataType, KeyPropertyType> extends string | number
     ? KeyPropertyType
     : never
-  columns: ReturnType<typeof useTableColumns<DataType>>
   headerContent?: ReactNode
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   data: DataType[] | PaginatedApiFunction<DataType, any, never, any[]>
   onAdd?: ReactNode | (() => void)
-  onEdit?: (data: DataType) => void
-  onDelete?: (data: DataType) => void
-  onRowClick?: (row: DataType) => void
-  allowUnselect?: boolean
   selectedRowKeys?: ExtractTypeByPath<DataType, KeyPropertyType>[]
   hideRefreshButton?: boolean
 }
@@ -75,12 +81,9 @@ export const Table = genericMemo(
         headerContent,
         data: dataSource,
         onAdd,
-        onEdit,
-        onDelete,
-        onRowClick,
-        allowUnselect,
         selectedRowKeys = emptyArray,
         hideRefreshButton,
+        ...rowProps
       }: TableProps<DataType, KeyPropertyType> & RefAttributes<TableRef>,
       ref: RefAttributes<TableRef>['ref'],
     ) => {
@@ -94,7 +97,11 @@ export const Table = genericMemo(
       const [cursor, setCursor] = useState<{ [p: string]: unknown } | undefined | null>(null)
       const [fetchingData, setFetchingData] = useState(false)
 
-      const hasActionsColumn = !!onDelete || !!onEdit || columns.customActions.length > 0
+      const hasActionsColumn =
+        !!rowProps.onDelete ||
+        !!rowProps.onEdit ||
+        !!rowProps.onRowExpand ||
+        columns.customActions.length > 0
       const columnsCount = columns.definitions.length + (hasActionsColumn ? 1 : 0)
       const showMainHeader = Boolean(!hideRefreshButton || headerContent || onAdd)
       const mainTableHeaderSize = showMainHeader ? 51 : 0
@@ -208,7 +215,7 @@ export const Table = genericMemo(
                       direction="row"
                       alignItems="center"
                       justifyContent="space-between"
-                      gap={1}
+                      gap="0.5rem"
                     >
                       {headerContent}
                       <Stack
@@ -260,66 +267,17 @@ export const Table = genericMemo(
                     : undefined
 
                   const selected = !!key && selectedRowKeys?.includes(key)
-                  const clickable = !!onRowClick && (!selected || allowUnselect)
 
                   return (
-                    <TableRow
+                    <Row
                       key={(key as Key) ?? rowIndex}
-                      hover={clickable}
-                      onClick={clickable ? () => onRowClick?.(row) : undefined}
-                      sx={{
-                        cursor: clickable ? 'pointer' : undefined,
-                        backgroundColor: selected
-                          ? (theme) => `${alpha(theme.palette.action.focus, 0.75)} !important`
-                          : undefined,
-                        [`& .${chipClasses.root}.no-data-chip`]: selected
-                          ? {
-                              color: 'text.primary',
-                            }
-                          : undefined,
-                      }}
-                    >
-                      {columns.definitions.map((columnDefinition) => (
-                        <ValueCell
-                          key={columnDefinition.id}
-                          encrypted={!!columnDefinition.encrypted}
-                          jsonString={!!columnDefinition.jsonString}
-                          sx={columnDefinition.cellSx}
-                        >
-                          {typeof columnDefinition.accessor === 'function'
-                            ? columnDefinition.accessor(row)
-                            : getDeepProperty(row, columnDefinition.accessor)}
-                        </ValueCell>
-                      ))}
-                      {hasActionsColumn && (
-                        <TableCell width="2.5rem" sx={{ top: mainTableHeaderSize, py: 0 }}>
-                          <Stack
-                            direction="row"
-                            alignItems="center"
-                            justifyContent="end-start"
-                            gap={1}
-                          >
-                            {columns.customActions.map((customAction) => (
-                              <Box key={customAction.id}>{customAction.accessor(row)}</Box>
-                            ))}
-                            {onEdit && (
-                              <Tooltip title="Edit">
-                                <IconButton size="small" onClick={() => onEdit(row)}>
-                                  <EditRounded />
-                                </IconButton>
-                              </Tooltip>
-                            )}
-                            {onDelete && (
-                              <Tooltip title="Delete">
-                                <IconButton size="small" onClick={() => onDelete(row)}>
-                                  <DeleteRounded />
-                                </IconButton>
-                              </Tooltip>
-                            )}
-                          </Stack>
-                        </TableCell>
-                      )}
-                    </TableRow>
+                      row={row}
+                      selected={selected}
+                      hasActionsColumn={hasActionsColumn}
+                      mainTableHeaderSize={mainTableHeaderSize}
+                      columns={columns}
+                      {...rowProps}
+                    />
                   )
                 })
               ) : (
@@ -338,5 +296,135 @@ export const Table = genericMemo(
     },
   ),
 )
+
+interface RowProps<DataType extends object> {
+  row: DataType
+  selected: boolean
+  hasActionsColumn: boolean
+  mainTableHeaderSize: number
+
+  columns: ReturnType<typeof useTableColumns<DataType>>
+  onEdit?: (data: DataType) => void
+  onDelete?: (data: DataType) => void
+  onRowClick?: (row: DataType) => void
+  onRowExpand?: (row: DataType) => ReactNode
+  expandButtonTooltip?: ReactNode
+  allowUnselect?: boolean
+}
+
+const Row = <DataType extends object>({
+  row,
+  selected,
+  hasActionsColumn,
+  mainTableHeaderSize,
+  columns,
+  onEdit,
+  onDelete,
+  onRowClick,
+  onRowExpand,
+  expandButtonTooltip,
+  allowUnselect,
+}: RowProps<DataType>) => {
+  const clickable = !!onRowClick && (!selected || allowUnselect)
+  const columnsCount = columns.definitions.length + (hasActionsColumn ? 1 : 0)
+
+  const [rowExpandContent, setRowExpandContent] = useState<ReactNode>(null)
+  const [expandRow, setExpandRow] = useState(false)
+
+  return (
+    <>
+      <TableRow
+        hover={clickable}
+        onClick={clickable ? () => onRowClick?.(row) : undefined}
+        sx={{
+          cursor: clickable ? 'pointer' : undefined,
+          backgroundColor: selected
+            ? (theme) => `${alpha(theme.palette.action.focus, 0.75)} !important`
+            : undefined,
+          [`& .${chipClasses.root}.no-data-chip`]: selected
+            ? {
+                color: 'text.primary',
+              }
+            : undefined,
+        }}
+      >
+        {columns.definitions.map((columnDefinition) => (
+          <ValueCell
+            key={columnDefinition.id}
+            encrypted={!!columnDefinition.encrypted}
+            jsonString={!!columnDefinition.jsonString}
+            sx={columnDefinition.cellSx}
+          >
+            {typeof columnDefinition.accessor === 'function'
+              ? columnDefinition.accessor(row)
+              : getDeepProperty(row, columnDefinition.accessor)}
+          </ValueCell>
+        ))}
+        {hasActionsColumn && (
+          <TableCell width="2.5rem" sx={{ top: mainTableHeaderSize, py: 0 }}>
+            <Stack direction="row" alignItems="center" justifyContent="end-start" gap="0.5rem">
+              {columns.customActions.map((customAction) => (
+                <Box key={customAction.id}>{customAction.accessor(row)}</Box>
+              ))}
+              {onEdit && (
+                <Tooltip title="Edit">
+                  <IconButton size="small" onClick={() => onEdit(row)}>
+                    <EditRounded />
+                  </IconButton>
+                </Tooltip>
+              )}
+              {onDelete && (
+                <Tooltip title="Delete">
+                  <IconButton size="small" onClick={() => onDelete(row)}>
+                    <DeleteRounded />
+                  </IconButton>
+                </Tooltip>
+              )}
+              {onRowExpand && (
+                <Tooltip title={expandRow ? 'Collapse' : expandButtonTooltip ?? 'Expand'}>
+                  <IconButton
+                    size="small"
+                    onClick={(event) => {
+                      const content = onRowExpand(row)
+                      setRowExpandContent(content)
+                      setExpandRow(
+                        (current) => !current && content !== null && content !== undefined,
+                      )
+
+                      event.preventDefault()
+                      event.stopPropagation()
+                    }}
+                  >
+                    <ExpandMoreRounded
+                      sx={{
+                        transform: `rotate(${expandRow ? 180 : 0}deg)`,
+                        transition: (theme) => theme.transitions.create('transform'),
+                      }}
+                    />
+                  </IconButton>
+                </Tooltip>
+              )}
+            </Stack>
+          </TableCell>
+        )}
+      </TableRow>
+      {onRowExpand && (
+        <>
+          <TableRow />
+          <TableRow>
+            <TableCell
+              style={{ padding: 0, border: expandRow ? undefined : 'none' }}
+              colSpan={columnsCount}
+            >
+              <Collapse in={expandRow} timeout="auto" unmountOnExit>
+                {rowExpandContent}
+              </Collapse>
+            </TableCell>
+          </TableRow>
+        </>
+      )}
+    </>
+  )
+}
 
 const emptyArray: never[] = []

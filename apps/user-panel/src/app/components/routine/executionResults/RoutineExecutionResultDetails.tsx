@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import { Box, Divider, Stack, Typography } from '@mui/material'
+import { Box, type BoxProps, Divider, Stack, Typography, lighten } from '@mui/material'
 import type { RoutineExecutionResult } from '@web-scraper/common'
 import { ProcedureExecutionResultDetails } from './ProcedureExecutionResultDetails'
 import { useDataSourceTableColumns } from '../../../hooks/useDataSourceTableColumns'
@@ -17,31 +17,28 @@ export const RoutineExecutionResultDetails = ({
   iterationIndex,
 }: RoutineExecutionResultDetailsProps) => {
   return (
-    <Stack py="1rem" gap="1rem">
-      <HorizontallyScrollableContainer px="1rem" alignItems="center">
-        <Typography variant="h5" whiteSpace="nowrap" fontWeight="bold">
-          {result.routine.name}
-        </Typography>
-      </HorizontallyScrollableContainer>
-      <Divider />
+    <Stack>
       <Stack direction="row" alignItems="center" gap="1rem" px="1rem">
-        <Typography variant="body1">
+        <Typography variant="body1" whiteSpace="nowrap" py="1rem">
           Execution plan:{' '}
           <strong>{routineExecutionTypeNames[result.routine.executionPlan.type]}</strong>
         </Typography>
         <Divider orientation="vertical" flexItem />
-        <Typography variant="body1" whiteSpace="nowrap">
+        <Typography variant="body1" whiteSpace="nowrap" py="1rem">
           Iteration: <strong>{iterationIndex}</strong>
         </Typography>
       </Stack>
-      <Divider />
       {result.source && (
-        <>
-          <RoutineExecutionResultSource source={result.source} />
-          <Divider />
-        </>
+        <Box
+          mx="1rem"
+          overflow="hidden"
+          borderRadius="0.5rem"
+          border={(theme) => `1px solid ${lighten(theme.palette.background.paper, 0.2)}`}
+        >
+          <RoutineExecutionResultSource source={result.source} mb="-1px" />
+        </Box>
       )}
-      <Stack gap="0.5rem">
+      <Stack py="1rem">
         {result.proceduresExecutionResults.map((procedureExecutionResult, index) => (
           <HorizontallyScrollableContainer
             key={`${procedureExecutionResult.procedure.id}-${index}`}
@@ -59,16 +56,19 @@ export const RoutineExecutionResultDetails = ({
   )
 }
 
-interface RoutineExecutionResultSourceProps {
+interface RoutineExecutionResultSourceProps extends BoxProps {
   source: NonNullable<RoutineExecutionResult['source']>
 }
 
-const RoutineExecutionResultSource = ({ source }: RoutineExecutionResultSourceProps) => {
+const RoutineExecutionResultSource = ({
+  source,
+  ...boxProps
+}: RoutineExecutionResultSourceProps) => {
   const columns = useDataSourceTableColumns(source.dataSource.columns)
   const data = useMemo(() => [source.item], [source.item])
 
   return (
-    <Box width="100%" my="-1rem">
+    <Box width="100%" {...boxProps}>
       <Table columns={columns} keyProperty="id" hideRefreshButton data={data} />
     </Box>
   )

@@ -1,16 +1,12 @@
-import { useCallback, useRef, useState } from 'react'
-import { MoreRounded } from '@mui/icons-material'
+import { useCallback } from 'react'
 import { Box, Divider, Paper, Stack, Typography } from '@mui/material'
 import {
   hasProcedureExecutionFailed,
   type ProcedureExecutionResult,
   type Routine,
   type RoutineExecutionHistory,
-  type RoutineExecutionResult,
 } from '@web-scraper/common'
 import { RoutineExecutionResultDetails } from './RoutineExecutionResultDetails'
-import { CustomPopover, type CustomPopoverRef } from '../../common/CustomPopover'
-import { ToggleIconButton } from '../../common/button/ToggleIconButton'
 import { ResultChip } from '../../common/chip/ResultChip'
 import { TermChipLabel } from '../../common/chip/TermChip'
 import { Table, useTableColumns } from '../../table'
@@ -41,6 +37,7 @@ export const RoutineExecutionHistoryTable = ({ routine }: { routine: Routine }) 
           id: 'createdAt',
           header: 'Created',
           accessor: 'createdAt',
+          cellSx: { whiteSpace: 'nowrap' },
         },
         {
           id: 'iterationIndex',
@@ -58,10 +55,6 @@ export const RoutineExecutionHistoryTable = ({ routine }: { routine: Routine }) 
                   result={procedureExecutionResult}
                 />
               ))}
-              <OpenExecutionDetailsButton
-                result={row.results}
-                iterationIndex={row.iterationIndex}
-              />
             </Stack>
           ),
           cellSx: { py: '0.5rem' },
@@ -71,12 +64,21 @@ export const RoutineExecutionHistoryTable = ({ routine }: { routine: Routine }) 
     [],
   )
 
+  const handleRowExpand = useCallback((row: RoutineExecutionHistory[number]) => {
+    return (
+      <RoutineExecutionResultDetails result={row.results} iterationIndex={row.iterationIndex} />
+    )
+  }, [])
+
+  // TODO: allow clearing history and deleting individual results
   return (
     <Table
       name={`routine-execution-history-${routine.id}`}
       columns={columns}
       keyProperty="id"
       data={dataFetcher}
+      onRowExpand={handleRowExpand}
+      expandButtonTooltip="Open execution details"
     />
   )
 }
@@ -103,51 +105,5 @@ const ProcedureExecutionResultCompact = ({ result }: { result: ProcedureExecutio
         />
       </Box>
     </Paper>
-  )
-}
-
-interface OpenExecutionDetailsButtonProps {
-  result: RoutineExecutionResult
-  iterationIndex: number
-}
-
-const OpenExecutionDetailsButton = ({
-  result,
-  iterationIndex,
-}: OpenExecutionDetailsButtonProps) => {
-  const executionPlanRowsPreviewPopoverRef = useRef<CustomPopoverRef>(null)
-
-  const [isOpen, setIsOpen] = useState(false)
-
-  return (
-    <>
-      <ToggleIconButton
-        open={isOpen}
-        onToggle={(open, event) => {
-          executionPlanRowsPreviewPopoverRef.current?.open(event.currentTarget)
-          setIsOpen(open)
-        }}
-        closedStateIcon={MoreRounded}
-        closeTooltip="Open execution details"
-        openTooltip="Close execution details"
-        boxProps={{ sx: { ml: 'auto' } }}
-      />
-      <CustomPopover
-        ref={executionPlanRowsPreviewPopoverRef}
-        onClose={() => setIsOpen(false)}
-        TransitionProps={{ unmountOnExit: true }}
-        slotProps={{ paper: { sx: { overflow: 'auto' } } }}
-        anchorOrigin={{
-          vertical: 'top',
-          horizontal: 'left',
-        }}
-        transformOrigin={{
-          vertical: 'bottom',
-          horizontal: 'right',
-        }}
-      >
-        <RoutineExecutionResultDetails result={result} iterationIndex={iterationIndex} />
-      </CustomPopover>
-    </>
   )
 }

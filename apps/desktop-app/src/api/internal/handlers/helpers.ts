@@ -5,13 +5,10 @@ import {
   isCustomValueQuery,
   ValueQueryType,
   type ApiError,
+  parseScrapperStringValue,
 } from '@web-scraper/common'
 
-import {
-  parseScrapperStringValue,
-  type RequestDataCallback,
-  type RequestDataSourceItemIdCallback,
-} from '../../../scraper'
+import type { RequestDataCallback, RequestDataSourceItemIdCallback } from '../../../scraper'
 import { broadcastMessageWithResponseRequest } from '../helpers'
 
 export const onManualDataRequest: RequestDataCallback = async (valueQuery, actionStep) => {

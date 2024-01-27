@@ -8,10 +8,11 @@ import {
   int,
   SaveDataType,
   type ScraperMode,
+  parseScrapperStringValue,
 } from '@web-scraper/common'
 
 import Database from '../../database'
-import { parseScrapperStringValue, type RequestDataSourceItemIdCallback } from '../helpers'
+import type { RequestDataSourceItemIdCallback } from '../helpers'
 import type { Scraper } from '../scraper'
 
 export async function saveToDataSourceStep<ModeType extends ScraperMode>(

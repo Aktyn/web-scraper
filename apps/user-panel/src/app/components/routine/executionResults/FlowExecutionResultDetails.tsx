@@ -6,6 +6,7 @@ import {
   type FlowExecutionResult,
   type GlobalActionType,
   type RoutineExecutionResult,
+  type Site,
 } from '@web-scraper/common'
 import { ActionExecutionResultDetails } from './ActionExecutionResultDetails'
 import { globalActionTypeNames } from '../../../utils/dictionaries'
@@ -16,15 +17,20 @@ import { ReadonlyField } from '../../common/input/ReadonlyField'
 interface FlowExecutionResultDetailsProps {
   result: FlowExecutionResult
   source: RoutineExecutionResult['source']
+  site?: Site
 }
 
-export const FlowExecutionResultDetails = ({ result, source }: FlowExecutionResultDetailsProps) => {
+export const FlowExecutionResultDetails = ({
+  result,
+  source,
+  site,
+}: FlowExecutionResultDetailsProps) => {
   return (
     <Stack direction="row" alignItems="stretch" color="text.secondary" columnGap="0.25rem">
       {result.flowStepsResults.map((flowStepResult, index) => (
         <Fragment key={index}>
           {index > 0 && <EastRounded color="inherit" sx={{ alignSelf: 'center' }} />}
-          <FlowStepResultDetails result={flowStepResult} source={source} />
+          <FlowStepResultDetails result={flowStepResult} source={source} site={site} />
         </Fragment>
       ))}
     </Stack>
@@ -34,9 +40,10 @@ export const FlowExecutionResultDetails = ({ result, source }: FlowExecutionResu
 interface FlowStepResultDetailsProps {
   result: FlowExecutionResult['flowStepsResults'][number]
   source: RoutineExecutionResult['source']
+  site?: Site
 }
 
-const FlowStepResultDetails = ({ result, source }: FlowStepResultDetailsProps) => {
+const FlowStepResultDetails = ({ result, source, site }: FlowStepResultDetailsProps) => {
   const [prefix, actionName] = result.flowStep.actionName.split('.') ?? ['', '']
 
   return (
@@ -85,7 +92,11 @@ const FlowStepResultDetails = ({ result, source }: FlowStepResultDetailsProps) =
         <>
           <Divider />
           <Box my="-0.5rem">
-            <ActionExecutionResultDetails result={result.actionResult} source={source} />
+            <ActionExecutionResultDetails
+              result={result.actionResult}
+              source={source}
+              site={site}
+            />
           </Box>
         </>
       )}

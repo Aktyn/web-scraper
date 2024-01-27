@@ -10,6 +10,7 @@ import {
   hasProcedureExecutionFailed,
   isCustomValueQuery,
   isDataSourceValueQuery,
+  parseScrapperStringValue,
   upsertMatchSequentiallyExecutionPlanSchema,
   upsertStandaloneExecutionPlanSchema,
   wait,
@@ -21,7 +22,7 @@ import {
 
 import Database from '../../../database'
 import type { RawDataSourceItemSchema } from '../../../database/dataSource'
-import { Scraper, parseScrapperStringValue, type ActionsAndSiteGrouped } from '../../../scraper'
+import { Scraper, type ActionsAndSiteGrouped } from '../../../scraper'
 import {
   broadcastMessage,
   handleApiRequest,

@@ -1,5 +1,4 @@
-import '../test-utils/electronMock'
-import { parseScrapperStringValue } from './helpers'
+import { parseScrapperStringValue } from './common'
 
 describe(parseScrapperStringValue.name, () => {
   beforeEach(() => {

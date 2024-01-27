@@ -1,11 +1,24 @@
 import { Fragment } from 'react'
-import { EastRounded } from '@mui/icons-material'
-import { Box, Divider, Paper, Stack, Typography, alpha } from '@mui/material'
+import { EastRounded, ExpandMoreRounded } from '@mui/icons-material'
+import {
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
+  Box,
+  Divider,
+  Paper,
+  Stack,
+  Typography,
+  accordionSummaryClasses,
+  alpha,
+} from '@mui/material'
 import { common } from '@mui/material/colors'
 import {
   ActionStepErrorType,
+  parseScrapperStringValue,
   type ActionExecutionResult,
   type RoutineExecutionResult,
+  type Site,
 } from '@web-scraper/common'
 import { ActionStepData } from './ActionStepData'
 import { actionStepErrorTypeNames, actionStepTypeNames } from '../../../utils/dictionaries'
@@ -17,56 +30,81 @@ import { BooleanValue } from '../../table/BooleanValue'
 interface ActionExecutionResultDetailsProps {
   result: ActionExecutionResult
   source: RoutineExecutionResult['source']
+  site?: Site
 }
 
 export const ActionExecutionResultDetails = ({
   result,
   source,
+  site,
 }: ActionExecutionResultDetailsProps) => {
   result.action.url
   return (
-    <Stack py="0.5rem" gap="0.5rem" bgcolor={alpha(common.white, 0.025)}>
-      <Stack
-        direction="row"
-        alignItems="center"
-        justifyContent="space-between"
-        gap="0.5rem"
-        px="0.5rem"
-        fontSize="small"
-        color="text.secondary"
+    <Accordion
+      variant="outlined"
+      disableGutters
+      slotProps={{
+        transition: { unmountOnExit: true },
+      }}
+      sx={{
+        backgroundColor: alpha(common.white, 0.025),
+        border: 'none',
+        borderRadius: 0,
+      }}
+    >
+      <AccordionSummary
+        expandIcon={<ExpandMoreRounded />}
+        sx={{
+          px: '0.5rem',
+          fontSize: 'small',
+          [`& > .${accordionSummaryClasses.content}`]: {
+            my: 0,
+            pr: '0.5rem',
+            display: 'flex',
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'flex-start',
+            gap: '0.5rem',
+            color: 'text.secondary',
+            whiteSpace: 'nowrap',
+          },
+        }}
       >
         <TermChip term="action" />
-        <Typography variant="body2" color="text.primary" fontWeight="bold" mr="auto">
+        <Typography variant="body2" color="text.primary" fontWeight="bold" whiteSpace="nowrap">
           {result.action.name}
         </Typography>
         {result.action.url && (
-          // TODO: move parseScrapperStringValue to @common and use it here
           <>
-            <Typography variant="caption" color="text.secondary" ml="auto">
+            <Divider orientation="vertical" flexItem />
+            <Typography variant="caption" color="text.secondary">
               URL:
             </Typography>
             <UrlButton variant="caption" color="text.primary" readOnly>
-              {result.action.url}
+              {parseScrapperStringValue(result.action.url, { siteURL: site?.url }) || '-'}
             </UrlButton>
           </>
         )}
-      </Stack>
-      <Divider />
-      <Stack
-        direction="row"
-        alignItems="stretch"
-        color="text.secondary"
-        columnGap="0.25rem"
-        px="0.5rem"
-      >
-        {result.actionStepsResults.map((actionStepResult, index) => (
-          <Fragment key={index}>
-            {index > 0 && <EastRounded color="inherit" sx={{ alignSelf: 'center' }} />}
-            <ActionStepResultDetails result={actionStepResult} source={source} />
-          </Fragment>
-        ))}
-      </Stack>
-    </Stack>
+        <Divider orientation="vertical" flexItem />
+        {result.actionStepsResults.length} action steps
+      </AccordionSummary>
+      <AccordionDetails>
+        <Stack
+          direction="row"
+          alignItems="stretch"
+          color="text.secondary"
+          columnGap="0.25rem"
+          px="0.5rem"
+        >
+          {result.actionStepsResults.map((actionStepResult, index) => (
+            <Fragment key={index}>
+              {index > 0 && <EastRounded color="inherit" sx={{ alignSelf: 'center' }} />}
+              <ActionStepResultDetails result={actionStepResult} source={source} />
+            </Fragment>
+          ))}
+        </Stack>
+      </AccordionDetails>
+    </Accordion>
   )
 }
 
