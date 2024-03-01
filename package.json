@@ -48,7 +48,7 @@
   "devDependencies": {
     "prettier": "^3.2.4",
     "shx": "^0.3.4",
-    "turbo": "^1.11.3"
+    "turbo": "^1.12.4"
   },
   "engines": {
     "npm": ">=7.0.0",
