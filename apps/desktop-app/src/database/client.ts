@@ -3,14 +3,14 @@ import path from 'path'
 import url from 'url'
 
 import { PrismaClient } from '@prisma/client'
-import isDev from 'electron-is-dev'
+import { app } from 'electron'
 
 import { EXECUTABLE_DIRECTORY_PATH, EXTERNAL_DIRECTORY_PATH } from '../utils'
 
 console.info('EXECUTABLE_DIRECTORY_PATH', EXECUTABLE_DIRECTORY_PATH)
 
 const databaseFilePath = (() => {
-  if (isDev) {
+  if (app.isPackaged) {
     return path.join(EXTERNAL_DIRECTORY_PATH, 'data.db')
   } else {
     const localDatabaseFilePath = path.resolve(EXECUTABLE_DIRECTORY_PATH, 'data.db')

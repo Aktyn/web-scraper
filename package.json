@@ -46,9 +46,9 @@
     "typecheck": "turbo run typecheck"
   },
   "devDependencies": {
-    "prettier": "^3.2.4",
+    "prettier": "^3.2.5",
     "shx": "^0.3.4",
-    "turbo": "^1.11.3"
+    "turbo": "^1.13.2"
   },
   "engines": {
     "npm": ">=7.0.0",

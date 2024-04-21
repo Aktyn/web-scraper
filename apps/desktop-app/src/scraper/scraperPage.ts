@@ -1,7 +1,6 @@
 import type {
   Browser,
   Page,
-  PageEventObject,
   ScreenshotOptions,
   Viewport,
   WaitForOptions,
@@ -73,19 +72,9 @@ export class ScraperPage implements Pick<Page, 'on' | 'off'> {
     this.initialized = true
   }
 
-  public on<K extends keyof PageEventObject>(
-    eventName: K,
-    handler: (event: PageEventObject[K]) => void,
-  ) {
-    return this.page!.on(eventName, handler)
-  }
+  public on: Page['on'] = (eventName, handler) => this.page!.on(eventName, handler)
 
-  public off<K extends keyof PageEventObject>(
-    eventName: K,
-    handler: (event: PageEventObject[K]) => void,
-  ) {
-    return this.page!.off(eventName, handler)
-  }
+  public off: Page['off'] = (eventName, handler) => this.page!.off(eventName, handler)
 
   public close(...args: Parameters<Page['close']>) {
     return this.page.close(...args)

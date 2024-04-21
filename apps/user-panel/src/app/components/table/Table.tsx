@@ -8,6 +8,7 @@ import {
   useImperativeHandle,
   useRef,
   useState,
+  type Ref,
 } from 'react'
 import {
   AddRounded,
@@ -85,7 +86,7 @@ export const Table = genericMemo(
         hideRefreshButton,
         ...rowProps
       }: TableProps<DataType, KeyPropertyType> & RefAttributes<TableRef>,
-      ref: RefAttributes<TableRef>['ref'],
+      ref: Ref<TableRef>,
     ) => {
       const cancellable = useCancellablePromise()
       const tableContainerRef = useRef<HTMLDivElement>(null)

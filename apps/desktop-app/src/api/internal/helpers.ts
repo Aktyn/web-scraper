@@ -1,15 +1,14 @@
 import {
   ErrorCode,
   wait,
-  type ElectronToRendererMessage,
-  type RendererToElectronResponseBlueprint,
   type ApiError,
   type ElectronApi,
+  type ElectronToRendererMessage,
   type IpcRendererEventPolyfill,
   type RendererToElectronMessage,
+  type RendererToElectronResponseBlueprint,
 } from '@web-scraper/common'
-import type { IpcMainInvokeEvent } from 'electron'
-import isDev from 'electron-is-dev'
+import { app, type IpcMainInvokeEvent } from 'electron'
 import { v4 as uuidV4 } from 'uuid'
 
 import { ExtendedBrowserWindow } from '../../extendedBrowserWindow'
@@ -23,7 +22,7 @@ export const handleApiRequest = <ArgumentsType extends any[], ResponseType exten
     // eslint-disable-next-line no-console
     console.log(`[API request] [name: ${name}] [args: ${JSON.stringify(args)}]`)
     try {
-      if (isDev) {
+      if (app.isPackaged) {
         await wait(400)
       }
       return await requestFunc(...args)

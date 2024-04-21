@@ -4,6 +4,9 @@ import { mockDeep } from 'jest-mock-extended'
 jest.mock('electron', () => ({
   __esModule: true,
   default: mockDeep<typeof electron>(),
+  app: {
+    isPackaged: true,
+  },
   ipcMain: {
     handle: jest.fn(),
   },
@@ -12,9 +15,4 @@ jest.mock('electron', () => ({
       //noop
     }
   },
-}))
-
-jest.mock('electron-is-dev', () => ({
-  __esModule: true,
-  default: true,
 }))

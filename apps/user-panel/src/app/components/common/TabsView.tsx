@@ -76,7 +76,7 @@ export const TabsView = genericMemo(
         onTabsEntryAnimationStarted,
         onTabsEntryAnimationFinished,
       }: TabsViewProps<ValueType> & RefAttributes<HTMLDivElement>,
-      ref: RefAttributes<HTMLDivElement>['ref'],
+      ref: Ref<HTMLDivElement>,
     ) => {
       const containerRef = useRef<HTMLDivElement>(null)
       const contentContainerRef = useRef<HTMLDivElement>(null)

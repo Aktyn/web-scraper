@@ -6,7 +6,7 @@ export const waitFor = async (
   timeout = 10000,
 ) => {
   const start = Date.now()
-  // eslint-disable-next-line no-constant-condition
+
   while (true) {
     await wait(interval)
     if (await condition()) {

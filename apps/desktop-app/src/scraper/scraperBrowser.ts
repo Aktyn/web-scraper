@@ -2,7 +2,7 @@ import * as fs from 'fs'
 import path from 'path'
 
 import { cacheable, waitFor } from '@web-scraper/common'
-import isDev from 'electron-is-dev'
+import { app } from 'electron'
 import {
   type Browser,
   type EventType,
@@ -80,13 +80,13 @@ export default class ScraperBrowser {
           '--disable-blink-features=AutomationControlled',
         ],
         headless,
-        devtools: isDev,
+        devtools: app.isPackaged,
         defaultViewport: headless ? ScraperBrowser.defaultViewport : null,
         handleSIGINT: true,
         ignoreHTTPSErrors: true,
         timeout: 30_000,
         userDataDir:
-          isDev && !process.env.JEST_WORKER_ID
+          app.isPackaged && !process.env.JEST_WORKER_ID
             ? path.join(
                 EXTERNAL_DIRECTORY_PATH,
                 `userData${this.instanceSlot > 0 ? this.instanceSlot : ''}`,

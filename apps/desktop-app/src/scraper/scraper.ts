@@ -120,9 +120,7 @@ export class Scraper<ModeType extends ScraperMode> {
       mode === ScraperMode.PREVIEW ||
       (mode === ScraperMode.ROUTINE_EXECUTION &&
         !(this.options as ScraperOptions<ScraperMode.ROUTINE_EXECUTION>).preview) ||
-      process.env.JEST_WORKER_ID
-        ? 'new'
-        : false
+      !!process.env.JEST_WORKER_ID
 
     this.browser = new ScraperBrowser({
       headless,

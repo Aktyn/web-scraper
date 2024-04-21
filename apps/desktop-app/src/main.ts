@@ -12,7 +12,6 @@ dotenvExpand.expand(myEnv)
 import { safePromise } from '@web-scraper/common'
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { app, shell } from 'electron'
-import isDev from 'electron-is-dev'
 
 import { registerRequestsHandler } from './api/internal/requestHandler'
 import Database from './database'
@@ -45,7 +44,7 @@ function createWindow() {
   })
 
   mainWindow.once('ready-to-show', () => {
-    if (!isDev) {
+    if (!app.isPackaged) {
       mainWindow.maximize()
     }
   })
@@ -57,13 +56,13 @@ function createWindow() {
 
   mainWindow
     .loadURL(
-      isDev
+      app.isPackaged
         ? 'http://localhost:3000'
         : url.pathToFileURL(path.join(__dirname, '../user-panel-build/index.html')).href,
     )
     .catch(console.error)
 
-  if (isDev) {
+  if (app.isPackaged) {
     mainWindow.webContents.openDevTools({ mode: 'bottom' })
   }
 }
