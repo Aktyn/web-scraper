@@ -22,7 +22,7 @@ export const handleApiRequest = <ArgumentsType extends any[], ResponseType exten
     // eslint-disable-next-line no-console
     console.log(`[API request] [name: ${name}] [args: ${JSON.stringify(args)}]`)
     try {
-      if (app.isPackaged) {
+      if (!app.isPackaged) {
         await wait(400)
       }
       return await requestFunc(...args)

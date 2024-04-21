@@ -44,7 +44,7 @@ function createWindow() {
   })
 
   mainWindow.once('ready-to-show', () => {
-    if (!app.isPackaged) {
+    if (app.isPackaged) {
       mainWindow.maximize()
     }
   })
@@ -56,13 +56,13 @@ function createWindow() {
 
   mainWindow
     .loadURL(
-      app.isPackaged
+      !app.isPackaged
         ? 'http://localhost:3000'
         : url.pathToFileURL(path.join(__dirname, '../user-panel-build/index.html')).href,
     )
     .catch(console.error)
 
-  if (app.isPackaged) {
+  if (!app.isPackaged) {
     mainWindow.webContents.openDevTools({ mode: 'bottom' })
   }
 }

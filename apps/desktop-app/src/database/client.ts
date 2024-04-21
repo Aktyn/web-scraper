@@ -10,7 +10,7 @@ import { EXECUTABLE_DIRECTORY_PATH, EXTERNAL_DIRECTORY_PATH } from '../utils'
 console.info('EXECUTABLE_DIRECTORY_PATH', EXECUTABLE_DIRECTORY_PATH)
 
 const databaseFilePath = (() => {
-  if (app.isPackaged) {
+  if (!app.isPackaged) {
     return path.join(EXTERNAL_DIRECTORY_PATH, 'data.db')
   } else {
     const localDatabaseFilePath = path.resolve(EXECUTABLE_DIRECTORY_PATH, 'data.db')

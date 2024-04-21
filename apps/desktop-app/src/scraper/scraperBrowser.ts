@@ -80,13 +80,13 @@ export default class ScraperBrowser {
           '--disable-blink-features=AutomationControlled',
         ],
         headless,
-        devtools: app.isPackaged,
+        devtools: !app.isPackaged,
         defaultViewport: headless ? ScraperBrowser.defaultViewport : null,
         handleSIGINT: true,
         ignoreHTTPSErrors: true,
         timeout: 30_000,
         userDataDir:
-          app.isPackaged && !process.env.JEST_WORKER_ID
+          !app.isPackaged && !process.env.JEST_WORKER_ID
             ? path.join(
                 EXTERNAL_DIRECTORY_PATH,
                 `userData${this.instanceSlot > 0 ? this.instanceSlot : ''}`,
