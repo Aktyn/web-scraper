@@ -5,7 +5,7 @@ jest.mock('electron', () => ({
   __esModule: true,
   default: mockDeep<typeof electron>(),
   app: {
-    isPackaged: true,
+    isPackaged: false,
   },
   ipcMain: {
     handle: jest.fn(),

@@ -14,6 +14,7 @@ import {
 } from '@web-scraper/common'
 
 import { initServer } from '../test-utils/serverMock'
+import '../test-utils/databaseMock'
 
 import { type RequestDataCallback, type RequestDataSourceItemIdCallback } from '.'
 import '../test-utils/electronMock'

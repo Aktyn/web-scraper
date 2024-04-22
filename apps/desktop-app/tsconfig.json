@@ -1,6 +1,6 @@
 {
   "include": [
-    "./src",
+    "./src"
   ],
   "exclude": [
     "./node_modules",
@@ -38,7 +38,7 @@
     "resolveJsonModule": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
-    "experimentalDecorators": true,
+    "experimentalDecorators": true
   },
   "ts-node": {
     "transpileOnly": true,
