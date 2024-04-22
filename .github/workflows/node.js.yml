@@ -36,6 +36,6 @@ jobs:
           DISABLE_ERD: true
 
       - name: Run all tests
-        run: yarn run test
+        run: yarn run test:ci
         env:
           CI: true
