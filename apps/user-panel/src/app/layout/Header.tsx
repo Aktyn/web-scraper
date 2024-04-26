@@ -78,13 +78,13 @@ export const Header = () => {
         >
           <Tooltip
             title={
-              <Stack alignItems="center">
-                <Box>
-                  Adjust theme coloring intensity ({Math.round(100 * backgroundSaturation)}
+              <Box>
+                Adjust theme coloring intensity{' '}
+                <strong>
+                  ({Math.round(100 * backgroundSaturation)}
                   %)
-                </Box>
-                <Box>The effect will be visible the next time you change view</Box>
-              </Stack>
+                </strong>
+              </Box>
             }
             className="no-draggable"
           >
@@ -96,6 +96,9 @@ export const Header = () => {
               color="text.primary"
             >
               <DarkModeRounded
+                onClick={() =>
+                  updateSetting('backgroundSaturation', Math.max(0, backgroundSaturation - 0.1))
+                }
                 sx={{
                   opacity: Math.max(0.2, 1 - backgroundSaturation),
                   transition: (theme) => theme?.transitions.create('opacity', { easing: 'linear' }),
@@ -116,6 +119,9 @@ export const Header = () => {
                 max={1}
               />
               <LightModeRounded
+                onClick={() =>
+                  updateSetting('backgroundSaturation', Math.min(1, backgroundSaturation + 0.1))
+                }
                 sx={{
                   opacity: Math.max(0.2, backgroundSaturation),
                   transition: (theme) => theme?.transitions.create('opacity', { easing: 'linear' }),

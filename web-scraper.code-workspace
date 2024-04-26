@@ -22,6 +22,8 @@
 		"testing.automaticallyOpenPeekView": "never",
 		"jest.disabledWorkspaceFolders": [
 			"web-scraper"
-		]
+		],
+		"jest.monitorLongRun": 30000,
+		"jest.runMode": "watch"
 	}
 }

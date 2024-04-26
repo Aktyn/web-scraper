@@ -1,15 +1,18 @@
-import { Suspense, useCallback, useEffect, useRef, useState } from 'react'
+import { Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import createCache from '@emotion/cache'
 import { CacheProvider } from '@emotion/react'
 import { CloseRounded } from '@mui/icons-material'
 import { CssBaseline, IconButton, Stack, ThemeProvider } from '@mui/material'
 import { ElectronToRendererMessage, WindowStateChange } from '@web-scraper/common'
 import anime from 'animejs'
+import deepmerge from 'deepmerge'
 import { SnackbarProvider, closeSnackbar } from 'notistack'
 import { FullViewLoader } from './components/common/loader/FullViewLoader'
 import { AktynLogoIcon } from './components/icons/AktynLogoIcon'
 import { Config } from './config'
+import { defaultUserSettings } from './context/userDataContext'
 import { ViewContext, ViewTransitionState, type ViewName } from './context/viewContext'
+import { useDebounce } from './hooks/useDebounce'
 import { useMounted } from './hooks/useMounted'
 import { usePersistentState } from './hooks/usePersistentState'
 import { Layout } from './layout/Layout'
@@ -44,8 +47,19 @@ function ViewBase() {
   const [viewTransitionState, setViewTransitionState] = useState(ViewTransitionState.IDLE)
   const [maximized, setMaximized] = usePersistentState('window-maximized', 'false', sessionStorage)
   const [loadingUserData, setLoadingUserData] = useState(true)
+  const [backgroundSaturation, setBackgroundSaturation] = useState(
+    defaultUserSettings.backgroundSaturation,
+  )
 
-  const currentView = Navigation[viewName]
+  const setBackgroundSaturationDebounce = useDebounce(setBackgroundSaturation, 200, [
+    setBackgroundSaturation,
+  ])
+
+  const currentView = useMemo(
+    () => deepmerge({}, Navigation[viewName]),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [viewName, backgroundSaturation],
+  )
   const nextView = nextViewName ? Navigation[nextViewName] : null
 
   const handleViewChange = useCallback(
@@ -96,12 +110,13 @@ function ViewBase() {
     (userSettings, reason) => {
       if (typeof userSettings.backgroundSaturation === 'number') {
         updateThemes(userSettings.backgroundSaturation)
+        setBackgroundSaturationDebounce(userSettings.backgroundSaturation)
       }
       if (reason === 'loaded') {
         setLoadingUserData(false)
       }
     },
-    [],
+    [setBackgroundSaturationDebounce],
   )
 
   useEffect(() => {

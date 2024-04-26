@@ -11,7 +11,7 @@ export interface ViewSettingsSchema {
 
 interface NavigationEntry {
   component: LazyExoticComponent<ViewComponentType>
-  theme?: Theme
+  theme: Theme
   gridPosition: [number, number]
   viewSettings?: ViewSettingsSchema
 }
