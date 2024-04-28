@@ -44,7 +44,7 @@ function createWindow() {
   })
 
   mainWindow.once('ready-to-show', () => {
-    if (app.isPackaged) {
+    if (!app.isPackaged) {
       mainWindow.maximize()
     }
   })

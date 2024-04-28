@@ -1,9 +1,7 @@
-import { CodeRounded } from '@mui/icons-material'
-import { InputAdornment } from '@mui/material'
 import type { UpsertSiteInstructionsSchema } from '@web-scraper/common'
 import { useFormContext } from 'react-hook-form'
+import { ElementFormInput } from './ElementFormInput'
 import { ItemsList } from '../common/treeStructure/ItemsList'
-import { FormInput } from '../form/FormInput'
 
 type GlobalReturnValuesFormProps = {
   level: number
@@ -29,19 +27,11 @@ export const GlobalReturnValuesForm = ({ level, fieldName }: GlobalReturnValuesF
     >
       {(_, index) => [
         index,
-        <FormInput
+        <ElementFormInput
           key={index}
           name={`${fieldName}.${index}`}
-          form={form}
           label="Value"
           debounceChange
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position="start">
-                <CodeRounded />
-              </InputAdornment>
-            ),
-          }}
         />,
       ]}
     </ItemsList>

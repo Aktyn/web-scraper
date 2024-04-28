@@ -46,3 +46,104 @@ export const getFlowFinishedNotification = cacheable(() => {
 
   return notification
 })
+
+export const pageEvaluators = {
+  getPageElementJsPath: () => {
+    function getJsPathFromElement(element: HTMLElement | null) {
+      const pathParts = []
+
+      while (element) {
+        let selector = element.tagName.toLowerCase()
+
+        if (element.id) {
+          selector += `#${element.id}`
+        } else {
+          const siblings = element.parentNode?.children ?? []
+          let siblingIndex = 1
+          for (const sibling of siblings) {
+            if (sibling === element) {
+              break
+            }
+            if (sibling.tagName === element.tagName) {
+              siblingIndex++
+            }
+          }
+          if (siblingIndex > 1) {
+            selector += `:nth-of-type(${siblingIndex})`
+          }
+        }
+
+        pathParts.unshift(selector)
+        element = element.parentElement
+      }
+
+      return pathParts.slice(1).join(' > ')
+    }
+
+    class InteractiveElementSelector {
+      private resolve: ((element: string | null) => void) | null = null
+      private highlightedElement: Element | null = null
+
+      private onClick = (event: MouseEvent) => {
+        if (event.target && event.target instanceof HTMLElement) {
+          event.preventDefault()
+          event.stopPropagation()
+          event.stopImmediatePropagation()
+          this.resolve?.(getJsPathFromElement(event.target))
+          this.stop()
+        } else {
+          this.resolve?.(null)
+        }
+      }
+      private onMouseMove = (event: MouseEvent) => {
+        if (event.target && event.target instanceof Element) {
+          this.highlightedElement?.classList.remove('highlighted')
+          this.highlightedElement = event.target
+          event.target.classList.add('highlighted')
+        }
+      }
+
+      async getSelectedElement() {
+        window.addEventListener('click', this.onClick, true)
+        window.addEventListener('mousemove', this.onMouseMove)
+
+        return new Promise<string | null>((resolve) => {
+          this.resolve = resolve
+        })
+      }
+
+      stop() {
+        this.highlightedElement?.classList.remove('highlighted')
+        window.removeEventListener('click', this.onClick, true)
+        window.removeEventListener('mousemove', this.onMouseMove)
+        this.resolve?.(null)
+      }
+    }
+
+    if ('interactiveElementSelector' in window) {
+      try {
+        //@ts-expect-error dynamic window property without type
+        window.interactiveElementSelector.stop()
+        delete window.interactiveElementSelector
+      } catch {
+        // noop
+      }
+    }
+
+    const ies = new InteractiveElementSelector()
+    //@ts-expect-error dynamic window property without type
+    window.interactiveElementSelector = ies
+    return ies.getSelectedElement()
+  },
+  stopAndRemoveInteractiveElementSelector: () => {
+    if ('interactiveElementSelector' in window) {
+      try {
+        //@ts-expect-error dynamic window property without type
+        window.interactiveElementSelector.stop()
+        delete window.interactiveElementSelector
+      } catch {
+        // noop
+      }
+    }
+  },
+}

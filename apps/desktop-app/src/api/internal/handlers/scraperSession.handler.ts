@@ -80,6 +80,29 @@ export const scraperSessionHandler = {
       return successResponse
     },
   ),
+  [RendererToElectronMessage.pickElement]: handleApiRequest(
+    RendererToElectronMessage.pickElement,
+    (sessionId, pickFromUrl) => {
+      const scraper = Scraper.getInstances(Scraper.Mode.TESTING).get(sessionId)
+      if (!scraper) {
+        throw ErrorCode.NOT_FOUND
+      }
+
+      return scraper.pickElement(pickFromUrl)
+    },
+  ),
+  [RendererToElectronMessage.cancelPickingElement]: handleApiRequest(
+    RendererToElectronMessage.cancelPickingElement,
+    async (sessionId) => {
+      const scraper = Scraper.getInstances(Scraper.Mode.TESTING).get(sessionId)
+      if (!scraper) {
+        throw ErrorCode.NOT_FOUND
+      }
+
+      await scraper.cancelPickingElement()
+      return successResponse
+    },
+  ),
   [RendererToElectronMessage.testActionStep]: handleApiRequest(
     RendererToElectronMessage.testActionStep,
     (sessionId, actionStep) => {

@@ -1,10 +1,5 @@
 import { useCallback, useContext, useState } from 'react'
-import {
-  CodeRounded,
-  FormatListBulletedRounded,
-  LabelRounded,
-  LinkRounded,
-} from '@mui/icons-material'
+import { FormatListBulletedRounded, LabelRounded, LinkRounded } from '@mui/icons-material'
 import { InputAdornment, MenuItem, Stack } from '@mui/material'
 import {
   ProcedureType,
@@ -14,6 +9,7 @@ import {
 } from '@web-scraper/common'
 import { useFieldArray, useFormContext } from 'react-hook-form'
 import { actionSchemaToExecutableAction } from './ActionsForm'
+import { ElementFormInput } from './ElementFormInput'
 import { FlowStepForm, flowSchemaToExecutableFlow } from './FlowStepForm'
 import { SiteInstructionsTestingSessionContext } from '../../context/siteInstructionsTestingSessionContext'
 import { useApiRequest } from '../../hooks/useApiRequest'
@@ -142,7 +138,7 @@ export const ProceduresForm = () => {
             }
           },
         },
-        testingSession.sessionId,
+        testingSession.testingSession.sessionId,
         procedure,
         actions,
       )
@@ -176,7 +172,7 @@ export const ProceduresForm = () => {
     >
       {(field, index) => [
         field.id,
-        <Stack key={field.id} flexGrow={1} gap={2}>
+        <Stack key={field.id} flexGrow={1} gap="1rem">
           <FormInput
             name={`procedures.${index}.name`}
             form={form}
@@ -221,17 +217,10 @@ export const ProceduresForm = () => {
               ),
             }}
           />
-          <FormInput
+          <ElementFormInput
             name={`procedures.${index}.waitFor`}
-            form={form}
             label="Wait for"
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <CodeRounded />
-                </InputAdornment>
-              ),
-            }}
+            pickFromUrl={field.startUrl}
           />
           <FlowStepForm fieldName={`procedures.${index}.flow`} />
         </Stack>,

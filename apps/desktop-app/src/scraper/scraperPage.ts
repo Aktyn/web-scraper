@@ -1,11 +1,23 @@
+import { type ApiError, ErrorCode } from '@web-scraper/common'
+import { app } from 'electron'
+// eslint-disable-next-line import/no-extraneous-dependencies
+import {
+  createCursor,
+  getRandomPagePoint,
+  installMouseHelper,
+  type GhostCursor,
+} from 'ghost-cursor'
 import type {
   Browser,
+  ElementHandle,
   Page,
   ScreenshotOptions,
   Viewport,
   WaitForOptions,
   WaitForSelectorOptions,
 } from 'puppeteer'
+
+import { pageEvaluators } from './helpers'
 
 export class ScraperPage implements Pick<Page, 'on' | 'off'> {
   private static readonly exposedMethods = [
@@ -15,7 +27,9 @@ export class ScraperPage implements Pick<Page, 'on' | 'off'> {
     'type',
   ] as const satisfies Readonly<(keyof Page)[]>
 
+  private ghostCursor: GhostCursor | null = null
   private initialized = false
+  private highlightedStyleTagHandle: ElementHandle<HTMLStyleElement> | null = null
 
   public static async createFromExisting(
     page: Page,
@@ -60,6 +74,23 @@ export class ScraperPage implements Pick<Page, 'on' | 'off'> {
     this.page.setDefaultTimeout(30_000)
     this.page.setDefaultNavigationTimeout(30_000)
 
+    try {
+      //@ts-expect-error types overlapping from different versions
+      this.ghostCursor = createCursor(this.page)
+      this.ghostCursor.toggleRandomMove(true)
+
+      //@ts-expect-error types overlapping from different versions
+      const randomStartingPoint = await getRandomPagePoint(this.page)
+      await this.ghostCursor.moveTo(randomStartingPoint)
+
+      if (!app.isPackaged) {
+        //@ts-expect-error types overlapping from different versions
+        await installMouseHelper(this.page)
+      }
+    } catch (error) {
+      console.error('Error during ghost cursor initialization:', error)
+    }
+
     //TODO
     // this.page.on('console', (msg) => {
     //   for (let i = 0; i < msg.args.length; ++i) {
@@ -88,11 +119,77 @@ export class ScraperPage implements Pick<Page, 'on' | 'off'> {
       timeout: 0,
     },
   ) {
-    await this.page.goto(url, options)
+    if (this.page.url() !== url) {
+      await this.page.goto(url, options)
+    }
 
     if (waitForSelector) {
       await this.waitForSelector(waitForSelector, { timeout: 30_000 })
     }
+  }
+
+  public ghostClick(target: ElementHandle<Element>) {
+    //@ts-expect-error types overlapping from different versions
+    return this.ghostCursor?.click(target, {
+      hesitate: Math.round(500 + Math.random() * 500),
+      waitForClick: Math.round(500 + Math.random() * 500),
+      waitForSelector: 5_000,
+    })
+  }
+
+  private async disposeHighlightStyleTag() {
+    try {
+      await this.highlightedStyleTagHandle?.evaluate((styleTag) => styleTag.remove())
+      await this.highlightedStyleTagHandle?.dispose()
+      this.highlightedStyleTagHandle = null
+    } catch {
+      // noop
+    }
+  }
+
+  public async pickElement() {
+    await this.disposeHighlightStyleTag()
+    this.highlightedStyleTagHandle = await this.page.addStyleTag({
+      content: `.highlighted {
+          opacity: 1 !important;
+          box-shadow:
+            0 0 6px 0 rgba(236, 64, 122, 0.25),
+            0 0 0 6px rgba(236, 64, 122, 0.5) inset,
+            0 0 0 256px rgba(236, 64, 122, 0.1) inset !important;
+          cursor: pointer !important;
+      }`,
+    })
+
+    const jsPath = await this.page.evaluate(pageEvaluators.getPageElementJsPath)
+
+    if (jsPath) {
+      try {
+        const handle = await this.page.waitForSelector(jsPath, {
+          timeout: 2_000,
+        })
+        if (!handle) {
+          await this.disposeHighlightStyleTag()
+          throw {
+            errorCode: ErrorCode.INTERNAL_ERROR,
+            error: `"${jsPath}" is not a valid selector`,
+          } satisfies ApiError
+        }
+      } catch {
+        await this.disposeHighlightStyleTag()
+        throw {
+          errorCode: ErrorCode.INTERNAL_ERROR,
+          error: `"${jsPath}" is not a valid selector`,
+        } satisfies ApiError
+      }
+    }
+
+    await this.disposeHighlightStyleTag()
+    return jsPath
+  }
+
+  public async cancelPickingElement() {
+    await this.disposeHighlightStyleTag()
+    return this.page.evaluate(pageEvaluators.stopAndRemoveInteractiveElementSelector)
   }
 
   public screenshot(options: ScreenshotOptions & { encoding: 'base64' }) {

@@ -393,6 +393,7 @@ export class Scraper<ModeType extends ScraperMode> {
       if (procedure.waitFor) {
         const handle = await this.waitFor(procedure.waitFor)
         if (!handle) {
+          const result = { errorType: ActionStepErrorType.ELEMENT_NOT_FOUND }
           broadcastMessage(
             ElectronToRendererMessage.scraperExecutionResult,
             this.id,
@@ -400,12 +401,12 @@ export class Scraper<ModeType extends ScraperMode> {
             executionId,
             {
               scope: ScraperExecutionScope.PROCEDURE,
-              procedureResult: { errorType: ActionStepErrorType.ELEMENT_NOT_FOUND },
+              procedureResult: result,
             },
           )
           return {
             procedure,
-            flowExecutionResult: { errorType: ActionStepErrorType.ELEMENT_NOT_FOUND },
+            flowExecutionResult: result,
           }
         }
       }
@@ -776,6 +777,21 @@ export class Scraper<ModeType extends ScraperMode> {
     } catch (error) {
       return null
     }
+  }
+
+  @assertMainPage
+  async pickElement(pickFromUrl: string | undefined | null) {
+    if (pickFromUrl) {
+      await this.mainPage!.goto(pickFromUrl)
+    }
+
+    const jsPath = await this.mainPage!.pickElement()
+    return { jsPath }
+  }
+
+  @assertMainPage
+  cancelPickingElement() {
+    return this.mainPage!.cancelPickingElement()
   }
 }
 

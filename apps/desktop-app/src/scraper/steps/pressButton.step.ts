@@ -1,12 +1,14 @@
 import {
   ActionStepErrorType,
+  randomInt,
   type ActionStep,
   type ActionStepType,
-  randomInt,
   type ScraperMode,
 } from '@web-scraper/common'
+import type { ElementHandle } from 'puppeteer'
 
 import type { Scraper } from '../scraper'
+import type { ScraperPage } from '../scraperPage'
 
 export async function pressButtonStep<ModeType extends ScraperMode>(
   this: Scraper<ModeType>,
@@ -21,7 +23,7 @@ export async function pressButtonStep<ModeType extends ScraperMode>(
   }
 
   if (actionStep.data.waitForNavigation) {
-    const clickPromise = buttonHandle.click()
+    const clickPromise = clickButton(this.mainPage!, buttonHandle)
     try {
       await this.mainPage!.exposed.waitForNavigation({
         waitUntil: 'networkidle2',
@@ -38,10 +40,20 @@ export async function pressButtonStep<ModeType extends ScraperMode>(
 
     await clickPromise
   } else {
+    await clickButton(this.mainPage!, buttonHandle)
+  }
+
+  return { errorType: ActionStepErrorType.NO_ERROR }
+}
+
+async function clickButton(page: ScraperPage, buttonHandle: ElementHandle<Element>) {
+  try {
+    await page.ghostClick(buttonHandle)
+  } catch (error) {
+    console.error('Error while ghost clicking button', error)
+
     await buttonHandle.click({
       delay: randomInt(50, 200),
     })
   }
-
-  return { errorType: ActionStepErrorType.NO_ERROR }
 }

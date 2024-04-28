@@ -81,7 +81,7 @@ export default class ScraperBrowser {
         ],
         headless,
         devtools: !app.isPackaged,
-        defaultViewport: headless ? ScraperBrowser.defaultViewport : null,
+        defaultViewport: this.viewport,
         handleSIGINT: true,
         ignoreHTTPSErrors: true,
         timeout: 30_000,

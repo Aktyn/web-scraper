@@ -98,6 +98,8 @@ export enum RendererToElectronMessage {
   getSiteInstructionsTestingSessions = 'getSiteInstructionsTestingSessions',
   startSiteInstructionsTestingSession = 'startSiteInstructionsTestingSession',
   endSiteInstructionsTestingSession = 'endSiteInstructionsTestingSession',
+  pickElement = 'pickElement',
+  cancelPickingElement = 'cancelPickingElement',
   testActionStep = 'testActionStep',
   testAction = 'testAction',
   testFlow = 'testFlow',
@@ -295,6 +297,11 @@ export type ElectronApi = {
   [RendererToElectronMessage.endSiteInstructionsTestingSession]: (
     sessionId: string,
   ) => Promise<ApiError>
+  [RendererToElectronMessage.pickElement]: (
+    sessionId: string,
+    pickFromUrl: string | undefined | null,
+  ) => Promise<{ jsPath: string | null } | ApiError>
+  [RendererToElectronMessage.cancelPickingElement]: (sessionId: string) => Promise<ApiError>
   [RendererToElectronMessage.testActionStep]: (
     sessionId: string,
     actionStep: ActionStep,

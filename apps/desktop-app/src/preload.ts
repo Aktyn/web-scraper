@@ -62,6 +62,8 @@ const rendererToElectronMessageNames = [
   'getSiteInstructionsTestingSessions',
   'startSiteInstructionsTestingSession',
   'endSiteInstructionsTestingSession',
+  'pickElement',
+  'cancelPickingElement',
   'testActionStep',
   'testAction',
   'testFlow',

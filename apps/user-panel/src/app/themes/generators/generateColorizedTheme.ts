@@ -172,6 +172,32 @@ export function generateColorizedTheme({
                   },
                 },
               },
+              {
+                props: { variant: 'outlined', color: 'primary' },
+                style: {
+                  '&:not([disabled])': {
+                    backgroundColor: alpha(primary[200], 0.1),
+                    '&:hover': {
+                      backgroundColor: alpha(primary[200], 0.2),
+                      color: primary[50],
+                      borderColor: primary[50],
+                    },
+                  },
+                },
+              },
+              {
+                props: { variant: 'outlined', color: 'secondary' },
+                style: {
+                  '&:not([disabled])': {
+                    backgroundColor: alpha(secondary[200], 0.1),
+                    '&:hover': {
+                      backgroundColor: alpha(secondary[200], 0.2),
+                      color: secondary[50],
+                      borderColor: secondary[50],
+                    },
+                  },
+                },
+              },
             ],
           },
           MuiTableCell: {

@@ -1,6 +1,8 @@
 import { createContext } from 'react'
-import { type TestingSessionSchema } from '../modules/ScraperTestingSessionsModule'
+import type { TestingSessionSchema } from '../modules/ScraperTestingSessionsModule'
 
-export const SiteInstructionsTestingSessionContext = createContext<TestingSessionSchema | null>(
-  null,
-)
+export const SiteInstructionsTestingSessionContext = createContext<{
+  testingSession: TestingSessionSchema
+  pickElement: (url?: string | null) => Promise<string | null>
+  cancelPickingElement: () => void
+} | null>(null)

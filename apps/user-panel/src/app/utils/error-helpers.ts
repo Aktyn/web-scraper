@@ -3,6 +3,7 @@ import { ErrorCode, type ApiError } from '@web-scraper/common'
 export const errorLabels: { [key in ErrorCode]: string } = {
   [ErrorCode.NO_ERROR]: 'No error',
   [ErrorCode.UNKNOWN_ERROR]: 'Unknown error',
+  [ErrorCode.INTERNAL_ERROR]: 'Internal error',
   [ErrorCode.API_ERROR]: 'API error',
   [ErrorCode.DATABASE_ERROR]: 'Database error',
   [ErrorCode.INCORRECT_DATA]: 'Incorrect data',

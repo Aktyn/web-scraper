@@ -112,7 +112,7 @@ export const FlowStepForm = ({
             }
           },
         },
-        testingSession.sessionId,
+        testingSession.testingSession.sessionId,
         flow,
         actions,
       )

@@ -2872,6 +2872,11 @@
   dependencies:
     "@babel/types" "^7.20.7"
 
+"@types/bezier-js@4":
+  version "4.1.3"
+  resolved "https://registry.yarnpkg.com/@types/bezier-js/-/bezier-js-4.1.3.tgz#237d4fe7e9aae7edd0c27a71f9f236f4ddc1c562"
+  integrity sha512-FNVVCu5mx/rJCWBxLTcL7oOajmGtWtBTDjq6DSUWUI12GeePivrZZXz+UgE0D6VYsLEjvExRO03z4hVtu3pTEQ==
+
 "@types/body-parser@*":
   version "1.19.5"
   resolved "https://registry.yarnpkg.com/@types/body-parser/-/body-parser-1.19.5.tgz#04ce9a3b677dc8bd681a17da1ab9835dc9d3ede4"
@@ -4402,6 +4407,11 @@ batch@0.6.1:
   version "0.6.1"
   resolved "https://registry.yarnpkg.com/batch/-/batch-0.6.1.tgz#dc34314f4e679318093fc760272525f94bf25c16"
   integrity sha512-x+VAiMRL6UPkx+kudNvxTl6hB2XNNCG2r+7wixVfIYwu/2HKRXimwQyaumLjMveWvT2Hkd/cAJw+QBMfJ/EKVw==
+
+bezier-js@^6.1.3:
+  version "6.1.4"
+  resolved "https://registry.yarnpkg.com/bezier-js/-/bezier-js-6.1.4.tgz#c7828f6c8900562b69d5040afb881bcbdad82001"
+  integrity sha512-PA0FW9ZpcHbojUCMu28z9Vg/fNkwTj5YhusSAjHHDfHDGLxJ6YUKrAN2vk1fP2MMOxVw4Oko16FMlRGVBGqLKg==
 
 bfj@^7.0.2:
   version "7.1.0"
@@ -7207,6 +7217,15 @@ get-uri@^6.0.1:
     data-uri-to-buffer "^6.0.0"
     debug "^4.3.4"
     fs-extra "^8.1.0"
+
+ghost-cursor@^1.2.0:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/ghost-cursor/-/ghost-cursor-1.2.0.tgz#711ec4d83623469890c9f0833d86c1b673a9aa8f"
+  integrity sha512-iXoYqmeS5UQXKqolMoyaXvBdu2WSWbtznRt7gg6HcxGs8AAgrKK7xvFTTqzXVczoGXsaXAxZVKS0rEA0IhO04A==
+  dependencies:
+    "@types/bezier-js" "4"
+    bezier-js "^6.1.3"
+    debug "^4.3.4"
 
 github-from-package@0.0.0:
   version "0.0.0"

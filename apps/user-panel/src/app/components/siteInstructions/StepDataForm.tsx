@@ -1,4 +1,4 @@
-import { CodeRounded, FormatListBulletedRounded, TimerRounded } from '@mui/icons-material'
+import { FormatListBulletedRounded, TimerRounded } from '@mui/icons-material'
 import { InputAdornment, MenuItem, Stack, TextField } from '@mui/material'
 import {
   ActionStepErrorType,
@@ -8,12 +8,14 @@ import {
 } from '@web-scraper/common'
 import { Controller, useFieldArray, useFormContext } from 'react-hook-form'
 import { DataSourceQuerySelect } from './DataSourceQuerySelect'
+import { ElementFormInput } from './ElementFormInput'
 import { SaveToDataSourceValueInput } from './SaveToDataSourceValueInput'
 import { ValueQueryInput } from './ValueQueryInput'
 import { actionStepErrorTypeNames, saveDataTypeNames } from '../../utils/dictionaries'
 import { ItemsList } from '../common/treeStructure/ItemsList'
 import { FormInput } from '../form/FormInput'
 import { FormSwitch } from '../form/FormSwitch'
+import { RegexIcon } from '../icons/RegexIcon'
 
 interface DataFieldFormProps {
   fieldName: `actions.${number}.actionSteps.${number}.data`
@@ -27,6 +29,11 @@ export const StepDataForm = ({ stepFieldName, ...fieldFormProps }: StepDataFormP
   const form = useFormContext<UpsertSiteInstructionsSchema>()
   const stepType = form.watch(`${stepFieldName}.type`)
 
+  const actionFieldName = stepFieldName.replace(
+    /^(actions\.\d+)(\..+)?/i,
+    '$1',
+  ) as `actions.${number}`
+
   switch (stepType) {
     default:
       return null
@@ -35,7 +42,7 @@ export const StepDataForm = ({ stepFieldName, ...fieldFormProps }: StepDataFormP
     case ActionStepType.WAIT_FOR_ELEMENT:
       return (
         <>
-          <ElementFormInput {...fieldFormProps} />
+          <ActionElementFormInput {...fieldFormProps} actionFieldName={actionFieldName} />
           <DurationFormInput {...fieldFormProps} type="timeout" />
         </>
       )
@@ -44,7 +51,7 @@ export const StepDataForm = ({ stepFieldName, ...fieldFormProps }: StepDataFormP
     case ActionStepType.SELECT_OPTION:
       return (
         <>
-          <ElementFormInput {...fieldFormProps} />
+          <ActionElementFormInput {...fieldFormProps} actionFieldName={actionFieldName} />
           <ValueQueryInput {...fieldFormProps} />
           <DurationFormInput {...fieldFormProps} type="waitForElementTimeout" />
         </>
@@ -52,7 +59,7 @@ export const StepDataForm = ({ stepFieldName, ...fieldFormProps }: StepDataFormP
     case ActionStepType.PRESS_BUTTON:
       return (
         <>
-          <ElementFormInput {...fieldFormProps} />
+          <ActionElementFormInput {...fieldFormProps} actionFieldName={actionFieldName} />
           <WaitForNavigationFormInput {...fieldFormProps} />
           <DurationFormInput {...fieldFormProps} type="waitForElementTimeout" />
           <DurationFormInput {...fieldFormProps} type="waitForNavigationTimeout" />
@@ -98,7 +105,7 @@ export const StepDataForm = ({ stepFieldName, ...fieldFormProps }: StepDataFormP
     case ActionStepType.CHECK_SUCCESS:
       return (
         <>
-          <ElementFormInput {...fieldFormProps} />
+          <ActionElementFormInput {...fieldFormProps} actionFieldName={actionFieldName} />
           <MapSiteErrorsFormInput
             {...fieldFormProps}
             keyName={stepType === ActionStepType.CHECK_ERROR ? 'mapError' : 'mapSuccess'}
@@ -146,27 +153,13 @@ const DurationFormInput = ({
   )
 }
 
-const ElementFormInput = ({ fieldName }: DataFieldFormProps) => {
+const ActionElementFormInput = ({
+  fieldName,
+  actionFieldName,
+}: DataFieldFormProps & { actionFieldName: `actions.${number}` }) => {
   const form = useFormContext<UpsertSiteInstructionsSchema>()
-
-  return (
-    <FormInput
-      name={`${fieldName}.element`}
-      form={form}
-      label="Element"
-      placeholder="JS path"
-      InputProps={{
-        startAdornment: (
-          <InputAdornment position="start">
-            <CodeRounded />
-          </InputAdornment>
-        ),
-      }}
-      sx={{
-        minWidth: '16rem',
-      }}
-    />
-  )
+  const actionUrl = form.watch(`${actionFieldName}.url`)
+  return <ElementFormInput name={`${fieldName}.element`} pickFromUrl={actionUrl} />
 }
 
 const WaitForNavigationFormInput = ({ fieldName }: DataFieldFormProps) => {
@@ -213,47 +206,6 @@ const WaitForNavigationFormInput = ({ fieldName }: DataFieldFormProps) => {
 //   )
 // }
 
-// const ElementsFormInput = ({ fieldName }: DataFieldFormProps) => {
-//   const form = useFormContext<UpsertSiteInstructionsSchema>()
-//   const elementsFields = useFieldArray<
-//     UpsertSiteInstructionsSchema,
-//     // @ts-expect-error missing type support for array of strings
-//     `${typeof fieldName}.elements`
-//   >({
-//     name: `${fieldName}.elements`,
-//   })
-
-//   return (
-//     <ItemsList
-//       title="Elements"
-//       items={elementsFields.fields}
-//       level={2}
-//       onAdd={() => elementsFields.append('')}
-//       onDelete={(_, index) => elementsFields.remove(index)}
-//     >
-//       {(field, index) => [
-//         field.id,
-//         <FormInput
-//           key={field.id}
-//           name={`${fieldName}.elements.${index}`}
-//           form={form}
-//           label="Element"
-//           InputProps={{
-//             startAdornment: (
-//               <InputAdornment position="start">
-//                 <CodeRounded />
-//               </InputAdornment>
-//             ),
-//           }}
-//           sx={{
-//             minWidth: '16rem',
-//           }}
-//         />,
-//       ]}
-//     </ItemsList>
-//   )
-// }
-
 const MapSiteErrorsFormInput = ({
   fieldName,
   keyName,
@@ -292,10 +244,11 @@ const MapSiteErrorsFormInput = ({
             name={`${fieldName}.${keyName}.${index}.content`}
             form={form}
             label="Content"
+            placeholder="RegExp pattern without slashes"
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
-                  <CodeRounded />
+                  <RegexIcon />
                 </InputAdornment>
               ),
             }}

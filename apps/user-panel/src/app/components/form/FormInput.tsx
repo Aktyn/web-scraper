@@ -11,7 +11,7 @@ import type {
 import { Config } from '../../config'
 import { useDebounce } from '../../hooks/useDebounce'
 
-interface FormInputProps<FormSchema extends object>
+export interface FormInputProps<FormSchema extends object>
   extends Omit<TextFieldProps, keyof UseFormRegisterReturn> {
   name: FieldPath<FormSchema>
   form: UseFormReturn<FormSchema>

@@ -1,7 +1,8 @@
-import { CodeRounded, LabelRounded } from '@mui/icons-material'
+import { LabelRounded } from '@mui/icons-material'
 import { InputAdornment } from '@mui/material'
 import { SaveDataType, type UpsertSiteInstructionsSchema } from '@web-scraper/common'
 import { useFormContext } from 'react-hook-form'
+import { ElementFormInput } from './ElementFormInput'
 import { FormInput } from '../form/FormInput'
 
 interface SaveToDataSourceValueInputProps {
@@ -17,17 +18,21 @@ export const SaveToDataSourceValueInput = ({ fieldName }: SaveToDataSourceValueI
     return null
   }
 
+  if (saveDataType === SaveDataType.ELEMENT_CONTENT) {
+    return <ElementFormInput name={`${fieldName}.saveToDataSourceValue`} label="Element path" />
+  }
+
   return (
     <FormInput
       form={form}
       name={`${fieldName}.saveToDataSourceValue`}
       variant="standard"
-      label={saveDataType === SaveDataType.ELEMENT_CONTENT ? 'Element path' : 'Custom value'}
+      label="Custom value"
       defaultValue=""
       InputProps={{
         startAdornment: (
           <InputAdornment position="start">
-            {saveDataType === SaveDataType.ELEMENT_CONTENT ? <CodeRounded /> : <LabelRounded />}
+            <LabelRounded />
           </InputAdornment>
         ),
       }}

@@ -35,7 +35,7 @@ export const StepsForm = ({ fieldName, testingAction }: StepsFormProps) => {
     window.electronAPI.testActionStep,
   )
 
-  const testingSession = useContext(SiteInstructionsTestingSessionContext)
+  const testingSessionContext = useContext(SiteInstructionsTestingSessionContext)
 
   const [loadingPlayButtonIndex, setLoadingPlayButtonIndex] = useState(-1)
 
@@ -44,7 +44,7 @@ export const StepsForm = ({ fieldName, testingAction }: StepsFormProps) => {
       actionStepSchema: UpsertSiteInstructionsSchema['actions'][number]['actionSteps'][number],
       itemIndex: number,
     ) => {
-      if (!testingSession) {
+      if (!testingSessionContext) {
         return
       }
 
@@ -86,11 +86,11 @@ export const StepsForm = ({ fieldName, testingAction }: StepsFormProps) => {
             }
           },
         },
-        testingSession.sessionId,
+        testingSessionContext.testingSession.sessionId,
         actionStep,
       )
     },
-    [fieldName, getValues, submitTestActionStep, testingSession],
+    [fieldName, getValues, submitTestActionStep, testingSessionContext],
   )
 
   return (
@@ -110,7 +110,7 @@ export const StepsForm = ({ fieldName, testingAction }: StepsFormProps) => {
       }
       onDelete={(_, index) => stepsFields.remove(index)}
       onSwap={(index1, index2) => stepsFields.swap(index1, index2)}
-      onPlay={!testingSession ? undefined : testActionStep}
+      onPlay={!testingSessionContext ? undefined : testActionStep}
       onPlayTooltip="Test step"
       loadingPlayButtonIndex={testingActionStep ? loadingPlayButtonIndex : -1}
       disablePlayButtons={testingActionStep || testingAction}

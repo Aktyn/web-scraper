@@ -14,6 +14,7 @@ import {
 } from '@mui/material'
 import {
   ErrorCode,
+  parseScrapperStringValue,
   pick,
   upsertSiteInstructionsSchema,
   type Site,
@@ -38,10 +39,15 @@ export const SiteInstructionsForm = ({ site, onSuccess }: SiteInstructionsFormPr
   const { submit: getSiteInstructions, submitting: gettingSiteInstructions } = useApiRequest(
     window.electronAPI.getSiteInstructions,
   )
-  const setSiteInstructionsRequest = useApiRequest(window.electronAPI.setSiteInstructions)
+  const { submit: setSiteInstructions, submitting: settingSiteInstructions } = useApiRequest(
+    window.electronAPI.setSiteInstructions,
+  )
+  const { submit: pickElement } = useApiRequest(window.electronAPI.pickElement)
+  const { submit: cancelPickingElement } = useApiRequest(window.electronAPI.cancelPickingElement)
 
   const testingSessions = ScraperTestingSessionsModule.useTestingSessions()
   const siteTestingSession = testingSessions.sessions.find((session) => session.site.id === site.id)
+  const sessionId = siteTestingSession?.sessionId
 
   const form = useForm<UpsertSiteInstructionsSchema>({
     mode: 'onTouched',
@@ -73,7 +79,7 @@ export const SiteInstructionsForm = ({ site, onSuccess }: SiteInstructionsFormPr
 
   const onSubmit = useCallback(
     (data: UpsertSiteInstructionsSchema) => {
-      setSiteInstructionsRequest.submit(
+      setSiteInstructions(
         {
           onSuccess: (_, { enqueueSnackbar }) => {
             enqueueSnackbar({
@@ -90,12 +96,61 @@ export const SiteInstructionsForm = ({ site, onSuccess }: SiteInstructionsFormPr
         data,
       )
     },
-    [onSuccess, setSiteInstructionsRequest, site.id],
+    [onSuccess, setSiteInstructions, site.id],
   )
+
+  const handlePickElement = useCallback(
+    async (pickFromUrl?: string | null) => {
+      if (!sessionId) {
+        return Promise.resolve('')
+      }
+
+      return new Promise<string | null>((resolve) => {
+        pickElement(
+          {
+            onSuccess: (elementData) => {
+              resolve(elementData.jsPath)
+            },
+            onError: (error, { showErrorSnackbar }) => {
+              if (error.errorCode !== ErrorCode.NO_ERROR) {
+                showErrorSnackbar()
+              }
+              resolve(null)
+            },
+          },
+          sessionId,
+          pickFromUrl
+            ? parseScrapperStringValue(pickFromUrl, {
+                siteURL: site.url,
+              })
+            : null,
+        )
+      })
+    },
+    [pickElement, site.url, sessionId],
+  )
+
+  const handleCancelPickingElement = useCallback(() => {
+    if (!sessionId) {
+      return
+    }
+
+    cancelPickingElement({}, sessionId)
+  }, [cancelPickingElement, sessionId])
 
   return (
     <FormProvider {...form}>
-      <SiteInstructionsTestingSessionContext.Provider value={siteTestingSession ?? null}>
+      <SiteInstructionsTestingSessionContext.Provider
+        value={
+          siteTestingSession
+            ? {
+                testingSession: siteTestingSession,
+                pickElement: handlePickElement,
+                cancelPickingElement: handleCancelPickingElement,
+              }
+            : null
+        }
+      >
         <Stack
           flexGrow={1}
           overflow="hidden"
@@ -210,12 +265,12 @@ export const SiteInstructionsForm = ({ site, onSuccess }: SiteInstructionsFormPr
                 (testingSessions.startingSession &&
                   testingSessions.startingSessionData?.[0] === site.id) ||
                 (testingSessions.endingSession &&
-                  testingSessions.endingSessionData?.[0] === siteTestingSession?.sessionId)
+                  testingSessions.endingSessionData?.[0] === sessionId)
               }
               loadingPosition="end"
               onClick={() =>
                 siteTestingSession
-                  ? testingSessions.endSession(siteTestingSession.sessionId)
+                  ? testingSessions.endSession(siteTestingSession)
                   : testingSessions.startSession(site.id)
               }
             >
@@ -226,7 +281,7 @@ export const SiteInstructionsForm = ({ site, onSuccess }: SiteInstructionsFormPr
               color="primary"
               type="submit"
               endIcon={<SendRounded />}
-              loading={setSiteInstructionsRequest.submitting}
+              loading={settingSiteInstructions}
               loadingPosition="end"
             >
               Apply changes

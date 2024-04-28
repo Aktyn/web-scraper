@@ -81,7 +81,7 @@ export const ActionsForm = () => {
             }
           },
         },
-        testingSession.sessionId,
+        testingSession.testingSession.sessionId,
         action,
       )
     },
