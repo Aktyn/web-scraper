@@ -299,7 +299,6 @@ export type ElectronApi = {
   ) => Promise<ApiError>
   [RendererToElectronMessage.pickElement]: (
     sessionId: string,
-    pickFromUrl: string | undefined | null,
   ) => Promise<{ jsPath: string | null } | ApiError>
   [RendererToElectronMessage.cancelPickingElement]: (sessionId: string) => Promise<ApiError>
   [RendererToElectronMessage.testActionStep]: (

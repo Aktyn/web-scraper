@@ -29,11 +29,6 @@ export const StepDataForm = ({ stepFieldName, ...fieldFormProps }: StepDataFormP
   const form = useFormContext<UpsertSiteInstructionsSchema>()
   const stepType = form.watch(`${stepFieldName}.type`)
 
-  const actionFieldName = stepFieldName.replace(
-    /^(actions\.\d+)(\..+)?/i,
-    '$1',
-  ) as `actions.${number}`
-
   switch (stepType) {
     default:
       return null
@@ -42,7 +37,7 @@ export const StepDataForm = ({ stepFieldName, ...fieldFormProps }: StepDataFormP
     case ActionStepType.WAIT_FOR_ELEMENT:
       return (
         <>
-          <ActionElementFormInput {...fieldFormProps} actionFieldName={actionFieldName} />
+          <ActionElementFormInput {...fieldFormProps} />
           <DurationFormInput {...fieldFormProps} type="timeout" />
         </>
       )
@@ -51,16 +46,22 @@ export const StepDataForm = ({ stepFieldName, ...fieldFormProps }: StepDataFormP
     case ActionStepType.SELECT_OPTION:
       return (
         <>
-          <ActionElementFormInput {...fieldFormProps} actionFieldName={actionFieldName} />
+          <ActionElementFormInput {...fieldFormProps} />
           <ValueQueryInput {...fieldFormProps} />
+          {stepType === ActionStepType.FILL_INPUT && (
+            <>
+              <PressEnterFormSwitch {...fieldFormProps} />
+              <InputActionFields {...fieldFormProps} />
+            </>
+          )}
           <DurationFormInput {...fieldFormProps} type="waitForElementTimeout" />
         </>
       )
     case ActionStepType.PRESS_BUTTON:
       return (
         <>
-          <ActionElementFormInput {...fieldFormProps} actionFieldName={actionFieldName} />
-          <WaitForNavigationFormInput {...fieldFormProps} />
+          <ActionElementFormInput {...fieldFormProps} />
+          <WaitForNavigationFormSwitch {...fieldFormProps} />
           <DurationFormInput {...fieldFormProps} type="waitForElementTimeout" />
           <DurationFormInput {...fieldFormProps} type="waitForNavigationTimeout" />
         </>
@@ -105,7 +106,7 @@ export const StepDataForm = ({ stepFieldName, ...fieldFormProps }: StepDataFormP
     case ActionStepType.CHECK_SUCCESS:
       return (
         <>
-          <ActionElementFormInput {...fieldFormProps} actionFieldName={actionFieldName} />
+          <ActionElementFormInput {...fieldFormProps} />
           <MapSiteErrorsFormInput
             {...fieldFormProps}
             keyName={stepType === ActionStepType.CHECK_ERROR ? 'mapError' : 'mapSuccess'}
@@ -117,11 +118,33 @@ export const StepDataForm = ({ stepFieldName, ...fieldFormProps }: StepDataFormP
   return null
 }
 
+const InputActionFields = ({ fieldName }: DataFieldFormProps) => {
+  const form = useFormContext<UpsertSiteInstructionsSchema>()
+  const pressEnter = form.watch(`${fieldName}.pressEnter`)
+
+  if (!pressEnter) {
+    return null
+  }
+
+  return (
+    <>
+      <DurationFormInput fieldName={fieldName} type="delayEnter" />
+      <WaitForNavigationFormSwitch fieldName={fieldName} />
+      <DurationFormInput fieldName={fieldName} type="waitForNavigationTimeout" />
+    </>
+  )
+}
+
 const DurationFormInput = ({
   fieldName,
   type = 'duration',
 }: DataFieldFormProps & {
-  type?: 'duration' | 'timeout' | 'waitForElementTimeout' | 'waitForNavigationTimeout'
+  type?:
+    | 'duration'
+    | 'timeout'
+    | 'waitForElementTimeout'
+    | 'waitForNavigationTimeout'
+    | 'delayEnter'
 }) => {
   const form = useFormContext<UpsertSiteInstructionsSchema>()
 
@@ -138,7 +161,9 @@ const DurationFormInput = ({
               ? 'Wait for element timeout'
               : type === 'waitForNavigationTimeout'
                 ? 'Wait for navigation timeout'
-                : 'Unknown type'
+                : type === 'delayEnter'
+                  ? 'Delay before pressing enter'
+                  : 'Unknown type'
       }
       type="number"
       InputProps={{
@@ -153,20 +178,24 @@ const DurationFormInput = ({
   )
 }
 
-const ActionElementFormInput = ({
-  fieldName,
-  actionFieldName,
-}: DataFieldFormProps & { actionFieldName: `actions.${number}` }) => {
-  const form = useFormContext<UpsertSiteInstructionsSchema>()
-  const actionUrl = form.watch(`${actionFieldName}.url`)
-  return <ElementFormInput name={`${fieldName}.element`} pickFromUrl={actionUrl} />
+const ActionElementFormInput = ({ fieldName }: DataFieldFormProps) => {
+  return <ElementFormInput name={`${fieldName}.element`} />
 }
 
-const WaitForNavigationFormInput = ({ fieldName }: DataFieldFormProps) => {
+const WaitForNavigationFormSwitch = ({ fieldName }: DataFieldFormProps) => {
   return (
     <FormSwitch<UpsertSiteInstructionsSchema>
       fieldName={`${fieldName}.waitForNavigation`}
       label="Wait for navigation"
+    />
+  )
+}
+
+const PressEnterFormSwitch = ({ fieldName }: DataFieldFormProps) => {
+  return (
+    <FormSwitch<UpsertSiteInstructionsSchema>
+      fieldName={`${fieldName}.pressEnter`}
+      label="Press enter"
     />
   )
 }

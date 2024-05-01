@@ -8,13 +8,11 @@ import { useCancellablePromise } from '../../hooks/useCancellablePromise'
 import { FormInput, type FormInputProps } from '../form/FormInput'
 import { CursorDefaultClickIcon } from '../icons/CursorDefaultClickIcon'
 
-export const ElementFormInput = <FormSchema extends object = UpsertSiteInstructionsSchema>({
-  pickFromUrl,
-  ...formInputProps
-}: Partial<FormInputProps<FormSchema>> & {
-  name: FormInputProps<FormSchema>['name']
-  pickFromUrl?: string | null
-}) => {
+export const ElementFormInput = <FormSchema extends object = UpsertSiteInstructionsSchema>(
+  formInputProps: Partial<FormInputProps<FormSchema>> & {
+    name: FormInputProps<FormSchema>['name']
+  },
+) => {
   const cancellable = useCancellablePromise()
   const form = useFormContext<FormSchema>()
   const testingSession = useContext(SiteInstructionsTestingSessionContext)
@@ -27,7 +25,7 @@ export const ElementFormInput = <FormSchema extends object = UpsertSiteInstructi
       return
     }
     setWaitingForElementPick(true)
-    cancellable(testingSession.pickElement(pickFromUrl))
+    cancellable(testingSession.pickElement())
       .then((jsPath) => {
         if (jsPath) {
           setValue(formInputProps.name, jsPath as never, { shouldValidate: true })
@@ -40,11 +38,13 @@ export const ElementFormInput = <FormSchema extends object = UpsertSiteInstructi
           setWaitingForElementPick(false)
         }
       })
-  }, [cancellable, formInputProps.name, pickFromUrl, setValue, testingSession])
+  }, [cancellable, formInputProps.name, setValue, testingSession])
 
   const handleCancelPickElement = useCallback(() => {
     testingSession?.cancelPickingElement()
   }, [testingSession])
+
+  //TODO: allow for multiple elements in which the first found is used
 
   return (
     <FormInput

@@ -195,6 +195,10 @@ export function actionStepSchemaToExecutableActionStep(
         data: {
           element: actionStepSchema.data.element,
           valueQuery: actionStepSchema.data.valueQuery as ValueQuery,
+          pressEnter: actionStepSchema.data.pressEnter ?? false,
+          delayEnter: actionStepSchema.data.delayEnter ?? undefined,
+          waitForNavigation: actionStepSchema.data.waitForNavigation ?? false,
+          waitForNavigationTimeout: actionStepSchema.data.waitForNavigationTimeout ?? undefined,
           waitForElementTimeout: actionStepSchema.data.waitForElementTimeout ?? undefined,
         },
       }

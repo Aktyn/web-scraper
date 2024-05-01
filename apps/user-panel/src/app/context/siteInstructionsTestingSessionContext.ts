@@ -3,6 +3,6 @@ import type { TestingSessionSchema } from '../modules/ScraperTestingSessionsModu
 
 export const SiteInstructionsTestingSessionContext = createContext<{
   testingSession: TestingSessionSchema
-  pickElement: (url?: string | null) => Promise<string | null>
+  pickElement: () => Promise<string | null>
   cancelPickingElement: () => void
 } | null>(null)

@@ -76,7 +76,15 @@ export type ActionStep =
   | ActionStepBase<ActionStepType.WAIT_FOR_ELEMENT, { element: string; timeout?: number }>
   | ActionStepBase<
       ActionStepType.FILL_INPUT,
-      { element: string; valueQuery: ValueQuery; waitForElementTimeout?: number }
+      {
+        element: string
+        valueQuery: ValueQuery
+        pressEnter?: boolean
+        delayEnter?: number
+        waitForNavigation?: boolean
+        waitForNavigationTimeout?: number
+        waitForElementTimeout?: number
+      }
     >
   // | ActionStepBase<ActionStepType.UPLOAD_FILE, { element: string; value: string }>
   | ActionStepBase<
@@ -186,6 +194,13 @@ export const upsertActionStepSchema = yup.object({
         .default(null),
       saveToDataSourceValue: yup.string().notRequired().nullable().default(null),
       waitForNavigation: yup.boolean().nullable().default(null).notRequired(),
+      pressEnter: yup.boolean().nullable().default(null).notRequired(),
+      delayEnter: yup
+        .number()
+        .transform(transformNanToUndefined)
+        .nullable()
+        .default(null)
+        .notRequired(),
       solver: yup
         .mixed<CaptchaSolverType>()
         .notRequired()

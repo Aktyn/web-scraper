@@ -82,13 +82,13 @@ export const scraperSessionHandler = {
   ),
   [RendererToElectronMessage.pickElement]: handleApiRequest(
     RendererToElectronMessage.pickElement,
-    (sessionId, pickFromUrl) => {
+    (sessionId) => {
       const scraper = Scraper.getInstances(Scraper.Mode.TESTING).get(sessionId)
       if (!scraper) {
         throw ErrorCode.NOT_FOUND
       }
 
-      return scraper.pickElement(pickFromUrl)
+      return scraper.pickElement()
     },
   ),
   [RendererToElectronMessage.cancelPickingElement]: handleApiRequest(

@@ -1,5 +1,6 @@
 import {
   ActionStepErrorType,
+  wait,
   type ActionStep,
   type ActionStepType,
   type ScraperMode,
@@ -20,6 +21,9 @@ export async function selectOptionStep<ModeType extends ScraperMode>(
   if (!selectHandle) {
     return { errorType: ActionStepErrorType.ELEMENT_NOT_FOUND }
   }
+
+  await this.mainPage!.ghostClick(selectHandle)
+  await wait(1000)
 
   const result = await selectHandle.select(
     await requestData(actionStep.data.valueQuery, actionStep).then((res) => res?.toString() ?? ''),

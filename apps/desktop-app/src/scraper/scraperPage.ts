@@ -25,6 +25,7 @@ export class ScraperPage implements Pick<Page, 'on' | 'off'> {
     'waitForNavigation',
     'click',
     'type',
+    'keyboard',
   ] as const satisfies Readonly<(keyof Page)[]>
 
   private ghostCursor: GhostCursor | null = null
@@ -48,7 +49,12 @@ export class ScraperPage implements Pick<Page, 'on' | 'off'> {
 
   private constructor(private readonly page: Page) {
     this.exposed = ScraperPage.exposedMethods.reduce((acc, method) => {
-      acc[method] = this.page[method].bind(this.page) as never
+      const source = this.page[method]
+      if (typeof source !== 'function') {
+        acc[method] = source as never
+      } else {
+        acc[method] = source.bind(this.page) as never
+      }
       return acc
     }, this.exposed)
   }

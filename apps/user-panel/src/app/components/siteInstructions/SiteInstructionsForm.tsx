@@ -14,7 +14,6 @@ import {
 } from '@mui/material'
 import {
   ErrorCode,
-  parseScrapperStringValue,
   pick,
   upsertSiteInstructionsSchema,
   type Site,
@@ -99,36 +98,28 @@ export const SiteInstructionsForm = ({ site, onSuccess }: SiteInstructionsFormPr
     [onSuccess, setSiteInstructions, site.id],
   )
 
-  const handlePickElement = useCallback(
-    async (pickFromUrl?: string | null) => {
-      if (!sessionId) {
-        return Promise.resolve('')
-      }
+  const handlePickElement = useCallback(async () => {
+    if (!sessionId) {
+      return Promise.resolve('')
+    }
 
-      return new Promise<string | null>((resolve) => {
-        pickElement(
-          {
-            onSuccess: (elementData) => {
-              resolve(elementData.jsPath)
-            },
-            onError: (error, { showErrorSnackbar }) => {
-              if (error.errorCode !== ErrorCode.NO_ERROR) {
-                showErrorSnackbar()
-              }
-              resolve(null)
-            },
+    return new Promise<string | null>((resolve) => {
+      pickElement(
+        {
+          onSuccess: (elementData) => {
+            resolve(elementData.jsPath)
           },
-          sessionId,
-          pickFromUrl
-            ? parseScrapperStringValue(pickFromUrl, {
-                siteURL: site.url,
-              })
-            : null,
-        )
-      })
-    },
-    [pickElement, site.url, sessionId],
-  )
+          onError: (error, { showErrorSnackbar }) => {
+            if (error.errorCode !== ErrorCode.NO_ERROR) {
+              showErrorSnackbar()
+            }
+            resolve(null)
+          },
+        },
+        sessionId,
+      )
+    })
+  }, [pickElement, sessionId])
 
   const handleCancelPickingElement = useCallback(() => {
     if (!sessionId) {

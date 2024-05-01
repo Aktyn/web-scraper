@@ -41,7 +41,7 @@ function ViewBase() {
   const mounted = useMounted()
   const logoContainerRef = useRef<HTMLDivElement>(null)
 
-  const [viewName, setViewName] = useState<ViewName>('DATA_MANAGER') //TODO: restore DASHBOARD
+  const [viewName, setViewName] = useState<ViewName>('ROUTINES') //TODO: restore DASHBOARD
   const [previousViewName, setPreviousViewName] = useState<ViewName | null>(null)
   const [nextViewName, setNextViewName] = useState<ViewName | null>(null)
   const [viewTransitionState, setViewTransitionState] = useState(ViewTransitionState.IDLE)
@@ -198,7 +198,7 @@ function ViewBase() {
                         height="100vh"
                         alignItems="center"
                         justifyContent="center"
-                        bgcolor="#0d3235"
+                        bgcolor="#1b2632"
                         zIndex={99}
                         sx={{ pointerEvents: 'none' }}
                       >

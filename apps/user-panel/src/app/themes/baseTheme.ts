@@ -163,6 +163,7 @@ export const baseThemeOptions: ThemeOptions = {
             flexGrow: 0,
             position: 'static',
             alignSelf: 'stretch',
+            marginBlock: '1rem',
           },
           [`& > .${drawerClasses.paperAnchorRight}`]: {
             borderRight: 'none',
@@ -170,7 +171,6 @@ export const baseThemeOptions: ThemeOptions = {
             borderBottomRightRadius: 0,
             marginRight: 0,
             marginLeft: '1rem',
-            marginBlock: '1rem',
             minWidth: '16rem',
             height: 'calc(100% - 2rem)',
           },

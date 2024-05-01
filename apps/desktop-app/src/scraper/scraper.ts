@@ -638,6 +638,9 @@ export class Scraper<ModeType extends ScraperMode> {
       for (const step of steps) {
         const result = await this.performActionStep(step, onDataRequest, onDataSourceItemIdRequest)
         actionStepsResults.push({ step, result })
+        if (result.errorType !== ActionStepErrorType.NO_ERROR) {
+          break
+        }
       }
 
       broadcastMessage(
@@ -780,11 +783,7 @@ export class Scraper<ModeType extends ScraperMode> {
   }
 
   @assertMainPage
-  async pickElement(pickFromUrl: string | undefined | null) {
-    if (pickFromUrl) {
-      await this.mainPage!.goto(pickFromUrl)
-    }
-
+  async pickElement() {
     const jsPath = await this.mainPage!.pickElement()
     return { jsPath }
   }

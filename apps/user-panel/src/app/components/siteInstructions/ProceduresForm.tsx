@@ -116,23 +116,29 @@ export const ProceduresForm = () => {
                 pushNotification({
                   type: NotificationType.SUCCESS,
                   title: 'Procedure execution',
-                  content: `Procedure succeeded. Returned values: ${
-                    returnedValues?.join(', ') ?? '-'
-                  }; Procedure id: ${procedure.id}`,
+                  content: returnedValues?.length
+                    ? `Procedure succeeded. Returned values: ${
+                        returnedValues?.join(', ') ?? '-'
+                      }; Procedure id: ${procedure.id}`
+                    : `Procedure succeeded. Procedure id: ${procedure.id}`,
                 })
               } else {
                 enqueueSnackbar({
                   variant: 'error',
-                  message: `Procedure execution failed (returned values: ${
-                    returnedValues?.join(', ') ?? '-'
-                  })`,
+                  message: returnedValues?.length
+                    ? `Procedure execution failed. Returned values: ${
+                        returnedValues?.join(', ') ?? '-'
+                      }`
+                    : 'Procedure execution failed',
                 })
                 pushNotification({
                   type: NotificationType.WARNING,
                   title: 'Procedure execution',
-                  content: `Procedure ended unsuccessfully. Returned values: ${
-                    returnedValues?.join(', ') ?? '-'
-                  }; Procedure id: ${procedure.id}`,
+                  content: returnedValues?.length
+                    ? `Procedure ended unsuccessfully. Returned values: ${
+                        returnedValues?.join(', ') ?? '-'
+                      }; Procedure id: ${procedure.id}`
+                    : `Procedure ended unsuccessfully. Procedure id: ${procedure.id}`,
                 })
               }
             }
@@ -217,11 +223,7 @@ export const ProceduresForm = () => {
               ),
             }}
           />
-          <ElementFormInput
-            name={`procedures.${index}.waitFor`}
-            label="Wait for"
-            pickFromUrl={field.startUrl}
-          />
+          <ElementFormInput name={`procedures.${index}.waitFor`} label="Wait for" />
           <FlowStepForm fieldName={`procedures.${index}.flow`} />
         </Stack>,
       ]}
