@@ -41,7 +41,7 @@
     "dotenv-expand": "^11.0.6",
     "electron": "30.0.1",
     "ghost-cursor": "^1.2.0",
-    "puppeteer": "^22.6.5",
+    "puppeteer": "^22.7.1",
     "puppeteer-extra": "^3.3.6",
     "puppeteer-extra-plugin-stealth": "^2.11.2",
     "random-useragent": "^0.5.0",
