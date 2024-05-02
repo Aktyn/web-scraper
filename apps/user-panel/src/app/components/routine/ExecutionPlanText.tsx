@@ -70,64 +70,68 @@ export const ExecutionPlanText = ({ executionPlan }: ExecutionPlanTextProps) => 
       return (
         <>
           Executes for each row in <Strong>DataSource.{executionPlan.dataSourceName}</Strong>{' '}
-          matching the condition:{' '}
-          <JoinedArrayItems
-            array={executionPlan.filters.map((filter, index) => (
-              <Fragment key={index}>
-                {filter.columnName}{' '}
-                <WhereLabel where={filter.where} columnType={filter.columnType} />
-              </Fragment>
-            ))}
-            separator=" and "
-            lastSeparator=" and "
-          />
-          <Button
-            variant="text"
-            size="small"
-            endIcon={<CodeRounded />}
-            onClick={(event) => {
-              sqlitePreviewPopoverRef.current?.open(event.currentTarget)
-              setTimeout(generatePreview, 0)
-            }}
-            sx={{ ml: '0.5rem' }}
-          >
-            Preview SQLite
-          </Button>
-          <CustomPopover
-            ref={sqlitePreviewPopoverRef}
-            TransitionProps={{ unmountOnExit: true }}
-            anchorOrigin={{
-              vertical: 'bottom',
-              horizontal: 'center',
-            }}
-            transformOrigin={{
-              vertical: 'top',
-              horizontal: 'center',
-            }}
-            slotProps={{
-              paper: {
-                sx: {
-                  display: 'flex',
-                },
-              },
-            }}
-          >
-            <Stack
-              gap="0.5rem"
-              component="pre"
-              sx={{
-                m: 0,
-                p: '1rem',
-                overflow: 'auto',
-                fontSize: '0.875rem',
-              }}
-            >
-              <Typography variant="body1" fontWeight="bold">
-                Generated SQLite conditions to filter data source
-              </Typography>
-              <Box ref={sqliteCodeContainerRef}>{sql}</Box>
-            </Stack>
-          </CustomPopover>
+          {executionPlan.filters.length > 0 && <>matching the condition: </>}
+          {executionPlan.filters.length > 0 && (
+            <>
+              <JoinedArrayItems
+                array={executionPlan.filters.map((filter, index) => (
+                  <Fragment key={index}>
+                    {filter.columnName}{' '}
+                    <WhereLabel where={filter.where} columnType={filter.columnType} />
+                  </Fragment>
+                ))}
+                separator=" and "
+                lastSeparator=" and "
+              />
+              <Button
+                variant="text"
+                size="small"
+                endIcon={<CodeRounded />}
+                onClick={(event) => {
+                  sqlitePreviewPopoverRef.current?.open(event.currentTarget)
+                  setTimeout(generatePreview, 0)
+                }}
+                sx={{ ml: '0.5rem' }}
+              >
+                Preview SQLite
+              </Button>
+              <CustomPopover
+                ref={sqlitePreviewPopoverRef}
+                TransitionProps={{ unmountOnExit: true }}
+                anchorOrigin={{
+                  vertical: 'bottom',
+                  horizontal: 'center',
+                }}
+                transformOrigin={{
+                  vertical: 'top',
+                  horizontal: 'center',
+                }}
+                slotProps={{
+                  paper: {
+                    sx: {
+                      display: 'flex',
+                    },
+                  },
+                }}
+              >
+                <Stack
+                  gap="0.5rem"
+                  component="pre"
+                  sx={{
+                    m: 0,
+                    p: '1rem',
+                    overflow: 'auto',
+                    fontSize: '0.875rem',
+                  }}
+                >
+                  <Typography variant="body1" fontWeight="bold">
+                    Generated SQLite conditions to filter data source
+                  </Typography>
+                  <Box ref={sqliteCodeContainerRef}>{sql}</Box>
+                </Stack>
+              </CustomPopover>
+            </>
+          )}
           <br />
           Maximum iterations: <Strong>{executionPlan.maximumIterations ?? 'no limit'}</Strong>
         </>

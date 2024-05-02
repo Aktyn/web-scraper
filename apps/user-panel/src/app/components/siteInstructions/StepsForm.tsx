@@ -256,7 +256,7 @@ export function actionStepSchemaToExecutableActionStep(
           saveToDataSourceValue: actionStepSchema.data.saveToDataSourceValue ?? undefined,
         },
       }
-    //TODO
+    //TODO: captcha field
     // case ActionStepType.SOLVE_CAPTCHA:
     //   if (
     //     !actionStepSchema.data.solver ||

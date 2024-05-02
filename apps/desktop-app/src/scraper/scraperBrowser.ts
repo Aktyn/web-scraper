@@ -68,7 +68,7 @@ export default class ScraperBrowser {
           // ...(process.env.TOR_PROXY_SERVER
           //   ? [`--proxy-server=${process.env.TOR_PROXY_SERVER}`]
           //   : []),
-          // '--start-maximized',
+          '--start-maximized',
 
           '--disable-infobars',
           '--no-default-browser-check',

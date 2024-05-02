@@ -264,8 +264,13 @@ function useScraperExecution(
   return executionData
 }
 
+function useScraperExecutionContext() {
+  return useContext(ScraperExecutionContext)
+}
+
 export const ScraperExecutionModule = {
   Provider: ScraperExecutionProvider,
+  useScraperExecutionContext,
   useScraperExecution,
 }
 

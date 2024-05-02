@@ -1,4 +1,5 @@
-import { useCallback, useContext } from 'react'
+import { useCallback, useContext, useState } from 'react'
+import { Box, FormControlLabel, Switch } from '@mui/material'
 import { RoutineExecutionType, dataSourceFiltersToSqlite, type Routine } from '@web-scraper/common'
 import { DataSourcesContext } from 'src/app/context/dataSourcesContext'
 import { useDataSourceTableColumns } from 'src/app/hooks/useDataSourceTableColumns'
@@ -16,17 +17,42 @@ export const ExecutionPlanRowsPreview = ({ executionPlan }: ExecutionPlanRowsPre
 
   const columns = useDataSourceTableColumns(dataSourceStructure?.columns, 'id')
 
+  const [disableFilters, setDisableFilters] = useState(false)
+
   const dataFetcher = useCallback<typeof window.electronAPI.getDataSourceItems>(
     (request) => {
       return window.electronAPI.getDataSourceItems(
-        { ...request, filters: getRequestFilters(executionPlan) ?? request.filters },
+        {
+          ...request,
+          filters: disableFilters ? undefined : getRequestFilters(executionPlan) ?? request.filters,
+        },
         executionPlan.dataSourceName,
       )
     },
-    [executionPlan],
+    [disableFilters, executionPlan],
   )
 
-  return <Table columns={columns} keyProperty="id" data={dataFetcher} />
+  return (
+    <Table
+      columns={columns}
+      keyProperty="id"
+      data={dataFetcher}
+      headerContent={
+        <Box px="1rem">
+          <FormControlLabel
+            control={
+              <Switch
+                checked={disableFilters}
+                onChange={(_, checked) => setDisableFilters(checked)}
+                sx={{ my: '-0.5rem' }}
+              />
+            }
+            label="Disable filters"
+          />
+        </Box>
+      }
+    />
+  )
 }
 
 type FiltersType = Parameters<typeof window.electronAPI.getDataSourceItems>[0]['filters']

@@ -64,11 +64,12 @@ export const RoutineExecutionHistoryTable = ({ routine }: { routine: Routine }) 
     [],
   )
 
-  const handleRowExpand = useCallback((row: RoutineExecutionHistory[number]) => {
-    return (
+  const handleRowExpand = useCallback(
+    (row: RoutineExecutionHistory[number]) => (
       <RoutineExecutionResultDetails result={row.results} iterationIndex={row.iterationIndex} />
-    )
-  }, [])
+    ),
+    [],
+  )
 
   // TODO: allow clearing history and deleting individual results
   return (
@@ -78,6 +79,7 @@ export const RoutineExecutionHistoryTable = ({ routine }: { routine: Routine }) 
       keyProperty="id"
       data={dataFetcher}
       onRowExpand={handleRowExpand}
+      expandOnRowClick
       expandButtonTooltip="Open execution details"
     />
   )

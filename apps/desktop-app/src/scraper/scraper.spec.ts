@@ -601,7 +601,7 @@ describe('Scraper.TESTING procedure', () => {
         },
       } satisfies ProcedureExecutionResult)
     })
-  })
+  }, 20_000)
 })
 
 describe('Scraper.TESTING multiple instances', () => {

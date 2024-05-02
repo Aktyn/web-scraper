@@ -7,8 +7,11 @@ const DashboardView = ({ doNotRender }: ViewComponentProps) => {
     return null
   }
 
+  //TODO: show currently running procedures/routines/chores (Scraper executions) for monitoring/preview purposes
+  // const {scraperExecutions} = ScraperExecutionModule.useScraperExecutionContext()
+
   return (
-    <Stack alignItems="center" p={4} spacing={4}>
+    <Stack alignItems="center" p="2rem" spacing="2rem">
       <ViewTransition>
         <Button variant="contained" color="primary">
           NOOP

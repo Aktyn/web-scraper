@@ -94,7 +94,7 @@ export const StepDataForm = ({ stepFieldName, ...fieldFormProps }: StepDataFormP
           <SaveToDataSourceValueInput {...fieldFormProps} />
         </>
       )
-    //TODO
+    //TODO: handle captcha step
     // case ActionStepType.SOLVE_CAPTCHA:
     //   return (
     //     <>
@@ -200,7 +200,7 @@ const PressEnterFormSwitch = ({ fieldName }: DataFieldFormProps) => {
   )
 }
 
-//TODO
+//TODO: action step form for captcha
 // const CaptchaSolverFormInput = ({ fieldName }: DataFieldFormProps) => {
 //   const form = useFormContext<UpsertSiteInstructionsSchema>()
 

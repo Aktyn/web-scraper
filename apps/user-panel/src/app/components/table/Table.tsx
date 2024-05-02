@@ -1,14 +1,15 @@
 import {
-  type Key,
-  type ReactNode,
-  type RefAttributes,
   useCallback,
   useContext,
   useEffect,
   useImperativeHandle,
   useRef,
   useState,
+  type Key,
+  type MouseEventHandler,
+  type ReactNode,
   type Ref,
+  type RefAttributes,
 } from 'react'
 import {
   AddRounded,
@@ -18,11 +19,11 @@ import {
   RefreshRounded,
 } from '@mui/icons-material'
 import {
-  alpha,
   Box,
+  Collapse,
   IconButton,
-  Stack,
   Table as MuiTable,
+  Stack,
   TableBody,
   TableCell,
   TableContainer,
@@ -30,12 +31,12 @@ import {
   TableRow,
   Tooltip,
   Typography,
+  alpha,
   chipClasses,
-  Collapse,
 } from '@mui/material'
 import {
-  type ExtractTypeByPath,
   getDeepProperty,
+  type ExtractTypeByPath,
   type PaginatedApiFunction,
   type Path,
 } from '@web-scraper/common'
@@ -310,6 +311,7 @@ interface RowProps<DataType extends object> {
   onRowClick?: (row: DataType) => void
   onRowExpand?: (row: DataType) => ReactNode
   expandButtonTooltip?: ReactNode
+  expandOnRowClick?: boolean
   allowUnselect?: boolean
 }
 
@@ -324,19 +326,38 @@ const Row = <DataType extends object>({
   onRowClick,
   onRowExpand,
   expandButtonTooltip,
+  expandOnRowClick,
   allowUnselect,
 }: RowProps<DataType>) => {
-  const clickable = !!onRowClick && (!selected || allowUnselect)
   const columnsCount = columns.definitions.length + (hasActionsColumn ? 1 : 0)
 
   const [rowExpandContent, setRowExpandContent] = useState<ReactNode>(null)
   const [expandRow, setExpandRow] = useState(false)
 
+  const handleRowExpandClick = useCallback<MouseEventHandler<HTMLElement>>(
+    (event) => {
+      const content = onRowExpand?.(row)
+      setRowExpandContent(content)
+      setExpandRow((current) => !current && content !== null && content !== undefined)
+
+      event.preventDefault()
+      event.stopPropagation()
+    },
+    [onRowExpand, row],
+  )
+
+  const handleRegularRowClick = useCallback<MouseEventHandler<HTMLElement>>(() => {
+    onRowClick?.(row)
+  }, [onRowClick, row])
+
+  const onRowClickCallback = expandOnRowClick ? handleRowExpandClick : handleRegularRowClick
+  const clickable = (expandOnRowClick || !!onRowClick) && (!selected || allowUnselect)
+
   return (
     <>
       <TableRow
         hover={clickable}
-        onClick={clickable ? () => onRowClick?.(row) : undefined}
+        onClick={clickable ? onRowClickCallback : undefined}
         sx={{
           cursor: clickable ? 'pointer' : undefined,
           backgroundColor: selected
@@ -383,19 +404,7 @@ const Row = <DataType extends object>({
               )}
               {onRowExpand && (
                 <Tooltip title={expandRow ? 'Collapse' : expandButtonTooltip ?? 'Expand'}>
-                  <IconButton
-                    size="small"
-                    onClick={(event) => {
-                      const content = onRowExpand(row)
-                      setRowExpandContent(content)
-                      setExpandRow(
-                        (current) => !current && content !== null && content !== undefined,
-                      )
-
-                      event.preventDefault()
-                      event.stopPropagation()
-                    }}
-                  >
+                  <IconButton size="small" onClick={handleRowExpandClick}>
                     <ExpandMoreRounded
                       sx={{
                         transform: `rotate(${expandRow ? 180 : 0}deg)`,

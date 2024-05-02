@@ -62,8 +62,8 @@ export function getDataSourceItems(
 ) {
   const tableName = 'DataSource.' + dataSourceName
 
-  const whereSql =
-    typeof request.filters === 'string'
+  const whereSql = request.filters
+    ? typeof request.filters === 'string'
       ? `(${request.filters})`
       : request.filters
           ?.map((filter) => {
@@ -91,6 +91,7 @@ export function getDataSourceItems(
           })
           .filter(Boolean)
           .join(' AND ')
+    : null
 
   if (request.cursor) {
     return Database.prisma.$queryRawUnsafe<RawDataSourceItemSchema[]>(`
