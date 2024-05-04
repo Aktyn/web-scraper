@@ -6,12 +6,13 @@ import {
   VisibilityOffRounded,
   VisibilityRounded,
 } from '@mui/icons-material'
-import { Box, Button, Stack } from '@mui/material'
+import { Box, Button, Stack, useTheme } from '@mui/material'
 import { type Routine } from '@web-scraper/common'
 import { CustomDrawer, type CustomDrawerRef } from '../../components/common/CustomDrawer'
 import { TermInfo } from '../../components/common/TermInfo'
 import { ConfirmableButton } from '../../components/common/button/ConfirmableButton'
 import { IconToggle } from '../../components/common/button/IconToggle'
+import { AnimatedBorder } from '../../components/common/effect/AnimatedBorder'
 import { RoutineForm } from '../../components/routine/RoutineForm'
 import { useApiRequest } from '../../hooks/useApiRequest'
 
@@ -20,6 +21,7 @@ interface RoutinePanelHeaderOptionsProps {
   loading?: boolean
   onEdited?: (routine: Routine) => void
   onDeleted?: (routineId: Routine['id']) => void
+  active?: boolean
 }
 
 export const RoutinePanelHeaderOptions = ({
@@ -27,8 +29,10 @@ export const RoutinePanelHeaderOptions = ({
   loading,
   onEdited,
   onDeleted,
+  active = false,
 }: RoutinePanelHeaderOptionsProps) => {
   const routineDrawerRef = useRef<CustomDrawerRef>(null)
+  const theme = useTheme()
 
   const { submit: deleteRoutineRequest, submitting: deletingRoutine } = useApiRequest(
     window.electronAPI.deleteRoutine,
@@ -90,29 +94,41 @@ export const RoutinePanelHeaderOptions = ({
         alignItems="center"
         gap="0.5rem"
       >
-        <ConfirmableButton
-          variant="outlined"
-          size="large"
-          disabled={loading || !routine}
-          startIcon={
-            <Box sx={{ my: '-7px', ml: 'calc(-21px + 0.5rem)' }}>
-              <IconToggle
-                tooltipTitle="Toggle routine execution preview"
-                options={routineExecutionPreviewToggleOptions}
-                value={runWithPreview}
-                onChange={setRunWithPreview}
-                buttonProps={{ tabIndex: -1, disableRipple: true }}
-                sx={{ backgroundColor: 'transparent' }}
-              />
-            </Box>
-          }
-          endIcon={<PlayArrowRounded />}
-          onConfirm={handleRunRoutine}
-          loadingPosition="end"
-          loading={runningRoutine}
+        <AnimatedBorder
+          active={active}
+          borderRadius="max"
+          animationDuration={800}
+          offset={-1}
+          rectProps={{
+            strokeWidth: 2,
+            strokeDasharray: [11, 12],
+            stroke: theme.palette.secondary.main,
+          }}
         >
-          Run
-        </ConfirmableButton>
+          <ConfirmableButton
+            variant="outlined"
+            size="large"
+            disabled={active || !routine}
+            startIcon={
+              <Box sx={{ my: '-7px', ml: 'calc(-21px + 0.5rem)' }}>
+                <IconToggle
+                  tooltipTitle="Toggle routine execution preview"
+                  options={routineExecutionPreviewToggleOptions}
+                  value={runWithPreview}
+                  onChange={setRunWithPreview}
+                  buttonProps={{ tabIndex: -1, disableRipple: true }}
+                  sx={{ backgroundColor: 'transparent' }}
+                />
+              </Box>
+            }
+            endIcon={<PlayArrowRounded />}
+            onConfirm={handleRunRoutine}
+            loadingPosition="end"
+            loading={runningRoutine}
+          >
+            Run
+          </ConfirmableButton>
+        </AnimatedBorder>
         <Button
           size="large"
           disabled={loading || !routine}

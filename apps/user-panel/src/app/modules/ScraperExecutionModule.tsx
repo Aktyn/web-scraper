@@ -183,16 +183,23 @@ const ScraperExecutionProvider = ({ children }: PropsWithChildren) => {
       const currentExecution = getCurrentExecution(map, scraperId, data.scope)
       if (!currentExecution) {
         throw new Error('Scraper execution not found')
-      } else {
-        currentExecution.execution.push({
-          id: executionId,
-          event: ElectronToRendererMessage.scraperExecutionFinished,
-          ...data,
-        })
-        currentExecution.finished = currentExecution.execution[0].scope === data.scope
       }
 
+      currentExecution.execution.push({
+        id: executionId,
+        event: ElectronToRendererMessage.scraperExecutionFinished,
+        ...data,
+      })
+      currentExecution.finished = currentExecution.execution[0].scope === data.scope
       emitScraperExecutionChange(scraperId, mode, map)
+
+      //TODO: remove finished executions if there are no changeListeners attached
+      // if (currentExecution.finished) {
+      //   scraperExecutionsRef.current[mode].delete(scraperId)
+      //   setScraperExecutions((executions) =>
+      //     executions.filter((e) => e.scraperId !== scraperId || e.mode !== mode),
+      //   )
+      // }
     },
   )
 
@@ -220,7 +227,7 @@ const ScraperExecutionProvider = ({ children }: PropsWithChildren) => {
 
               scraperExecutionsRef.current[mode].delete(execution.scraperId)
               setScraperExecutions((executions) =>
-                executions.filter((e) => e.scraperId !== execution.scraperId),
+                executions.filter((e) => e.scraperId !== execution.scraperId || e.mode !== mode),
               )
             }}
           />
@@ -231,7 +238,7 @@ const ScraperExecutionProvider = ({ children }: PropsWithChildren) => {
 }
 
 function useScraperExecution(
-  targetScraperId: string,
+  targetScraperId: string | null,
   targetMode: ScraperMode,
   deps: DependencyList = [],
 ) {
@@ -243,10 +250,16 @@ function useScraperExecution(
   } | null>(null)
 
   useEffect(() => {
+    if (!targetScraperId) {
+      return
+    }
     setExecutionData(scraperExecutionContext.getExecutionData(targetScraperId, targetMode) ?? null)
   }, [scraperExecutionContext, targetMode, targetScraperId])
 
   useEffect(() => {
+    if (!targetScraperId) {
+      return
+    }
     const handleApiEvent: ScraperExecutionChangeListenerType = (scraperId, mode, executionData) => {
       if (targetScraperId === scraperId && targetMode === mode) {
         setExecutionData({ ...executionData, execution: [...executionData.execution] })

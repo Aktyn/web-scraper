@@ -1,6 +1,15 @@
 import { useCallback, useMemo, useRef, useState } from 'react'
-import { CodeRounded, LabelRounded, LinkRounded } from '@mui/icons-material'
-import { Box, LinearProgress, Paper, Skeleton, Stack, Typography } from '@mui/material'
+import { CodeRounded, ExpandMoreRounded, LabelRounded, LinkRounded } from '@mui/icons-material'
+import {
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
+  Box,
+  LinearProgress,
+  Skeleton,
+  Stack,
+  Typography,
+} from '@mui/material'
 import {
   GLOBAL_ACTION_PREFIX,
   REGULAR_ACTION_PREFIX,
@@ -47,78 +56,92 @@ export const ProcedureWidget = ({ procedure, groupedSiteProcedures }: ProcedureW
     siteInstructionsDrawerRef.current?.open()
   }, [site])
 
+  // return
+
   return (
     <>
-      <Paper
-        variant="elevation"
+      <Accordion
+        defaultExpanded
+        disableGutters
         elevation={2}
-        sx={{
-          display: 'inline-flex',
-          flexShrink: 0,
-          flexDirection: 'column',
-          rowGap: '0.5rem',
-          p: '1rem',
-          color: 'text.primary',
-          minWidth: '16.5rem',
-          width: 'auto',
-          overflow: 'visible',
-        }}
+        slotProps={{ transition: { unmountOnExit: true } }}
+        sx={{ borderRadius: '1rem !important' }}
       >
-        <Box
+        <AccordionSummary expandIcon={<ExpandMoreRounded />}>
+          <Box
+            sx={{
+              display: 'grid',
+              gridTemplateColumns: '1fr auto auto',
+              alignItems: 'center',
+              columnGap: '1rem',
+              pr: '0.5rem',
+            }}
+          >
+            <Stack>
+              <Typography
+                variant="body1"
+                fontWeight="bold"
+                whiteSpace="nowrap"
+                textOverflow="ellipsis"
+                overflow="hidden"
+              >
+                {procedure.name}
+              </Typography>
+              {site ? (
+                <UrlButton variant="caption" color="text.secondary">
+                  {site.url}
+                </UrlButton>
+              ) : (
+                <LinearProgress />
+              )}
+            </Stack>
+            <TermChip term="procedure" />
+            {site ? (
+              <OpenSiteInstructionsFormButtonWithBadge
+                site={site}
+                onClick={handleShowInstructions}
+              />
+            ) : (
+              <Skeleton variant="circular" width="1.5rem" height="1.5rem" />
+            )}
+          </Box>
+        </AccordionSummary>
+        <AccordionDetails
           sx={{
-            display: 'grid',
-            gridTemplateColumns: '1fr auto auto',
-            alignItems: 'center',
-            columnGap: '1rem',
+            display: 'flex',
+            flexShrink: 0,
+            flexDirection: 'column',
+            rowGap: '0.5rem',
+            p: '1rem',
+            color: 'text.primary',
+            minWidth: '16.5rem',
+            width: 'auto',
+            overflow: 'visible',
           }}
         >
-          <Stack>
-            <Typography
-              variant="body1"
-              fontWeight="bold"
-              whiteSpace="nowrap"
-              textOverflow="ellipsis"
-              overflow="hidden"
-            >
-              {procedure.name}
-            </Typography>
-            {site ? (
-              <UrlButton variant="caption" color="text.secondary">
-                {site.url}
-              </UrlButton>
-            ) : (
-              <LinearProgress />
-            )}
-          </Stack>
-          <TermChip term="procedure" />
-          {site ? (
-            <OpenSiteInstructionsFormButtonWithBadge site={site} onClick={handleShowInstructions} />
-          ) : (
-            <Skeleton variant="circular" width="1.5rem" height="1.5rem" />
-          )}
-        </Box>
-        <ReadonlyField
-          label="Type"
-          value={procedureTypeNames[procedure.type]}
-          showBorder
-          icon={<LabelRounded />}
-        />
-        <ReadonlyField
-          label="Start URL"
-          value={procedure.startUrl}
-          showBorder
-          icon={<LinkRounded />}
-        />
-        <ReadonlyField
-          label="Wait for"
-          value={procedure.waitFor ?? ''}
-          showBorder
-          icon={<CodeRounded />}
-        />
-        <Box mx="-1rem">
-          <FlowBranch flow={procedure.flow} />
-        </Box>
-      </Paper>
+          <ReadonlyField
+            label="Type"
+            value={procedureTypeNames[procedure.type]}
+            showBorder
+            icon={<LabelRounded />}
+          />
+          <ReadonlyField
+            label="Start URL"
+            value={procedure.startUrl}
+            showBorder
+            icon={<LinkRounded />}
+          />
+          <ReadonlyField
+            label="Wait for"
+            value={procedure.waitFor ?? ''}
+            showBorder
+            icon={<CodeRounded />}
+          />
+          <Box mx="-1rem">
+            <FlowBranch flow={procedure.flow} />
+          </Box>
+        </AccordionDetails>
+      </Accordion>
       <CustomDrawer
         ref={siteInstructionsDrawerRef}
         title={

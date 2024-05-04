@@ -31,7 +31,7 @@ export const Footer = memo(() => {
         color={textColor}
         sx={{ transition: commonLayoutTransitions.color, display: 'flex', alignItems: 'center' }}
       >
-        &copy;&nbsp;2023&nbsp;Aktyn&nbsp;
+        &copy;&nbsp;2024&nbsp;Aktyn&nbsp;
         <AktynLogoIcon fontSize="inherit" />
         &ensp;|&ensp;
         <Link

@@ -1,5 +1,5 @@
 import { Fragment } from 'react'
-import { EastRounded, ExpandMoreRounded } from '@mui/icons-material'
+import { EastRounded, ErrorRounded, ExpandMoreRounded } from '@mui/icons-material'
 import {
   Accordion,
   AccordionDetails,
@@ -147,16 +147,15 @@ const ActionStepResultDetails = ({ result, source }: ActionStepResultDetailsProp
           py="0.25rem"
         >
           {actionStepTypeNames[result.step.type]}
-          {/* TODO: just a <BooleanValue /> indicating success or failure */}
         </Typography>
-        <BooleanValue value={!failed} sx={{ justifySelf: 'flex-end' }} />
+        <BooleanValue value={!failed} falseIcon={ErrorRounded} sx={{ justifySelf: 'flex-end' }} />
       </Box>
       <Divider />
       <HorizontallyScrollableContainer
         justifyContent="stretch"
         px="0.5rem"
         py="0.25rem"
-        maxWidth="24rem"
+        maxWidth="26rem"
         sx={{
           '& p': {
             whiteSpace: 'nowrap',

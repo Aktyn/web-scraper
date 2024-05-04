@@ -16,6 +16,7 @@ import {
   saveDataTypeNames,
 } from '../../../utils/dictionaries'
 import { LabeledValuesList } from '../../common/LabeledValuesList'
+import { TrimText } from '../../common/TrimText'
 import { DataSourceColumnTypeIcon } from '../../dataSource/DataSourceColumnTypeIcon'
 import { BooleanValue } from '../../table/BooleanValue'
 import { ValueCell } from '../../table/ValueCell'
@@ -45,7 +46,7 @@ export const ActionStepData = ({ step, source }: ActionStepDataProps) => {
           data={[
             {
               label: 'Element',
-              value: trimJsPath(step.data.element),
+              value: <TrimmedValue value={step.data.element} />,
             },
             {
               label: 'Timeout',
@@ -55,6 +56,45 @@ export const ActionStepData = ({ step, source }: ActionStepDataProps) => {
         />
       )
     case ActionStepType.FILL_INPUT:
+      return (
+        <LabeledValuesList
+          skipEmptyValues
+          data={[
+            {
+              label: 'Element',
+              value: <TrimmedValue value={step.data.element} />,
+            },
+            {
+              label: 'Value query',
+              value: step.data.valueQuery,
+            },
+            {
+              label: 'Input value',
+              value: <ParsedValueQuery valueQuery={step.data.valueQuery} source={source} />,
+            },
+            {
+              label: 'Element timeout',
+              value: formatTimeout(step.data.waitForElementTimeout),
+            },
+            {
+              label: 'Press enter',
+              value: <BooleanValue value={!!step.data.pressEnter} />,
+            },
+            ...(step.data.pressEnter
+              ? [
+                  {
+                    label: 'Wait for navigation',
+                    value: <BooleanValue value={!!step.data.waitForNavigation} />,
+                  },
+                  {
+                    label: 'Navigation timeout',
+                    value: formatTimeout(step.data.waitForNavigationTimeout),
+                  },
+                ]
+              : []),
+          ]}
+        />
+      )
     case ActionStepType.SELECT_OPTION:
       return (
         <LabeledValuesList
@@ -62,7 +102,7 @@ export const ActionStepData = ({ step, source }: ActionStepDataProps) => {
           data={[
             {
               label: 'Element',
-              value: trimJsPath(step.data.element),
+              value: <TrimmedValue value={step.data.element} />,
             },
             {
               label: 'Value query',
@@ -86,7 +126,7 @@ export const ActionStepData = ({ step, source }: ActionStepDataProps) => {
           data={[
             {
               label: 'Element',
-              value: trimJsPath(step.data.element),
+              value: <TrimmedValue value={step.data.element} />,
             },
             {
               label: 'Element timeout',
@@ -110,7 +150,7 @@ export const ActionStepData = ({ step, source }: ActionStepDataProps) => {
           data={[
             {
               label: 'Data source query',
-              value: step.data.dataSourceQuery,
+              value: <TrimmedValue value={step.data.dataSourceQuery} />,
             },
             {
               label: 'Save data type',
@@ -122,9 +162,9 @@ export const ActionStepData = ({ step, source }: ActionStepDataProps) => {
                 step.data.saveDataType === SaveDataType.CURRENT_TIMESTAMP ? (
                   <AccessTimeRounded fontSize="small" />
                 ) : step.data.saveDataType === SaveDataType.CUSTOM ? (
-                  step.data.saveToDataSourceValue
+                  <TrimmedValue value={step.data.saveToDataSourceValue ?? '-'} />
                 ) : step.data.saveDataType === SaveDataType.ELEMENT_CONTENT ? (
-                  trimJsPath(step.data.saveToDataSourceValue)
+                  <TrimmedValue value={step.data.saveToDataSourceValue ?? '-'} />
                 ) : null,
             },
           ]}
@@ -137,7 +177,7 @@ export const ActionStepData = ({ step, source }: ActionStepDataProps) => {
           data={[
             {
               label: 'Element',
-              value: trimJsPath(step.data.element),
+              value: <TrimmedValue value={step.data.element} />,
             },
             {
               label: 'Element timeout',
@@ -168,7 +208,7 @@ export const ActionStepData = ({ step, source }: ActionStepDataProps) => {
           data={[
             {
               label: 'Element',
-              value: trimJsPath(step.data.element),
+              value: <TrimmedValue value={step.data.element} />,
             },
             {
               label: 'Element timeout',
@@ -239,12 +279,13 @@ const ParsedValueQuery = ({ valueQuery, source }: ParsedValueQueryProps) => {
   return NA
 }
 
-function trimJsPath(jsPath?: string, maxLength = 24) {
-  if (!jsPath) {
-    return null
-  }
-  return jsPath.length > maxLength ? `...${jsPath.slice(-maxLength + 3)}` : jsPath
-}
+const TrimmedValue = ({ value }: { value: string }) => (
+  <Typography variant="body1" fontWeight="bold">
+    <TrimText side="left" maxLength={28}>
+      {value}
+    </TrimText>
+  </Typography>
+)
 
 function formatTimeout(timeout?: number) {
   if (!timeout) {

@@ -1,14 +1,14 @@
 import { type ReactNode, useEffect, useRef, useState } from 'react'
-import { Box } from '@mui/material'
+import { Box, type BoxProps } from '@mui/material'
 import { useDebounce } from 'src/app/hooks/useDebounce'
 
-interface AutoSizerProps {
+type AutoSizerProps = {
   children: (size: { width: number; height: number }) => ReactNode
   delay?: number
   absolute?: boolean
-}
+} & Omit<BoxProps, 'children' | 'ref'>
 
-export const AutoSizer = ({ children, delay = 16, absolute }: AutoSizerProps) => {
+export const AutoSizer = ({ children, delay = 16, absolute, ...boxProps }: AutoSizerProps) => {
   const containerRef = useRef<HTMLDivElement>(null)
   const [size, setSize] = useState({ width: 0, height: 0 })
 
@@ -49,9 +49,11 @@ export const AutoSizer = ({ children, delay = 16, absolute }: AutoSizerProps) =>
   return (
     <Box
       ref={containerRef}
+      {...boxProps}
       sx={{
         width: '100%',
         height: '100%',
+        ...boxProps.sx,
         ...(absolute ? { position: 'absolute', top: 0, left: 0 } : {}),
       }}
     >
