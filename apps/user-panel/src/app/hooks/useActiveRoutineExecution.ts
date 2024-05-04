@@ -20,32 +20,34 @@ export function useActiveRoutineExecution(routine: Routine | null) {
       return null
     }
 
-    const routineExecution = scraperExecutions.find(
-      (execution) =>
-        execution.scope === ScraperExecutionScope.ROUTINE &&
-        execution.mode === ScraperMode.ROUTINE_EXECUTION,
-    )
-    if (!routineExecution) {
-      return null
-    }
+    const scraperIds = scraperExecutions.reduce((acc, execution) => {
+      if (
+        execution.scope !== ScraperExecutionScope.ROUTINE ||
+        execution.mode !== ScraperMode.ROUTINE_EXECUTION
+      ) {
+        return acc
+      }
 
-    const executionData = getExecutionData(routineExecution.scraperId, routineExecution.mode)
-    if (!executionData || executionData.finished) {
-      return null
-    }
+      const executionData = getExecutionData(execution.scraperId, execution.mode)
+      if (!executionData || executionData.finished) {
+        return acc
+      }
 
-    if (
-      executionData.execution.find(
-        (executionEntry) =>
-          executionEntry.event === ElectronToRendererMessage.scraperExecutionStarted &&
-          executionEntry.scope === ScraperExecutionScope.ROUTINE &&
-          executionEntry.routine.id === routine.id,
-      )
-    ) {
-      return routineExecution.scraperId
-    }
+      if (
+        executionData.execution.find(
+          (executionEntry) =>
+            executionEntry.event === ElectronToRendererMessage.scraperExecutionStarted &&
+            executionEntry.scope === ScraperExecutionScope.ROUTINE &&
+            executionEntry.routine.id === routine.id,
+        )
+      ) {
+        acc.push(execution.scraperId)
+      }
 
-    return null
+      return acc
+    }, [] as string[])
+
+    return scraperIds[0] ?? null
   }, [getExecutionData, routine, scraperExecutions])
   const executionData = ScraperExecutionModule.useScraperExecution(
     activeExecutionScraperId,

@@ -20,8 +20,13 @@ export const RoutineExecutionMonitor = ({
       <Typography variant="h6" color="text.secondary" fontWeight="bold">
         {executing ? 'Routine is currently running...' : 'Routine execution finished'}
       </Typography>
-      {/* TODO: progress bar */}
-      <HorizontallyScrollableContainer alignItems="flex-start">
+      <HorizontallyScrollableContainer
+        alignItems="flex-start"
+        pt="1rem"
+        mt="-1rem"
+        mx="-1rem"
+        px="1rem"
+      >
         <ExecutionTree executionTree={scraperExecutionTree} />
       </HorizontallyScrollableContainer>
     </Stack>

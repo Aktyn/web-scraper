@@ -32,7 +32,12 @@ export const OpenSiteInstructionsFormButtonWithBadge = ({
 
   return (
     <Badge overlap="circular" variant={isSiteSessionActive ? 'dot' : undefined} color="secondary">
-      <OpenSiteInstructionsFormButton onClick={onClick} />
+      <OpenSiteInstructionsFormButton
+        onClick={(event) => {
+          event.stopPropagation()
+          onClick()
+        }}
+      />
     </Badge>
   )
 }

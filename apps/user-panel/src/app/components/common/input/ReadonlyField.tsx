@@ -9,11 +9,12 @@ type ReadonlyFieldProps = TextFieldProps & {
 export const ReadonlyField = ({ icon, showBorder, ...props }: ReadonlyFieldProps) => (
   <TextField
     variant="standard"
+    {...props}
     InputProps={{
       readOnly: true,
       className: showBorder ? 'always-show-border' : undefined,
       startAdornment: icon && <InputAdornment position="start">{icon}</InputAdornment>,
+      ...props.InputProps,
     }}
-    {...props}
   />
 )

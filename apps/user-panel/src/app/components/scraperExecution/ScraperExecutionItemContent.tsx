@@ -2,6 +2,7 @@ import { Fragment, useEffect, useRef } from 'react'
 import {
   CircleRounded,
   CodeRounded,
+  DataObjectRounded,
   ErrorRounded,
   FormatListBulletedRounded,
   LabelRounded,
@@ -9,35 +10,63 @@ import {
 } from '@mui/icons-material'
 import { Stack } from '@mui/material'
 import { ActionStepErrorType, ScraperExecutionScope } from '@web-scraper/common'
+import type { ParsedScraperExecution } from './helpers'
 import {
   actionStepErrorTypeNames,
   actionStepTypeNames,
+  parseActionName,
   procedureTypeNames,
-} from 'src/app/utils/dictionaries'
-import type { ParsedScraperExecution } from './helpers'
+  routineExecutionTypeNames,
+} from '../../utils/dictionaries'
+import { JsonValue } from '../common/JsonValue'
 import { ReadonlyField } from '../common/input/ReadonlyField'
 
 interface ScraperExecutionItemContentProps {
   item: ParsedScraperExecution
+  autoScroll?: boolean
 }
 
-export const ScraperExecutionItemContent = ({ item }: ScraperExecutionItemContentProps) => {
+export const ScraperExecutionItemContent = ({
+  item,
+  autoScroll = true,
+}: ScraperExecutionItemContentProps) => {
   const containerRef = useRef<HTMLDivElement | null>(null)
 
   useEffect(() => {
-    setTimeout(() => {
+    if (!autoScroll) {
+      return
+    }
+    const timeout = setTimeout(() => {
       if (containerRef.current) {
-        containerRef.current.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
+        containerRef.current.scrollIntoView({
+          behavior: 'smooth',
+          block: 'nearest',
+          inline: 'center',
+        })
       }
     }, 200)
-  }, [])
+
+    return () => clearTimeout(timeout)
+  }, [autoScroll])
 
   const start = item.start
 
   return (
-    <Stack ref={containerRef} width="100%">
+    <Stack ref={containerRef} width="100%" minWidth="14rem">
+      {start.scope === ScraperExecutionScope.ROUTINE && (
+        <>
+          <ReadonlyField label="Name" value={start.routine.name} icon={<LabelRounded />} />
+          <ReadonlyField label="Iteration" value={start.iterationIndex} icon={<LabelRounded />} />
+          <ReadonlyField
+            label="Execution plan"
+            value={routineExecutionTypeNames[start.routine.executionPlan.type]}
+            icon={<FormatListBulletedRounded />}
+          />
+        </>
+      )}
       {start.scope === ScraperExecutionScope.PROCEDURE && (
         <>
+          <ReadonlyField label="Name" value={start.procedure.name} icon={<LabelRounded />} />
           <ReadonlyField
             label="Type"
             value={procedureTypeNames[start.procedure.type]}
@@ -58,11 +87,27 @@ export const ScraperExecutionItemContent = ({ item }: ScraperExecutionItemConten
         </>
       )}
       {start.scope === ScraperExecutionScope.FLOW && (
-        <ReadonlyField
-          label="Action name"
-          value={start.flow.actionName}
-          icon={<FormatListBulletedRounded />}
-        />
+        <>
+          <ReadonlyField
+            label="Action name"
+            value={parseActionName(start.flow.actionName)}
+            icon={<FormatListBulletedRounded />}
+          />
+          {start.flow.onSuccess && (
+            <ReadonlyField
+              label="On success"
+              value={parseActionName(start.flow.onSuccess.actionName)}
+              icon={<FormatListBulletedRounded />}
+            />
+          )}
+          {start.flow.onFailure && (
+            <ReadonlyField
+              label="On failure"
+              value={parseActionName(start.flow.onFailure.actionName)}
+              icon={<FormatListBulletedRounded />}
+            />
+          )}
+        </>
       )}
       {start.scope === ScraperExecutionScope.ACTION && (
         <>
@@ -78,6 +123,16 @@ export const ScraperExecutionItemContent = ({ item }: ScraperExecutionItemConten
             label="Type"
             value={actionStepTypeNames[start.actionStep.type]}
             icon={<FormatListBulletedRounded />}
+          />
+          <ReadonlyField
+            label="Data (as JSON)"
+            value=""
+            icon={
+              <Stack direction="row" alignItems="center" gap="0.5rem">
+                <DataObjectRounded />
+                <JsonValue>{JSON.stringify(start.actionStep.data)}</JsonValue>
+              </Stack>
+            }
           />
         </>
       )}

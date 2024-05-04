@@ -36,6 +36,14 @@ export function isGlobalAction(
   return actionName.startsWith(`${GLOBAL_ACTION_PREFIX}.`)
 }
 
+export function isFinishGlobalAction(actionName: FlowStep['actionName']) {
+  return (
+    actionName === `${GLOBAL_ACTION_PREFIX}.${GlobalActionType.FINISH}` ||
+    actionName === `${GLOBAL_ACTION_PREFIX}.${GlobalActionType.FINISH_WITH_ERROR}` ||
+    actionName === `${GLOBAL_ACTION_PREFIX}.${GlobalActionType.FINISH_WITH_NOTIFICATION}`
+  )
+}
+
 export interface FlowStep {
   id: number
   actionName:
@@ -126,11 +134,3 @@ export const upsertProcedureSchema = yup.object({
   siteInstructionsId: yup.number().required(),
   flow: upsertFlowSchema.nullable().default(null).notRequired(),
 })
-
-export function isFinishGlobalAction(actionName: FlowStep['actionName']) {
-  return (
-    actionName === `${GLOBAL_ACTION_PREFIX}.${GlobalActionType.FINISH}` ||
-    actionName === `${GLOBAL_ACTION_PREFIX}.${GlobalActionType.FINISH_WITH_ERROR}` ||
-    actionName === `${GLOBAL_ACTION_PREFIX}.${GlobalActionType.FINISH_WITH_NOTIFICATION}`
-  )
-}

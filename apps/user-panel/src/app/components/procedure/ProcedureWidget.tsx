@@ -11,16 +11,14 @@ import {
   Typography,
 } from '@mui/material'
 import {
-  GLOBAL_ACTION_PREFIX,
-  REGULAR_ACTION_PREFIX,
   isFinishGlobalAction,
-  type GlobalActionType,
+  isGlobalAction,
   type Procedure,
   type Site,
   type SiteProcedures,
 } from '@web-scraper/common'
 import { noop } from '../../utils'
-import { globalActionTypeNames, procedureTypeNames } from '../../utils/dictionaries'
+import { parseActionName, procedureTypeNames } from '../../utils/dictionaries'
 import { CustomDrawer, type CustomDrawerRef } from '../common/CustomDrawer'
 import { TermInfo } from '../common/TermInfo'
 import { UrlButton } from '../common/button/UrlButton'
@@ -171,8 +169,6 @@ interface FlowBranchProps {
 const FlowBranch = ({ flow, title = 'Flow', level = 0, disabled }: FlowBranchProps) => {
   const items = useMemo(() => (flow ? [flow] : []), [flow])
 
-  const [prefix, actionName] = flow?.actionName?.split('.') ?? ['', '']
-
   return (
     <ItemsList
       title={
@@ -200,21 +196,11 @@ const FlowBranch = ({ flow, title = 'Flow', level = 0, disabled }: FlowBranchPro
         <Stack key={flowStep.id} gap="1rem" minWidth="12rem">
           <ReadonlyField
             label="Action name"
-            value={`${
-              prefix === GLOBAL_ACTION_PREFIX
-                ? 'Global'
-                : prefix === REGULAR_ACTION_PREFIX
-                  ? 'Action'
-                  : '-'
-            }.${
-              prefix === GLOBAL_ACTION_PREFIX
-                ? globalActionTypeNames[actionName as GlobalActionType]
-                : actionName
-            }`}
+            value={parseActionName(flowStep.actionName)}
             showBorder
             icon={<LabelRounded />}
           />
-          {prefix === GLOBAL_ACTION_PREFIX && flowStep.globalReturnValues.length > 0 && (
+          {isGlobalAction(flowStep.actionName) && flowStep.globalReturnValues.length > 0 && (
             <GlobalReturnValuesList
               level={level + 1}
               globalReturnValues={flowStep.globalReturnValues}

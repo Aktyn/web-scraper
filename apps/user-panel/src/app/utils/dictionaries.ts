@@ -8,6 +8,9 @@ import {
   RoutineExecutionType,
   SaveDataType,
   ScraperExecutionScope,
+  isGlobalAction,
+  isRegularAction,
+  type FlowStep,
 } from '@web-scraper/common'
 
 export const actionStepTypeNames: { [key in ActionStepType]: string } = {
@@ -53,6 +56,18 @@ export const globalActionTypeNames: { [key in GlobalActionType]: string } = {
   [GlobalActionType.FINISH]: 'Finish',
   [GlobalActionType.FINISH_WITH_ERROR]: 'Finish with error',
   [GlobalActionType.FINISH_WITH_NOTIFICATION]: 'Finish with notification',
+}
+
+export function parseActionName(actionName: FlowStep['actionName']) {
+  const [, actionNameValue] = actionName.split('.') ?? ['', '']
+
+  if (isRegularAction(actionName)) {
+    return `Action.${actionNameValue}`
+  }
+  if (isGlobalAction(actionName)) {
+    return `Global.${globalActionTypeNames[actionNameValue as GlobalActionType]}`
+  }
+  return actionName
 }
 
 export const scraperExecutionScopeNames: { [key in ScraperExecutionScope]: string } = {
