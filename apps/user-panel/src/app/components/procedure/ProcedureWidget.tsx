@@ -54,8 +54,6 @@ export const ProcedureWidget = ({ procedure, groupedSiteProcedures }: ProcedureW
     siteInstructionsDrawerRef.current?.open()
   }, [site])
 
-  // return
-
   return (
     <>
       <Accordion

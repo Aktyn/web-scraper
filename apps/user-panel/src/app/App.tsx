@@ -146,7 +146,7 @@ function ViewBase() {
 
   return (
     <CacheProvider value={emotionCache}>
-      <ThemeProvider key={Number(loadingUserData)} theme={currentView.theme ?? baseTheme}>
+      <ThemeProvider theme={currentView.theme ?? baseTheme}>
         <CssBaseline>
           <SnackbarProvider
             maxSnack={10}

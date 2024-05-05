@@ -8,6 +8,7 @@ module.exports = {
     'plugin:import/recommended',
     'plugin:react-hooks/recommended',
     'plugin:prettier/recommended',
+    'plugin:storybook/recommended',
   ],
   plugins: ['@emotion', 'react', '@typescript-eslint', 'prettier'],
   parserOptions: {

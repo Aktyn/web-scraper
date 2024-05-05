@@ -31,3 +31,4 @@ user-panel-build/
 *.db
 *.db-journal
 erd.pdf
+*storybook.log
