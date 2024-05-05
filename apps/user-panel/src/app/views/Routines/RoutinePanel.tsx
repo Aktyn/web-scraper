@@ -163,6 +163,7 @@ export const RoutinePanel = ({ routineInfo, onDeleted, onNameChanged }: RoutineP
                 </Stack>
               }
               anchor="bottom"
+              closeAfterTransition
             >
               {routine && <RoutineExecutionHistoryTable routine={routine} />}
             </CustomDrawer>

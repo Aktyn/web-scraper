@@ -185,5 +185,6 @@ export function getRoutineExecutionHistory(
     orderBy: {
       createdAt: 'desc',
     },
+    include: { Routine: true },
   })
 }

@@ -11,18 +11,20 @@ import { ResultChip } from '../../common/chip/ResultChip'
 import { TermChipLabel } from '../../common/chip/TermChip'
 import { Table, useTableColumns } from '../../table'
 
-export const RoutineExecutionHistoryTable = ({ routine }: { routine: Routine }) => {
+export const RoutineExecutionHistoryTable = ({ routine }: { routine?: Routine }) => {
+  const routineId = routine?.id
+
   const dataFetcher = useCallback<typeof window.electronAPI.getRoutineExecutionHistory>(
     (request) => {
       return window.electronAPI.getRoutineExecutionHistory({
         ...request,
         filters:
-          typeof request.filters === 'string'
+          typeof request.filters === 'string' || !routineId
             ? request.filters
-            : [...(request.filters ?? []), { routineId: routine.id }],
+            : [...(request.filters ?? []), { routineId }],
       })
     },
-    [routine.id],
+    [routineId],
   )
 
   const columns = useTableColumns<RoutineExecutionHistory[number]>(
@@ -33,6 +35,9 @@ export const RoutineExecutionHistoryTable = ({ routine }: { routine: Routine }) 
           header: 'ID',
           accessor: 'id',
         },
+        ...(routineId
+          ? []
+          : ([{ id: 'routineName', header: 'Routine', accessor: 'routineName' }] as const)),
         {
           id: 'createdAt',
           header: 'Created',
@@ -74,7 +79,7 @@ export const RoutineExecutionHistoryTable = ({ routine }: { routine: Routine }) 
   // TODO: allow clearing history and deleting individual results
   return (
     <Table
-      name={`routine-execution-history-${routine.id}`}
+      name={`routine-execution-history-${routine?.id ?? 'all'}`}
       columns={columns}
       keyProperty="id"
       data={dataFetcher}

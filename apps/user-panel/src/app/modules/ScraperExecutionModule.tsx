@@ -193,13 +193,12 @@ const ScraperExecutionProvider = ({ children }: PropsWithChildren) => {
       currentExecution.finished = currentExecution.execution[0].scope === data.scope
       emitScraperExecutionChange(scraperId, mode, map)
 
-      //TODO: remove finished executions if there are no changeListeners attached
-      // if (currentExecution.finished) {
-      //   scraperExecutionsRef.current[mode].delete(scraperId)
-      //   setScraperExecutions((executions) =>
-      //     executions.filter((e) => e.scraperId !== scraperId || e.mode !== mode),
-      //   )
-      // }
+      if (currentExecution.finished) {
+        scraperExecutionsRef.current[mode].delete(scraperId)
+        setScraperExecutions((executions) =>
+          executions.filter((e) => e.scraperId !== scraperId || e.mode !== mode),
+        )
+      }
     },
   )
 

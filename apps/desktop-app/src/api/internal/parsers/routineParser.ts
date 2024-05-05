@@ -17,6 +17,7 @@ export function parseDatabaseRoutineExecutionHistory(
 ): RoutineExecutionHistory {
   return routineExecutionHistoryData.map((historyItem) => ({
     ...pick(historyItem, 'id', 'createdAt', 'routineId', 'iterationIndex'),
+    routineName: historyItem.Routine.name,
     results: JSON.parse(historyItem.results),
   }))
 }

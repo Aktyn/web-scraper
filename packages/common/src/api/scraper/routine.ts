@@ -41,6 +41,7 @@ export interface RoutineExecutionResult {
 export type RoutineExecutionHistory = {
   id: number
   createdAt: Date
+  routineName: string
   routineId: Routine['id']
   iterationIndex: number
   results: RoutineExecutionResult

@@ -1,4 +1,6 @@
-import { Button, Stack } from '@mui/material'
+import { Stack } from '@mui/material'
+import { DashboardPanelHeaderOptions } from './DashboardPanelHeaderOptions'
+import { ExecutionsMonitoring } from './ExecutionsMonitoring'
 import { ViewTransition } from '../../components/animation/ViewTransition'
 import type { ViewComponentProps } from '../helpers'
 
@@ -7,17 +9,24 @@ const DashboardView = ({ doNotRender }: ViewComponentProps) => {
     return null
   }
 
-  //TODO: show currently running procedures/routines/chores (Scraper executions) for monitoring/preview purposes
-  // const {scraperExecutions} = ScraperExecutionModule.useScraperExecutionContext()
-
   return (
-    <Stack alignItems="center" p="2rem" spacing="2rem">
-      <ViewTransition>
-        <Button variant="contained" color="primary">
-          NOOP
-        </Button>
-      </ViewTransition>
-    </Stack>
+    <ViewTransition>
+      <Stack
+        flexGrow={1}
+        p="1rem"
+        gap="1rem"
+        sx={{
+          overflowY: 'auto',
+          overflowX: 'hidden',
+          '& > *': {
+            flexShrink: 0,
+          },
+        }}
+      >
+        <DashboardPanelHeaderOptions />
+        <ExecutionsMonitoring />
+      </Stack>
+    </ViewTransition>
   )
 }
 export default DashboardView

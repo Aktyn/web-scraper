@@ -337,8 +337,15 @@ const Row = <DataType extends object>({
   const handleRowExpandClick = useCallback<MouseEventHandler<HTMLElement>>(
     (event) => {
       const content = onRowExpand?.(row)
-      setRowExpandContent(content)
-      setExpandRow((current) => !current && content !== null && content !== undefined)
+      setExpandRow((current) => {
+        const expand = !current && content !== null && content !== undefined
+
+        if (expand) {
+          setRowExpandContent(content)
+        }
+
+        return expand
+      })
 
       event.preventDefault()
       event.stopPropagation()

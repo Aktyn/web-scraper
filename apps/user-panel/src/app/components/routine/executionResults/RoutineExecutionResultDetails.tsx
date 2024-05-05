@@ -1,5 +1,5 @@
-import { useMemo } from 'react'
-import { Box, type BoxProps, Divider, Stack, Typography, lighten } from '@mui/material'
+import { useEffect, useMemo, useRef } from 'react'
+import { Box, Divider, Stack, Typography, lighten, type BoxProps } from '@mui/material'
 import type { RoutineExecutionResult } from '@web-scraper/common'
 import { ProcedureExecutionResultDetails } from './ProcedureExecutionResultDetails'
 import { useDataSourceTableColumns } from '../../../hooks/useDataSourceTableColumns'
@@ -16,8 +16,23 @@ export const RoutineExecutionResultDetails = ({
   result,
   iterationIndex,
 }: RoutineExecutionResultDetailsProps) => {
+  const containerRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      if (containerRef.current) {
+        containerRef.current.scrollIntoView({
+          behavior: 'smooth',
+          block: 'nearest',
+        })
+      }
+    }, 400)
+
+    return () => clearTimeout(timeout)
+  }, [])
+
   return (
-    <Stack>
+    <Stack ref={containerRef}>
       <Stack direction="row" alignItems="center" gap="1rem" px="1rem">
         <Typography variant="body1" whiteSpace="nowrap" py="1rem">
           Execution plan:{' '}
@@ -38,7 +53,7 @@ export const RoutineExecutionResultDetails = ({
           <RoutineExecutionResultSource source={result.source} mb="-1px" />
         </Box>
       )}
-      <Stack py="1rem">
+      <Stack py="1rem" rowGap="0.5rem">
         {result.proceduresExecutionResults.map((procedureExecutionResult, index) => (
           <HorizontallyScrollableContainer
             key={`${procedureExecutionResult.procedure.id}-${index}`}
