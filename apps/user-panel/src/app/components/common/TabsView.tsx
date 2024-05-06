@@ -15,6 +15,7 @@ import {
   Divider,
   IconButton,
   Stack,
+  type StackProps,
   Tab,
   Tabs,
   Tooltip,
@@ -52,16 +53,6 @@ interface TabsViewProps<ValueType> {
   onTabsEntryAnimationFinished?: () => void
 }
 
-const commonTabContentStyles: BoxProps['sx'] = {
-  position: 'absolute',
-  left: 0,
-  top: 0,
-  width: '100%',
-  height: '100%',
-  overflowY: 'auto',
-  overflowX: 'hidden',
-}
-
 export const TabsView = genericMemo(
   genericForwardRef(
     <ValueType extends string | number>(
@@ -75,7 +66,8 @@ export const TabsView = genericMemo(
         tabsProps,
         onTabsEntryAnimationStarted,
         onTabsEntryAnimationFinished,
-      }: TabsViewProps<ValueType> & RefAttributes<HTMLDivElement>,
+        ...stackProps
+      }: TabsViewProps<ValueType> & RefAttributes<HTMLDivElement> & StackProps,
       ref: Ref<HTMLDivElement>,
     ) => {
       const containerRef = useRef<HTMLDivElement>(null)
@@ -197,7 +189,9 @@ export const TabsView = genericMemo(
           flexGrow={1}
           alignItems="stretch"
           maxHeight="100%"
+          height="100%"
           overflow="hidden"
+          {...stackProps}
         >
           <ViewTransition
             targets={(element) => element.querySelectorAll(`.${tabsClasses.indicator}`)}
@@ -283,3 +277,13 @@ export const TabsView = genericMemo(
     },
   ),
 )
+
+const commonTabContentStyles: BoxProps['sx'] = {
+  position: 'absolute',
+  left: 0,
+  top: 0,
+  width: '100%',
+  height: '100%',
+  overflowY: 'auto',
+  overflowX: 'hidden',
+}

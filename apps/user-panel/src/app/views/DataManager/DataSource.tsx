@@ -2,14 +2,14 @@ import { useCallback, useRef, useState } from 'react'
 import { DeleteSweepRounded, FileDownloadRounded, FileUploadRounded } from '@mui/icons-material'
 import { Box, IconButton, Stack, Tooltip } from '@mui/material'
 import { type DataSourceItem, type DataSourceStructure } from '@web-scraper/common'
-import { Table, type TableRef } from 'src/app/components/table'
-import { useDataSourceTableColumns } from 'src/app/hooks/useDataSourceTableColumns'
 import { TransitionType, ViewTransition } from '../../components/animation/ViewTransition'
 import { ConfirmationDialog } from '../../components/common/ConfirmationDialog'
 import { CustomDrawer, type CustomDrawerRef } from '../../components/common/CustomDrawer'
 import { ConfirmableButton } from '../../components/common/button/ConfirmableButton'
 import { DataSourceItemForm } from '../../components/dataSource/DataSourceItemForm'
+import { Table, type TableRef } from '../../components/table'
 import { useApiRequest } from '../../hooks/useApiRequest'
+import { useDataSourceTableColumns } from '../../hooks/useDataSourceTableColumns'
 
 interface DataSourceProps {
   dataSource: DataSourceStructure

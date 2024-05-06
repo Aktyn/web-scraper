@@ -1,6 +1,6 @@
-import { type ReactNode, useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { Box, type BoxProps } from '@mui/material'
-import { useDebounce } from 'src/app/hooks/useDebounce'
+import { useDebounce } from '../../hooks/useDebounce'
 
 type AutoSizerProps = {
   children: (size: { width: number; height: number }) => ReactNode

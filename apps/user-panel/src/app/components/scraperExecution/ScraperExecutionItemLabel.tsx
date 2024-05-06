@@ -1,6 +1,6 @@
 import { Typography, type TypographyProps } from '@mui/material'
-import { scraperExecutionScopeNames } from 'src/app/utils/dictionaries'
 import type { ParsedScraperExecution } from './helpers'
+import { scraperExecutionScopeNames } from '../../utils/dictionaries'
 
 type ScraperExecutionItemProps = {
   item: ParsedScraperExecution

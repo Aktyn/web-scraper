@@ -1,8 +1,8 @@
 import { useCallback, useContext, useState } from 'react'
 import { Box, FormControlLabel, Switch } from '@mui/material'
 import { RoutineExecutionType, dataSourceFiltersToSqlite, type Routine } from '@web-scraper/common'
-import { DataSourcesContext } from 'src/app/context/dataSourcesContext'
-import { useDataSourceTableColumns } from 'src/app/hooks/useDataSourceTableColumns'
+import { DataSourcesContext } from '../../context/dataSourcesContext'
+import { useDataSourceTableColumns } from '../../hooks/useDataSourceTableColumns'
 import { Table } from '../table'
 
 interface ExecutionPlanRowsPreviewProps {

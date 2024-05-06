@@ -45,7 +45,7 @@ export const DrawerToggle = ({
       onClick={() => onToggle(!open)}
       {...buttonProps}
     >
-      <Stack ref={contentRef} direction="row" alignItems="center" columnGap={1}>
+      <Stack ref={contentRef} direction="row" alignItems="center" columnGap="0.5rem">
         <ChevronLeftRounded />
         {children}
         <ChevronRightRounded />

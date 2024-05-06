@@ -136,6 +136,9 @@ export function generateColorizedTheme({
                   color: lightBlue[50],
                 },
               },
+              body: {
+                color: textPrimary,
+              },
             },
           },
           MuiButton: {

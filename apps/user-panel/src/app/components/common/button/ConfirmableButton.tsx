@@ -5,11 +5,11 @@ import { CircularCountdown } from '../CircularCountdown'
 
 interface ConfirmableButtonProps extends Omit<LoadingButtonProps, 'onClick'> {
   onConfirm: MouseEventHandler<HTMLButtonElement>
-  duration?: number
+  durationMs?: number
 }
 
 export const ConfirmableButton = forwardRef<HTMLButtonElement, ConfirmableButtonProps>(
-  ({ children, onConfirm, duration = 5_000, ...buttonProps }, forwardedRef) => {
+  ({ children, onConfirm, durationMs = 5_000, ...buttonProps }, forwardedRef) => {
     const targetRef = useRef<HTMLButtonElement>(null)
     const ref = forwardedRef ?? targetRef
 
@@ -45,7 +45,7 @@ export const ConfirmableButton = forwardRef<HTMLButtonElement, ConfirmableButton
             }
 
             const now = Date.now()
-            if (now - start >= duration) {
+            if (now - start >= durationMs) {
               setAwaitConfirmation(false)
               setMinWidth(0)
               timeoutRef.current = null
@@ -58,12 +58,15 @@ export const ConfirmableButton = forwardRef<HTMLButtonElement, ConfirmableButton
           timeoutRef.current = setTimeout(tick, 1000)
         }
       },
-      [awaitConfirmation, mounted, onConfirm, ref, duration],
+      [awaitConfirmation, mounted, onConfirm, ref, durationMs],
     )
 
     const progress = Math.min(
       1,
-      Math.max(0, 1 - (Math.ceil((now - start) / 1000 - 1) * 1000) / Math.max(1, duration - 1000)),
+      Math.max(
+        0,
+        1 - (Math.ceil((now - start) / 1000 - 1) * 1000) / Math.max(1, durationMs - 1000),
+      ),
     )
 
     return (
@@ -76,7 +79,7 @@ export const ConfirmableButton = forwardRef<HTMLButtonElement, ConfirmableButton
           awaitConfirmation ? (
             <CircularCountdown
               progress={progress}
-              label={Math.max(0, Math.round((duration - (now - start)) / 1000))}
+              label={Math.max(0, Math.round((durationMs - (now - start)) / 1000))}
             />
           ) : (
             buttonProps.endIcon

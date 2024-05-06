@@ -88,7 +88,9 @@ export const ProcedureWidget = ({ procedure, groupedSiteProcedures }: ProcedureW
                   {site.url}
                 </UrlButton>
               ) : (
-                <LinearProgress />
+                <Box height="0.75rem">
+                  <LinearProgress />
+                </Box>
               )}
             </Stack>
             <TermChip term="procedure" />
@@ -98,7 +100,7 @@ export const ProcedureWidget = ({ procedure, groupedSiteProcedures }: ProcedureW
                 onClick={handleShowInstructions}
               />
             ) : (
-              <Skeleton variant="circular" width="1.5rem" height="1.5rem" />
+              <Skeleton variant="circular" width="2.125rem" height="2.125rem" />
             )}
           </Box>
         </AccordionSummary>

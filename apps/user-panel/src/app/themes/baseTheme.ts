@@ -5,6 +5,7 @@ import { common } from '@mui/material/colors'
 import { alpha, createTheme } from '@mui/material/styles'
 
 const retinaDisplayMediaQuery = '@media only screen and (-webkit-min-device-pixel-ratio: 2)'
+const fontFamily = ['"Roboto Flex Variable"', 'Roboto', 'Arial', 'sans-serif'].join(',')
 
 const customPaper: CSSInterpolation = {
   borderRadius: '1rem',
@@ -14,7 +15,7 @@ const customPaper: CSSInterpolation = {
 
 export const baseThemeOptions: ThemeOptions = {
   typography: {
-    fontFamily: ['"Roboto Flex Variable"', 'Roboto', 'Arial', 'sans-serif'].join(','),
+    fontFamily,
   },
   components: {
     MuiCssBaseline: {
@@ -39,6 +40,7 @@ export const baseThemeOptions: ThemeOptions = {
         },
         body: {
           backgroundColor: 'transparent',
+          fontFamily,
         },
       },
     },

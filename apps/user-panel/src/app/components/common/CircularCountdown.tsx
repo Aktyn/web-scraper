@@ -12,7 +12,7 @@ export const CircularCountdown = ({ progress, label }: CircularCountdownProps) =
     <Box sx={{ position: 'relative', display: 'inline-flex' }}>
       <CircularProgress
         variant="determinate"
-        size={20}
+        size="1.25rem"
         value={progress * 100}
         sx={{
           [`& .${circularProgressClasses.circle}`]: {
