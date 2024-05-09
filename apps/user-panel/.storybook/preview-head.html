@@ -1,3 +1,135 @@
 <script>
-  window.electronAPI = {}
+  const noop = () => { }
+  window.electronAPI = {
+    getDataSourceItems: () => Promise.resolve({
+      data: [
+        {
+          id: 1,
+          data: [
+            { columnName: 'Integer column', value: 1337 },
+            { columnName: 'Real column', value: 13.37 },
+            { columnName: 'Text column', value: 'Foo' },
+          ],
+        },
+        {
+          id: 2,
+          data: [
+            { columnName: 'Integer column', value: null },
+            { columnName: 'Real column', value: 13.37 },
+            { columnName: 'Text column', value: 'Foo' },
+          ],
+        },
+        {
+          id: 3,
+          data: [
+            { columnName: 'Integer column', value: 1337 },
+            { columnName: 'Real column', value: 13.37 },
+            { columnName: 'Text column', value: null },
+          ],
+        },
+        {
+          id: 4,
+          data: [
+            { columnName: 'Integer column', value: 1337 },
+            { columnName: 'Real column', value: null },
+            { columnName: 'Text column', value: 'Foo' },
+          ],
+        },
+      ]
+    }),
+    getSites: () => Promise.resolve({
+      data: [
+        {
+          id: 1,
+          createdAt: new Date(1715164444961),
+          url: 'http://example.com',
+          language: 'en',
+          tags: [
+            {
+              id: 1,
+              name: 'Foo',
+              description: null,
+            },
+          ],
+        },
+        {
+          id: 2,
+          createdAt: new Date(1715164444961),
+          url: 'http://example2.com',
+          language: null,
+          tags: [],
+        },
+        {
+          id: 3,
+          createdAt: new Date(1715164444961),
+          url: 'http://example3.com',
+          language: 'pl',
+          tags: [
+            {
+              id: 1,
+              name: 'Foo',
+              description: null,
+            },
+            {
+              id: 2,
+              name: 'Bar',
+              description: 'Tag description',
+            },
+          ],
+        },
+        {
+          id: 4,
+          createdAt: new Date(1715164444961),
+          url: 'http://example4.com',
+          language: 'en',
+          tags: [],
+        },
+      ]
+    }),
+
+    changeWindowState: noop,
+    getUserSettings: noop,
+    setUserSetting: noop,
+    getDataSources: noop,
+    createDataSource: noop,
+    updateDataSource: noop,
+    deleteDataSource: noop,
+    createDataSourceItem: noop,
+    updateDataSourceItem: noop,
+    deleteDataSourceItem: noop,
+    clearDataSourceItems: noop,
+    exportDataSourceItems: noop,
+    importDataSourceItems: noop,
+    getSiteTags: noop,
+    createSiteTag: noop,
+    updateSiteTag: noop,
+    deleteSiteTag: noop,
+    deleteLooseSiteTags: noop,
+    getSite: noop,
+    createSite: noop,
+    updateSite: noop,
+    deleteSite: noop,
+    getSitePreview: noop,
+    getSiteInstructions: noop,
+    setSiteInstructions: noop,
+    getProceduresGroupedBySite: noop,
+    getRoutines: noop,
+    getRoutine: noop,
+    createRoutine: noop,
+    updateRoutine: noop,
+    deleteRoutine: noop,
+    executeRoutine: noop,
+    getRoutineExecutionHistory: noop,
+    getSiteInstructionsTestingSessions: noop,
+    startSiteInstructionsTestingSession: noop,
+    endSiteInstructionsTestingSession: noop,
+    pickElement: noop,
+    cancelPickingElement: noop,
+    testActionStep: noop,
+    testAction: noop,
+    testFlow: noop,
+    testProcedure: noop,
+    returnManualDataForActionStep: noop,
+    returnDataSourceItemIdForActionStep: noop,
+  }
 </script>

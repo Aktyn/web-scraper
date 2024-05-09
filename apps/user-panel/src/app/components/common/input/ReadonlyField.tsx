@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react'
 import { InputAdornment, TextField, type TextFieldProps } from '@mui/material'
 
-type ReadonlyFieldProps = TextFieldProps & {
+type ReadonlyFieldProps = Omit<TextFieldProps, 'onChange'> & {
   icon?: ReactNode
   showBorder?: boolean
 }

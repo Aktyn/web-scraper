@@ -57,3 +57,12 @@ export function sortNumbers<DataType extends object>(
     return direction === 'asc' ? aValue - bValue : bValue - aValue
   }
 }
+
+export function isValidUrl(url: string) {
+  try {
+    new URL(url)
+    return true
+  } catch {
+    return false
+  }
+}

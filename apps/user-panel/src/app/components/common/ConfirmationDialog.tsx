@@ -10,6 +10,8 @@ import {
   DialogTitle,
   Stack,
   Typography,
+  Fade,
+  Box,
 } from '@mui/material'
 import { CircularCountdown } from './CircularCountdown'
 import { useInterval } from '../../hooks/useInterval'
@@ -18,17 +20,19 @@ type ConfirmationDialogProps = Omit<DialogProps, 'onClose'> & {
   onClose: () => void
   onConfirm: () => void
   titleContent: ReactNode | Element
+  loading?: boolean
+  autoCloseDuration?: number
   cancelButtonText?: string
   confirmButtonText?: string
-  loading?: boolean
 }
 
 export function ConfirmationDialog({
+  children,
   onClose,
   onConfirm,
   titleContent,
-  children,
   loading,
+  autoCloseDuration = 10_000,
   cancelButtonText = 'Cancel',
   confirmButtonText = 'Confirm',
   ...dialogProps
@@ -42,7 +46,11 @@ export function ConfirmationDialog({
           ) : (
             titleContent
           )}
-          <AutoCloseCountdown duration={10_000} onClose={onClose} />
+          <Fade in={!loading} unmountOnExit>
+            <Box>
+              <AutoCloseCountdown duration={autoCloseDuration} onClose={onClose} />
+            </Box>
+          </Fade>
         </>
       </Stack>
       <DialogContent sx={{ pt: 0 }}>
@@ -78,7 +86,7 @@ interface AutoCloseCountdownProps {
   onClose: () => void
 }
 
-const AutoCloseCountdown = memo(({ duration, onClose }: AutoCloseCountdownProps) => {
+const AutoCloseCountdown = memo<AutoCloseCountdownProps>(({ duration, onClose }) => {
   const [start] = useState(Date.now())
   const [now, setNow] = useState(start)
 

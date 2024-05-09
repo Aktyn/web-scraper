@@ -3,7 +3,7 @@ import { fn } from '@storybook/test'
 import { DrawerToggle } from './DrawerToggle'
 
 const meta = {
-  title: 'Common/DrawerToggle',
+  title: 'Common/Button/DrawerToggle',
   component: DrawerToggle,
   parameters: { layout: 'centered' },
   args: { children: 'Foo', onToggle: fn() },

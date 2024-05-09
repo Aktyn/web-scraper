@@ -80,7 +80,7 @@ export const DataSourceItemForm = ({
   )
 
   return (
-    <Stack flexGrow={1} p={2} gap={2} component="form" onSubmit={form.handleSubmit(onSubmit)}>
+    <Stack flexGrow={1} p="1rem" gap="1rem" component="form" onSubmit={form.handleSubmit(onSubmit)}>
       <FormProvider {...form}>
         <ColumnsValuesForm dataSource={dataSource} />
       </FormProvider>

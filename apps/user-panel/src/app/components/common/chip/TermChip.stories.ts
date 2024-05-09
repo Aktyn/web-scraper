@@ -3,7 +3,7 @@ import { TermChip } from './TermChip'
 import { termsDetails } from '../../../utils/terms'
 
 const meta = {
-  title: 'Common/TermChip',
+  title: 'Common/Chip/TermChip',
   component: TermChip,
   parameters: { layout: 'centered' },
   argTypes: {

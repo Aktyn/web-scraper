@@ -37,6 +37,7 @@ export const ToggleButton = ({ active, onToggle, ...buttonProps }: ToggleButtonP
             className="toggle-circle"
             sx={{
               position: 'absolute',
+              transformOrigin: 'center',
               top: '50%',
               left: '50%',
             }}

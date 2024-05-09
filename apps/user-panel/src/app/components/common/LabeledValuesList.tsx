@@ -36,7 +36,7 @@ export const LabeledValuesList = ({ data, skipEmptyValues, sx = {} }: LabeledVal
                   {value}
                 </Typography>
               ) : (
-                value
+                value ?? '-'
               )}
             </Fragment>
           ),

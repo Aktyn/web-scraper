@@ -3,7 +3,7 @@ import { OpenInFullRounded, PreviewRounded } from '@mui/icons-material'
 import { LoadingButton } from '@mui/lab'
 import { alpha, Backdrop, Box, IconButton, Stack, type StackProps } from '@mui/material'
 import { common } from '@mui/material/colors'
-import { upsertSiteSchema } from '@web-scraper/common'
+import { isValidUrl, upsertSiteSchema } from '@web-scraper/common'
 import { RootPortal } from './portal/RootPortal'
 import { useCancellablePromise } from '../../hooks/useCancellablePromise'
 import { useDebounce } from '../../hooks/useDebounce'
@@ -116,6 +116,7 @@ export const UrlPreview = ({ url, width, maxHeight }: UrlPreviewProps) => {
                 loading={loading}
                 loadingPosition="end"
                 onClick={loadSitePreview}
+                disabled={!isValidUrl(url)}
               >
                 Load site preview
               </LoadingButton>

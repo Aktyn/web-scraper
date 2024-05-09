@@ -4,7 +4,7 @@ import { fn } from '@storybook/test'
 import { ConfirmableButton } from './ConfirmableButton'
 
 const meta = {
-  title: 'Common/ConfirmableButton',
+  title: 'Common/Button/ConfirmableButton',
   component: ConfirmableButton,
   parameters: { layout: 'centered' },
   args: { children: 'Foo', variant: 'outlined', endIcon: <ThumbUpRounded />, onConfirm: fn() },

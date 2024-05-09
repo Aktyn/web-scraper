@@ -24,7 +24,7 @@ type StringFormProperties<FormSchema extends object> = {
   [key in FieldPath<FormSchema>]: PathValue<FormSchema, key> extends string | null ? key : never
 }[FieldPath<FormSchema>]
 
-interface FormJsonInputProps<
+export interface FormJsonInputProps<
   FormSchema extends object,
   StringPropertyName extends StringFormProperties<FormSchema>,
 > {
@@ -88,7 +88,7 @@ export const FormJsonInput = <
           <>
             <NestedDrawer
               title={
-                <Stack direction="row" alignItems="center" gap={2}>
+                <Stack direction="row" alignItems="center" gap="1rem">
                   <Box>{label}</Box>
                   <Button
                     variant="outlined"
@@ -131,8 +131,14 @@ export const FormJsonInput = <
                 />
               </Stack>
             </NestedDrawer>
-            <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={1}>
-              <Stack direction="row" alignItems="center" justifyContent="flex-start" spacing={1}>
+            <Stack
+              direction="row"
+              alignItems="center"
+              justifyContent="space-between"
+              gap="0.5rem"
+              overflow="hidden"
+            >
+              <Stack direction="row" alignItems="center" justifyContent="flex-start" gap="0.5rem">
                 <DataObjectRounded />
                 <JsonValue disablePreview>{field.value}</JsonValue>
               </Stack>

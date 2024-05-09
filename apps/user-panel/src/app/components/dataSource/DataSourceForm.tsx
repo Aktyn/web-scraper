@@ -105,10 +105,11 @@ export const DataSourceForm = ({ dataSource, onSuccess }: DataSourceFormProps) =
       flexGrow={1}
       rowGap="1rem"
       minWidth="24rem"
+      maxWidth="32rem"
       overflow="hidden"
     >
-      <Stack rowGap="1rem" p="1rem" overflow="auto">
-        <FormInput name="name" form={form} label="Name" required />
+      <Stack rowGap="1rem" p="1rem" overflow="auto" display="inline-flex" mx="auto">
+        <FormInput name="name" form={form} label="Data source name" required />
         <FormProvider {...form}>
           <ColumnsDefinitionsForm />
         </FormProvider>
@@ -179,7 +180,7 @@ const ColumnsDefinitionsForm = () => {
               form={form}
               label="Name"
               required
-              sx={{ minWidth: '12rem' }}
+              sx={{ minWidth: '12rem', flexGrow: 1 }}
             />
             <FormInput
               name={`columns.${index}.type`}
@@ -195,7 +196,7 @@ const ColumnsDefinitionsForm = () => {
                   </InputAdornment>
                 ),
               }}
-              sx={{ flexGrow: 1 }}
+              sx={{ minWidth: '8rem' }}
             >
               {Object.values(DataSourceColumnType).map((columnType) => (
                 <MenuItem key={columnType} value={columnType}>
