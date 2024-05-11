@@ -18,11 +18,12 @@ export interface CustomDrawerRef {
 
 interface CustomDrawerProps extends Omit<DrawerProps, 'open' | 'onClose' | 'title'> {
   title?: ReactNode
+  defaultOpen?: boolean
 }
 
 export const CustomDrawer = forwardRef<CustomDrawerRef, PropsWithChildren<CustomDrawerProps>>(
-  ({ children, title, ...drawerProps }, ref) => {
-    const [open, setOpen] = useState(false)
+  ({ children, title, defaultOpen = false, ...drawerProps }, ref) => {
+    const [open, setOpen] = useState(defaultOpen)
     const deferredOpen = useDeferredValue(open)
 
     const handleClose = useCallback(() => setOpen(false), [])

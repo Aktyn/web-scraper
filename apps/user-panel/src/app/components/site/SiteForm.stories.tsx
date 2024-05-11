@@ -1,18 +1,16 @@
-import { Drawer } from '@mui/material'
 import type { Meta, StoryObj } from '@storybook/react'
 import { fn } from '@storybook/test'
 import { SiteForm } from './SiteForm'
+import { CustomDrawer } from '../common/CustomDrawer'
 
 const meta = {
   title: 'Site/SiteForm',
   component: SiteForm,
   decorators: [
     (Story) => (
-      <Drawer anchor="right" open>
-        {/* TODO */}
-        {/* <CustomDrawer ref={siteDrawerRef} title={siteToEdit ? 'Update site' : 'Add site'}> */}
+      <CustomDrawer title="Site form" defaultOpen>
         <Story />
-      </Drawer>
+      </CustomDrawer>
     ),
   ],
   parameters: { layout: 'fullscreen' },
