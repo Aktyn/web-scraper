@@ -209,7 +209,8 @@ export const SiteInstructionsForm = ({ site, onSuccess }: SiteInstructionsFormPr
                 key={instructions?.id || 'instructions'}
                 sx={{
                   flexGrow: 1,
-                  overflow: 'hidden',
+                  overflowY: 'hidden',
+                  overflowX: 'auto',
                   display: 'grid',
                   gridTemplateColumns: 'auto 1px auto',
                   gridTemplateRows: '100%',

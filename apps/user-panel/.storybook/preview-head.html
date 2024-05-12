@@ -1,5 +1,73 @@
 <script>
   const noop = () => { }
+  const noopSuccess = () => Promise.resolve({ errorCode: 0 })
+
+  const actions = [
+    {
+      id: 1,
+      name: 'Foo',
+      siteInstructionsId: 1,
+      url: '{{URL.ORIGIN}}',
+      actionSteps: [
+        {
+          id: 1,
+          type: 'saveToDataSource',
+          data: {
+            dataSourceQuery: 'DataSource.Example.Title',
+            saveDataType: 'elementContent',
+            saveToDataSourceValue: 'body > div:nth-child(1) > h1',
+          },
+          orderIndex: 1,
+          actionId: 1,
+        }
+      ]
+    }
+  ]
+
+  const procedures = [
+    {
+      id: 1,
+      name: 'Get title from example site',
+      type: 'dataRetrieval',
+      startUrl: `{{URL.ORIGIN}}`,
+      waitFor: 'body > div:nth-child(1) > h1',
+      siteInstructionsId: 1,
+      flowStepId: 1,
+      flow: {
+        id: 1,
+        actionName: 'action.Foo',
+        globalReturnValues: [],
+        onSuccess: {
+          id: 2,
+          actionName: 'global.finishProcedure',
+          globalReturnValues: [],
+          onSuccess: null,
+          onFailure: null
+        },
+        onFailure: {
+          id: 3,
+          actionName: 'global.finishProcedureWithError',
+          globalReturnValues: [],
+          onSuccess: null,
+          onFailure: null
+        },
+      }
+    }
+  ]
+
+  const siteTags = [
+    {
+      id: 1,
+      name: 'Foo',
+      description: null,
+    },
+    {
+      id: 2,
+      name: 'Bar',
+      description: 'Tag description',
+    },
+  ]
+
   window.electronAPI = {
     getDataSourceItems: () => Promise.resolve({
       data: [
@@ -44,13 +112,7 @@
           createdAt: new Date(1715164444961),
           url: 'http://example.com',
           language: 'en',
-          tags: [
-            {
-              id: 1,
-              name: 'Foo',
-              description: null,
-            },
-          ],
+          tags: [siteTags[0]],
         },
         {
           id: 2,
@@ -64,18 +126,7 @@
           createdAt: new Date(1715164444961),
           url: 'http://example3.com',
           language: 'pl',
-          tags: [
-            {
-              id: 1,
-              name: 'Foo',
-              description: null,
-            },
-            {
-              id: 2,
-              name: 'Bar',
-              description: 'Tag description',
-            },
-          ],
+          tags: siteTags.slice(0, 2),
         },
         {
           id: 4,
@@ -85,6 +136,16 @@
           tags: [],
         },
       ]
+    }),
+    getSiteInstructions: () => Promise.resolve({
+      id: 1,
+      createdAt: new Date(1715164444961),
+      siteId: 1,
+      actions: actions,
+      procedures: procedures,
+    }),
+    getSiteTags: () => Promise.resolve({
+      data: siteTags
     }),
 
     changeWindowState: noop,
@@ -100,7 +161,6 @@
     clearDataSourceItems: noop,
     exportDataSourceItems: noop,
     importDataSourceItems: noop,
-    getSiteTags: noop,
     createSiteTag: noop,
     updateSiteTag: noop,
     deleteSiteTag: noop,
@@ -108,9 +168,8 @@
     getSite: noop,
     createSite: noop,
     updateSite: noop,
-    deleteSite: noop,
+    deleteSite: noopSuccess,
     getSitePreview: noop,
-    getSiteInstructions: noop,
     setSiteInstructions: noop,
     getProceduresGroupedBySite: noop,
     getRoutines: noop,
