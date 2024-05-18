@@ -19,9 +19,9 @@
           },
           orderIndex: 1,
           actionId: 1,
-        }
-      ]
-    }
+        },
+      ],
+    },
   ]
 
   const procedures = [
@@ -42,17 +42,17 @@
           actionName: 'global.finishProcedure',
           globalReturnValues: [],
           onSuccess: null,
-          onFailure: null
+          onFailure: null,
         },
         onFailure: {
           id: 3,
           actionName: 'global.finishProcedureWithError',
           globalReturnValues: [],
           onSuccess: null,
-          onFailure: null
+          onFailure: null,
         },
-      }
-    }
+      },
+    },
   ]
 
   const siteTags = [
@@ -68,122 +68,207 @@
     },
   ]
 
-  window.electronAPI = {
-    getDataSourceItems: () => Promise.resolve({
-      data: [
-        {
-          id: 1,
-          data: [
-            { columnName: 'Integer column', value: 1337 },
-            { columnName: 'Real column', value: 13.37 },
-            { columnName: 'Text column', value: 'Foo' },
-          ],
-        },
-        {
-          id: 2,
-          data: [
-            { columnName: 'Integer column', value: null },
-            { columnName: 'Real column', value: 13.37 },
-            { columnName: 'Text column', value: 'Foo' },
-          ],
-        },
-        {
-          id: 3,
-          data: [
-            { columnName: 'Integer column', value: 1337 },
-            { columnName: 'Real column', value: 13.37 },
-            { columnName: 'Text column', value: null },
-          ],
-        },
-        {
-          id: 4,
-          data: [
-            { columnName: 'Integer column', value: 1337 },
-            { columnName: 'Real column', value: null },
-            { columnName: 'Text column', value: 'Foo' },
-          ],
-        },
-      ]
-    }),
-    getSites: () => Promise.resolve({
-      data: [
-        {
-          id: 1,
-          createdAt: new Date(1715164444961),
-          url: 'http://example.com',
-          language: 'en',
-          tags: [siteTags[0]],
-        },
-        {
-          id: 2,
-          createdAt: new Date(1715164444961),
-          url: 'http://example2.com',
-          language: null,
-          tags: [],
-        },
-        {
-          id: 3,
-          createdAt: new Date(1715164444961),
-          url: 'http://example3.com',
-          language: 'pl',
-          tags: siteTags.slice(0, 2),
-        },
-        {
-          id: 4,
-          createdAt: new Date(1715164444961),
-          url: 'http://example4.com',
-          language: 'en',
-          tags: [],
-        },
-      ]
-    }),
-    getSiteInstructions: () => Promise.resolve({
+  const sites = [
+    {
       id: 1,
       createdAt: new Date(1715164444961),
-      siteId: 1,
-      actions: actions,
-      procedures: procedures,
-    }),
-    getSiteTags: () => Promise.resolve({
-      data: siteTags
+      url: 'http://example.com',
+      language: 'en',
+      tags: [siteTags[0]],
+    },
+    {
+      id: 2,
+      createdAt: new Date(1715164444961),
+      url: 'http://example2.com',
+      language: null,
+      tags: [],
+    },
+    {
+      id: 3,
+      createdAt: new Date(1715164444961),
+      url: 'http://example3.com',
+      language: 'pl',
+      tags: siteTags.slice(0, 2),
+    },
+    {
+      id: 4,
+      createdAt: new Date(1715164444961),
+      url: 'http://example4.com',
+      language: 'en',
+      tags: [],
+    },
+  ]
+
+  const dataSources = [
+    {
+      name: 'Example',
+      columns: [
+        { name: 'Title', type: 'TEXT' },
+        { name: 'Description', type: 'TEXT' },
+        { name: 'Price', type: 'REAL' },
+        { name: 'Quantity', type: 'INTEGER' },
+      ],
+    },
+  ]
+
+  const routines = [
+    {
+      id: 1,
+      name: 'Routine 1',
+      description: 'Example routine',
+      stopOnError: true,
+      procedures: [procedures[0]],
+      executionPlan: {
+        type: 'standalone',
+        repeat: 4,
+      },
+      //TODO: more mock routines with different executions
+      // executionPlan:
+      //   | {
+      //       type: RoutineExecutionType.MATCH_SEQUENTIALLY
+      //       dataSourceName: string
+      //       filters: DataSourceFilter[]
+      //       maximumIterations?: number
+      //     }
+      //   | {
+      //       type: RoutineExecutionType.SPECIFIC_IDS | RoutineExecutionType.EXCEPT_SPECIFIC_IDS
+      //       dataSourceName: string
+      //       ids: DataSourceItem['id'][]
+      //     }
+      //   | {
+      //       type: RoutineExecutionType.STANDALONE
+      //       /** @default 1 */
+      //       repeat?: number
+      //     }
+    },
+  ]
+
+  const siteProcedures = [
+    {
+      site: sites[0],
+      procedures: [procedures[0]],
+    },
+  ]
+
+  const routineExecutionHistory = [
+    {
+      id: 1,
+      createdAt: new Date(1715164444961),
+      routineName: 'Routine 1',
+      routineId: 1,
+      iterationIndex: 0,
+      results: {
+        routine: routines[0],
+        source: {
+          dataSource: dataSources[0], item: {
+            id: 1,
+            data: [{ columnName: 'Title', value: 'example title' }]
+          }
+        },
+        proceduresExecutionResults: [] //TODO: mock procedures execution results
+      }
+    }
+  ]
+
+  window.electronAPI = {
+    getDataSourceItems: () =>
+      Promise.resolve({
+        data: [
+          {
+            id: 1,
+            data: [
+              { columnName: 'Integer column', value: 1337 },
+              { columnName: 'Real column', value: 13.37 },
+              { columnName: 'Text column', value: 'Foo' },
+            ],
+          },
+          {
+            id: 2,
+            data: [
+              { columnName: 'Integer column', value: null },
+              { columnName: 'Real column', value: 13.37 },
+              { columnName: 'Text column', value: 'Foo' },
+            ],
+          },
+          {
+            id: 3,
+            data: [
+              { columnName: 'Integer column', value: 1337 },
+              { columnName: 'Real column', value: 13.37 },
+              { columnName: 'Text column', value: null },
+            ],
+          },
+          {
+            id: 4,
+            data: [
+              { columnName: 'Integer column', value: 1337 },
+              { columnName: 'Real column', value: null },
+              { columnName: 'Text column', value: 'Foo' },
+            ],
+          },
+        ],
+      }),
+    getSites: () =>
+      Promise.resolve({
+        data: sites,
+      }),
+    getSiteInstructions: () =>
+      Promise.resolve({
+        id: 1,
+        createdAt: new Date(1715164444961),
+        siteId: 1,
+        actions: actions,
+        procedures: procedures,
+      }),
+    getSiteTags: () =>
+      Promise.resolve({
+        data: siteTags,
+      }),
+    getDataSources: () => Promise.resolve(dataSources),
+    getRoutines: () =>
+      Promise.resolve(
+        routines.map((routine) => ({
+          id: routine.id,
+          name: routine.name,
+        })),
+      ),
+    getRoutine: () => Promise.resolve(routines[0]),
+    getProceduresGroupedBySite: () => Promise.resolve(siteProcedures),
+    getRoutineExecutionHistory: () => Promise.resolve({
+      data: routineExecutionHistory
     }),
 
-    changeWindowState: noop,
+    changeWindowState: noopSuccess,
     getUserSettings: noop,
-    setUserSetting: noop,
-    getDataSources: noop,
+    setUserSetting: noopSuccess,
     createDataSource: noop,
     updateDataSource: noop,
-    deleteDataSource: noop,
-    createDataSourceItem: noop,
+    deleteDataSource: noopSuccess,
+    createDataSourceItem: noopSuccess,
     updateDataSourceItem: noop,
-    deleteDataSourceItem: noop,
-    clearDataSourceItems: noop,
+    deleteDataSourceItem: noopSuccess,
+    clearDataSourceItems: noopSuccess,
     exportDataSourceItems: noop,
     importDataSourceItems: noop,
     createSiteTag: noop,
     updateSiteTag: noop,
-    deleteSiteTag: noop,
+    deleteSiteTag: noopSuccess,
     deleteLooseSiteTags: noop,
     getSite: noop,
     createSite: noop,
     updateSite: noop,
     deleteSite: noopSuccess,
     getSitePreview: noop,
-    setSiteInstructions: noop,
-    getProceduresGroupedBySite: noop,
-    getRoutines: noop,
-    getRoutine: noop,
+    setSiteInstructions: noopSuccess,
     createRoutine: noop,
     updateRoutine: noop,
-    deleteRoutine: noop,
+    deleteRoutine: noopSuccess,
     executeRoutine: noop,
-    getRoutineExecutionHistory: noop,
     getSiteInstructionsTestingSessions: noop,
     startSiteInstructionsTestingSession: noop,
-    endSiteInstructionsTestingSession: noop,
+    endSiteInstructionsTestingSession: noopSuccess,
     pickElement: noop,
-    cancelPickingElement: noop,
+    cancelPickingElement: noopSuccess,
     testActionStep: noop,
     testAction: noop,
     testFlow: noop,

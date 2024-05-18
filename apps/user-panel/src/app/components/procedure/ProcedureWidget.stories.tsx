@@ -1,6 +1,9 @@
+import { useEffect } from 'react'
 import type { Meta, StoryObj } from '@storybook/react'
-import { type Procedure, ProcedureType } from '@web-scraper/common'
+import { ProcedureType, type Procedure } from '@web-scraper/common'
 import { ProcedureWidget as ProcedureWidgetComponent } from './ProcedureWidget'
+import { DataSourcesContext } from '../../context/dataSourcesContext'
+import { useDataSourcesLoader } from '../../hooks/useDataSourcesLoader'
 
 const mockProcedure = {
   id: 1,
@@ -33,6 +36,21 @@ const mockProcedure = {
 const meta = {
   title: 'Procedure/ProcedureWidget',
   component: ProcedureWidgetComponent,
+  decorators: [
+    (Story) => {
+      const { loadDataSources, dataSources, loadingDataSources } = useDataSourcesLoader()
+
+      useEffect(() => {
+        void loadDataSources()
+      }, [loadDataSources])
+
+      return (
+        <DataSourcesContext.Provider value={dataSources ?? []}>
+          {!loadingDataSources && <Story />}
+        </DataSourcesContext.Provider>
+      )
+    },
+  ],
   parameters: { layout: 'centered' },
   args: {
     procedure: mockProcedure,
