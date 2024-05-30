@@ -165,7 +165,26 @@
             data: [{ columnName: 'Title', value: 'example title' }]
           }
         },
-        proceduresExecutionResults: [] //TODO: mock procedures execution results
+        proceduresExecutionResults: [
+          {
+            procedure: procedures[0],
+            flowExecutionResult: {
+              flow: procedures[0].flow,
+              flowStepsResults: [{
+                flowStep: procedures[0].flow, //omit onSuccess and onFailure
+                actionResult: {
+                  action: actions[0],
+                  actionStepsResults: [{
+                    step: actions[0].actionSteps[0],
+                    result: { errorType: 'error.common.noError' }
+                  }]
+                },
+                returnedValues: [], //(string | { error: string })[]
+                succeeded: true
+              }]
+            }
+          }
+        ]
       }
     }
   ]
@@ -177,35 +196,39 @@
           {
             id: 1,
             data: [
-              { columnName: 'Integer column', value: 1337 },
-              { columnName: 'Real column', value: 13.37 },
-              { columnName: 'Text column', value: 'Foo' },
+              { columnName: 'Title', value: 'example title' },
+              { columnName: 'Description', value: 'example description' },
+              { columnName: 'Price', value: 123.45 },
+              { columnName: 'Quantity', value: 678 },
             ],
           },
           {
             id: 2,
             data: [
-              { columnName: 'Integer column', value: null },
-              { columnName: 'Real column', value: 13.37 },
-              { columnName: 'Text column', value: 'Foo' },
+              { columnName: 'Title', value: 'example title 2' },
+              { columnName: 'Description', value: 'example description 2' },
+              { columnName: 'Price', value: 543.21 },
+              { columnName: 'Quantity', value: 876 },
             ],
           },
           {
             id: 3,
             data: [
-              { columnName: 'Integer column', value: 1337 },
-              { columnName: 'Real column', value: 13.37 },
-              { columnName: 'Text column', value: null },
+              { columnName: 'Title', value: 'example title 3' },
+              { columnName: 'Description', value: 'example description 3' },
+              { columnName: 'Price', value: 321.54 },
+              { columnName: 'Quantity', value: 765 },
             ],
           },
           {
             id: 4,
             data: [
-              { columnName: 'Integer column', value: 1337 },
-              { columnName: 'Real column', value: null },
-              { columnName: 'Text column', value: 'Foo' },
+              { columnName: 'Title', value: 'example title 4' },
+              { columnName: 'Description', value: 'example description 4' },
+              { columnName: 'Price', value: 654.12 },
+              { columnName: 'Quantity', value: 654 },
             ],
-          },
+          }
         ],
       }),
     getSites: () =>

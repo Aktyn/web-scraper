@@ -8,7 +8,7 @@ import {
 import { Popover, type PopoverProps } from '@mui/material'
 
 export interface CustomPopoverRef {
-  open: (anchorElement: HTMLButtonElement) => void
+  open: (anchorElement: HTMLElement) => void
   close: () => void
 }
 
@@ -18,7 +18,7 @@ type CustomPopoverProps = Omit<PopoverProps, 'open' | 'anchorEl' | 'onClose'> & 
 
 export const CustomPopover = forwardRef<CustomPopoverRef, PropsWithChildren<CustomPopoverProps>>(
   ({ children, onClose, ...popoverProps }, ref) => {
-    const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null)
+    const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null)
 
     useImperativeHandle(
       ref,

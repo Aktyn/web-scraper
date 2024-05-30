@@ -70,9 +70,9 @@ export const ExecutionPlanText = ({ executionPlan }: ExecutionPlanTextProps) => 
       return (
         <>
           Executes for each row in <Strong>DataSource.{executionPlan.dataSourceName}</Strong>{' '}
-          {executionPlan.filters.length > 0 && <>matching the condition: </>}
           {executionPlan.filters.length > 0 && (
             <>
+              matching the condition:{' '}
               <JoinedArrayItems
                 array={executionPlan.filters.map((filter, index) => (
                   <Fragment key={index}>
