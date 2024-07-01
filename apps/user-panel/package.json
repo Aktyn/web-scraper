@@ -24,7 +24,7 @@
     "@hookform/resolvers": "^3.3.4",
     "@mui/icons-material": "^5.15.16",
     "@mui/lab": "5.0.0-alpha.170",
-    "@mui/material": "^5.15.16",
+    "@mui/material": "^5.15.21",
     "@testing-library/react": "^15.0.6",
     "@types/node": "^20.12.8",
     "@types/react": "^18.3.1",
