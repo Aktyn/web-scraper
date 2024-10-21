@@ -12,8 +12,8 @@
 			"path": "./apps/desktop-app"
 		},
 		{
-			"name": "User panel",
-			"path": "./apps/user-panel"
+			"name": "UI",
+			"path": "./apps/ui"
 		},
 	],
 	"settings": {
