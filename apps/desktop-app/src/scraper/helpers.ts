@@ -58,9 +58,9 @@ export const pageEvaluators = {
         if (element.id) {
           selector += `#${element.id}`
         } else {
-          const siblings = element.parentNode?.children ?? []
+          const siblings = element.parentNode?.children ?? ([] as Element[])
           let siblingIndex = 1
-          for (const sibling of siblings) {
+          for (const sibling of htmlCollectionToIterable(siblings)) {
             if (sibling === element) {
               break
             }
@@ -146,4 +146,11 @@ export const pageEvaluators = {
       }
     }
   },
+}
+
+function htmlCollectionToIterable(htmlCollection: HTMLCollection | Element[]) {
+  if (Array.isArray(htmlCollection)) {
+    return htmlCollection
+  }
+  return Array.from(htmlCollection)
 }

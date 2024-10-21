@@ -57,7 +57,7 @@ function createWindow() {
   mainWindow
     .loadURL(
       !app.isPackaged
-        ? 'http://localhost:3000'
+        ? 'http://localhost:5173'
         : url.pathToFileURL(path.join(__dirname, '../user-panel-build/index.html')).href,
     )
     .catch(console.error)
