@@ -24,6 +24,11 @@
 			"web-scraper"
 		],
 		"jest.monitorLongRun": 30000,
-		"jest.runMode": "watch"
+		"jest.runMode": "watch",
+		"cSpell.words": [
+			"Aktyn",
+			"Krajewski",
+			"Radosław"
+		]
 	}
 }
