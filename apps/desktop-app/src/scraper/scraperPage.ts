@@ -81,16 +81,13 @@ export class ScraperPage implements Pick<Page, 'on' | 'off'> {
     this.page.setDefaultNavigationTimeout(30_000)
 
     try {
-      //@ts-expect-error types overlapping from different versions
       this.ghostCursor = createCursor(this.page)
       this.ghostCursor.toggleRandomMove(true)
 
-      //@ts-expect-error types overlapping from different versions
       const randomStartingPoint = await getRandomPagePoint(this.page)
       await this.ghostCursor.moveTo(randomStartingPoint)
 
       if (!app.isPackaged) {
-        //@ts-expect-error types overlapping from different versions
         await installMouseHelper(this.page)
       }
     } catch (error) {
@@ -135,7 +132,6 @@ export class ScraperPage implements Pick<Page, 'on' | 'off'> {
   }
 
   public ghostClick(target: ElementHandle<Element>) {
-    //@ts-expect-error types overlapping from different versions
     return this.ghostCursor?.click(target, {
       hesitate: Math.round(500 + Math.random() * 500),
       waitForClick: Math.round(500 + Math.random() * 500),
