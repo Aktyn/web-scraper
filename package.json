@@ -12,18 +12,6 @@
   },
   "homepage": "https://github.com/Aktyn/web-scrapers#readme",
   "workspaces": {
-    "nohoist": [
-      "**/@prisma",
-      "**/@prisma/**",
-      "**/@prisma/client",
-      "@prisma/client",
-      "dotenv",
-      "**/dotenv",
-      "**/dotenv/**",
-      "dotenv-expand",
-      "**/dotenv-expand",
-      "**/dotenv-expand/**"
-    ],
     "packages": [
       "packages/*",
       "apps/*"

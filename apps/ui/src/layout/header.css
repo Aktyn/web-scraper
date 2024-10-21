@@ -1,0 +1,10 @@
+.header {
+  @apply flex flex-row flex-nowrap justify-between p-3 dark:bg-black/30 bg-black/10 border-b dark:border-border/40;
+
+  -webkit-app-region: drag;
+  user-select: none;
+}
+
+.header button {
+  -webkit-app-region: no-drag;
+}
