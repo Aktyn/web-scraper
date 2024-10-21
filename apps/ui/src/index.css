@@ -9,13 +9,6 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-body {
-  margin: 0;
-  display: flex;
-  place-items: center;
-  background-color: transparent;
-}
-
 @layer base {
   :root {
     --background: 209 98.35% 98.4%;
@@ -67,6 +60,15 @@ body {
     @apply border-border outline-none;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply text-foreground;
+  }
+  #root {
+    @apply bg-background rounded-2xl border overflow-hidden w-screen h-screen;
+  }
+  .maximized #root {
+    @apply rounded-none border-none;
+  }
+  :not(.maximized) > body > div[role='dialog'] {
+    @apply rounded-2xl;
   }
 }

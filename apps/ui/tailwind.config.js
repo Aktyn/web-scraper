@@ -5,9 +5,14 @@ export default {
   theme: {
     extend: {
       borderRadius: {
+        '4xl': 'calc(var(--radius) * 4)',
+        '3xl': 'calc(var(--radius) * 3)',
+        '2xl': 'calc(var(--radius) * 2)',
+        xl: 'calc(var(--radius) * 1.5)',
         lg: 'var(--radius)',
-        md: 'calc(var(--radius) - 2px)',
-        sm: 'calc(var(--radius) - 4px)',
+        md: 'calc(var(--radius) * 0.75)',
+        sm: 'calc(var(--radius) * 0.5)',
+        xs: 'calc(var(--radius) * 0.25)',
       },
       colors: {
         background: 'hsl(var(--background))',

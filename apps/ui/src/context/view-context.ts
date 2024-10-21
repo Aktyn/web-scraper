@@ -1,19 +1,13 @@
-import { createContext } from 'react'
-
-// export enum ViewTransitionState {
-//   IDLE = 'idle',
-//   ENTERING = 'entering',
-//   LEAVING = 'leaving',
-// }
-
-// export type ViewName = keyof typeof Navigation
+import { createContext, useContext } from 'react'
+import { noop } from '~/lib/utils'
+import { View } from '~/navigation'
 
 export const ViewContext = createContext({
-  // viewName: 'DASHBOARD' as ViewName,
-  // previousViewName: null as ViewName | null,
-  // nextViewName: null as ViewName | null,
-  // viewTransitionState: ViewTransitionState.IDLE,
-  // requestViewChange: noop as (viewName: ViewName) => void,
-  // viewSettings: undefined as ViewSettingsSchema | undefined,
+  view: View.DASHBOARD,
+  setView: noop as (view: View) => void,
   maximized: false,
 })
+
+export function useView() {
+  return useContext(ViewContext)
+}

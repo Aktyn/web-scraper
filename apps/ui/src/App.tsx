@@ -7,6 +7,8 @@ import { Layout } from './layout/layout'
 import { ApiModule } from './modules/api-module'
 import { Toaster } from './components/ui/sonner'
 import { toast } from 'sonner'
+import { useState } from 'react'
+import { View } from './navigation'
 
 export function App() {
   return (
@@ -18,6 +20,7 @@ export function App() {
 
 function ViewBase() {
   const [maximized, setMaximized] = usePersistentState('window-maximized', 'false', sessionStorage)
+  const [view, setView] = useState(View.DASHBOARD)
 
   ApiModule.useEvent(ElectronToRendererMessage.windowStateChanged, (_, stateChange) => {
     if (stateChange === WindowStateChange.MAXIMIZE) {
@@ -32,12 +35,8 @@ function ViewBase() {
     <GlobalProviders>
       <ViewContext.Provider
         value={{
-          // viewName,
-          // previousViewName,
-          // nextViewName,
-          // viewTransitionState,
-          // requestViewChange: handleViewChange,
-          // viewSettings: currentView.viewSettings,
+          view,
+          setView,
           maximized: maximized === 'true',
         }}
       >
