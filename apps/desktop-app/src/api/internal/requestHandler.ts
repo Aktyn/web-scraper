@@ -1,5 +1,5 @@
 import { RendererToElectronMessage, WindowStateChange } from '@web-scraper/common'
-// eslint-disable-next-line import/no-extraneous-dependencies
+
 import { ipcMain } from 'electron'
 
 import { ExtendedBrowserWindow } from '../../extendedBrowserWindow'

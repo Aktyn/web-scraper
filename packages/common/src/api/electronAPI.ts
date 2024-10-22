@@ -108,7 +108,7 @@ export enum RendererToElectronMessage {
   returnDataSourceItemIdForActionStep = 'returnDataSourceItemIdForActionStep',
 }
 
-// eslint-disable-next-line @typescript-eslint/ban-types
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 type Event<Params extends object = {}> = {
   preventDefault: () => void
   readonly defaultPrevented: boolean
@@ -117,7 +117,7 @@ type Event<Params extends object = {}> = {
 export interface IpcRendererEventPolyfill extends Event {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ports: any[]
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
   sender: NodeJS.EventEmitter
 }
 

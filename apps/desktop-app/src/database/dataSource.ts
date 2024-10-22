@@ -126,7 +126,7 @@ export function getAllDataSourceItems(dataSourceName: string) {
 function validateDataSourceStructureUpsertSchema(data: UpsertDataSourceStructureSchema) {
   try {
     upsertDataSourceStructureSchema.validateSync(data)
-  } catch (error) {
+  } catch {
     throw ErrorCode.INCORRECT_DATA
   }
 }
@@ -177,7 +177,7 @@ export async function updateDataSource(
 function validateDataSourceItemUpsertSchema(data: UpsertDataSourceItemSchema) {
   try {
     upsertDataSourceItemSchema.validateSync(data)
-  } catch (error) {
+  } catch {
     throw ErrorCode.INCORRECT_DATA
   }
 }

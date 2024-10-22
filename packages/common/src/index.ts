@@ -1,7 +1,7 @@
 export * from './logger'
 export * from './error'
 export * from './api'
-export * from './types'
+export type * from './types'
 export * from './parsers'
 export * from './common'
 export * from './cache'

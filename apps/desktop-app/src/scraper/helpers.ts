@@ -6,7 +6,7 @@ import {
   type DataSourceValueQuery,
   type ValueQuery,
 } from '@web-scraper/common'
-// eslint-disable-next-line import/no-extraneous-dependencies
+
 import { Notification } from 'electron'
 
 import { ExtendedBrowserWindow } from '../extendedBrowserWindow'

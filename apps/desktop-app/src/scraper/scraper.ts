@@ -148,7 +148,9 @@ export class Scraper<ModeType extends ScraperMode> {
   async destroy(destroyBrowser = true) {
     this.destroyed = true
     Scraper.instancesStore[this.mode].delete(this.id)
-    this.mainPage && (await safePromise(this.mainPage.destroy()))
+    if (this.mainPage) {
+      await safePromise(this.mainPage.destroy())
+    }
     this.mainPage = null
     if (destroyBrowser) {
       await safePromise(this.browser.destroy())
@@ -777,7 +779,7 @@ export class Scraper<ModeType extends ScraperMode> {
       } else {
         return await this.mainPage!.waitForSelector(elements, { timeout, visible: true })
       }
-    } catch (error) {
+    } catch {
       return null
     }
   }

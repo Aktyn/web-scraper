@@ -59,7 +59,7 @@ export const ValueQueryInput = ({ fieldName }: ValueQueryInputProps) => {
 
         const [dataSourceName, dataSourceColumn] =
           queryType === ValueQueryType.DATA_SOURCE
-            ? field.value?.split('.').slice(1) ?? ['', '']
+            ? (field.value?.split('.').slice(1) ?? ['', ''])
             : ['', '']
 
         const handleTypeChange = (queryType: ValueQueryType) => {

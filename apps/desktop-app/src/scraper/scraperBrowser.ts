@@ -56,13 +56,13 @@ export default class ScraperBrowser {
 
     const headless = options.headless ?? false
 
-    this.viewport = headless ? options.defaultViewport ?? ScraperBrowser.defaultViewport : null
+    this.viewport = headless ? (options.defaultViewport ?? ScraperBrowser.defaultViewport) : null
 
     puppeteer
       .launch({
         // executablePath: executablePath('chrome'), //TODO: test executablePath('chrome') on system without chrome
         channel: 'chrome',
-        product: 'chrome',
+        browser: 'chrome',
         //TODO: allow different arguments
         args: [
           // ...(process.env.TOR_PROXY_SERVER
@@ -83,7 +83,6 @@ export default class ScraperBrowser {
         devtools: !app.isPackaged,
         defaultViewport: this.viewport,
         handleSIGINT: true,
-        ignoreHTTPSErrors: true,
         timeout: 30_000,
         userDataDir:
           !app.isPackaged && !process.env.JEST_WORKER_ID

@@ -29,7 +29,7 @@ export function getSiteTags(request: PaginatedRequest<SiteTag, 'id'>) {
 function validateUpsertSchema(data: UpsertSiteTagSchema) {
   try {
     upsertSiteTagSchema.validateSync(data)
-  } catch (error) {
+  } catch {
     throw ErrorCode.INCORRECT_DATA
   }
 }

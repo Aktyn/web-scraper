@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import type { ElectronApi } from '@web-scraper/common'
-// eslint-disable-next-line import/no-extraneous-dependencies
+
 import { contextBridge, ipcRenderer, type IpcRendererEvent } from 'electron'
 
 const electronToRendererMessageNames = [

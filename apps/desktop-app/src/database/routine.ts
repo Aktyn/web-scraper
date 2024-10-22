@@ -61,7 +61,7 @@ export async function getRoutine(routineId: number) {
 function validateUpsertSchema(data: UpsertRoutineSchema) {
   try {
     upsertRoutineSchema.validateSync(data)
-  } catch (error) {
+  } catch {
     throw ErrorCode.INCORRECT_DATA
   }
 }

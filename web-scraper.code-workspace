@@ -29,8 +29,10 @@
 			"Aktyn",
 			"Krajewski",
 			"Radosław",
+			"sonner",
 			"tseslint"
 		],
-		"liveServer.settings.multiRootWorkspaceName": "web-scraper"
+		"liveServer.settings.multiRootWorkspaceName": "web-scraper",
+		"eslint.useFlatConfig": true
 	}
 }

@@ -4,7 +4,7 @@ import {
   type IpcRendererEventPolyfill,
   type ElectronApi,
 } from '@web-scraper/common'
-// eslint-disable-next-line import/no-extraneous-dependencies
+
 import { BrowserWindow } from 'electron'
 
 /* istanbul ignore next */

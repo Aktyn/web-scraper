@@ -81,7 +81,7 @@ export async function getProcedureFlow(flowStep: DatabaseFlowStep): Promise<Data
 function validateUpsertSchema(data: UpsertSiteInstructionsSchema) {
   try {
     upsertSiteInstructionsSchema.validateSync(data)
-  } catch (error) {
+  } catch {
     throw ErrorCode.INCORRECT_DATA
   }
 }

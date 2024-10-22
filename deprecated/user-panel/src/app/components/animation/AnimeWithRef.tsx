@@ -15,7 +15,7 @@ export const AnimeWithRef = memo(({ children: child, targets, ...animeProps }: A
     }
 
     const animeTargets =
-      typeof targets === 'function' ? targets(targetRef.current) : targets ?? targetRef.current
+      typeof targets === 'function' ? targets(targetRef.current) : (targets ?? targetRef.current)
 
     if (!animeTargets) {
       return

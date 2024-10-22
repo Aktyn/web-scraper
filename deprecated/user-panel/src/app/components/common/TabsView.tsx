@@ -181,7 +181,7 @@ export const TabsView = genericMemo(
         [handleTabChange],
       )
 
-      const activeTab = tabs.some((t) => t.value === tab) ? tab : tabs.at(0)?.value ?? null
+      const activeTab = tabs.some((t) => t.value === tab) ? tab : (tabs.at(0)?.value ?? null)
 
       return (
         <Stack

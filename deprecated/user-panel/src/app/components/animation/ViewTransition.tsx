@@ -60,7 +60,8 @@ export const ViewTransition = memo(
             return
           }
 
-          const animeTargets = typeof targets === 'function' ? targets(current) : targets ?? current
+          const animeTargets =
+            typeof targets === 'function' ? targets(current) : (targets ?? current)
 
           if (!animeTargets) {
             return

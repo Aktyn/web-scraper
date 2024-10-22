@@ -2,7 +2,7 @@ import fs from 'fs'
 import path from 'path'
 
 import { type ApiError, ErrorCode } from '@web-scraper/common'
-// eslint-disable-next-line import/no-extraneous-dependencies
+
 import { dialog, type OpenDialogOptions, type SaveDialogOptions } from 'electron'
 
 import { successResponse } from '../api/internal/helpers'

@@ -24,7 +24,9 @@ export const ExecutionPlanRowsPreview = ({ executionPlan }: ExecutionPlanRowsPre
       return window.electronAPI.getDataSourceItems(
         {
           ...request,
-          filters: disableFilters ? undefined : getRequestFilters(executionPlan) ?? request.filters,
+          filters: disableFilters
+            ? undefined
+            : (getRequestFilters(executionPlan) ?? request.filters),
         },
         executionPlan.dataSourceName,
       )

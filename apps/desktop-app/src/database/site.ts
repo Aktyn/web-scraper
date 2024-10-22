@@ -75,7 +75,7 @@ export async function getSiteByInstructionsId(siteInstructionsId: SiteInstructio
 function validateUpsertSchema(data: UpsertSiteSchema) {
   try {
     upsertSiteSchema.validateSync(data)
-  } catch (error) {
+  } catch {
     throw ErrorCode.INCORRECT_DATA
   }
 }

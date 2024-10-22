@@ -162,7 +162,7 @@ const FilterFields = ({ fieldName, dataSourceStructure, onRemove }: FilterFields
                   select
                   error={!!fieldState.error}
                   value={
-                    filterField && 'columnName' in filterField ? filterField.columnName ?? '' : ''
+                    filterField && 'columnName' in filterField ? (filterField.columnName ?? '') : ''
                   }
                   onChange={(event) => handleColumnChange(event.target.value)}
                   onBlur={field.onBlur}

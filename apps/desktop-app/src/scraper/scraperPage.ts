@@ -1,6 +1,6 @@
 import { type ApiError, ErrorCode } from '@web-scraper/common'
 import { app } from 'electron'
-// eslint-disable-next-line import/no-extraneous-dependencies
+
 import {
   createCursor,
   getRandomPagePoint,

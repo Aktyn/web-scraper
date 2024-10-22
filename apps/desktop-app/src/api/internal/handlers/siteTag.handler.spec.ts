@@ -1,4 +1,3 @@
-/* eslint-disable import/order */
 import { databaseMock, mockData } from '../../../test-utils/databaseMock'
 import type { HandlersInterface } from '../../../test-utils/handlers.helpers'
 import '../../../test-utils/electronMock'

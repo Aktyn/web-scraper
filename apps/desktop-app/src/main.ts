@@ -2,15 +2,14 @@ import path from 'path'
 import url from 'url'
 
 import * as dotenv from 'dotenv'
-// eslint-disable-next-line import/order
+
 import * as dotenvExpand from 'dotenv-expand'
 
 const myEnv = dotenv.config()
 dotenvExpand.expand(myEnv)
 
-// eslint-disable-next-line import/order
 import { safePromise } from '@web-scraper/common'
-// eslint-disable-next-line import/no-extraneous-dependencies
+
 import { app, shell } from 'electron'
 
 import { registerRequestsHandler } from './api/internal/requestHandler'

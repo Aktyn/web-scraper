@@ -410,7 +410,7 @@ const Row = <DataType extends object>({
                 </Tooltip>
               )}
               {onRowExpand && (
-                <Tooltip title={expandRow ? 'Collapse' : expandButtonTooltip ?? 'Expand'}>
+                <Tooltip title={expandRow ? 'Collapse' : (expandButtonTooltip ?? 'Expand')}>
                   <IconButton size="small" onClick={handleRowExpandClick}>
                     <ExpandMoreRounded
                       sx={{

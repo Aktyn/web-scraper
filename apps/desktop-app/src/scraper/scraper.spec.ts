@@ -47,8 +47,8 @@ const dummyDataSourceItemIdRequest: RequestDataSourceItemIdCallback = () => Prom
 const withScraperTestingMode = async (
   callback: (
     scraper: ExposedScraper<typeof Scraper.Mode.TESTING>,
-    closeListener: jest.Mock<any, any>,
-  ) => Promise<any>,
+    closeListener: jest.Mock<unknown, never[]>,
+  ) => Promise<unknown>,
   lockURL = 'http://localhost:1357/mock-testing',
 ) => {
   const closeListener = jest.fn()
@@ -651,7 +651,7 @@ describe('Scraper.TESTING multiple instances', () => {
 function isBase64(str: string): boolean {
   try {
     return Buffer.from(str, 'base64').toString('base64') === str
-  } catch (err) {
+  } catch {
     return false
   }
 }
