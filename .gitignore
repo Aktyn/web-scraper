@@ -23,7 +23,6 @@ tsconfig.tsbuildinfo
 
 dist/
 release/
-lib/
 build/
 user-panel-build/
 
