@@ -44,7 +44,7 @@ export function Header() {
               <Icon path={mdiMenu} />
             </Button>
           </SheetTrigger>
-          <SheetContent side="left">
+          <SheetContent side="left" className="w-auto min-w-64">
             <SheetHeader className="gap-y-4">
               <SheetTitle>
                 <ModeToggle />
@@ -52,7 +52,7 @@ export function Header() {
               <Separator className="mt-6 mb-4" />
               <SheetDescription className="text-foreground"></SheetDescription>
             </SheetHeader>
-            <NavigationMenu className="flex-grow !grid-cols-1" />
+            <NavigationMenu className="flex-grow !grid-cols-1 [&_button]:justify-start" />
           </SheetContent>
         </Sheet>
 

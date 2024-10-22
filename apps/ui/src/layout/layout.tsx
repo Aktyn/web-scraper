@@ -18,7 +18,7 @@ export function Layout({ children }: PropsWithChildren) {
   return (
     <div className="flex flex-col h-screen w-screen">
       <Header />
-      <div className="flex flex-col flex-grow justify-center items-center">{children}</div>
+      <div className="flex-grow">{children}</div>
     </div>
   )
 }

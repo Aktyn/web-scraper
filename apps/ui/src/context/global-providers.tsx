@@ -5,7 +5,7 @@ import { NotificationsModule } from '~/modules/notifications-module'
 
 export function GlobalProviders({ children }: PropsWithChildren) {
   return (
-    <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+    <ThemeProvider defaultTheme="dark" storageKey="ui-theme">
       <TooltipProvider delayDuration={0} disableHoverableContent>
         <NotificationsModule.Provider>{children}</NotificationsModule.Provider>
       </TooltipProvider>

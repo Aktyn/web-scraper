@@ -14,6 +14,10 @@ export default {
         sm: 'calc(var(--radius) * 0.5)',
         xs: 'calc(var(--radius) * 0.25)',
       },
+      scale: {
+        golden: '1.618',
+        'golden-reverse': '0.618',
+      },
       colors: {
         background: 'hsl(var(--background))',
         foreground: 'hsl(var(--foreground))',

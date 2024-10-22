@@ -1,3 +1,4 @@
+import Icon from '@mdi/react'
 import { Button } from '~/components/ui/button'
 import { useView } from '~/context/view-context'
 import { cn } from '~/lib/utils'
@@ -34,6 +35,7 @@ function NavigationButtons() {
           disabled={view === item.view}
           onClick={() => setView(item.view)}
         >
+          <Icon path={item.svgPath} className="size-12" />
           {item.label}
         </Button>
       ))}
