@@ -7,28 +7,33 @@ on:
     branches: ["main"]
 
 jobs:
-  deploy:
+  build-and-test:
     runs-on: ubuntu-latest
 
     strategy:
       matrix:
-        node-version: [20.x]
+        node-version: [18.x, 20.x]
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
           cache: "yarn"
 
       - name: Install dependencies
-        run: yarn install
+        run: yarn install --frozen-lockfile
         env:
           DISABLE_ERD: true
 
       - name: Check code with linter
         run: yarn run lint
+
+      - name: Generate and seed database
+        run: yarn run db:generate:reset
+        env:
+          DISABLE_ERD: true
 
       - name: Build all projects
         run: yarn run build
