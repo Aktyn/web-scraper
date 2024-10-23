@@ -27,6 +27,7 @@
 		"jest.runMode": "watch",
 		"cSpell.words": [
 			"Aktyn",
+			"devicon",
 			"Krajewski",
 			"Radosław",
 			"sonner",
@@ -34,5 +35,22 @@
 		],
 		"liveServer.settings.multiRootWorkspaceName": "web-scraper",
 		"eslint.useFlatConfig": true
+	},
+	"launch": {
+		"version": "1.0.0",
+		"configurations": [
+			{
+				"type": "node",
+				"request": "launch",
+				"name": "Run yarn dev",
+				"runtimeExecutable": "yarn",
+				"runtimeArgs": [
+					"dev"
+				],
+				"cwd": "${workspaceFolder}",
+				"console": "integratedTerminal",
+				"noDebug": true
+			}
+		]
 	}
 }

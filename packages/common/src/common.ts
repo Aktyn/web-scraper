@@ -1,3 +1,4 @@
+import { v4 as uuidv4 } from 'uuid'
 import type { ExtractTypeByPath, NumericKeys, Path } from './types'
 
 export function pick<ObjectType, Key extends Extract<keyof ObjectType, string>>(
@@ -65,4 +66,9 @@ export function isValidUrl(url: string) {
   } catch {
     return false
   }
+}
+
+// eslint-disable-next-line @typescript-eslint/naming-convention
+export function generateUUID() {
+  return uuidv4()
 }

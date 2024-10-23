@@ -24,11 +24,14 @@ export function Header() {
   const { isDark } = useTheme()
 
   return (
-    <ScrollArea className="shadow-md dark:shadow-lg">
+    <div className="shadow-md dark:shadow-lg">
       <div className="header flex w-full flex-row flex-nowrap justify-between items-center p-3 gap-x-4 dark:bg-black/30 bg-black/10 border-b dark:border-border/40">
         <div className="flex-grow hidden md:flex flex-row items-center gap-x-4 border-r border-border/50 pr-4">
           <img src={isDark ? icon : iconDark} className="logo w-10 h-10" alt="Web Scraper logo" />
-          <NavigationMenu className="flex-grow" />
+          <ScrollArea className="w-full">
+            <NavigationMenu className="flex-grow" />
+            <ScrollBar orientation="horizontal" />
+          </ScrollArea>
           {/* TODO */}
           {/* <IconToggle
             tooltipTitle="Toggle desktop notifications"
@@ -55,10 +58,8 @@ export function Header() {
             <NavigationMenu className="flex-grow !grid-cols-1 [&_button]:justify-start" />
           </SheetContent>
         </Sheet>
-
         <WindowStateOptions />
       </div>
-      <ScrollBar orientation="horizontal" />
-    </ScrollArea>
+    </div>
   )
 }

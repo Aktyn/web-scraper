@@ -1,3 +1,5 @@
+//TODO: remove this file and all unused types
+
 import * as yup from 'yup'
 
 import { transformNanToUndefined } from '../common'

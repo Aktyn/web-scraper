@@ -1,51 +1,36 @@
-import type { TypedKeys } from '../../types'
-
-import type { ActionStepErrorType } from './action'
-
-export interface MapSiteError {
-  /** Regexp pattern allowed */
-  content?: string
-  errorType: ActionStepErrorType
+type BaseElementProperties = {
+  /**
+   * Unique index of the element in simplified page structure\
+   * AI will use this index to refer to the element in its response
+   */
+  id: number
+  /**
+   * Path to original element in the DOM tree
+   */
+  element: string
 }
 
-export function isMapSiteError(value: unknown): value is MapSiteError {
-  return (
-    typeof value === 'object' &&
-    value !== null &&
-    'errorType' in value &&
-    typeof value.errorType === 'string'
-  )
-}
-
-export function parseScrapperStringValue(
-  value: string | null | undefined,
-  helpers: Partial<{ siteURL: string }> = {},
-) {
-  if (typeof value !== 'string') {
-    return ''
-  }
-  return value.replace(/{{([^}]+)}}/g, (_, matchedGroup: string) => {
-    //TODO: add some info/tutorial about supported special values
-    const specialCode = matchedGroup.replace(/\s+/g, '').toUpperCase()
-    if (specialCode === 'URL') {
-      return helpers.siteURL ?? ''
+/**
+ * JSON object containing only the elements and its attributes needed for scraping\
+ * The purpose of simplifying the page structure is to reduce the amount of data sent to the AI
+ * and to make the response easier to parse maximizing the chance of a correct answer
+ */
+export type SimplifiedPageStructure = {
+  generatedTimestamp: number
+  buttons: Array<
+    BaseElementProperties & {
+      text: string
     }
-    const urlMatch = specialCode.match(/^URL\.(.*)/i)
-    if (urlMatch) {
-      try {
-        const url = new URL(helpers.siteURL ?? '')
-        const urlProperty = urlMatch[1].toLowerCase() as TypedKeys<URL, string>
-        return url[urlProperty] ?? ''
-      } catch {
-        // noop
-      }
+  >
+  links: Array<
+    BaseElementProperties & {
+      href: URL['href']
+      innerText: Array<string>
     }
-
-    if (['NOW', 'TIMESTAMP', 'CURRENT_TIMESTAMP'].includes(specialCode)) {
-      return Date.now().toString()
+  >
+  inputs: Array<
+    BaseElementProperties & {
+      label: string
     }
-
-    console.warn(`Unknown special code: ${specialCode}`)
-    return ''
-  })
+  >
 }

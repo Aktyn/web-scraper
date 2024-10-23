@@ -1,5 +1,5 @@
 import { ElectronToRendererMessage, WindowStateChange } from '@web-scraper/common'
-import { useState } from 'react'
+import { Fragment, useState } from 'react'
 import { Toaster } from './components/ui/sonner'
 import { GlobalProviders } from './context/global-providers'
 import { ViewContext } from './context/view-context'
@@ -7,7 +7,7 @@ import { usePersistentState } from './hooks/usePersistentState'
 import { Layout } from './layout/layout'
 import { ViewContainer } from './layout/view-container'
 import { ApiModule } from './modules/api-module'
-import { Navigation, View } from './navigation'
+import { NAVIGATION, View } from './navigation'
 
 export function App() {
   return (
@@ -30,6 +30,10 @@ function ViewBase() {
     }
   })
 
+  const mainViewIndex = NAVIGATION.findIndex(
+    (item) => item.view === view || item.subViews.some((subView) => subView.view === view),
+  )
+
   return (
     <GlobalProviders>
       <ViewContext.Provider
@@ -41,15 +45,30 @@ function ViewBase() {
       >
         <Layout>
           <div
-            className="grid grid-rows-1 h-full overflow-hidden transition-transform duration-500"
+            className="grid grid-rows-1 h-full overflow-hidden transition-transform duration-500 relative"
             style={{
-              width: `${Navigation.length * 100}vw`,
-              gridTemplateColumns: `repeat(${Navigation.length}, 1fr)`,
-              transform: `translateX(-${view * 100}vw)`,
+              width: `${NAVIGATION.length * 100}vw`,
+              gridTemplateColumns: `repeat(${NAVIGATION.length}, 1fr)`,
+              transform: `translateX(-${mainViewIndex * 100}vw)`,
             }}
           >
-            {Navigation.map((item) => (
-              <ViewContainer key={item.view} navigationItem={item} active={view === item.view} />
+            {NAVIGATION.map((item, index) => (
+              <Fragment key={item.view}>
+                <ViewContainer
+                  key={item.view}
+                  component={item.component}
+                  active={view === item.view}
+                />
+                {item.subViews.map((subView) => (
+                  <ViewContainer
+                    key={subView.view}
+                    component={subView.component}
+                    active={view === subView.view}
+                    className="absolute top-0"
+                    style={{ left: `${index * 100}vw` }}
+                  />
+                ))}
+              </Fragment>
             ))}
           </div>
         </Layout>

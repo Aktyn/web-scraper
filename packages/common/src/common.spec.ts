@@ -1,4 +1,12 @@
-import { forceArray, getDeepProperty, omit, pick, sortNumbers } from './common'
+import {
+  forceArray,
+  getDeepProperty,
+  isValidUrl,
+  omit,
+  pick,
+  sortNumbers,
+  generateUUID,
+} from './common'
 
 describe(pick.name, () => {
   it('should return object left only with given properties', () => {
@@ -122,5 +130,21 @@ describe(sortNumbers.name, () => {
       { id: 2, value: 3, stringValue: 'foo' },
       { id: 1, value: -5, stringValue: 'foo' },
     ])
+  })
+})
+
+describe(isValidUrl.name, () => {
+  it('should return true for a valid url', () => {
+    expect(isValidUrl('https://example.com')).toBe(true)
+  })
+
+  it('should return false for an invalid url', () => {
+    expect(isValidUrl('invalid-url')).toBe(false)
+  })
+})
+
+describe(generateUUID.name, () => {
+  it('should return a valid uuid', () => {
+    expect(generateUUID()).toMatch(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/)
   })
 })

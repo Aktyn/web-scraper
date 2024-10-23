@@ -1,4 +1,4 @@
-import { PropsWithChildren, useEffect } from 'react'
+import { type PropsWithChildren, useEffect } from 'react'
 import { useView } from '~/context/view-context'
 import { Header } from './header'
 
@@ -16,9 +16,9 @@ export function Layout({ children }: PropsWithChildren) {
   }, [view.maximized])
 
   return (
-    <div className="flex flex-col h-screen w-screen">
+    <div className="flex flex-col h-screen w-screen max-h-full">
       <Header />
-      <div className="flex-grow">{children}</div>
+      <div className="flex-grow max-h-full overflow-hidden">{children}</div>
     </div>
   )
 }

@@ -1,13 +1,19 @@
-import { useState, useEffect } from 'react'
+import { type ComponentType, type CSSProperties, useEffect, useState } from 'react'
 import { cn } from '~/lib/utils'
-import { Navigation } from '~/navigation'
 
 type ViewContainerProps = {
-  navigationItem: (typeof Navigation)[number]
+  component: ComponentType
   active: boolean
+  className?: string
+  style?: CSSProperties
 }
 
-export function ViewContainer({ navigationItem, active }: ViewContainerProps) {
+export function ViewContainer({
+  component: Component,
+  active,
+  className,
+  style,
+}: ViewContainerProps) {
   const [mount, setMount] = useState(true)
 
   useEffect(() => {
@@ -25,11 +31,13 @@ export function ViewContainer({ navigationItem, active }: ViewContainerProps) {
   return (
     <div
       className={cn(
-        'w-screen h-full transition-[transform,opacity] duration-500',
-        active ? 'opacity-100 scale-100' : 'opacity-0 scale-golden-reverse',
+        'w-screen h-full transition-opacity duration-500',
+        active ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none',
+        className,
       )}
+      style={style}
     >
-      {mount && <navigationItem.component />}
+      {mount && <Component />}
     </div>
   )
 }

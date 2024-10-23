@@ -25,7 +25,7 @@ import type {
   UpsertRoutineSchema,
   UpsertSiteInstructionsSchema,
   ValueQuery,
-} from './scraper'
+} from './scraper-deprecated'
 import type { Site, SiteTag, UpsertSiteSchema, UpsertSiteTagSchema } from './site'
 import type { UserSettings } from './user'
 import type { WindowStateChange } from './window'
