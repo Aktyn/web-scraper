@@ -11,6 +11,7 @@ import {
   RoutineExecutionType,
   SaveDataType,
   ScraperExecutionScope,
+  ScraperStepType,
   isGlobalAction,
   isRegularAction,
   type FlowStep,
@@ -112,4 +113,10 @@ export const executionItemTypeNames: {
 
 export const flowActionTypeNames: { [key in FlowActionType]: string } = {
   [FlowActionType.JUMP]: 'Jump',
+}
+
+export const scraperStepTypeNames: { [key in ScraperStepType]: string } = {
+  [ScraperStepType.FILL_INPUT]: 'Fill input',
+  [ScraperStepType.SELECT_OPTION]: 'Select option',
+  [ScraperStepType.PRESS_BUTTON]: 'Press button',
 }

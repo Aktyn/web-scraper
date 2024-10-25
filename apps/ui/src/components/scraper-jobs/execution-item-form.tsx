@@ -3,16 +3,23 @@ import { mdiAlert, mdiPencilBox, mdiPlus } from '@mdi/js'
 import Icon from '@mdi/react'
 import {
   ExecutionItemType,
+  FlowActionType,
+  ScraperStepType,
   upsertJobExecutionItemSchema,
   upsertScraperStepSchema,
   type JobExecutionItem,
   type UpsertJobExecutionItemSchema,
 } from '@web-scraper/common'
-import { useForm } from 'react-hook-form'
+import { useForm, useFormContext, type Control } from 'react-hook-form'
+import { flowActionTypeNames, scraperStepTypeNames } from '~/lib/dictionaries'
 import { cn } from '~/lib/utils'
 import { FormInput } from '../common/form/form-input'
+import { FormSelect } from '../common/form/form-select'
+import { FormSwitch } from '../common/form/form-switch'
 import { Button } from '../ui/button'
 import { Form } from '../ui/form'
+import { Label } from '../ui/label'
+import { Switch } from '../ui/switch'
 
 type ExecutionItemFormProps = {
   item: ExecutionItemType | JobExecutionItem
@@ -40,11 +47,19 @@ export function ExecutionItemForm({
               type === ExecutionItemType.CONDITION
                 ? {
                     condition: {},
-                    flowAction: { type: 'jump', targetExecutionItemIndex: 0 },
+                    flowAction: { type: FlowActionType.JUMP, targetExecutionItemIndex: 0 },
                   }
                 : undefined,
             step:
-              type === ExecutionItemType.STEP ? upsertScraperStepSchema.getDefault() : undefined,
+              type === ExecutionItemType.STEP
+                ? {
+                    ...upsertScraperStepSchema.getDefault(),
+                    data: {
+                      ...upsertScraperStepSchema.getDefault().data,
+                      element: '',
+                    },
+                  }
+                : undefined,
           }
         : item,
   })
@@ -60,16 +75,15 @@ export function ExecutionItemForm({
         }}
         className={cn('flex flex-col gap-y-4 items-start', className)}
       >
-        <div className="flex flex-row flex-wrap items-stretch gap-2">
-          {type === ExecutionItemType.STEP && <div>TODO: action step fields</div>}
+        <div className="flex flex-row flex-wrap items-stretch gap-y-2 gap-x-4">
           {type === ExecutionItemType.CONDITION && (
             <>
-              {/* TODO: use FormSelect component */}
-              <FormInput
+              <FormSelect
                 control={form.control}
                 name="condition.flowAction.type"
                 label="Flow action type"
-                inputProps={{ readOnly: true }}
+                selectProps={{ disabled: true }}
+                items={flowActionTypeItems}
               />
               {maxTargetExecutionItemIndex >= 0 ? (
                 <FormInput
@@ -84,6 +98,20 @@ export function ExecutionItemForm({
                   execution item required for this type of flow action.
                 </div>
               )}
+            </>
+          )}
+          {type === ExecutionItemType.STEP && (
+            <>
+              <div className="w-full flex flex-row justify-start">
+                <FormSelect
+                  control={form.control}
+                  name="step.type"
+                  label="Step type"
+                  items={scraperStepTypeItems}
+                  className="min-w-48"
+                />
+              </div>
+              <ActionStepDataFields control={form.control} />
             </>
           )}
           {/* 
@@ -114,3 +142,65 @@ export function ExecutionItemForm({
     </Form>
   )
 }
+
+function ActionStepDataFields({ control }: { control: Control<UpsertJobExecutionItemSchema> }) {
+  const { watch } = useFormContext<UpsertJobExecutionItemSchema>()
+  const scraperStepType = watch('step.type')
+  const pressEnter = watch('step.data.pressEnter')
+  const waitForNavigation = watch('step.data.waitForNavigation')
+
+  return (
+    <>
+      <FormInput control={control} name="step.data.element" label="Element path" />
+      <div className="flex items-center space-x-2">
+        <Switch id="ai-prompt" disabled />
+        <Label htmlFor="ai-prompt">Use AI for targeting element</Label>
+      </div>
+      <FormInput control={control} name="step.data.valueQuery" label="Value query" />
+      {scraperStepType === ScraperStepType.FILL_INPUT && (
+        <>
+          <FormSwitch control={control} name="step.data.pressEnter" label="Press enter" />
+          <FormInput
+            control={control}
+            name="step.data.delayEnter"
+            label="Delay enter"
+            inputProps={{ type: 'number', min: 0 }}
+            disabled={!pressEnter}
+          />
+        </>
+      )}
+      {[ScraperStepType.FILL_INPUT, ScraperStepType.PRESS_BUTTON].includes(scraperStepType) && (
+        <>
+          <FormSwitch
+            control={control}
+            name="step.data.waitForNavigation"
+            label="Wait for navigation"
+          />
+          <FormInput
+            control={control}
+            name="step.data.waitForNavigationTimeout"
+            label="Wait for navigation timeout (ms)"
+            inputProps={{ type: 'number', min: 0 }}
+            disabled={!waitForNavigation}
+          />
+        </>
+      )}
+      <FormInput
+        control={control}
+        name="step.data.waitForElementTimeout"
+        label="Wait for element timeout (ms)"
+        inputProps={{ type: 'number', min: 0 }}
+      />
+    </>
+  )
+}
+
+const flowActionTypeItems = Object.values(FlowActionType).map((type) => ({
+  value: type,
+  label: flowActionTypeNames[type],
+}))
+
+const scraperStepTypeItems = Object.values(ScraperStepType).map((type) => ({
+  value: type,
+  label: scraperStepTypeNames[type],
+}))

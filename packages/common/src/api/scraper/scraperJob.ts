@@ -22,7 +22,10 @@ export type JobExecutionItem =
     }
 
 export const upsertJobExecutionItemSchema = yup.object({
-  type: yup.string().oneOf([ExecutionItemType.CONDITION, ExecutionItemType.STEP]).required(),
+  type: yup
+    .mixed<ExecutionItemType>()
+    .oneOf(Object.values(ExecutionItemType))
+    .required('Execution item type is required'),
 
   condition: upsertExecutionConditionSchema.when('type', {
     is: ExecutionItemType.CONDITION,

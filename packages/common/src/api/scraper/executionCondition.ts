@@ -17,7 +17,10 @@ export const upsertExecutionConditionSchema = yup.object({
   condition: yup.object().required(), //TODO
   flowAction: yup
     .object({
-      type: yup.string().equals([FlowActionType.JUMP]).required('Flow action type is required'),
+      type: yup
+        .mixed<FlowActionType>()
+        .oneOf(Object.values(FlowActionType))
+        .required('Flow action type is required'),
       targetExecutionItemIndex: yup
         .number()
         .transform(transformNanToUndefined)

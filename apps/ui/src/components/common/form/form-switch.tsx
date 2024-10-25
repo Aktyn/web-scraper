@@ -1,29 +1,29 @@
 import type { ControllerProps, FieldPath, FieldValues } from 'react-hook-form'
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '~/components/ui/form'
-import { Input, type InputProps } from '~/components/ui/input'
+import { Switch } from '~/components/ui/switch'
 
-type FormInputProps<
+type FormSwitchProps<
   TFieldValues extends FieldValues = FieldValues,
   TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
 > = Omit<ControllerProps<TFieldValues, TName>, 'render'> & {
   label: string
-  placeholder?: string
-  inputProps?: InputProps
 }
 
-export function FormInput<
+export function FormSwitch<
   TFieldValues extends FieldValues = FieldValues,
   TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
->({ label, placeholder, inputProps, ...formFieldProps }: FormInputProps<TFieldValues, TName>) {
+>({ label, ...formFieldProps }: FormSwitchProps<TFieldValues, TName>) {
   return (
     <FormField
       {...formFieldProps}
       render={({ field }) => (
         <FormItem className="flex flex-col justify-start">
           <FormLabel>{label}</FormLabel>
-          <FormControl>
-            <Input placeholder={placeholder} {...field} value={field.value ?? ''} {...inputProps} />
-          </FormControl>
+          <div className="min-h-10 flex items-center">
+            <FormControl>
+              <Switch checked={field.value} onCheckedChange={field.onChange} />
+            </FormControl>
+          </div>
           <FormMessage reserveSpace />
         </FormItem>
       )}

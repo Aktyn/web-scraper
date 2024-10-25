@@ -27,7 +27,7 @@ export const ExecutionFlow = memo<ExecutionFlowProps>(({ execution, onChange }) 
     <Measurer
       ref={containerRef}
       className={cn(
-        'inline-flex flex-row flex-wrap items-center justify-start relative gap-8',
+        'inline-flex flex-row flex-wrap items-stretch justify-start relative gap-8',
         onChange && 'gap-x-5',
       )}
     >
@@ -44,7 +44,7 @@ export const ExecutionFlow = memo<ExecutionFlowProps>(({ execution, onChange }) 
                   <Button
                     variant="outline"
                     size="icon"
-                    className="z-10 rounded-full border-dashed border-2 border-execution-condition/50 hover:border-execution-condition text-foreground"
+                    className="z-10 rounded-full border-dashed border-2 border-execution-condition/50 hover:border-execution-condition text-foreground my-auto"
                   >
                     <Icon path={mdiPlus} />
                   </Button>

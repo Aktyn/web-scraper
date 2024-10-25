@@ -1,13 +1,18 @@
-import { mdiPencil, mdiTrashCan } from '@mdi/js'
+import { mdiAssistant, mdiKeyboardReturn, mdiPencil, mdiTimerSand, mdiTrashCan } from '@mdi/js'
 import Icon from '@mdi/react'
 import {
   ExecutionItemType,
   FlowActionType,
+  ScraperStepType,
   type JobExecutionItem,
   type UpsertJobExecutionItemSchema,
 } from '@web-scraper/common'
 import { type HTMLAttributes, useCallback, useState } from 'react'
-import { executionItemTypeNames, flowActionTypeNames } from '~/lib/dictionaries'
+import {
+  executionItemTypeNames,
+  flowActionTypeNames,
+  scraperStepTypeNames,
+} from '~/lib/dictionaries'
 import { cn } from '~/lib/utils'
 import { Badge } from '../ui/badge'
 import { Button } from '../ui/button'
@@ -19,8 +24,9 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '../ui/dialog'
-import { ExecutionItemForm } from './execution-item-form'
 import { Separator } from '../ui/separator'
+import { Tooltip, TooltipContent, TooltipTrigger } from '../ui/tooltip'
+import { ExecutionItemForm } from './execution-item-form'
 
 type ExecutionItemProps = {
   item: JobExecutionItem
@@ -60,9 +66,9 @@ export function ExecutionItem({
         divProps.className,
       )}
     >
-      {item.type === ExecutionItemType.CONDITION && (
-        <div className="flex flex-col justify-between items-stretch">
-          <ExecutionItemHeader type={item.type} index={index} />
+      <div className="flex flex-col justify-start items-stretch">
+        <ExecutionItemHeader type={item.type} index={index} />
+        {item.type === ExecutionItemType.CONDITION && (
           <div className="flex flex-col items-start justify-center px-2 py-1">
             <div className="flex flex-row items-baseline gap-x-2">
               <span className="text-sm font-semibold opacity-50">IF</span>
@@ -81,9 +87,53 @@ export function ExecutionItem({
               </span>
             </div>
           </div>
-        </div>
-      )}
-      {item.type === ExecutionItemType.STEP && <div>TODO: step item block</div>}
+        )}
+        {item.type === ExecutionItemType.STEP && (
+          <div className="flex flex-col items-start justify-center px-2 py-1">
+            <div className="flex flex-row flex-wrap items-center gap-x-2">
+              <span className="text-base font-semibold">
+                {scraperStepTypeNames[item.step.type]}
+              </span>
+              {typeof item.step.data.element !== 'string' && (
+                <Tooltip>
+                  <TooltipTrigger>
+                    <Icon path={mdiAssistant} className="size-5" />
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    Targeting element with AI
+                    <br />
+                    Prompt: <b>{item.step.data.element.aiPrompt}</b>
+                  </TooltipContent>
+                </Tooltip>
+              )}
+              {item.step.type === ScraperStepType.FILL_INPUT && item.step.data.pressEnter && (
+                <Tooltip>
+                  <TooltipTrigger>
+                    <Icon path={mdiKeyboardReturn} className="size-5" />
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    Press enter with {item.step.data.delayEnter ?? 0}ms delay
+                  </TooltipContent>
+                </Tooltip>
+              )}
+              {(item.step.type === ScraperStepType.FILL_INPUT ||
+                item.step.type === ScraperStepType.PRESS_BUTTON) &&
+                item.step.data.waitForNavigation && (
+                  <Tooltip>
+                    <TooltipTrigger>
+                      <Icon path={mdiTimerSand} className="size-5" />
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      {/* TODO: smart time formatting (the value will most likely be rounded to the nearest second) */}
+                      Wait for navigation for {item.step.data.waitForNavigationTimeout ?? 0}ms
+                    </TooltipContent>
+                  </Tooltip>
+                )}
+            </div>
+            <span>TODO: value query</span>
+          </div>
+        )}
+      </div>
       {(onEdit || onDelete) && (
         <div
           className={cn(
@@ -153,7 +203,7 @@ export function ExecutionItem({
 function ExecutionItemHeader({ type, index }: { type: ExecutionItemType; index: number }) {
   return (
     <div className="flex flex-row items-center justify-start gap-x-2 px-2 dark:bg-black/20">
-      <span className="text-lg font-bold">{index}</span>
+      <span className="font-base font-bold">{index}</span>
       <Separator
         orientation="vertical"
         className={cn(

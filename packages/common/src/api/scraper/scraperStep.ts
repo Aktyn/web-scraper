@@ -53,21 +53,87 @@ export type ScraperStep =
 
 const elementPathSchema = yup.lazy((value) =>
   typeof value === 'string'
-    ? yup.string().required('Element path is required')
-    : yup.object({
-        aiPrompt: yup.string().required('AI prompt is required'),
-      }),
+    ? yup.string().required('Element path is required').default('')
+    : yup
+        .object({
+          aiPrompt: yup.string().required('AI prompt is required').default(''),
+        })
+        .required('AI prompt is required'),
 )
+const valueQuerySchema = yup.string().notRequired().nullable().default(null)
+const waitForElementTimeoutSchema = yup
+  .number()
+  .transform(transformNanToUndefined)
+  .nullable()
+  .default(null)
+  .notRequired()
+const waitForNavigationSchema = yup.boolean().nullable().default(null).notRequired()
+const waitForNavigationTimeout = yup
+  .number()
+  .transform(transformNanToUndefined)
+  .nullable()
+  .default(null)
+  .notRequired()
+
+// const fillInputSchema = yup.object({
+//   element: elementPathSchema,
+//   valueQuery: valueQuerySchema,
+//   pressEnter: yup.boolean().nullable().default(null).notRequired(),
+//   delayEnter: yup
+//     .number()
+//     .transform(transformNanToUndefined)
+//     .nullable()
+//     .default(null)
+//     .notRequired(),
+//   waitForNavigation: waitForNavigationSchema,
+//   waitForElementTimeout: waitForElementTimeoutSchema,
+//   waitForNavigationTimeout: waitForNavigationTimeout,
+// })
+
+// const selectOptionSchema = yup.object({
+//   element: elementPathSchema,
+//   valueQuery: valueQuerySchema,
+//   waitForElementTimeout: waitForElementTimeoutSchema,
+// })
+
+// const pressButtonSchema = yup.object({
+//   element: elementPathSchema,
+//   valueQuery: valueQuerySchema,
+//   pressEnter: yup.boolean().nullable().default(null).notRequired(),
+//   delayEnter: yup
+//     .number()
+//     .transform(transformNanToUndefined)
+//     .nullable()
+//     .default(null)
+//     .notRequired(),
+//   waitForNavigation: waitForNavigationSchema,
+//   waitForElementTimeout: waitForElementTimeoutSchema,
+//   waitForNavigationTimeout: waitForNavigationTimeout,
+// })
 
 export const upsertScraperStepSchema = yup.object({
   type: yup
     .mixed<ScraperStepType>()
     .oneOf(Object.values(ScraperStepType))
+    .default(ScraperStepType.PRESS_BUTTON)
     .required('Type is required'),
+  // data: yup.lazy((_, options) => {
+  //   const parentType = options.parent.type
+  //   switch (parentType) {
+  //     case ScraperStepType.FILL_INPUT:
+  //       return fillInputSchema.required().nullable().default(fillInputSchema.getDefault())
+  //     case ScraperStepType.SELECT_OPTION:
+  //       return selectOptionSchema.required().nullable().default(selectOptionSchema.getDefault())
+  //     case ScraperStepType.PRESS_BUTTON:
+  //       return pressButtonSchema.required().nullable().default(pressButtonSchema.getDefault())
+  //     default:
+  //       return yup.mixed().required('Invalid scraper step type')
+  //   }
+  // }),
   data: yup
     .object({
       element: elementPathSchema,
-      valueQuery: yup.string().notRequired().nullable().default(null),
+      valueQuery: valueQuerySchema,
       pressEnter: yup.boolean().nullable().default(null).notRequired(),
       delayEnter: yup
         .number()
@@ -75,22 +141,10 @@ export const upsertScraperStepSchema = yup.object({
         .nullable()
         .default(null)
         .notRequired(),
-      waitForNavigation: yup.boolean().nullable().default(null).notRequired(),
-      waitForElementTimeout: yup
-        .number()
-        .transform(transformNanToUndefined)
-        .nullable()
-        .default(null)
-        .notRequired(),
-      waitForNavigationTimeout: yup
-        .number()
-        .transform(transformNanToUndefined)
-        .nullable()
-        .default(null)
-        .notRequired(),
+      waitForNavigation: waitForNavigationSchema,
+      waitForElementTimeout: waitForElementTimeoutSchema,
+      waitForNavigationTimeout: waitForNavigationTimeout,
     })
     .partial()
-    .nullable()
-    .default(null)
-    .notRequired(),
+    .required(),
 })
