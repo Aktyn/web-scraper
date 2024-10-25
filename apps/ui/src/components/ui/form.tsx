@@ -87,7 +87,7 @@ const FormLabel = React.forwardRef<
   return (
     <Label
       ref={ref}
-      className={cn(error && 'text-destructive', className)}
+      className={cn('transition-colors', error && 'text-destructive', className)}
       htmlFor={formItemId}
       {...props}
     />
@@ -132,10 +132,18 @@ FormDescription.displayName = 'FormDescription'
 
 const FormMessage = React.forwardRef<
   HTMLParagraphElement,
-  React.HTMLAttributes<HTMLParagraphElement>
->(({ className, children, ...props }, ref) => {
+  React.HTMLAttributes<HTMLParagraphElement> & { reserveSpace?: boolean }
+>(({ className, children, reserveSpace, ...props }, ref) => {
   const { error, formMessageId } = useFormField()
-  const body = error ? String(error?.message) : children
+  const [errorMessage, setErrorMessage] = React.useState<string | null>(null)
+
+  const body = errorMessage ?? children ?? (reserveSpace ? <>&nbsp;</> : null)
+
+  React.useEffect(() => {
+    if (error) {
+      setErrorMessage(String(error?.message))
+    }
+  }, [error])
 
   if (!body) {
     return null
@@ -145,7 +153,11 @@ const FormMessage = React.forwardRef<
     <p
       ref={ref}
       id={formMessageId}
-      className={cn('text-sm font-medium text-destructive', className)}
+      className={cn(
+        'text-sm font-medium text-destructive transition-opacity',
+        error ? 'opacity-100' : 'opacity-0',
+        className,
+      )}
       {...props}
     >
       {body}

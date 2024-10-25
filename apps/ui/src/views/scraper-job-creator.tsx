@@ -1,5 +1,5 @@
 import { yupResolver } from '@hookform/resolvers/yup'
-import { mdiChevronLeft } from '@mdi/js'
+import { mdiChevronLeft, mdiContentSave } from '@mdi/js'
 import Icon from '@mdi/react'
 import {
   generateUUID,
@@ -8,18 +8,11 @@ import {
 } from '@web-scraper/common'
 import { useCallback } from 'react'
 import { useForm } from 'react-hook-form'
+import { FormInput } from '~/components/common/form/form-input'
 import { TermInfo } from '~/components/common/term-info'
+import { ExecutionForm } from '~/components/scraper-jobs/execution-form'
 import { Button } from '~/components/ui/button'
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '~/components/ui/form'
-import { Input } from '~/components/ui/input'
+import { Form, FormField, FormItem, FormLabel, FormMessage } from '~/components/ui/form'
 import { ScrollArea, ScrollBar } from '~/components/ui/scroll-area'
 import { Separator } from '~/components/ui/separator'
 import { useView } from '~/context/view-context'
@@ -30,6 +23,7 @@ export function ScraperJobCreator() {
   const { view, setView } = useView()
   const form = useForm<UpsertScraperJobSchema>({
     resolver: yupResolver(upsertScraperJobSchema),
+    mode: 'onSubmit',
     defaultValues: {
       uuid: generateUUID(),
       name: '',
@@ -41,18 +35,19 @@ export function ScraperJobCreator() {
 
   const onSubmit = useCallback((values: UpsertScraperJobSchema) => {
     console.info('submit:', values) //TODO: remove
+    // setView(View.SCRAPER_JOBS)
   }, [])
 
   return (
-    <div
+    <ScrollArea
       className={cn(
-        'h-full flex flex-col items-stretch justify-start gap-4 py-4 duration-500',
+        'h-full flex flex-col items-stretch justify-start duration-500',
         isOpen ? 'animate-in slide-in-from-bottom-64' : 'animate-out slide-out-to-bottom-64',
       )}
     >
-      <ScrollArea className="px-4">
-        <div className="flex flex-row items-center justify-between min-w-full">
-          <span className="text-lg text-muted-foreground font-bold">
+      <ScrollArea className="p-4 overflow-visible">
+        <div className="flex flex-row items-center justify-between min-w-full gap-x-4">
+          <span className="text-lg text-muted-foreground font-bold whitespace-nowrap">
             Scraper job creator&nbsp;
             <TermInfo term="job" className="inline size-6 text-muted-foreground align-text-top" />
           </span>
@@ -71,30 +66,46 @@ export function ScraperJobCreator() {
         <ScrollBar orientation="horizontal" />
       </ScrollArea>
       <Separator />
-      <div className="flex flex-col gap-4 xs:px-4">
+      <div className="flex flex-col gap-4 py-4 xs:px-4">
         <Form {...form}>
           <form
-            onSubmit={form.handleSubmit(onSubmit, console.error)}
-            className="flex flex-col gap-y-4 items-center"
+            id="scraper-job-creator-form"
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="flex flex-col gap-y-4 items-start"
           >
-            <FormField
-              control={form.control}
-              name="name"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Name</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Hablabla" {...field} />
-                  </FormControl>
-                  <FormDescription>This is your public display name.</FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <Button type="submit">Submit</Button>
+            <div className="flex flex-row flex-wrap items-stretch gap-x-4">
+              <FormInput
+                control={form.control}
+                name="name"
+                label="Job name"
+                placeholder="Name shortly describing what the job does"
+                inputProps={{ className: 'w-80' }}
+              />
+              <FormField
+                control={form.control}
+                name="execution"
+                render={({ field }) => (
+                  <FormItem className="flex flex-col justify-start">
+                    <FormLabel>Execution</FormLabel>
+                    <ExecutionForm {...field} />
+                    <FormMessage reserveSpace />
+                  </FormItem>
+                )}
+              />
+            </div>
+            <Button
+              form="scraper-job-creator-form"
+              size="lg"
+              variant="default"
+              type="submit"
+              disabled={form.formState.isSubmitted && !form.formState.isValid}
+            >
+              <Icon path={mdiContentSave} />
+              Save
+            </Button>
           </form>
         </Form>
       </div>
-    </div>
+    </ScrollArea>
   )
 }

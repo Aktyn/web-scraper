@@ -1,8 +1,11 @@
+import { mdiArrowDecision, mdiCursorDefaultClick } from '@mdi/js'
 import {
   ActionStepErrorType,
   ActionStepType,
   CaptchaSolverType,
   DataSourceColumnType,
+  ExecutionItemType,
+  FlowActionType,
   GlobalActionType,
   ProcedureType,
   RoutineExecutionType,
@@ -96,4 +99,17 @@ export const routineExecutionTypeNames: { [key in RoutineExecutionType]: string 
   [RoutineExecutionType.SPECIFIC_IDS]: 'Specific ids',
   [RoutineExecutionType.EXCEPT_SPECIFIC_IDS]: 'Except specific ids',
   [RoutineExecutionType.STANDALONE]: 'Standalone',
+}
+
+// TODO: check above dictionaries for deprecations
+
+export const executionItemTypeNames: {
+  [key in ExecutionItemType]: { label: string; svgPath: string }
+} = {
+  [ExecutionItemType.CONDITION]: { label: 'Condition', svgPath: mdiArrowDecision },
+  [ExecutionItemType.STEP]: { label: 'Scraper step', svgPath: mdiCursorDefaultClick },
+}
+
+export const flowActionTypeNames: { [key in FlowActionType]: string } = {
+  [FlowActionType.JUMP]: 'Jump',
 }

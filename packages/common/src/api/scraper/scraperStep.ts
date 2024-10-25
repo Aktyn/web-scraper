@@ -9,7 +9,6 @@ export enum ScraperStepType {
 }
 
 type StepBase<Type extends ScraperStepType, Data> = {
-  uuid: string
   type: Type
   data: Data
 }
@@ -52,15 +51,22 @@ export type ScraperStep =
       }
     >
 
+const elementPathSchema = yup.lazy((value) =>
+  typeof value === 'string'
+    ? yup.string().required('Element path is required')
+    : yup.object({
+        aiPrompt: yup.string().required('AI prompt is required'),
+      }),
+)
+
 export const upsertScraperStepSchema = yup.object({
-  uuid: yup.string().required(),
   type: yup
     .mixed<ScraperStepType>()
     .oneOf(Object.values(ScraperStepType))
     .required('Type is required'),
   data: yup
     .object({
-      element: yup.string().notRequired().nullable().default(null),
+      element: elementPathSchema,
       valueQuery: yup.string().notRequired().nullable().default(null),
       pressEnter: yup.boolean().nullable().default(null).notRequired(),
       delayEnter: yup

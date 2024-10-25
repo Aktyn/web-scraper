@@ -28,9 +28,15 @@
     --accent: 209 3.35% 96%;
     --accent-foreground: 209 5% 12%;
     --destructive: 0 84.2% 60.2%;
+    --destructive-focus: 0 84.2% 85%;
     --destructive-foreground: 0 0% 98%;
     --ring: 209 67% 20%;
     --radius: 0.5rem;
+
+    --execution-condition: 262 47% 55%;
+    --execution-condition-foreground: 264 45% 94%;
+    --execution-step: 174 63% 40%;
+    --execution-step-foreground: 177 41% 91%;
   }
   .dark {
     --background: 212 52% 5.52%;
@@ -47,11 +53,19 @@
     --muted-foreground: 212 8% 56.9%;
     --accent: 212 40% 20.7%;
     --accent-foreground: 212 8% 98.45%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 212 8% 98.45%;
+    --destructive: 1 83% 63%;
+    --destructive-focus: 0 73% 77%;
+    --destructive-foreground: 351 100% 96%;
+    --warning: 36 100% 50%;
+    --warning-foreground: 37 100% 94%;
     --border: 212 40% 20.7%;
     --input: 212 40% 20.7%;
     --ring: 212 80% 69%;
+
+    --execution-condition: 262 47% 55%;
+    --execution-condition-foreground: 264 45% 94%;
+    --execution-step: 174 63% 40%;
+    --execution-step-foreground: 177 41% 91%;
   }
 }
 

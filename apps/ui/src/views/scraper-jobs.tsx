@@ -12,9 +12,9 @@ export function ScraperJobs() {
   const { setView } = useView()
 
   return (
-    <div className="h-full flex flex-col items-stretch justify-start gap-4 py-4">
-      <ScrollArea className="px-4">
-        <div className="flex flex-row items-center justify-between min-w-full">
+    <div className="h-full flex flex-col items-stretch justify-start">
+      <ScrollArea className="p-4">
+        <div className="flex flex-row items-center justify-between min-w-full gap-x-4">
           <TermInfo term="job" className="size-6 text-muted-foreground" />
           <Button
             variant="secondary"
@@ -29,7 +29,9 @@ export function ScraperJobs() {
         <ScrollBar orientation="horizontal" />
       </ScrollArea>
       <Separator />
-      <ScraperJobsList />
+      <div className="xs:px-4 py-4">
+        <ScraperJobsList />
+      </div>
     </div>
   )
 }

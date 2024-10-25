@@ -11,14 +11,14 @@ export const WindowStateOptions = () => {
     <div className="flex flex-row items-center gap-2">
       <Button
         size="icon"
-        variant="outline"
+        variant="ghost"
         onClick={() => window.electronAPI.changeWindowState(WindowStateChange.MINIMIZE)}
       >
         <Icon path={mdiWindowMinimize} />
       </Button>
       <Button
         size="icon"
-        variant="outline"
+        variant="ghost"
         onClick={() =>
           window.electronAPI.changeWindowState(
             view.maximized ? WindowStateChange.UNMAXIMIZE : WindowStateChange.MAXIMIZE,
@@ -29,7 +29,7 @@ export const WindowStateOptions = () => {
       </Button>
       <Button
         size="icon"
-        variant="outline"
+        variant="ghost"
         onClick={() => window.electronAPI.changeWindowState(WindowStateChange.CLOSE)}
       >
         <Icon path={mdiWindowClose} />

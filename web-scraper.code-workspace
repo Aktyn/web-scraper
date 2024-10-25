@@ -29,6 +29,7 @@
 			"Aktyn",
 			"devicon",
 			"Krajewski",
+			"prosopo",
 			"Radosław",
 			"sonner",
 			"tseslint"
@@ -37,12 +38,12 @@
 		"eslint.useFlatConfig": true
 	},
 	"launch": {
-		"version": "1.0.0",
+		"version": "2.0.0",
 		"configurations": [
 			{
 				"type": "node",
 				"request": "launch",
-				"name": "Run yarn dev",
+				"name": "Development",
 				"runtimeExecutable": "yarn",
 				"runtimeArgs": [
 					"dev"

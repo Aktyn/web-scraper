@@ -6,32 +6,32 @@ import { upsertScraperStepSchema, type ScraperStep } from './scraperStep'
 //TODO: data-feed and data-scrape execution types; data-feed will read database record for looping execution; data-scrape will scrape data from web page (scraped data structure would be an array of objects since tables can be scraped) and save to database
 //TODO: data in execution can work as dictionary storing key-value data from which data will be picked when needed by execution item
 
-type ExecutionItemBase<Data extends { type: string }> = Data & {
-  executionItemIndex: number
+export enum ExecutionItemType {
+  CONDITION = 'condition',
+  STEP = 'step',
 }
 
-type JobExecutionItem =
-  | ExecutionItemBase<{
-      type: 'condition'
+export type JobExecutionItem =
+  | {
+      type: ExecutionItemType.CONDITION
       condition: ExecutionCondition
-    }>
-  | ExecutionItemBase<{
-      type: 'step'
+    }
+  | {
+      type: ExecutionItemType.STEP
       step: ScraperStep
-    }>
+    }
 
-const upsertJobExecutionItemSchema = yup.object({
-  executionItemIndex: yup.number().required(),
-  type: yup.string().oneOf(['condition', 'step']).required(),
+export const upsertJobExecutionItemSchema = yup.object({
+  type: yup.string().oneOf([ExecutionItemType.CONDITION, ExecutionItemType.STEP]).required(),
 
   condition: upsertExecutionConditionSchema.when('type', {
-    is: 'condition',
+    is: ExecutionItemType.CONDITION,
     then: (schema) => schema.required(),
     otherwise: (schema) => schema.strip(),
   }),
 
   step: upsertScraperStepSchema.when('type', {
-    is: 'step',
+    is: ExecutionItemType.STEP,
     then: (schema) => schema.required(),
     otherwise: (schema) => schema.strip(),
   }),
@@ -58,8 +58,13 @@ export type ScraperJob = {
 export const upsertScraperJobSchema = yup
   .object({
     uuid: yup.string().required(),
-    name: yup.string().required(),
-    execution: yup.array().of(upsertJobExecutionItemSchema).default([]).required(),
+    name: yup.string().required('Name is required'),
+    execution: yup
+      .array()
+      .of(upsertJobExecutionItemSchema)
+      .default([])
+      .required()
+      .min(1, 'Execution cannot be empty'),
   })
   .required()
 
