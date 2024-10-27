@@ -4,7 +4,7 @@ import {
   mdiLink,
   mdiPencil,
   mdiTimerSand,
-  mdiTrashCan,
+  mdiDelete,
 } from '@mdi/js'
 import Icon from '@mdi/react'
 import {
@@ -219,7 +219,7 @@ export function ExecutionItem({
                 item.type === ExecutionItemType.STEP && 'hover:bg-execution-step/50',
               )}
             >
-              <Icon path={mdiTrashCan} />
+              <Icon path={mdiDelete} />
             </Button>
           )}
         </div>
@@ -230,7 +230,7 @@ export function ExecutionItem({
 
 function ExecutionItemHeader({ type, index }: { type: ExecutionItemType; index: number }) {
   return (
-    <div className="flex flex-row items-center justify-start gap-x-2 px-2 dark:bg-black/20">
+    <div className="flex flex-row items-center justify-start gap-x-2 px-2 bg-black/10 dark:bg-black/20">
       <span className="font-base font-bold">{index}</span>
       <Separator
         orientation="vertical"

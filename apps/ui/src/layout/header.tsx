@@ -19,9 +19,12 @@ import { NavigationMenu } from './navigation-menu'
 
 import './header.css'
 import { Separator } from '~/components/ui/separator'
+import { useState } from 'react'
 
 export function Header() {
   const { isDark } = useTheme()
+
+  const [openSheet, setOpenSheet] = useState(false)
 
   return (
     <div className="shadow-md dark:shadow-lg pointer-events-auto">
@@ -41,7 +44,7 @@ export function Header() {
           /> */}
           <ModeToggle className="ml-auto" />
         </div>
-        <Sheet>
+        <Sheet open={openSheet} onOpenChange={setOpenSheet}>
           <SheetTrigger asChild>
             <Button className="inline-flex md:hidden" size="icon" variant="outline">
               <Icon path={mdiMenu} />
@@ -55,7 +58,10 @@ export function Header() {
               <Separator className="mt-6 mb-4" />
               <SheetDescription className="text-foreground"></SheetDescription>
             </SheetHeader>
-            <NavigationMenu className="flex-grow !grid-cols-1 [&_button]:justify-start" />
+            <NavigationMenu
+              className="flex-grow !grid-cols-1 [&_button]:justify-start"
+              onNavigate={() => setOpenSheet(false)}
+            />
           </SheetContent>
         </Sheet>
         <WindowStateOptions />

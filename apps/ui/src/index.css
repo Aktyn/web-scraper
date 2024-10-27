@@ -21,8 +21,6 @@
     --popover-foreground: 209 6.7% 1%;
     --card: 209 36.4% 92%;
     --card-foreground: 209 6.7% 1%;
-    --border: 209 11.7% 89.8%;
-    --input: 209 11.7% 89.8%;
     --primary: 209 67% 20%;
     --primary-foreground: 209 1.34% 92%;
     --secondary: 209 3.35% 96%;
@@ -32,13 +30,23 @@
     --destructive: 0 84.2% 60.2%;
     --destructive-focus: 0 84.2% 85%;
     --destructive-foreground: 0 0% 98%;
-    --ring: 209 67% 20%;
-    --radius: 0.5rem;
+    --warning: 36 100% 50%;
+    --warning-foreground: 37 100% 94%;
+    --success: 122 39% 49%;
+    --success-foreground: 125 39% 94%;
+    --info: 199 98% 48%;
+    --info-foreground: 199 94% 94%;
 
     --execution-condition: 262 47% 55%;
     --execution-condition-foreground: 264 45% 94%;
     --execution-step: 174 63% 40%;
     --execution-step-foreground: 177 41% 91%;
+
+    --input: 209 11.7% 89.8%;
+    --border: 209 11.7% 89.8%;
+    --ring: 209 67% 20%;
+
+    --radius: 0.5rem;
   }
   .dark {
     --background: 212 52% 5.52%;
@@ -60,14 +68,19 @@
     --destructive-foreground: 351 100% 96%;
     --warning: 36 100% 50%;
     --warning-foreground: 37 100% 94%;
-    --border: 212 40% 20.7%;
-    --input: 212 40% 20.7%;
-    --ring: 212 80% 69%;
+    --success: 122 39% 49%;
+    --success-foreground: 125 39% 94%;
+    --info: 199 98% 48%;
+    --info-foreground: 199 94% 94%;
 
     --execution-condition: 262 47% 55%;
     --execution-condition-foreground: 264 45% 94%;
     --execution-step: 174 63% 40%;
     --execution-step-foreground: 177 41% 91%;
+
+    --input: 212 40% 20.7%;
+    --border: 212 40% 20.7%;
+    --ring: 212 80% 69%;
   }
 }
 
@@ -76,7 +89,7 @@
     @apply border-border outline-none;
   }
   body {
-    @apply text-foreground;
+    @apply text-foreground bg-transparent;
   }
   #root {
     @apply bg-background rounded-2xl border overflow-hidden w-screen h-screen;

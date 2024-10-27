@@ -5,6 +5,7 @@ import { seedSiteInstructions } from './siteInstructions'
 import { seedSiteTag } from './siteTag'
 import { seedSiteTagsRelation } from './siteTagsRelation'
 import { seedRoutine } from './routine'
+import { seedScraperJob } from './scraperJob'
 
 const prisma = new PrismaClient()
 
@@ -15,6 +16,7 @@ async function main() {
   await seedSiteInstructions(prisma)
   await seedRoutine(prisma)
   await createAndSeedDataSources(prisma)
+  await seedScraperJob(prisma)
 }
 
 main()

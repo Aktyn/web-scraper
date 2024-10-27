@@ -56,9 +56,7 @@ export function usePaginatedApiRequest<
             return
           }
 
-          if (response.cursor) {
-            setCursor(response.cursor)
-          }
+          setCursor(response.cursor)
           setData((prev) => [...prev, ...response.data])
           setLoading(false)
         })
@@ -75,7 +73,10 @@ export function usePaginatedApiRequest<
 
   const clearData = useCallback(() => {
     setData([])
+    setCursor(undefined)
   }, [])
+
+  const hasMore = !!cursor
 
   return useMemo(
     () => ({
@@ -83,7 +84,8 @@ export function usePaginatedApiRequest<
       load,
       clearData,
       loading,
+      hasMore,
     }),
-    [data, load, loading, clearData],
+    [data, load, loading, clearData, hasMore],
   )
 }

@@ -39,12 +39,16 @@ describe('parseTimestamp', () => {
   })
 
   it('should return parsed date and time by default', () => {
-    expect(parseTimestamp(1645056024193)).toBe('17.02.2022, 01:00')
+    jest.spyOn(Date.prototype, 'getTimezoneOffset').mockImplementation(() => 180)
+
+    expect(parseTimestamp(1645056024193, { timeZone: 'UTC' })).toBe('17.02.2022, 00:00')
   })
 
   it('should be able to return only parsed time or only parsed date', () => {
-    expect(parseTimestamp(1645056024193, { onlyDate: true })).toBe('17.02.2022')
-    expect(parseTimestamp(1645056024193, { onlyTime: true })).toBe('01:00')
-    expect(parseTimestamp(1645056024193, { onlyDate: true, onlyTime: true })).toBe('01:00')
+    expect(parseTimestamp(1645056024193, { onlyDate: true, timeZone: 'UTC' })).toBe('17.02.2022')
+    expect(parseTimestamp(1645056024193, { onlyTime: true, timeZone: 'UTC' })).toBe('00:00')
+    expect(parseTimestamp(1645056024193, { onlyDate: true, onlyTime: true, timeZone: 'UTC' })).toBe(
+      '00:00',
+    )
   })
 })

@@ -64,6 +64,7 @@ interface ParseTimestampOptions {
   noDateSymbol: string
   onlyDate: boolean
   onlyTime: boolean
+  timeZone: string
 }
 
 export function parseTimestamp(
@@ -82,11 +83,13 @@ export function parseTimestamp(
       day: '2-digit',
       month: '2-digit',
       year: 'numeric',
+      timeZone: opts.timeZone,
     })
   } else if (opts.onlyTime) {
     return dt.toLocaleTimeString(locale, {
       hour: '2-digit',
       minute: '2-digit',
+      timeZone: opts.timeZone,
     })
   }
   return dt.toLocaleString(locale, {
@@ -95,5 +98,6 @@ export function parseTimestamp(
     year: 'numeric',
     hour: '2-digit',
     minute: '2-digit',
+    timeZone: opts.timeZone,
   })
 }

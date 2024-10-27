@@ -26,17 +26,21 @@ export const upsertJobExecutionItemSchema = yup.object({
     .oneOf(Object.values(ExecutionItemType))
     .required('Execution item type is required'),
 
-  condition: upsertExecutionConditionSchema.when('type', {
-    is: ExecutionItemType.CONDITION,
-    then: (schema) => schema.required(),
-    otherwise: (schema) => schema.strip(),
-  }),
+  condition: upsertExecutionConditionSchema
+    .when('type', {
+      is: ExecutionItemType.CONDITION,
+      then: (schema) => schema.required(),
+      otherwise: (schema) => schema.strip(),
+    })
+    .optional(),
 
-  step: upsertScraperStepSchema.when('type', {
-    is: ExecutionItemType.STEP,
-    then: (schema) => schema.required(),
-    otherwise: (schema) => schema.strip(),
-  }),
+  step: upsertScraperStepSchema
+    .when('type', {
+      is: ExecutionItemType.STEP,
+      then: (schema) => schema.required(),
+      otherwise: (schema) => schema.strip(),
+    })
+    .optional(),
 })
 
 export type UpsertJobExecutionItemSchema = yup.InferType<typeof upsertJobExecutionItemSchema>

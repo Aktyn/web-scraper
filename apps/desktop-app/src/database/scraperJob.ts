@@ -43,3 +43,7 @@ export function createScraperJob(data: UpsertScraperJobSchema) {
     },
   })
 }
+
+export function deleteScraperJob(id: ScraperJob['id']) {
+  return Database.prisma.scraperJob.delete({ where: { id } })
+}

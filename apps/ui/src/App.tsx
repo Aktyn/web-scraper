@@ -1,6 +1,5 @@
 import { ElectronToRendererMessage, WindowStateChange } from '@web-scraper/common'
 import { Fragment, useState } from 'react'
-import { Toaster } from './components/ui/sonner'
 import { GlobalProviders } from './context/global-providers'
 import { ViewContext } from './context/view-context'
 import { usePersistentState } from './hooks/usePersistentState'
@@ -72,7 +71,6 @@ function ViewBase() {
             ))}
           </div>
         </Layout>
-        <Toaster />
       </ViewContext.Provider>
     </GlobalProviders>
   )

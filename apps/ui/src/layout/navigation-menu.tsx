@@ -4,9 +4,14 @@ import { Button } from '~/components/ui/button'
 import { Fade } from '~/components/ui/fade'
 import { useView } from '~/context/view-context'
 import { cn } from '~/lib/utils'
-import { NAVIGATION } from '~/navigation'
+import { NAVIGATION, type View } from '~/navigation'
 
-export function NavigationMenu({ className }: { className?: string }) {
+type NavigationMenuProps = {
+  className?: string
+  onNavigate?: (view: View) => void
+}
+
+export function NavigationMenu({ className, onNavigate }: NavigationMenuProps) {
   return (
     <div
       role="navigation"
@@ -16,13 +21,19 @@ export function NavigationMenu({ className }: { className?: string }) {
       }}
     >
       {NAVIGATION.map((item) => (
-        <NavigationItem key={item.view} item={item} />
+        <NavigationItem key={item.view} item={item} onNavigate={onNavigate} />
       ))}
     </div>
   )
 }
 
-function NavigationItem({ item }: { item: (typeof NAVIGATION)[number] }) {
+function NavigationItem({
+  item,
+  onNavigate,
+}: {
+  item: (typeof NAVIGATION)[number]
+  onNavigate?: (view: View) => void
+}) {
   const { view, setView } = useView()
 
   const [subLabel, setSubLabel] = useState('')
@@ -46,7 +57,10 @@ function NavigationItem({ item }: { item: (typeof NAVIGATION)[number] }) {
       variant="ghost"
       size="default"
       disabled={item.view === view}
-      onClick={() => setView(item.view)}
+      onClick={() => {
+        setView(item.view)
+        onNavigate?.(item.view)
+      }}
     >
       <Icon path={item.svgPath} className="size-12" />
       <div className="flex flex-col items-start relative">
@@ -55,8 +69,9 @@ function NavigationItem({ item }: { item: (typeof NAVIGATION)[number] }) {
         </span>
         <Fade
           in={!!subView}
-          inClassName="slide-in-from-bottom-2"
-          outClassName="slide-out-to-bottom-2"
+          className="transition-[opacity,transform]"
+          inClassName="translate-y-0"
+          outClassName="translate-y-1"
         >
           <span className="text-xs h-0 -mt-2 mb-2 absolute bottom-0 left-0 duration-500">
             {subLabel}

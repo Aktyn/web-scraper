@@ -73,6 +73,7 @@ const rendererToElectronMessageNames = [
 
   'getScraperJobs',
   'createScraperJob',
+  'deleteScraperJob',
 ] as const
 
 const api = {
