@@ -14,6 +14,9 @@ export default {
         sm: 'calc(var(--radius) * 0.5)',
         xs: 'calc(var(--radius) * 0.25)',
       },
+      backdropBlur: {
+        xs: '2px',
+      },
       scale: {
         golden: '1.618',
         'golden-reverse': '0.618',

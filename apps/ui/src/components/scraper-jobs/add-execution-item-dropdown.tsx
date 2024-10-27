@@ -18,6 +18,7 @@ import {
   DropdownMenuTrigger,
 } from '../ui/dropdown-menu'
 import { ExecutionItemForm } from './execution-item-form'
+import { TermInfo } from '../common/term-info'
 
 type AddExecutionItemDropdownProps = PropsWithChildren<{
   execution: UpsertScraperJobSchema['execution']
@@ -57,18 +58,22 @@ export const AddExecutionItemDropdown = memo<AddExecutionItemDropdownProps>(
                     onSelect={(event) => event.preventDefault()}
                   >
                     <Icon path={executionItemTypeNames[value].svgPath} />
-                    {executionItemTypeNames[value].label}
+                    <span>{executionItemTypeNames[value].label}</span>
+                    <TermInfo
+                      term={value}
+                      className="text-muted-foreground ml-auto !pointer-events-auto"
+                    />
                   </DropdownMenuItem>
                 </DialogTrigger>
                 <DialogContent className="max-w-2xl">
                   <DialogHeader>
-                    <DialogTitle>
+                    <DialogTitle className="flex flex-row items-center gap-x-2">
                       <Icon
                         path={executionItemTypeNames[value].svgPath}
                         className="size-7 inline"
                       />
-                      &nbsp;
-                      {executionItemTypeNames[value].label}
+                      <span>{executionItemTypeNames[value].label}</span>
+                      <TermInfo term={value} className="size-6 inline text-muted-foreground" />
                     </DialogTitle>
                   </DialogHeader>
                   <DialogDescription>

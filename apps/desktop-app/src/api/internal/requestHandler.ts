@@ -12,6 +12,7 @@ import { siteInstructionsHandler } from './handlers/siteInstructions.handler'
 import { siteTagHandler } from './handlers/siteTag.handler'
 import { userSettingsHandler } from './handlers/userSettings.handler'
 import { handleApiRequest, type RequestHandlersSchema, successResponse } from './helpers'
+import { scraperJobHandler } from './handlers/scraperJob.handler'
 
 export function registerRequestsHandler() {
   const handler = {
@@ -42,6 +43,7 @@ export function registerRequestsHandler() {
     ...siteInstructionsHandler,
     ...routineHandler,
     ...scraperSessionHandler,
+    ...scraperJobHandler,
   } satisfies RequestHandlersSchema
 
   for (const channel in handler) {

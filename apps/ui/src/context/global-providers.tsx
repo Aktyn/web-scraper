@@ -6,7 +6,7 @@ import { NotificationsModule } from '~/modules/notifications-module'
 export function GlobalProviders({ children }: PropsWithChildren) {
   return (
     <ThemeProvider defaultTheme="dark" storageKey="ui-theme">
-      <TooltipProvider delayDuration={0}>
+      <TooltipProvider delayDuration={16} skipDelayDuration={16} disableHoverableContent>
         <NotificationsModule.Provider>{children}</NotificationsModule.Provider>
       </TooltipProvider>
     </ThemeProvider>

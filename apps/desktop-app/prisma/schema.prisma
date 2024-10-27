@@ -138,3 +138,13 @@ model UserData {
   key   String @id
   value String
 }
+
+model ScraperJob {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  //
+  name      String   @unique
+  startUrl  String
+  execution String // Stringified array of JSONs
+  // simplifiedPageStructureSnapshots String? // Stringified JSON
+}

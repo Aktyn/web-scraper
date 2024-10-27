@@ -1,5 +1,4 @@
 import * as yup from 'yup'
-import type { SimplifiedPageStructure } from './common'
 import { upsertExecutionConditionSchema, type ExecutionCondition } from './executionCondition'
 import { upsertScraperStepSchema, type ScraperStep } from './scraperStep'
 
@@ -43,8 +42,11 @@ export const upsertJobExecutionItemSchema = yup.object({
 export type UpsertJobExecutionItemSchema = yup.InferType<typeof upsertJobExecutionItemSchema>
 
 export type ScraperJob = {
-  uuid: string
+  id: number
+  createdAt: Date
+
   name: string
+  startUrl: URL['href']
 
   /**
    * List of execution items that will be executed in order, unless a condition changes the flow
@@ -55,13 +57,14 @@ export type ScraperJob = {
    * Map of simplified page structure snapshots indexed by page URL\
    * If the structure changes it means the AI should be re-prompted for the target elements
    */
-  simplifiedPageStructureSnapshots: Map<URL['href'], Readonly<SimplifiedPageStructure>>
+  //TODO: implement
+  // simplifiedPageStructureSnapshots?: Map<URL['href'], Readonly<SimplifiedPageStructure>>
 }
 
 export const upsertScraperJobSchema = yup
   .object({
-    uuid: yup.string().required(),
     name: yup.string().required('Name is required'),
+    startUrl: yup.string().url('Start URL must be a valid URL').required('Start URL is required'),
     execution: yup
       .array()
       .of(upsertJobExecutionItemSchema)

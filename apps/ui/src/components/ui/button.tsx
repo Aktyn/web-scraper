@@ -1,10 +1,11 @@
-import * as React from 'react'
 import { Slot } from '@radix-ui/react-slot'
 import { cva, type VariantProps } from 'class-variance-authority'
+import { type ButtonHTMLAttributes, forwardRef } from 'react'
 import { cn } from '~/lib/utils'
+import { Spinner } from '../common/spinner'
 
 const buttonVariants = cva(
-  'inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-5 [&_svg]:shrink-0',
+  'inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-5 [&_svg]:shrink-0 relative',
   {
     variants: {
       variant: {
@@ -30,20 +31,53 @@ const buttonVariants = cva(
 )
 
 export interface ButtonProps
-  extends React.ButtonHTMLAttributes<HTMLButtonElement>,
+  extends ButtonHTMLAttributes<HTMLButtonElement>,
     VariantProps<typeof buttonVariants> {
   asChild?: boolean
+  loading?: boolean
 }
 
-const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant, size, asChild = false, ...props }, ref) => {
+const Button = forwardRef<HTMLButtonElement, ButtonProps>(
+  ({ className, variant, size, asChild = false, loading = false, ...props }, ref) => {
     const Comp = asChild ? Slot : 'button'
+
     return (
-      <Comp className={cn(buttonVariants({ variant, size, className }))} ref={ref} {...props} />
+      <Comp
+        className={cn(
+          buttonVariants({ variant, size, className }),
+          loading && 'pointer-events-none overflow-hidden',
+        )}
+        ref={ref}
+        {...props}
+      >
+        {asChild ? (
+          loading ? (
+            <div>
+              {props.children}
+              <LoadingLayer />
+            </div>
+          ) : (
+            props.children
+          )
+        ) : (
+          <>
+            {props.children}
+            {loading && <LoadingLayer />}
+          </>
+        )}
+      </Comp>
     )
   },
 )
 Button.displayName = 'Button'
+
+function LoadingLayer() {
+  return (
+    <div className="absolute inset-0 backdrop-blur-xs flex items-center justify-center pointer-events-none overflow-hidden">
+      <Spinner />
+    </div>
+  )
+}
 
 // eslint-disable-next-line react-refresh/only-export-components
 export { Button, buttonVariants }

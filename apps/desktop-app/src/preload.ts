@@ -70,6 +70,9 @@ const rendererToElectronMessageNames = [
   'testProcedure',
   'returnManualDataForActionStep',
   'returnDataSourceItemIdForActionStep',
+
+  'getScraperJobs',
+  'createScraperJob',
 ] as const
 
 const api = {

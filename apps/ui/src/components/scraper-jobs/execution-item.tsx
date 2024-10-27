@@ -1,13 +1,21 @@
-import { mdiAssistant, mdiKeyboardReturn, mdiPencil, mdiTimerSand, mdiTrashCan } from '@mdi/js'
+import {
+  mdiAssistant,
+  mdiKeyboardReturn,
+  mdiLink,
+  mdiPencil,
+  mdiTimerSand,
+  mdiTrashCan,
+} from '@mdi/js'
 import Icon from '@mdi/react'
 import {
   ExecutionItemType,
   FlowActionType,
+  parseTime,
   ScraperStepType,
   type JobExecutionItem,
   type UpsertJobExecutionItemSchema,
 } from '@web-scraper/common'
-import { type HTMLAttributes, useCallback, useState } from 'react'
+import { useCallback, useState, type HTMLAttributes } from 'react'
 import {
   executionItemTypeNames,
   flowActionTypeNames,
@@ -90,29 +98,31 @@ export function ExecutionItem({
         )}
         {item.type === ExecutionItemType.STEP && (
           <div className="flex flex-col items-start justify-center px-2 py-1">
-            <div className="flex flex-row flex-wrap items-center gap-x-2">
+            <div className="flex flex-row flex-wrap items-center gap-x-1">
               <span className="text-base font-semibold">
                 {scraperStepTypeNames[item.step.type]}
               </span>
-              {typeof item.step.data.element !== 'string' && (
-                <Tooltip>
-                  <TooltipTrigger>
-                    <Icon path={mdiAssistant} className="size-5" />
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    Targeting element with AI
-                    <br />
-                    Prompt: <b>{item.step.data.element.aiPrompt}</b>
-                  </TooltipContent>
-                </Tooltip>
-              )}
+              {item.step.type !== ScraperStepType.REDIRECT &&
+                typeof item.step.data.element !== 'string' && (
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Icon path={mdiAssistant} className="size-5" />
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      Targeting element with AI
+                      <br />
+                      Prompt: <b>{item.step.data.element.aiPrompt}</b>
+                    </TooltipContent>
+                  </Tooltip>
+                )}
               {item.step.type === ScraperStepType.FILL_INPUT && item.step.data.pressEnter && (
                 <Tooltip>
-                  <TooltipTrigger>
+                  <TooltipTrigger asChild>
                     <Icon path={mdiKeyboardReturn} className="size-5" />
                   </TooltipTrigger>
                   <TooltipContent>
-                    Press enter with {item.step.data.delayEnter ?? 0}ms delay
+                    Press enter with{' '}
+                    <b>{parseTime(item.step.data.delayEnter ?? 0, 'milliseconds')}</b> delay
                   </TooltipContent>
                 </Tooltip>
               )}
@@ -120,17 +130,35 @@ export function ExecutionItem({
                 item.step.type === ScraperStepType.PRESS_BUTTON) &&
                 item.step.data.waitForNavigation && (
                   <Tooltip>
-                    <TooltipTrigger>
+                    <TooltipTrigger asChild>
                       <Icon path={mdiTimerSand} className="size-5" />
                     </TooltipTrigger>
                     <TooltipContent>
                       {/* TODO: smart time formatting (the value will most likely be rounded to the nearest second) */}
-                      Wait for navigation for {item.step.data.waitForNavigationTimeout ?? 0}ms
+                      Wait{' '}
+                      <b>
+                        {parseTime(item.step.data.waitForNavigationTimeout ?? 0, 'milliseconds')}
+                      </b>{' '}
+                      for navigation
                     </TooltipContent>
                   </Tooltip>
                 )}
             </div>
-            <span>TODO: value query</span>
+            {item.step.type === ScraperStepType.REDIRECT ? (
+              <div className="flex flex-row items-center gap-x-2">
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Icon path={mdiLink} className="size-5" />
+                  </TooltipTrigger>
+                  <TooltipContent>{item.step.data.url}</TooltipContent>
+                </Tooltip>
+                <span className="flex-1 max-w-32 overflow-hidden whitespace-nowrap text-ellipsis">
+                  {item.step.data.url}
+                </span>
+              </div>
+            ) : (
+              <span>TODO: value query</span>
+            )}
           </div>
         )}
       </div>

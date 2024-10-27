@@ -5,6 +5,7 @@ import * as site from './site'
 import * as siteInstructions from './siteInstructions'
 import * as siteTag from './siteTag'
 import * as userData from './userData'
+import * as scraperJob from './scraperJob'
 
 const Database = {
   prisma,
@@ -14,6 +15,7 @@ const Database = {
   siteInstructions,
   routine,
   userData,
+  scraperJob,
 
   disconnect: () => prisma.$disconnect(),
 

@@ -4,12 +4,13 @@ import { cn } from '~/lib/utils'
 
 type FadeProps = {
   in: boolean
+  keepMounted?: boolean
   inClassName?: string
   outClassName?: string
   children: ReactNode
 }
 
-export function Fade({ in: inProp, inClassName, outClassName, children }: FadeProps) {
+export function Fade({ in: inProp, keepMounted, inClassName, outClassName, children }: FadeProps) {
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
@@ -23,7 +24,7 @@ export function Fade({ in: inProp, inClassName, outClassName, children }: FadePr
     }
   }, [inProp])
 
-  if (!mounted) {
+  if (!mounted && !keepMounted) {
     return null
   }
 

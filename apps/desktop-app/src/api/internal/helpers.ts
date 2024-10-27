@@ -1,5 +1,6 @@
 import {
   ErrorCode,
+  isApiError,
   wait,
   type ApiError,
   type ElectronApi,
@@ -43,10 +44,6 @@ export const handleApiRequest = <ArgumentsType extends any[], ResponseType exten
     event: IpcMainInvokeEvent,
     ...args: ArgumentsType
   ) => ResponseType | Promise<ApiError>
-
-function isApiError(error: unknown): error is ApiError {
-  return !!error && typeof error === 'object' && 'errorCode' in error
-}
 
 export const successResponse: ApiError = {
   errorCode: ErrorCode.NO_ERROR,

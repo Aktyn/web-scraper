@@ -1,4 +1,5 @@
 import type { ApiError, PaginatedApiFunction } from './common'
+import type { ScraperJob, UpsertScraperJobSchema } from './scraper'
 import type {
   Action,
   ActionExecutionResult,
@@ -106,6 +107,10 @@ export enum RendererToElectronMessage {
   testProcedure = 'testProcedure',
   returnManualDataForActionStep = 'returnManualDataForActionStep',
   returnDataSourceItemIdForActionStep = 'returnDataSourceItemIdForActionStep',
+
+  //NOTE: above may be deprecated
+  getScraperJobs = 'getScraperJobs',
+  createScraperJob = 'createScraperJob',
 }
 
 // eslint-disable-next-line @typescript-eslint/no-empty-object-type
@@ -327,4 +332,8 @@ export type ElectronApi = {
     ElectronToRendererMessage.requestDataSourceItemIdForActionStep,
     [itemId: DataSourceItem['id']]
   >
+  [RendererToElectronMessage.getScraperJobs]: PaginatedApiFunction<ScraperJob, 'id'>
+  [RendererToElectronMessage.createScraperJob]: (
+    data: UpsertScraperJobSchema,
+  ) => Promise<ScraperJob | ApiError>
 }

@@ -1,12 +1,21 @@
 import { mdiPlus } from '@mdi/js'
 import Icon from '@mdi/react'
-import { type JobExecutionItem, type UpsertScraperJobSchema } from '@web-scraper/common'
+import {
+  ExecutionItemType,
+  type JobExecutionItem,
+  type UpsertScraperJobSchema,
+} from '@web-scraper/common'
 import { Fragment, memo, type RefObject, useCallback, useEffect, useRef, useState } from 'react'
 import { cn } from '~/lib/utils'
 import { Measurer } from '../common/measurer'
 import { Button } from '../ui/button'
 import { AddExecutionItemDropdown } from './add-execution-item-dropdown'
 import { ExecutionItem } from './execution-item'
+
+type Point = {
+  x: number
+  y: number
+}
 
 type ExecutionFlowProps = {
   execution: UpsertScraperJobSchema['execution']
@@ -41,17 +50,29 @@ export const ExecutionFlow = memo<ExecutionFlowProps>(({ execution, onChange }) 
                   onChange={onChange}
                   pushAfter={index}
                 >
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    className="z-10 rounded-full border-dashed border-2 border-execution-condition/50 hover:border-execution-condition text-foreground my-auto"
+                  <div
+                    className={cn(
+                      'z-10 my-auto rounded-full box-border bg-gradient-to-r',
+                      execution[index - 1].type === ExecutionItemType.CONDITION &&
+                        'from-execution-condition/75',
+                      execution[index - 1].type === ExecutionItemType.STEP &&
+                        'from-execution-step/75',
+                      item.type === ExecutionItemType.CONDITION && 'to-execution-condition/75',
+                      item.type === ExecutionItemType.STEP && 'to-execution-step/75',
+                    )}
                   >
-                    <Icon path={mdiPlus} />
-                  </Button>
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      className="rounded-[inherit] border-dashed border-2 text-foreground border-transparent bg-clip-padding bg-background"
+                    >
+                      <Icon path={mdiPlus} />
+                    </Button>
+                  </div>
                 </AddExecutionItemDropdown>
               )}
               <ExecutionItem
-                data-flow-index={index}
+                data-flow-execution-type={item.type}
                 item={item as JobExecutionItem}
                 onEdit={
                   onChange ? (item) => handleExecutionItemEditSuccess(index, item) : undefined
@@ -87,10 +108,18 @@ type FlowConnectorProps = {
 function FlowConnector({ width, height, containerRef }: FlowConnectorProps) {
   const svgRef = useRef<SVGSVGElement>(null)
 
-  const [paths, setPaths] = useState<string[]>([])
+  const [paths, setPaths] = useState<
+    {
+      d: string
+      from: Point
+      to: Point
+      previousExecutionType: ExecutionItemType
+      currentExecutionType: ExecutionItemType
+    }[]
+  >([])
 
   useEffect(() => {
-    const elements = containerRef.current?.querySelectorAll('[data-flow-index]')
+    const elements = containerRef.current?.querySelectorAll('[data-flow-execution-type]')
     const svg = svgRef.current
 
     if (!elements?.length || !svg || !width || !height) {
@@ -105,55 +134,71 @@ function FlowConnector({ width, height, containerRef }: FlowConnectorProps) {
       const previousElement = elements[i - 1]
       const currentElement = elements[i]
 
+      const previousExecutionType = previousElement.getAttribute(
+        'data-flow-execution-type',
+      ) as ExecutionItemType | null
+      const currentExecutionType = currentElement.getAttribute(
+        'data-flow-execution-type',
+      ) as ExecutionItemType | null
+
+      if (!previousExecutionType || !currentExecutionType) {
+        continue
+      }
+
       if (
         previousElement.getBoundingClientRect().right < currentElement.getBoundingClientRect().left
       ) {
-        calculatedPaths.push(
-          generatePath(
-            {
-              x: Math.floor(previousElement.getBoundingClientRect().right - svgBox.left),
-              y: Math.floor(
-                (previousElement.getBoundingClientRect().top +
-                  previousElement.getBoundingClientRect().bottom) /
-                  2 -
-                  svgBox.top,
-              ),
-            },
-            {
-              x: Math.floor(currentElement.getBoundingClientRect().left - svgBox.left),
-              y: Math.floor(
-                (currentElement.getBoundingClientRect().top +
-                  currentElement.getBoundingClientRect().bottom) /
-                  2 -
-                  svgBox.top,
-              ),
-            },
+        const from = {
+          x: Math.floor(previousElement.getBoundingClientRect().right - svgBox.left),
+          y: Math.floor(
+            (previousElement.getBoundingClientRect().top +
+              previousElement.getBoundingClientRect().bottom) /
+              2 -
+              svgBox.top,
           ),
-        )
+        }
+        const to = {
+          x: Math.floor(currentElement.getBoundingClientRect().left - svgBox.left),
+          y: Math.floor(
+            (currentElement.getBoundingClientRect().top +
+              currentElement.getBoundingClientRect().bottom) /
+              2 -
+              svgBox.top,
+          ),
+        }
+        calculatedPaths.push({
+          from,
+          to,
+          d: generatePath(from, to, true),
+          previousExecutionType,
+          currentExecutionType,
+        })
       } else {
-        calculatedPaths.push(
-          generatePath(
-            {
-              x: Math.floor(
-                (previousElement.getBoundingClientRect().left +
-                  previousElement.getBoundingClientRect().right) /
-                  2 -
-                  svgBox.left,
-              ),
-              y: Math.floor(previousElement.getBoundingClientRect().bottom - svgBox.top),
-            },
-            {
-              x: Math.floor(
-                (currentElement.getBoundingClientRect().left +
-                  currentElement.getBoundingClientRect().right) /
-                  2 -
-                  svgBox.left,
-              ),
-              y: Math.floor(currentElement.getBoundingClientRect().top - svgBox.top),
-            },
-            true,
+        const from = {
+          x: Math.floor(
+            (previousElement.getBoundingClientRect().left +
+              previousElement.getBoundingClientRect().right) /
+              2 -
+              svgBox.left,
           ),
-        )
+          y: Math.floor(previousElement.getBoundingClientRect().bottom - svgBox.top),
+        }
+        const to = {
+          x: Math.floor(
+            (currentElement.getBoundingClientRect().left +
+              currentElement.getBoundingClientRect().right) /
+              2 -
+              svgBox.left,
+          ),
+          y: Math.floor(currentElement.getBoundingClientRect().top - svgBox.top),
+        }
+        calculatedPaths.push({
+          from,
+          to,
+          d: generatePath(from, to, true),
+          previousExecutionType,
+          currentExecutionType,
+        })
       }
     }
 
@@ -163,11 +208,40 @@ function FlowConnector({ width, height, containerRef }: FlowConnectorProps) {
   return (
     <div className="absolute left-0 top-0 w-full h-full overflow-hidden pointer-events-none">
       <svg ref={svgRef} width={width} height={height} fill="none">
+        <defs>
+          {paths.map((path, index) => {
+            const minX = Math.min(path.from.x, path.to.x)
+            const maxX = Math.max(path.from.x, path.to.x)
+
+            const startColor = getExecutionColor(
+              path.from.x < path.to.x ? path.previousExecutionType : path.currentExecutionType,
+            )
+            const endColor = getExecutionColor(
+              path.from.x < path.to.x ? path.currentExecutionType : path.previousExecutionType,
+            )
+
+            return (
+              <linearGradient
+                key={index}
+                id={`flowGradient${index}`}
+                x1={minX}
+                y1={0}
+                x2={maxX}
+                y2={0}
+                gradientUnits="userSpaceOnUse"
+              >
+                <stop offset="0%" stopColor={startColor} />
+                <stop offset="100%" stopColor={endColor} />
+              </linearGradient>
+            )
+          })}
+        </defs>
         {paths.map((path, index) => (
           <path
             key={index}
-            className="stroke-execution-condition/50"
-            d={path}
+            strokeMiterlimit={10}
+            stroke={`url(#flowGradient${index})`}
+            d={path.d}
             strokeWidth={2}
             strokeDasharray="6, 4"
           />
@@ -177,9 +251,13 @@ function FlowConnector({ width, height, containerRef }: FlowConnectorProps) {
   )
 }
 
-type Point = {
-  x: number
-  y: number
+function getExecutionColor(executionType: ExecutionItemType) {
+  switch (executionType) {
+    case ExecutionItemType.CONDITION:
+      return 'hsl(var(--execution-condition) / 0.75)'
+    case ExecutionItemType.STEP:
+      return 'hsl(var(--execution-step) / 0.75)'
+  }
 }
 
 function generatePath(from: Point, to: Point, quadratic = false) {

@@ -20,6 +20,7 @@ import { Button } from '../ui/button'
 import { Form } from '../ui/form'
 import { Label } from '../ui/label'
 import { Switch } from '../ui/switch'
+import { useState } from 'react'
 
 type ExecutionItemFormProps = {
   item: ExecutionItemType | JobExecutionItem
@@ -51,15 +52,7 @@ export function ExecutionItemForm({
                   }
                 : undefined,
             step:
-              type === ExecutionItemType.STEP
-                ? {
-                    ...upsertScraperStepSchema.getDefault(),
-                    data: {
-                      ...upsertScraperStepSchema.getDefault().data,
-                      element: '',
-                    },
-                  }
-                : undefined,
+              type === ExecutionItemType.STEP ? upsertScraperStepSchema.getDefault() : undefined,
           }
         : item,
   })
@@ -111,7 +104,16 @@ export function ExecutionItemForm({
                   className="min-w-48"
                 />
               </div>
-              <ActionStepDataFields control={form.control} />
+              <ActionStepDataFields
+                control={form.control}
+                defaultUseAI={
+                  editMode &&
+                  item.type === ExecutionItemType.STEP &&
+                  item.step.type !== ScraperStepType.REDIRECT &&
+                  typeof item.step.data.element === 'object' &&
+                  item.step.data.element !== null
+                }
+              />
             </>
           )}
           {/* 
@@ -143,17 +145,39 @@ export function ExecutionItemForm({
   )
 }
 
-function ActionStepDataFields({ control }: { control: Control<UpsertJobExecutionItemSchema> }) {
+type ActionStepDataFieldsProps = {
+  control: Control<UpsertJobExecutionItemSchema>
+  defaultUseAI: boolean
+}
+
+function ActionStepDataFields({ control, defaultUseAI }: ActionStepDataFieldsProps) {
   const { watch } = useFormContext<UpsertJobExecutionItemSchema>()
   const scraperStepType = watch('step.type')
   const pressEnter = watch('step.data.pressEnter')
   const waitForNavigation = watch('step.data.waitForNavigation')
 
+  const [useAI, setUseAI] = useState(defaultUseAI)
+
+  if (scraperStepType === ScraperStepType.REDIRECT) {
+    return <FormInput key="url" control={control} name="step.data.url" label="Redirect URL" />
+  }
+
   return (
     <>
-      <FormInput control={control} name="step.data.element" label="Element path" />
+      {useAI ? (
+        // TODO: add ability to test-run AI prompt in active puppeteer instance
+        <FormInput
+          key="aiPrompt"
+          control={control}
+          name="step.data.element.aiPrompt"
+          label="Element description for AI"
+          placeholder="E.g., 'Search input', 'Login button'"
+        />
+      ) : (
+        <FormInput key="element" control={control} name="step.data.element" label="Element path" />
+      )}
       <div className="flex items-center space-x-2">
-        <Switch id="ai-prompt" disabled />
+        <Switch id="ai-prompt" checked={useAI} onCheckedChange={setUseAI} />
         <Label htmlFor="ai-prompt">Use AI for targeting element</Label>
       </div>
       <FormInput control={control} name="step.data.valueQuery" label="Value query" />

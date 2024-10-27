@@ -8,6 +8,10 @@ export interface ApiError {
   error?: Error | string | null
 }
 
+export function isApiError(error: unknown): error is ApiError {
+  return !!error && typeof error === 'object' && 'errorCode' in error
+}
+
 export type PaginatedApiResponse<DataType, IdProperty extends keyof DataType> =
   | ApiError
   | {

@@ -7,7 +7,6 @@ import {
   type SiteInstructions,
   type UpsertSiteSchema,
 } from '@web-scraper/common'
-
 import Database from './index'
 
 export function getSites(request: PaginatedRequest<Site, 'id'>) {

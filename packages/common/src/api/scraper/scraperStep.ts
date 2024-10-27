@@ -3,9 +3,9 @@ import { transformNanToUndefined } from '../common'
 
 export enum ScraperStepType {
   FILL_INPUT = 'fillInput',
-  // UPLOAD_FILE = 'uploadFile', //TODO: support for file fields
   SELECT_OPTION = 'selectOption',
   PRESS_BUTTON = 'pressButton',
+  REDIRECT = 'redirect',
 }
 
 type StepBase<Type extends ScraperStepType, Data> = {
@@ -50,15 +50,14 @@ export type ScraperStep =
         waitForNavigationTimeout?: number
       }
     >
+  | StepBase<ScraperStepType.REDIRECT, { url: URL['href'] }>
 
 const elementPathSchema = yup.lazy((value) =>
-  typeof value === 'string'
-    ? yup.string().required('Element path is required').default('')
-    : yup
-        .object({
-          aiPrompt: yup.string().required('AI prompt is required').default(''),
-        })
-        .required('AI prompt is required'),
+  typeof value === 'object' && value !== null
+    ? yup.object({
+        aiPrompt: yup.string().default(''),
+      })
+    : yup.string().required('Element path is required').default(''),
 )
 const valueQuerySchema = yup.string().notRequired().nullable().default(null)
 const waitForElementTimeoutSchema = yup
@@ -111,40 +110,35 @@ const waitForNavigationTimeout = yup
 //   waitForNavigationTimeout: waitForNavigationTimeout,
 // })
 
+const urlSchema = yup.string().url('Redirect URL must be a valid URL')
+
+const redirectStepDataSchema = yup.object({
+  url: urlSchema,
+})
+
+const nonRedirectStepDataSchema = yup
+  .object({
+    element: elementPathSchema,
+    valueQuery: valueQuerySchema,
+    pressEnter: yup.boolean().nullable().default(null),
+    delayEnter: yup.number().transform(transformNanToUndefined).nullable().default(null),
+    waitForNavigation: waitForNavigationSchema,
+    waitForElementTimeout: waitForElementTimeoutSchema,
+    waitForNavigationTimeout: waitForNavigationTimeout,
+    url: urlSchema.notRequired().nullable(),
+  })
+  .partial()
+  .required()
+
 export const upsertScraperStepSchema = yup.object({
   type: yup
     .mixed<ScraperStepType>()
     .oneOf(Object.values(ScraperStepType))
     .default(ScraperStepType.PRESS_BUTTON)
     .required('Type is required'),
-  // data: yup.lazy((_, options) => {
-  //   const parentType = options.parent.type
-  //   switch (parentType) {
-  //     case ScraperStepType.FILL_INPUT:
-  //       return fillInputSchema.required().nullable().default(fillInputSchema.getDefault())
-  //     case ScraperStepType.SELECT_OPTION:
-  //       return selectOptionSchema.required().nullable().default(selectOptionSchema.getDefault())
-  //     case ScraperStepType.PRESS_BUTTON:
-  //       return pressButtonSchema.required().nullable().default(pressButtonSchema.getDefault())
-  //     default:
-  //       return yup.mixed().required('Invalid scraper step type')
-  //   }
-  // }),
-  data: yup
-    .object({
-      element: elementPathSchema,
-      valueQuery: valueQuerySchema,
-      pressEnter: yup.boolean().nullable().default(null).notRequired(),
-      delayEnter: yup
-        .number()
-        .transform(transformNanToUndefined)
-        .nullable()
-        .default(null)
-        .notRequired(),
-      waitForNavigation: waitForNavigationSchema,
-      waitForElementTimeout: waitForElementTimeoutSchema,
-      waitForNavigationTimeout: waitForNavigationTimeout,
-    })
-    .partial()
-    .required(),
+  data: nonRedirectStepDataSchema.when('type', {
+    is: ScraperStepType.REDIRECT,
+    then: () => redirectStepDataSchema,
+    otherwise: (schema) => schema.required(),
+  }),
 })

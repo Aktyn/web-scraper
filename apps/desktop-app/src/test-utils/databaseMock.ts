@@ -5,6 +5,7 @@ import type {
   PrismaClient,
   Procedure,
   Routine,
+  ScraperJob,
   Site,
   SiteInstructions,
   SiteTag,
@@ -14,9 +15,13 @@ import type {
 import {
   ActionStepErrorType,
   ActionStepType,
+  ExecutionItemType,
+  FlowActionType,
   GLOBAL_ACTION_PREFIX,
   GlobalActionType,
+  type JobExecutionItem,
   ProcedureType,
+  ScraperStepType,
 } from '@web-scraper/common'
 import { type DeepMockProxy, mockDeep } from 'jest-mock-extended'
 
@@ -28,6 +33,28 @@ jest.mock('../database/client', () => ({
 }))
 
 export const databaseMock = prisma as unknown as DeepMockProxy<PrismaClient>
+
+const jobExecutionItems = [
+  {
+    type: ExecutionItemType.CONDITION,
+    condition: {
+      condition: {},
+      flowAction: {
+        type: FlowActionType.JUMP,
+        targetExecutionItemIndex: 1,
+      },
+    },
+  },
+  {
+    type: ExecutionItemType.STEP,
+    step: {
+      type: ScraperStepType.REDIRECT,
+      data: {
+        url: 'https://mocked-site.com',
+      },
+    },
+  },
+] satisfies JobExecutionItem[]
 
 export const mockData = {
   siteTags: [
@@ -198,4 +225,21 @@ export const mockData = {
       value: JSON.stringify(0.5),
     },
   ] satisfies UserData[],
+
+  scraperJobs: [
+    {
+      id: 1,
+      createdAt: new Date('2024-02-19T23:40:10.302Z'),
+      name: 'Mocked scraper job 1',
+      startUrl: 'https://mocked-site.com',
+      execution: JSON.stringify(jobExecutionItems),
+    },
+    {
+      id: 2,
+      createdAt: new Date('2024-02-20T23:40:10.302Z'),
+      name: 'Mocked scraper job 2',
+      startUrl: 'http://localhost:1357/mock-testing',
+      execution: JSON.stringify([]),
+    },
+  ] satisfies ScraperJob[],
 }

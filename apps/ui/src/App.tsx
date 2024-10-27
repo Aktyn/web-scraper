@@ -19,7 +19,7 @@ export function App() {
 
 function ViewBase() {
   const [maximized, setMaximized] = usePersistentState('window-maximized', 'false', sessionStorage)
-  const [view, setView] = useState(View.SCRAPER_JOB_CREATOR)
+  const [view, setView] = useState(View.SCRAPER_JOBS)
 
   ApiModule.useEvent(ElectronToRendererMessage.windowStateChanged, (_, stateChange) => {
     if (stateChange === WindowStateChange.MAXIMIZE) {

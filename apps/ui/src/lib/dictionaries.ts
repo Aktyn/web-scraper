@@ -119,4 +119,5 @@ export const scraperStepTypeNames: { [key in ScraperStepType]: string } = {
   [ScraperStepType.FILL_INPUT]: 'Fill input',
   [ScraperStepType.SELECT_OPTION]: 'Select option',
   [ScraperStepType.PRESS_BUTTON]: 'Press button',
+  [ScraperStepType.REDIRECT]: 'Redirect',
 }
