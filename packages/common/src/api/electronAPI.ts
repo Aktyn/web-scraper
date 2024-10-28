@@ -112,6 +112,7 @@ export enum RendererToElectronMessage {
   getScraperJobs = 'getScraperJobs',
   createScraperJob = 'createScraperJob',
   deleteScraperJob = 'deleteScraperJob',
+  updateScraperJob = 'updateScraperJob',
 }
 
 // eslint-disable-next-line @typescript-eslint/no-empty-object-type
@@ -335,6 +336,10 @@ export type ElectronApi = {
   >
   [RendererToElectronMessage.getScraperJobs]: PaginatedApiFunction<ScraperJob, 'id'>
   [RendererToElectronMessage.createScraperJob]: (
+    data: UpsertScraperJobSchema,
+  ) => Promise<ScraperJob | ApiError>
+  [RendererToElectronMessage.updateScraperJob]: (
+    scraperJobId: ScraperJob['id'],
     data: UpsertScraperJobSchema,
   ) => Promise<ScraperJob | ApiError>
   [RendererToElectronMessage.deleteScraperJob]: (

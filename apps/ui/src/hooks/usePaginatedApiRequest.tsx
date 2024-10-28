@@ -30,13 +30,18 @@ export function usePaginatedApiRequest<
     (
       config: ApiRequestConfigType<DataType>,
       filters?: DataFilter<Omit<DataType, OmitInFilters>>[] | string,
+      startOver = false,
     ) => {
       setLoading(true)
 
+      if (startOver) {
+        setCursor(undefined)
+        setData([])
+      }
       cancellable(
         request({
           count: Config.PAGINATION_PAGE_SIZE,
-          cursor,
+          cursor: startOver ? undefined : cursor,
           filters,
         }),
       )
@@ -81,6 +86,7 @@ export function usePaginatedApiRequest<
   return useMemo(
     () => ({
       data,
+      setData,
       load,
       clearData,
       loading,

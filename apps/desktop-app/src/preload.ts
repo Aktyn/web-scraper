@@ -73,6 +73,7 @@ const rendererToElectronMessageNames = [
 
   'getScraperJobs',
   'createScraperJob',
+  'updateScraperJob',
   'deleteScraperJob',
 ] as const
 

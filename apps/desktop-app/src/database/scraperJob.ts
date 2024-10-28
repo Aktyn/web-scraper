@@ -44,6 +44,19 @@ export function createScraperJob(data: UpsertScraperJobSchema) {
   })
 }
 
+export function updateScraperJob(id: ScraperJob['id'], data: UpsertScraperJobSchema) {
+  validateUpsertSchema(data)
+
+  return Database.prisma.scraperJob.update({
+    where: { id },
+    data: {
+      name: data.name,
+      startUrl: data.startUrl,
+      execution: JSON.stringify(data.execution),
+    },
+  })
+}
+
 export function deleteScraperJob(id: ScraperJob['id']) {
   return Database.prisma.scraperJob.delete({ where: { id } })
 }

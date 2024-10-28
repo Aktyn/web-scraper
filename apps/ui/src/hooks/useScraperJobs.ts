@@ -1,5 +1,5 @@
-import type { ScraperJob } from '@web-scraper/common'
-import { useCallback, useEffect, useMemo } from 'react'
+import type { ScraperJob, UpsertScraperJobSchema } from '@web-scraper/common'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { toast } from 'sonner'
 import { useApiRequest } from './useApiRequest'
 import { usePaginatedApiRequest } from './usePaginatedApiRequest'
@@ -7,6 +7,7 @@ import { usePaginatedApiRequest } from './usePaginatedApiRequest'
 export function useScraperJobs() {
   const {
     data: scraperJobs,
+    setData: setScraperJobs,
     load,
     loading,
     clearData,
@@ -15,10 +16,18 @@ export function useScraperJobs() {
   const { submit: apiDelete, submitting: deleting } = useApiRequest(
     window.electronAPI.deleteScraperJob,
   )
+  const { submit: apiUpdate, submitting: editing } = useApiRequest(
+    window.electronAPI.updateScraperJob,
+  )
 
-  const loadMore = useCallback(() => {
-    load({}, [])
-  }, [load])
+  const [deletingTarget, setDeletingTarget] = useState<ScraperJob['id'] | null>(null)
+  const [editingTarget, setEditingTarget] = useState<ScraperJob['id'] | null>(null)
+  const loadMore = useCallback(
+    (startOver = false) => {
+      load({}, [], startOver)
+    },
+    [load],
+  )
 
   useEffect(() => {
     loadMore()
@@ -29,18 +38,38 @@ export function useScraperJobs() {
 
   const deleteScraperJob = useCallback(
     (scraperJobId: ScraperJob['id']) => {
+      setDeletingTarget(scraperJobId)
       apiDelete(
         {
           onSuccess: () => {
             toast.success('Scraper job deleted')
-            clearData()
-            loadMore()
+            loadMore(true)
           },
         },
         scraperJobId,
       )
     },
-    [apiDelete, clearData, loadMore],
+    [apiDelete, loadMore],
+  )
+
+  const editScraperJob = useCallback(
+    (scraperJobId: ScraperJob['id'], data: UpsertScraperJobSchema) => {
+      setEditingTarget(scraperJobId)
+
+      apiUpdate(
+        {
+          onSuccess: (scraperJob) => {
+            toast.success(`Scraper job updated (${scraperJob.name})`)
+            setScraperJobs((prev) =>
+              prev.map((job) => (job.id === scraperJobId ? scraperJob : job)),
+            )
+          },
+        },
+        scraperJobId,
+        data,
+      )
+    },
+    [apiUpdate, setScraperJobs],
   )
 
   return useMemo(
@@ -50,8 +79,21 @@ export function useScraperJobs() {
       loading,
       hasMore,
       deleteScraperJob,
-      deleting,
+      deleting: deleting ? deletingTarget : null,
+      editScraperJob,
+      editing: editing ? editingTarget : null,
     }),
-    [scraperJobs, loadMore, loading, hasMore, deleteScraperJob, deleting],
+    [
+      scraperJobs,
+      loadMore,
+      loading,
+      hasMore,
+      deleteScraperJob,
+      deleting,
+      deletingTarget,
+      editScraperJob,
+      editing,
+      editingTarget,
+    ],
   )
 }

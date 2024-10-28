@@ -17,12 +17,12 @@ export const scraperJobHandler = {
     RendererToElectronMessage.createScraperJob,
     (data) => Database.scraperJob.createScraperJob(data).then(parseDatabaseScraperJob),
   ),
+  [RendererToElectronMessage.updateScraperJob]: handleApiRequest(
+    RendererToElectronMessage.updateScraperJob,
+    (id, data) => Database.scraperJob.updateScraperJob(id, data).then(parseDatabaseScraperJob),
+  ),
   [RendererToElectronMessage.deleteScraperJob]: handleApiRequest(
     RendererToElectronMessage.deleteScraperJob,
     (id) => Database.scraperJob.deleteScraperJob(id).then(() => successResponse),
   ),
-  // [RendererToElectronMessage.updateSite]: handleApiRequest(
-  //   RendererToElectronMessage.updateSite,
-  //   (id, data) => Database.site.updateSite(id, data).then(parseDatabaseSite),
-  // ),
 } satisfies Partial<RequestHandlersSchema>
