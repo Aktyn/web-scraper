@@ -1468,6 +1468,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@prisma/debug@npm:5.22.0":
+  version: 5.22.0
+  resolution: "@prisma/debug@npm:5.22.0"
+  checksum: 10c0/ff7c5e84d9f9b568a2a1992eb39fc7c3ab6d9e326c77fdefec1655ccfbf6c0ee268a5dcf087867848eb00a0328c9cc75a164880ec7cd60f7fd634e2fca2943d9
+  languageName: node
+  linkType: hard
+
 "@prisma/engines-version@npm:5.21.1-1.bf0e5e8a04cada8225617067eaa03d041e2bba36":
   version: 5.21.1-1.bf0e5e8a04cada8225617067eaa03d041e2bba36
   resolution: "@prisma/engines-version@npm:5.21.1-1.bf0e5e8a04cada8225617067eaa03d041e2bba36"
@@ -1498,12 +1505,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@prisma/generator-helper@npm:^4.0.0 || ^5.0.0, @prisma/generator-helper@npm:^5.21.1":
+"@prisma/generator-helper@npm:^4.0.0 || ^5.0.0":
   version: 5.21.1
   resolution: "@prisma/generator-helper@npm:5.21.1"
   dependencies:
     "@prisma/debug": "npm:5.21.1"
   checksum: 10c0/a9ef37ec18aebd98cfa406cf72bb14e962e01aded7187ad487a567470fef3a202d68db86ba5fae82d5138d5bf573bd755e834f7f26fc6cfb699ebb0fa2780c26
+  languageName: node
+  linkType: hard
+
+"@prisma/generator-helper@npm:^5.22.0":
+  version: 5.22.0
+  resolution: "@prisma/generator-helper@npm:5.22.0"
+  dependencies:
+    "@prisma/debug": "npm:5.22.0"
+  checksum: 10c0/d7a6a6f66330b38aea76cd148b1bbdf43e373f6401e8edabaebc12db81abc35712386c97f1178d97d1655905a4ff822000b902c407ead986565984555b9893d0
   languageName: node
   linkType: hard
 
@@ -3292,7 +3308,7 @@ __metadata:
     "@eslint/js": "npm:^9.13.0"
     "@mermaid-js/mermaid-cli": "npm:^11.2.1"
     "@prisma/client": "npm:^5.21.1"
-    "@prisma/generator-helper": "npm:^5.21.1"
+    "@prisma/generator-helper": "npm:^5.22.0"
     "@types/express": "npm:^5.0.0"
     "@types/jest": "npm:^29.5.13"
     "@types/node": "npm:^22.7.9"
