@@ -18,7 +18,7 @@ export function Layout({ children }: PropsWithChildren) {
   return (
     <div className="flex flex-col h-screen w-screen max-h-full">
       <Header />
-      <div className="flex-grow max-h-full overflow-hidden">{children}</div>
+      <div className="grow max-h-full overflow-hidden">{children}</div>
     </div>
   )
 }

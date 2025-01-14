@@ -66,7 +66,7 @@ export const ScraperJobsList = memo(
                 className="bg-card text-card-foreground animate-in fade-in slide-in-from-bottom-16 fill-mode-both duration-500"
                 style={{ animationDelay: `${(index % Config.PAGINATION_PAGE_SIZE) * 100}ms` }}
               >
-                <AccordionTrigger className="xs:px-4 gap-x-4 overflow-hidden hover:no-underline bg-background [&[data-state=open]]:bg-card hover:bg-card transition-colors duration-200">
+                <AccordionTrigger className="xs:px-4 gap-x-4 overflow-hidden hover:no-underline bg-background data-[state=open]:bg-card hover:bg-card transition-colors duration-200">
                   <ScrollArea className="flex-1">
                     <div className="flex flex-row items-center relative">
                       <div

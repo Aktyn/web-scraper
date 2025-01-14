@@ -51,7 +51,7 @@ function NavigationItem({
     <Button
       key={item.view}
       className={cn(
-        '!opacity-100 hover:bg-accent/60 border border-primary duration-500 overflow-hidden',
+        'opacity-100! hover:bg-accent/60 border border-primary duration-500 overflow-hidden',
         active ? 'bg-accent hover:bg-accent' : 'border-transparent',
       )}
       variant="ghost"

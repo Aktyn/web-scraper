@@ -13,7 +13,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
           props.readOnly ? 'cursor-auto' : 'focus-visible:border-primary',
           props['aria-invalid'] === 'true' ||
             (props['aria-invalid'] === true &&
-              'border-destructive focus-visible:border-destructive-focus [&:not(:focus-visible)]:animate-pulse'),
+              'border-destructive focus-visible:border-destructive-focus not-focus-visible:animate-pulse'),
           className,
         )}
         ref={ref}

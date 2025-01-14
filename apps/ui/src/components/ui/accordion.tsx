@@ -13,7 +13,7 @@ const AccordionItem = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <AccordionPrimitive.Item
     ref={ref}
-    className={cn('[&:not(:last-child)]:border-b', className)}
+    className={cn('not-last:border-b', className)}
     {...props}
   />
 ))

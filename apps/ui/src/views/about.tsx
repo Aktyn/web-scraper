@@ -19,7 +19,7 @@ export function About() {
   return (
     <ScrollArea className="min-h-full max-h-full flex flex-col items-center justify-center">
       <div className="w-full h-full inline-grid grid-rows-[auto_auto] grid-cols-[1fr] items-center justify-center p-0 xs:p-4 md:p-8 gap-y-4 md:gap-y-8">
-        <Card className="max-w-screen-sm w-full mx-auto overflow-hidden animate-in zoom-in spin-in duration-500">
+        <Card className="max-w-(--breakpoint-sm) w-full mx-auto overflow-hidden animate-in zoom-in spin-in duration-500">
           <CardHeader className="flex flex-col items-center">
             <CardTitle>Web Scraper</CardTitle>
             <CardDescription className="w-auto text-center">
@@ -33,7 +33,7 @@ export function About() {
             <TechnologiesSection />
           </CardContent>
         </Card>
-        <Card className="max-w-screen-sm w-full mx-auto overflow-hidden animate-in zoom-in spin-in duration-500 delay-100">
+        <Card className="max-w-(--breakpoint-sm) w-full mx-auto overflow-hidden animate-in zoom-in spin-in duration-500 delay-100">
           <CardHeader className="flex flex-col items-center">
             <CardTitle>Terminology</CardTitle>
             <CardDescription className="w-auto text-center">

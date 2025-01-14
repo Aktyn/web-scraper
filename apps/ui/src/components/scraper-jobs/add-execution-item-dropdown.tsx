@@ -61,7 +61,7 @@ export const AddExecutionItemDropdown = memo<AddExecutionItemDropdownProps>(
                     <span>{executionItemTypeNames[value].label}</span>
                     <TermInfo
                       term={value}
-                      className="text-muted-foreground ml-auto !pointer-events-auto"
+                      className="text-muted-foreground ml-auto pointer-events-auto!"
                     />
                   </DropdownMenuItem>
                 </DialogTrigger>

@@ -16,7 +16,7 @@ export function TermInfo({ term: termKey, className }: TermInfoProps) {
       <TooltipTrigger asChild>
         <Icon path={mdiInformation} className={className} />
       </TooltipTrigger>
-      <TooltipContent className="whitespace-pre-wrap text-left font-semibold max-w-screen-xs">
+      <TooltipContent className="whitespace-pre-wrap text-left font-semibold max-w-(--breakpoint-xs)">
         <p className="font-bold">{term?.title}</p>
         <span className="font-medium">{term?.content}</span>
       </TooltipContent>

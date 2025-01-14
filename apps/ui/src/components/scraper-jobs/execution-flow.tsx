@@ -52,7 +52,7 @@ export const ExecutionFlow = memo<ExecutionFlowProps>(({ execution, onChange }) 
                 >
                   <div
                     className={cn(
-                      'z-10 my-auto rounded-full box-border bg-gradient-to-r',
+                      'z-10 my-auto rounded-full box-border bg-linear-to-r',
                       execution[index - 1].type === ExecutionItemType.CONDITION &&
                         'from-execution-condition/75',
                       execution[index - 1].type === ExecutionItemType.STEP &&

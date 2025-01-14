@@ -20,7 +20,7 @@
   "scripts": {
     "dist:all": "yarn workspaces foreach --all --parallel --topological run env && yarn workspaces foreach --all --parallel --topological run build && shx mkdir -p ./apps/desktop-app/user-panel-build && shx cp -R ./apps/user-panel/build/* ./apps/desktop-app/user-panel-build && yarn workspace @web-scraper/desktop-app run db:generate:reset && yarn workspace @web-scraper/desktop-app run dist",
     "build": "yarn workspaces foreach --all --parallel --topological run build",
-    "dev": "yarn workspaces foreach --all --parallel --topological run dev",
+    "dev": "yarn workspaces foreach --all --parallel --interlaced run dev",
     "db:generate": "yarn workspace @web-scraper/desktop-app run db:generate",
     "db:generate:reset": "yarn workspace @web-scraper/desktop-app run db:generate:reset",
     "db:seed": "yarn workspace @web-scraper/desktop-app run db:seed",
