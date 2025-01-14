@@ -102,7 +102,7 @@ ExecutionFlow.displayName = 'ExecutionFlow'
 type FlowConnectorProps = {
   width: number
   height: number
-  containerRef: RefObject<HTMLDivElement>
+  containerRef: RefObject<HTMLDivElement | null>
 }
 
 function FlowConnector({ width, height, containerRef }: FlowConnectorProps) {

@@ -18,29 +18,27 @@
     ]
   },
   "scripts": {
-    "dist:all": "turbo run env && turbo run build --force && shx mkdir -p ./apps/desktop-app/user-panel-build && shx cp -R ./apps/user-panel/build/* ./apps/desktop-app/user-panel-build && turbo run db:generate:reset --filter=desktop-app --force && turbo run dist --filter=desktop-app",
-    "build": "turbo run build",
-    "dev": "turbo run dev",
-    "db:generate": "turbo run db:generate",
-    "db:generate:reset": "turbo run db:generate:reset",
-    "db:seed": "turbo run db:seed",
-    "db:studio": "turbo run db:studio",
+    "dist:all": "yarn workspaces foreach --all --parallel --topological run env && yarn workspaces foreach --all --parallel --topological run build && shx mkdir -p ./apps/desktop-app/user-panel-build && shx cp -R ./apps/user-panel/build/* ./apps/desktop-app/user-panel-build && yarn workspace @web-scraper/desktop-app run db:generate:reset && yarn workspace @web-scraper/desktop-app run dist",
+    "build": "yarn workspaces foreach --all --parallel --topological run build",
+    "dev": "yarn workspaces foreach --all --parallel --topological run dev",
+    "db:generate": "yarn workspace @web-scraper/desktop-app run db:generate",
+    "db:generate:reset": "yarn workspace @web-scraper/desktop-app run db:generate:reset",
+    "db:seed": "yarn workspace @web-scraper/desktop-app run db:seed",
+    "db:studio": "yarn workspace @web-scraper/desktop-app run db:studio",
     "db:reset:seed": "yarn run db:generate:reset && yarn run db:seed",
-    "test": "turbo run test",
-    "test:ci": "turbo run test:ci",
+    "test": "yarn workspaces foreach --all --parallel --topological run test",
+    "test:ci": "yarn workspaces foreach --all --parallel --topological run test:ci",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
-    "lint": "turbo run lint",
-    "env": "turbo run env",
-    "typecheck": "turbo run typecheck"
+    "lint": "yarn workspaces foreach --all --parallel --topological run lint",
+    "typecheck": "yarn workspaces foreach --all --parallel --topological run typecheck"
   },
   "devDependencies": {
-    "prettier": "^3.3.3",
-    "shx": "^0.3.4",
-    "turbo": "^1.13.3"
+    "prettier": "^3.4.2",
+    "shx": "^0.3.4"
   },
   "engines": {
     "npm": ">=7.0.0",
     "node": ">=16.0.0"
   },
-  "packageManager": "yarn@4.5.1"
+  "packageManager": "yarn@4.6.0"
 }

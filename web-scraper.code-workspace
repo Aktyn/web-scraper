@@ -1,10 +1,11 @@
 {
 	"folders": [
 		{
+			"name": "Root",
 			"path": "."
 		},
 		{
-			"name": "common",
+			"name": "Common",
 			"path": "./packages/common"
 		},
 		{
@@ -17,7 +18,7 @@
 		},
 	],
 	"settings": {
-		"typescript.tsdk": "web-scraper/node_modules/typescript/lib",
+		"typescript.tsdk": "Root/node_modules/typescript/lib",
 		"typescript.preferences.includePackageJsonAutoImports": "on",
 		"testing.automaticallyOpenPeekView": "never",
 		"jest.disabledWorkspaceFolders": [
@@ -29,6 +30,7 @@
 			"Aktyn",
 			"devicon",
 			"Krajewski",
+			"Lumia",
 			"prosopo",
 			"Radosław",
 			"sonner",
@@ -49,8 +51,7 @@
 					"dev"
 				],
 				"cwd": "${workspaceFolder}",
-				"console": "integratedTerminal",
-				"noDebug": true
+				"console": "integratedTerminal"
 			}
 		]
 	}

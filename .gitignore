@@ -16,9 +16,6 @@ yarn-error.log
 .env.test.local
 .env.production.local
 
-# turbo
-.turbo
-
 tsconfig.tsbuildinfo
 
 dist/

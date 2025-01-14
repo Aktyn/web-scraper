@@ -1,0 +1,43 @@
+$ cross-env yarn run build && electron-builder
+$ prisma generate
+Environment variables loaded from .env
+Prisma schema loaded from prisma/schema.prisma
+
+✔ Generated Prisma Client (v5.4.1) to ./node_modules/@prisma/client in 61ms
+
+✔ Generated Entity-relationship-diagram (1.11.1) to ./external/erd.pdf in 685ms
+
+Start using Prisma Client in Node.js (See: https://pris.ly/d/client)
+```
+import { PrismaClient } from '@prisma/client'
+const prisma = new PrismaClient()
+```
+or start using Prisma Client at the edge (See: https://pris.ly/d/accelerate)
+```
+import { PrismaClient } from '@prisma/client/edge'
+const prisma = new PrismaClient()
+```
+
+See other ways of importing Prisma Client: http://pris.ly/d/importing-client
+
+$ tsc -p ./tsconfig.json
+  • electron-builder  version=24.6.4 os=6.2.0-34-generic
+  • loaded configuration  file=/home/aktyn/Programming/web-scraper/apps/desktop-app/electron-builder.yml
+  • skipped dependencies rebuild  reason=npmRebuild is set to false
+  • packaging       platform=linux arch=x64 electron=26.3.0 appOutDir=release/linux-unpacked
+  ⨯ ENOENT: no such file or directory, stat '/tmp/.org.chromium.Chromium.dtOMHh/SingletonSocket'  failedTask=build stackTrace=Error: ENOENT: no such file or directory, stat '/tmp/.org.chromium.Chromium.dtOMHh/SingletonSocket'
+    at processImmediate (node:internal/timers:476:21)
+From previous event:
+    at walk (/home/aktyn/Programming/web-scraper/node_modules/builder-util/src/fs.ts:77:51)
+    at computeFileSets (/home/aktyn/Programming/web-scraper/node_modules/app-builder-lib/src/util/appFileCopier.ts:159:19)
+    at async Promise.all (index 0)
+    at AsyncTaskManager.awaitTasks (/home/aktyn/Programming/web-scraper/node_modules/builder-util/src/asyncTaskManager.ts:65:25)
+    at LinuxPackager.doPack (/home/aktyn/Programming/web-scraper/node_modules/app-builder-lib/src/platformPackager.ts:279:5)
+    at LinuxPackager.pack (/home/aktyn/Programming/web-scraper/node_modules/app-builder-lib/src/platformPackager.ts:136:5)
+    at Packager.doBuild (/home/aktyn/Programming/web-scraper/node_modules/app-builder-lib/src/packager.ts:442:9)
+    at executeFinally (/home/aktyn/Programming/web-scraper/node_modules/builder-util/src/promise.ts:12:14)
+    at Packager._build (/home/aktyn/Programming/web-scraper/node_modules/app-builder-lib/src/packager.ts:376:31)
+    at Packager.build (/home/aktyn/Programming/web-scraper/node_modules/app-builder-lib/src/packager.ts:337:12)
+    at executeFinally (/home/aktyn/Programming/web-scraper/node_modules/builder-util/src/promise.ts:12:14)
+error Command failed with exit code 1.
+info Visit https://yarnpkg.com/en/docs/cli/run for documentation about this command.

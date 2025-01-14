@@ -1,0 +1,564 @@
+$ vitest --coverage --threads=false --watch=false --reporter=default --reporter=junit
+
+ RUN  v0.34.6 /home/aktyn/Programming/web-scraper/apps/desktop-app
+      Coverage enabled with v8
+
+stdout | unknown test
+EXECUTABLE_DIRECTORY_PATH /home/aktyn/Programming/web-scraper/apps/desktop-app
+Database URL: file:///home/aktyn/Programming/web-scraper/apps/desktop-app/external/data.db
+
+stdout | src/scraper/scraper.spec.ts > Scraper.PREVIEW > should capture page screenshot
+[Scraper (mode: PREVIEW) (id: b2972c08)] Instance created
+
+stdout | src/scraper/scraper.spec.ts > Scraper.PREVIEW > should capture page screenshot
+Browser initialized with user agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_8_2) AppleWebKit/537.4 (KHTML like Gecko) Chrome/22.0.1229.79 Safari/537.4
+
+stdout | src/scraper/scraper.spec.ts > Scraper.TESTING action steps > should perform "wait" step in testing mode
+[Scraper (mode: TESTING) (id: d508a567)] Instance created
+
+stdout | src/scraper/scraper.spec.ts > Scraper.TESTING action steps > should perform "wait" step in testing mode
+Browser initialized with user agent: Mozilla/5.0 (X11; Linux i686) AppleWebKit/535.1 (KHTML, like Gecko) Ubuntu/11.04 Chromium/14.0.825.0 Chrome/14.0.825.0 Safari/535.1
+
+stdout | src/scraper/scraper.spec.ts > Scraper.TESTING action steps > should perform "wait" step in testing mode
+[Scraper (mode: TESTING) (id: d508a567)] Performing action step: wait
+
+stdout | src/scraper/scraper.spec.ts > Scraper.TESTING action steps > should perform "waitForElement" step in testing mode
+[Scraper (mode: TESTING) (id: 7b8f59f8)] Instance created
+
+stdout | src/scraper/scraper.spec.ts > Scraper.TESTING action steps > should perform "waitForElement" step in testing mode
+Browser initialized with user agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2859.0 Safari/537.36
+
+stdout | src/scraper/scraper.spec.ts > Scraper.TESTING action steps > should perform "waitForElement" step in testing mode
+[Scraper (mode: TESTING) (id: 7b8f59f8)] Performing action step: waitForElement
+
+stdout | src/scraper/scraper.spec.ts > Scraper.TESTING action steps > should return "error.common.elementNotFound" error for "waitForElement" action step with non existing element selector given in testing mode
+[Scraper (mode: TESTING) (id: 536e9563)] Instance created
+
+stdout | src/scraper/scraper.spec.ts > Scraper.TESTING action steps > should return "error.common.elementNotFound" error for "waitForElement" action step with non existing element selector given in testing mode
+Browser initialized with user agent: Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10_6_4; en-US) AppleWebKit/534.3 (KHTML, like Gecko) Chrome/6.0.464.0 Safari/534.3
+
+stdout | src/scraper/scraper.spec.ts > Scraper.TESTING action steps > should return "error.common.elementNotFound" error for "waitForElement" action step with non existing element selector given in testing mode
+[Scraper (mode: TESTING) (id: 536e9563)] Performing action step: waitForElement
+
+stdout | src/scraper/scraper.spec.ts > Scraper.TESTING action steps > should perform "pressButton" step in testing mode
+[Scraper (mode: TESTING) (id: b6ecee76)] Instance created
+
+stdout | src/scraper/scraper.spec.ts > Scraper.TESTING action steps > should perform "pressButton" step in testing mode
+Browser initialized with user agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2272.118 Safari/537.36 OPR/28.0.1750.51
+
+stdout | src/scraper/scraper.spec.ts > Scraper.TESTING action steps > should perform "pressButton" step in testing mode
+[Scraper (mode: TESTING) (id: b6ecee76)] Performing action step: pressButton
+
+stdout | src/scraper/scraper.spec.ts > Scraper.TESTING action steps > should perform "pressButton" step in testing mode resulting with error for given non existing button selector
+[Scraper (mode: TESTING) (id: c71a9b7d)] Instance created
+
+stdout | src/scraper/scraper.spec.ts > Scraper.TESTING action steps > should perform "pressButton" step in testing mode resulting with error for given non existing button selector
+Browser initialized with user agent: Mozilla/5.0 (Windows NT 6.2) AppleWebKit/536.3 (KHTML, like Gecko) Chrome/19.0.1061.1 Safari/536.3
+
+stdout | src/scraper/scraper.spec.ts > Scraper.TESTING action steps > should perform "pressButton" step in testing mode resulting with error for given non existing button selector
+[Scraper (mode: TESTING) (id: c71a9b7d)] Performing action step: pressButton
+
+stdout | src/scraper/scraper.spec.ts > Scraper.TESTING action steps > should perform "checkError" and "checkSuccess" steps in testing mode
+[Scraper (mode: TESTING) (id: fd387613)] Instance created
+
+stdout | src/scraper/scraper.spec.ts > Scraper.TESTING action steps > should perform "checkError" and "checkSuccess" steps in testing mode
+Browser initialized with user agent: Mozilla/5.0 (X11; Linux i686) AppleWebKit/537.36 (KHTML, like Gecko) Ubuntu Chromium/51.0.2704.79 Chrome/51.0.2704.79 Safari/537.36
+
+stdout | src/scraper/scraper.spec.ts > Scraper.TESTING action steps > should perform "checkError" and "checkSuccess" steps in testing mode
+[Scraper (mode: TESTING) (id: fd387613)] Performing action step: checkError
+
+stdout | src/scraper/scraper.spec.ts > Scraper.TESTING action steps > should perform "checkError" and "checkSuccess" steps in testing mode
+[Scraper (mode: TESTING) (id: fd387613)] Performing action step: checkSuccess
+
+stdout | src/scraper/scraper.spec.ts > Scraper.TESTING action steps > should return no error if there is no error element found for "checkError" step in testing mode
+[Scraper (mode: TESTING) (id: 71049a4d)] Instance created
+
+stdout | src/scraper/scraper.spec.ts > Scraper.TESTING action steps > should return no error if there is no error element found for "checkError" step in testing mode
+Browser initialized with user agent: Mozilla/5.0 (Windows; U; Windows NT 6.1; en-US) AppleWebKit/534.14 (KHTML, like Gecko) Chrome/10.0.601.0 Safari/534.14
+
+stdout | src/scraper/scraper.spec.ts > Scraper.TESTING action steps > should return no error if there is no error element found for "checkError" step in testing mode
+[Scraper (mode: TESTING) (id: 71049a4d)] Performing action step: checkError
+
+stdout | src/scraper/scraper.spec.ts > Scraper.TESTING action steps > should return error if there is no success element found for "checkSuccess" step in testing mode
+[Scraper (mode: TESTING) (id: a37f3525)] Instance created
+
+stdout | src/scraper/scraper.spec.ts > Scraper.TESTING action steps > should return error if there is no success element found for "checkSuccess" step in testing mode
+Browser initialized with user agent: Mozilla/5.0 (X11; Linux i686) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2166.2 Safari/537.36
+
+stdout | src/scraper/scraper.spec.ts > Scraper.TESTING action steps > should return error if there is no success element found for "checkSuccess" step in testing mode
+[Scraper (mode: TESTING) (id: a37f3525)] Performing action step: checkSuccess
+
+stdout | src/scraper/scraper.spec.ts > Scraper.TESTING action steps > should perform "fillInput" step in testing mode
+[Scraper (mode: TESTING) (id: e573bb1b)] Instance created
+
+stdout | src/scraper/scraper.spec.ts > Scraper.TESTING action steps > should perform "fillInput" step in testing mode
+Browser initialized with user agent: Mozilla/5.0 (X11; U; Linux x86_64; en-us) AppleWebKit/534.35 (KHTML, like Gecko) Chrome/11.0.696.65 Safari/534.35 Puffin/2.9174AT
+
+stdout | src/scraper/scraper.spec.ts > Scraper.TESTING action steps > should perform "fillInput" step in testing mode
+[Scraper (mode: TESTING) (id: e573bb1b)] Performing action step: fillInput
+
+stdout | src/scraper/scraper.spec.ts > Scraper.TESTING action steps > should perform "fillInput" step in testing mode resulting with error for given non existing button selector
+[Scraper (mode: TESTING) (id: a4a6e507)] Instance created
+
+stdout | src/scraper/scraper.spec.ts > Scraper.TESTING action steps > should perform "fillInput" step in testing mode resulting with error for given non existing button selector
+Browser initialized with user agent: Mozilla/5.0 (MSIE 9.0; Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.79 Safari/537.36 Edge/14.14931
+
+stdout | src/scraper/scraper.spec.ts > Scraper.TESTING action steps > should perform "fillInput" step in testing mode resulting with error for given non existing button selector
+[Scraper (mode: TESTING) (id: a4a6e507)] Performing action step: fillInput
+
+stdout | src/scraper/scraper.spec.ts > Scraper.TESTING action steps > should perform "selectOption" step in testing mode
+[Scraper (mode: TESTING) (id: 0d48e248)] Instance created
+
+stdout | src/scraper/scraper.spec.ts > Scraper.TESTING action steps > should perform "selectOption" step in testing mode
+Browser initialized with user agent: Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/31.0.1650.57 Safari/537.36 OPR/18.0.1284.49
+
+stdout | src/scraper/scraper.spec.ts > Scraper.TESTING action steps > should perform "selectOption" step in testing mode
+[Scraper (mode: TESTING) (id: 0d48e248)] Performing action step: selectOption
+
+stdout | src/scraper/scraper.spec.ts > Scraper.TESTING action steps > should perform "selectOption" step in testing mode resulting with proper error for non existing option
+[Scraper (mode: TESTING) (id: 59710e1e)] Instance created
+
+stdout | src/scraper/scraper.spec.ts > Scraper.TESTING action steps > should perform "selectOption" step in testing mode resulting with proper error for non existing option
+Browser initialized with user agent: Mozilla/5.0 (X11; Linux i686) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2166.2 Safari/537.36
+
+stdout | src/scraper/scraper.spec.ts > Scraper.TESTING action steps > should perform "selectOption" step in testing mode resulting with proper error for non existing option
+[Scraper (mode: TESTING) (id: 59710e1e)] Performing action step: selectOption
+
+stdout | src/scraper/scraper.spec.ts > Scraper.TESTING action > should perform action in testing mode
+[Scraper (mode: TESTING) (id: f10d3f11)] Instance created
+
+stdout | src/scraper/scraper.spec.ts > Scraper.TESTING action > should perform action in testing mode
+Browser initialized with user agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3191.0 Safari/537.36
+
+stdout | src/scraper/scraper.spec.ts > Scraper.TESTING action > should perform action in testing mode
+[Scraper (mode: TESTING) (id: f10d3f11)] Performing action: mock action
+[Scraper (mode: TESTING) (id: f10d3f11)] Performing action step: wait
+
+stdout | src/scraper/scraper.spec.ts > Scraper.TESTING action > should perform action in testing mode
+[Scraper (mode: TESTING) (id: f10d3f11)] Performing action step: waitForElement
+
+stdout | src/scraper/scraper.spec.ts > Scraper.TESTING action > should perform action in testing mode
+[Scraper (mode: TESTING) (id: f10d3f11)] Performing action step: pressButton
+
+stdout | src/scraper/scraper.spec.ts > Scraper.TESTING action > should perform action in testing mode
+[Scraper (mode: TESTING) (id: f10d3f11)] Performing action step: checkError
+
+stdout | src/scraper/scraper.spec.ts > Scraper.TESTING action > should perform action in testing mode
+[Scraper (mode: TESTING) (id: f10d3f11)] Performing action step: checkSuccess
+
+stdout | src/scraper/scraper.spec.ts > Scraper.TESTING procedure > should perform procedure in testing mode
+[Scraper (mode: TESTING) (id: e447de2f)] Instance created
+
+stdout | src/scraper/scraper.spec.ts > Scraper.TESTING procedure > should perform procedure in testing mode
+Browser initialized with user agent: Mozilla/5.0 (MSIE 9.0; Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.79 Safari/537.36 Edge/14.14931
+
+stdout | src/scraper/scraper.spec.ts > Scraper.TESTING procedure > should perform procedure in testing mode
+[Scraper (mode: TESTING) (id: e447de2f)] Performing procedure: accountCheck
+
+stdout | src/scraper/scraper.spec.ts > Scraper.TESTING procedure > should perform procedure in testing mode
+[Scraper (mode: TESTING) (id: e447de2f)] Performing flow starting with action: action.mock action
+[Scraper (mode: TESTING) (id: e447de2f)] Performing action: mock action
+[Scraper (mode: TESTING) (id: e447de2f)] Performing action step: wait
+
+stdout | src/scraper/scraper.spec.ts > Scraper.TESTING procedure > should perform procedure in testing mode
+[Scraper (mode: TESTING) (id: e447de2f)] Performing action step: waitForElement
+
+stdout | src/scraper/scraper.spec.ts > Scraper.TESTING procedure > should perform procedure in testing mode
+[Scraper (mode: TESTING) (id: e447de2f)] Performing action step: pressButton
+
+stdout | src/scraper/scraper.spec.ts > Scraper.TESTING procedure > should perform procedure in testing mode
+[Scraper (mode: TESTING) (id: e447de2f)] Performing action step: checkError
+
+stdout | src/scraper/scraper.spec.ts > Scraper.TESTING procedure > should perform procedure in testing mode
+[Scraper (mode: TESTING) (id: e447de2f)] Performing action step: checkSuccess
+
+stdout | src/scraper/scraper.spec.ts > Scraper.TESTING procedure > should perform procedure in testing mode
+[Scraper (mode: TESTING) (id: e447de2f)] Performing flow starting with action: global.finishProcedure
+
+ ✓ src/scraper/scraper.spec.ts  (15 tests) 36646ms
+stdout | src/api/internal/requestHandler.spec.ts > registerRequestsHandler > should return parsed user settings
+[API request] [name: getUserSettings] [args: []]
+
+stdout | src/api/internal/requestHandler.spec.ts > registerRequestsHandler > should upsert given user settings
+[API request] [name: setUserSetting] [args: ["tablesCompactMode",false]]
+
+stdout | src/api/internal/requestHandler.spec.ts > registerRequestsHandler > should return site tags
+[API request] [name: getSiteTags] [args: [{"count":20}]]
+
+stdout | src/api/internal/requestHandler.spec.ts > registerRequestsHandler > should delete site tag with given id
+[API request] [name: deleteSiteTag] [args: [1]]
+
+stdout | src/api/internal/requestHandler.spec.ts > registerRequestsHandler > should update site tag and return it
+[API request] [name: updateSiteTag] [args: [1,{"name":"Mock-1","description":"Mocked site 1"}]]
+
+stdout | src/api/internal/requestHandler.spec.ts > registerRequestsHandler > should return created site tag
+[API request] [name: createSiteTag] [args: [{"name":"Mock-1","description":"Mocked site 1"}]]
+
+stdout | src/api/internal/requestHandler.spec.ts > registerRequestsHandler > should return sites with tags
+[API request] [name: getSites] [args: [{"count":20}]]
+
+stdout | src/api/internal/requestHandler.spec.ts > registerRequestsHandler > should return site with given id
+[API request] [name: getSite] [args: [1]]
+
+stdout | src/api/internal/requestHandler.spec.ts > registerRequestsHandler > should return created site
+[API request] [name: createSite] [args: [{"url":"https://mocked-site.com","language":"en","siteTags":[]}]]
+
+stdout | src/api/internal/requestHandler.spec.ts > registerRequestsHandler > should delete site with given id
+[API request] [name: deleteSite] [args: [1]]
+
+stdout | src/api/internal/requestHandler.spec.ts > registerRequestsHandler > should update site and return it
+[API request] [name: updateSite] [args: [1,{"url":"https://mocked-site.com","language":"en","siteTags":[]}]]
+
+stdout | src/api/internal/requestHandler.spec.ts > registerRequestsHandler > should return site instructions with given id
+[API request] [name: getSiteInstructions] [args: [1]]
+
+stdout | src/api/internal/requestHandler.spec.ts > registerRequestsHandler > should set site instructions
+[API request] [name: setSiteInstructions] [args: [1,{"procedures":[],"actions":[]}]]
+
+ ✓ src/api/internal/requestHandler.spec.ts  (14 tests) 5235ms
+ ✓ src/database/site.spec.ts  (6 tests) 2ms
+ ✓ src/utils/crypto.spec.ts  (2 tests) 1ms
+ ✓ src/database/siteTag.spec.ts  (1 test) 1ms
+<?xml version="1.0" encoding="UTF-8" ?>
+<testsuites name="vitest tests" tests="38" failures="0" errors="0" time="42.756">
+
+    <testsuite name="src/database/site.spec.ts" timestamp="2023-10-28T02:43:35.992Z" hostname="HIPER-PC-LINUX" tests="6" failures="0" errors="0" skipped="0" time="0.002">
+ Test Files  5 passed (5)
+      Tests  38 passed (38)
+   Start at  04:42:53
+   Duration  42.76s (transform 125ms, setup 0ms, collect 657ms, tests 41.88s, environment 0ms, prepare 70ms)
+
+        <testcase classname="src/database/site.spec.ts" name="Database.site &gt; should return array of existing sites" time="0">
+        </testcase>
+        <testcase classname="src/database/site.spec.ts" name="Database.site &gt; should return site with given id" time="0.001">
+        </testcase>
+        <testcase classname="src/database/site.spec.ts" name="Database.site &gt; should create site and return it" time="0">
+        </testcase>
+        <testcase classname="src/database/site.spec.ts" name="Database.site &gt; should throw error when given url is incorrect" time="0">
+        </testcase>
+        <testcase classname="src/database/site.spec.ts" name="Database.site &gt; should update site and return it" time="0.001">
+        </testcase>
+        <testcase classname="src/database/site.spec.ts" name="Database.site &gt; should delete site with given in" time="0">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/database/siteTag.spec.ts" timestamp="2023-10-28T02:43:35.993Z" hostname="HIPER-PC-LINUX" tests="1" failures="0" errors="0" skipped="0" time="0.001">
+        <testcase classname="src/database/siteTag.spec.ts" name="Database.siteTags &gt; should return array of site tags" time="0.001">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/scraper/scraper.spec.ts" timestamp="2023-10-28T02:43:35.993Z" hostname="HIPER-PC-LINUX" tests="15" failures="0" errors="0" skipped="0" time="36.646">
+        <testcase classname="src/scraper/scraper.spec.ts" name="Scraper.PREVIEW &gt; should capture page screenshot" time="2.118">
+            <system-out>
+[Scraper (mode: PREVIEW) (id: b2972c08)] Instance created
+
+Browser initialized with user agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_8_2) AppleWebKit/537.4 (KHTML like Gecko) Chrome/22.0.1229.79 Safari/537.4
+
+            </system-out>
+        </testcase>
+        <testcase classname="src/scraper/scraper.spec.ts" name="Scraper.TESTING action steps &gt; should perform &quot;wait&quot; step in testing mode" time="1.577">
+            <system-out>
+[Scraper (mode: TESTING) (id: d508a567)] Instance created
+
+Browser initialized with user agent: Mozilla/5.0 (X11; Linux i686) AppleWebKit/535.1 (KHTML, like Gecko) Ubuntu/11.04 Chromium/14.0.825.0 Chrome/14.0.825.0 Safari/535.1
+
+[Scraper (mode: TESTING) (id: d508a567)] Performing action step: wait
+
+            </system-out>
+        </testcase>
+        <testcase classname="src/scraper/scraper.spec.ts" name="Scraper.TESTING action steps &gt; should perform &quot;waitForElement&quot; step in testing mode" time="0.474">
+            <system-out>
+[Scraper (mode: TESTING) (id: 7b8f59f8)] Instance created
+
+Browser initialized with user agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2859.0 Safari/537.36
+
+[Scraper (mode: TESTING) (id: 7b8f59f8)] Performing action step: waitForElement
+
+            </system-out>
+        </testcase>
+        <testcase classname="src/scraper/scraper.spec.ts" name="Scraper.TESTING action steps &gt; should return &quot;error.common.elementNotFound&quot; error for &quot;waitForElement&quot; action step with non existing element selector given in testing mode" time="7.561">
+            <system-out>
+[Scraper (mode: TESTING) (id: 536e9563)] Instance created
+
+Browser initialized with user agent: Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10_6_4; en-US) AppleWebKit/534.3 (KHTML, like Gecko) Chrome/6.0.464.0 Safari/534.3
+
+[Scraper (mode: TESTING) (id: 536e9563)] Performing action step: waitForElement
+
+            </system-out>
+        </testcase>
+        <testcase classname="src/scraper/scraper.spec.ts" name="Scraper.TESTING action steps &gt; should perform &quot;pressButton&quot; step in testing mode" time="0.616">
+            <system-out>
+[Scraper (mode: TESTING) (id: b6ecee76)] Instance created
+
+Browser initialized with user agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2272.118 Safari/537.36 OPR/28.0.1750.51
+
+[Scraper (mode: TESTING) (id: b6ecee76)] Performing action step: pressButton
+
+            </system-out>
+        </testcase>
+        <testcase classname="src/scraper/scraper.spec.ts" name="Scraper.TESTING action steps &gt; should perform &quot;pressButton&quot; step in testing mode resulting with error for given non existing button selector" time="4.472">
+            <system-out>
+[Scraper (mode: TESTING) (id: c71a9b7d)] Instance created
+
+Browser initialized with user agent: Mozilla/5.0 (Windows NT 6.2) AppleWebKit/536.3 (KHTML, like Gecko) Chrome/19.0.1061.1 Safari/536.3
+
+[Scraper (mode: TESTING) (id: c71a9b7d)] Performing action step: pressButton
+
+            </system-out>
+        </testcase>
+        <testcase classname="src/scraper/scraper.spec.ts" name="Scraper.TESTING action steps &gt; should perform &quot;checkError&quot; and &quot;checkSuccess&quot; steps in testing mode" time="0.601">
+            <system-out>
+[Scraper (mode: TESTING) (id: fd387613)] Instance created
+
+Browser initialized with user agent: Mozilla/5.0 (X11; Linux i686) AppleWebKit/537.36 (KHTML, like Gecko) Ubuntu Chromium/51.0.2704.79 Chrome/51.0.2704.79 Safari/537.36
+
+[Scraper (mode: TESTING) (id: fd387613)] Performing action step: checkError
+
+[Scraper (mode: TESTING) (id: fd387613)] Performing action step: checkSuccess
+
+            </system-out>
+        </testcase>
+        <testcase classname="src/scraper/scraper.spec.ts" name="Scraper.TESTING action steps &gt; should return no error if there is no error element found for &quot;checkError&quot; step in testing mode" time="4.582">
+            <system-out>
+[Scraper (mode: TESTING) (id: 71049a4d)] Instance created
+
+Browser initialized with user agent: Mozilla/5.0 (Windows; U; Windows NT 6.1; en-US) AppleWebKit/534.14 (KHTML, like Gecko) Chrome/10.0.601.0 Safari/534.14
+
+[Scraper (mode: TESTING) (id: 71049a4d)] Performing action step: checkError
+
+            </system-out>
+        </testcase>
+        <testcase classname="src/scraper/scraper.spec.ts" name="Scraper.TESTING action steps &gt; should return error if there is no success element found for &quot;checkSuccess&quot; step in testing mode" time="4.617">
+            <system-out>
+[Scraper (mode: TESTING) (id: a37f3525)] Instance created
+
+Browser initialized with user agent: Mozilla/5.0 (X11; Linux i686) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2166.2 Safari/537.36
+
+[Scraper (mode: TESTING) (id: a37f3525)] Performing action step: checkSuccess
+
+            </system-out>
+        </testcase>
+        <testcase classname="src/scraper/scraper.spec.ts" name="Scraper.TESTING action steps &gt; should perform &quot;fillInput&quot; step in testing mode" time="1.056">
+            <system-out>
+[Scraper (mode: TESTING) (id: e573bb1b)] Instance created
+
+Browser initialized with user agent: Mozilla/5.0 (X11; U; Linux x86_64; en-us) AppleWebKit/534.35 (KHTML, like Gecko) Chrome/11.0.696.65 Safari/534.35 Puffin/2.9174AT
+
+[Scraper (mode: TESTING) (id: e573bb1b)] Performing action step: fillInput
+
+            </system-out>
+        </testcase>
+        <testcase classname="src/scraper/scraper.spec.ts" name="Scraper.TESTING action steps &gt; should perform &quot;fillInput&quot; step in testing mode resulting with error for given non existing button selector" time="4.603">
+            <system-out>
+[Scraper (mode: TESTING) (id: a4a6e507)] Instance created
+
+Browser initialized with user agent: Mozilla/5.0 (MSIE 9.0; Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.79 Safari/537.36 Edge/14.14931
+
+[Scraper (mode: TESTING) (id: a4a6e507)] Performing action step: fillInput
+
+            </system-out>
+        </testcase>
+        <testcase classname="src/scraper/scraper.spec.ts" name="Scraper.TESTING action steps &gt; should perform &quot;selectOption&quot; step in testing mode" time="0.476">
+            <system-out>
+[Scraper (mode: TESTING) (id: 0d48e248)] Instance created
+
+Browser initialized with user agent: Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/31.0.1650.57 Safari/537.36 OPR/18.0.1284.49
+
+[Scraper (mode: TESTING) (id: 0d48e248)] Performing action step: selectOption
+
+            </system-out>
+        </testcase>
+        <testcase classname="src/scraper/scraper.spec.ts" name="Scraper.TESTING action steps &gt; should perform &quot;selectOption&quot; step in testing mode resulting with proper error for non existing option" time="0.476">
+            <system-out>
+[Scraper (mode: TESTING) (id: 59710e1e)] Instance created
+
+Browser initialized with user agent: Mozilla/5.0 (X11; Linux i686) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2166.2 Safari/537.36
+
+[Scraper (mode: TESTING) (id: 59710e1e)] Performing action step: selectOption
+
+            </system-out>
+        </testcase>
+        <testcase classname="src/scraper/scraper.spec.ts" name="Scraper.TESTING action &gt; should perform action in testing mode" time="1.7">
+            <system-out>
+[Scraper (mode: TESTING) (id: f10d3f11)] Instance created
+
+Browser initialized with user agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3191.0 Safari/537.36
+
+[Scraper (mode: TESTING) (id: f10d3f11)] Performing action: mock action
+[Scraper (mode: TESTING) (id: f10d3f11)] Performing action step: wait
+
+[Scraper (mode: TESTING) (id: f10d3f11)] Performing action step: waitForElement
+
+[Scraper (mode: TESTING) (id: f10d3f11)] Performing action step: pressButton
+
+[Scraper (mode: TESTING) (id: f10d3f11)] Performing action step: checkError
+
+[Scraper (mode: TESTING) (id: f10d3f11)] Performing action step: checkSuccess
+
+            </system-out>
+        </testcase>
+        <testcase classname="src/scraper/scraper.spec.ts" name="Scraper.TESTING procedure &gt; should perform procedure in testing mode" time="1.711">
+            <system-out>
+[Scraper (mode: TESTING) (id: e447de2f)] Instance created
+
+Browser initialized with user agent: Mozilla/5.0 (MSIE 9.0; Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.79 Safari/537.36 Edge/14.14931
+
+[Scraper (mode: TESTING) (id: e447de2f)] Performing procedure: accountCheck
+
+[Scraper (mode: TESTING) (id: e447de2f)] Performing flow starting with action: action.mock action
+[Scraper (mode: TESTING) (id: e447de2f)] Performing action: mock action
+[Scraper (mode: TESTING) (id: e447de2f)] Performing action step: wait
+
+[Scraper (mode: TESTING) (id: e447de2f)] Performing action step: waitForElement
+
+[Scraper (mode: TESTING) (id: e447de2f)] Performing action step: pressButton
+
+[Scraper (mode: TESTING) (id: e447de2f)] Performing action step: checkError
+
+[Scraper (mode: TESTING) (id: e447de2f)] Performing action step: checkSuccess
+
+[Scraper (mode: TESTING) (id: e447de2f)] Performing flow starting with action: global.finishProcedure
+
+            </system-out>
+        </testcase>
+    </testsuite>
+    <testsuite name="src/utils/crypto.spec.ts" timestamp="2023-10-28T02:43:35.994Z" hostname="HIPER-PC-LINUX" tests="2" failures="0" errors="0" skipped="0" time="0.001">
+        <testcase classname="src/utils/crypto.spec.ts" name="sha256 &gt; should generate sha256 string based on given input" time="0">
+        </testcase>
+        <testcase classname="src/utils/crypto.spec.ts" name="encrypt and decrypt &gt; should encrypt and decrypt data with given password" time="0">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/api/internal/requestHandler.spec.ts" timestamp="2023-10-28T02:43:35.995Z" hostname="HIPER-PC-LINUX" tests="14" failures="0" errors="0" skipped="0" time="5.235">
+        <testcase classname="src/api/internal/requestHandler.spec.ts" name="registerRequestsHandler &gt; should invoke ipcMain.handle for each defined handler" time="0">
+        </testcase>
+        <testcase classname="src/api/internal/requestHandler.spec.ts" name="registerRequestsHandler &gt; should return parsed user settings" time="0.401">
+            <system-out>
+[API request] [name: getUserSettings] [args: []]
+
+            </system-out>
+        </testcase>
+        <testcase classname="src/api/internal/requestHandler.spec.ts" name="registerRequestsHandler &gt; should upsert given user settings" time="0.405">
+            <system-out>
+[API request] [name: setUserSetting] [args: [&quot;tablesCompactMode&quot;,false]]
+
+            </system-out>
+        </testcase>
+        <testcase classname="src/api/internal/requestHandler.spec.ts" name="registerRequestsHandler &gt; should return site tags" time="0.402">
+            <system-out>
+[API request] [name: getSiteTags] [args: [{&quot;count&quot;:20}]]
+
+            </system-out>
+        </testcase>
+        <testcase classname="src/api/internal/requestHandler.spec.ts" name="registerRequestsHandler &gt; should delete site tag with given id" time="0.402">
+            <system-out>
+[API request] [name: deleteSiteTag] [args: [1]]
+
+            </system-out>
+        </testcase>
+        <testcase classname="src/api/internal/requestHandler.spec.ts" name="registerRequestsHandler &gt; should update site tag and return it" time="0.403">
+            <system-out>
+[API request] [name: updateSiteTag] [args: [1,{&quot;name&quot;:&quot;Mock-1&quot;,&quot;description&quot;:&quot;Mocked site 1&quot;}]]
+
+            </system-out>
+        </testcase>
+        <testcase classname="src/api/internal/requestHandler.spec.ts" name="registerRequestsHandler &gt; should return created site tag" time="0.401">
+            <system-out>
+[API request] [name: createSiteTag] [args: [{&quot;name&quot;:&quot;Mock-1&quot;,&quot;description&quot;:&quot;Mocked site 1&quot;}]]
+
+            </system-out>
+        </testcase>
+        <testcase classname="src/api/internal/requestHandler.spec.ts" name="registerRequestsHandler &gt; should return sites with tags" time="0.403">
+            <system-out>
+[API request] [name: getSites] [args: [{&quot;count&quot;:20}]]
+
+            </system-out>
+        </testcase>
+        <testcase classname="src/api/internal/requestHandler.spec.ts" name="registerRequestsHandler &gt; should return site with given id" time="0.403">
+            <system-out>
+[API request] [name: getSite] [args: [1]]
+
+            </system-out>
+        </testcase>
+        <testcase classname="src/api/internal/requestHandler.spec.ts" name="registerRequestsHandler &gt; should return created site" time="0.406">
+            <system-out>
+[API request] [name: createSite] [args: [{&quot;url&quot;:&quot;https://mocked-site.com&quot;,&quot;language&quot;:&quot;en&quot;,&quot;siteTags&quot;:[]}]]
+
+            </system-out>
+        </testcase>
+        <testcase classname="src/api/internal/requestHandler.spec.ts" name="registerRequestsHandler &gt; should delete site with given id" time="0.403">
+            <system-out>
+[API request] [name: deleteSite] [args: [1]]
+
+            </system-out>
+        </testcase>
+        <testcase classname="src/api/internal/requestHandler.spec.ts" name="registerRequestsHandler &gt; should update site and return it" time="0.402">
+            <system-out>
+[API request] [name: updateSite] [args: [1,{&quot;url&quot;:&quot;https://mocked-site.com&quot;,&quot;language&quot;:&quot;en&quot;,&quot;siteTags&quot;:[]}]]
+
+            </system-out>
+        </testcase>
+        <testcase classname="src/api/internal/requestHandler.spec.ts" name="registerRequestsHandler &gt; should return site instructions with given id" time="0.401">
+            <system-out>
+[API request] [name: getSiteInstructions] [args: [1]]
+
+            </system-out>
+        </testcase>
+        <testcase classname="src/api/internal/requestHandler.spec.ts" name="registerRequestsHandler &gt; should set site instructions" time="0.401">
+            <system-out>
+[API request] [name: setSiteInstructions] [args: [1,{&quot;procedures&quot;:[],&quot;actions&quot;:[]}]]
+
+            </system-out>
+        </testcase>
+    </testsuite>
+</testsuites>
+ % Coverage report from v8
+-------------------|---------|----------|---------|---------|-------------------
+File               | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
+-------------------|---------|----------|---------|---------|-------------------
+All files          |   74.63 |    70.12 |   73.14 |   74.63 |                   
+ src               |   42.85 |      100 |   33.33 |   42.85 |                   
+  ...wserWindow.ts |   42.85 |      100 |   33.33 |   42.85 | 19-37,40-48       
+ src/api/internal  |   62.56 |    83.33 |      60 |   62.56 |                   
+  helpers.ts       |   61.06 |       75 |      50 |   61.06 | ...90-115,117-131 
+  ...estHandler.ts |   66.66 |      100 |     100 |   66.66 | 20-35             
+ ...ernal/handlers |   63.34 |      100 |       0 |   63.34 |                   
+  ...ce.handler.ts |   74.54 |      100 |     100 |   74.54 | ...36,41,46-48,53 
+  ...on.handler.ts |   38.02 |      100 |       0 |   38.02 | ...29-131,136-142 
+  site.handler.ts  |      75 |      100 |     100 |      75 | 35-46             
+  ...ns.handler.ts |     100 |      100 |     100 |     100 |                   
+  ...ag.handler.ts |     100 |      100 |     100 |     100 |                   
+  ...gs.handler.ts |     100 |      100 |     100 |     100 |                   
+ ...ternal/parsers |   82.57 |      100 |   81.81 |   82.57 |                   
+  ...urceParser.ts |   23.33 |      100 |       0 |   23.33 | 6-13,16-30        
+  ...ionsParser.ts |     100 |      100 |     100 |     100 |                   
+  siteParser.ts    |     100 |      100 |     100 |     100 |                   
+  ...ingsParser.ts |     100 |      100 |     100 |     100 |                   
+ src/database      |    59.2 |       60 |   56.41 |    59.2 |                   
+  client.ts        |   76.19 |       50 |     100 |   76.19 | 16-25             
+  dataSource.ts    |   17.94 |      100 |       0 |   17.94 | ...56-168,170-195 
+  index.ts         |   94.11 |       50 |      50 |   94.11 | 28-29             
+  site.ts          |   92.66 |     62.5 |     100 |   92.66 | ...,87-88,101,132 
+  ...structions.ts |   47.57 |       60 |      75 |   47.57 | ...90-115,129-205 
+  siteTag.ts       |   83.33 |    53.84 |   85.71 |   83.33 | ...1,59-60,95-102 
+  userData.ts      |     100 |      100 |     100 |     100 |                   
+ src/scraper       |   84.02 |    64.65 |   86.84 |   84.02 |                   
+  helpers.ts       |   42.42 |      100 |     100 |   42.42 | 15-33             
+  index.ts         |     100 |      100 |     100 |     100 |                   
+  scraper.ts       |   83.67 |    60.29 |   84.21 |   83.67 | ...03-608,625-626 
+  ...perBrowser.ts |   88.13 |    68.96 |   88.88 |   88.13 | ...61-163,171-172 
+  scraperPage.ts   |      90 |    73.68 |      90 |      90 | ...15-116,126-127 
+ src/scraper/steps |   89.18 |    76.66 |     100 |   89.18 |                   
+  ...Error.step.ts |   93.75 |       75 |     100 |   93.75 | 25-26             
+  ...ccess.step.ts |   88.57 |     62.5 |     100 |   88.57 | 25-26,34-35       
+  ...Input.step.ts |     100 |      100 |     100 |     100 |                   
+  index.ts         |     100 |      100 |     100 |     100 |                   
+  ...utton.step.ts |   65.95 |       80 |     100 |   65.95 | 24-39             
+  ...ption.step.ts |   93.33 |    66.66 |     100 |   93.33 | 21-22             
+  wait.step.ts     |     100 |      100 |     100 |     100 |                   
+  ...ement.step.ts |     100 |      100 |     100 |     100 |                   
+ src/test-utils    |     100 |      100 |     100 |     100 |                   
+  databaseMock.ts  |     100 |      100 |     100 |     100 |                   
+  electronMock.ts  |     100 |      100 |     100 |     100 |                   
+ src/utils         |     100 |    57.14 |     100 |     100 |                   
+  common.ts        |     100 |        0 |     100 |     100 | 9                 
+  crypto.ts        |     100 |    66.66 |     100 |     100 | 19,23             
+  index.ts         |     100 |      100 |     100 |     100 |                   
+-------------------|---------|----------|---------|---------|-------------------
