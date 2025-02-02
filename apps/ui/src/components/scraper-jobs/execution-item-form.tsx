@@ -21,6 +21,7 @@ import { Form } from '../ui/form'
 import { Label } from '../ui/label'
 import { Switch } from '../ui/switch'
 import { useState } from 'react'
+import { FormTextArea } from '../common/form/form-textarea'
 
 type ExecutionItemFormProps = {
   item: ExecutionItemType | JobExecutionItem
@@ -53,6 +54,12 @@ export function ExecutionItemForm({
                 : undefined,
             step:
               type === ExecutionItemType.STEP ? upsertScraperStepSchema.getDefault() : undefined,
+            aiAction:
+              type === ExecutionItemType.AI_ACTION
+                ? {
+                    prompt: '',
+                  }
+                : undefined,
           }
         : item,
   })
@@ -68,7 +75,7 @@ export function ExecutionItemForm({
         }}
         className={cn('flex flex-col gap-y-4 items-start', className)}
       >
-        <div className="flex flex-row flex-wrap items-stretch gap-y-2 gap-x-4">
+        <div className="flex flex-row flex-wrap items-stretch justify-start gap-y-2 gap-x-4 w-full">
           {type === ExecutionItemType.CONDITION && (
             <>
               <FormSelect
@@ -115,6 +122,15 @@ export function ExecutionItemForm({
                 }
               />
             </>
+          )}
+          {type === ExecutionItemType.AI_ACTION && (
+            <FormTextArea
+              className="w-full"
+              control={form.control}
+              name="aiAction.prompt"
+              label="AI action prompt. Supports value queries."
+              placeholder="E.g., 'Login with username {{users.login}} and password {{users.password}}'"
+            />
           )}
           {/* 
           <FormField

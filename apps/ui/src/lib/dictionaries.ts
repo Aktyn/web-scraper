@@ -1,4 +1,4 @@
-import { mdiArrowDecision, mdiCursorDefaultClick } from '@mdi/js'
+import { mdiArrowDecision, mdiAutoFix, mdiCursorDefaultClick } from '@mdi/js'
 import {
   ActionStepErrorType,
   ActionStepType,
@@ -109,6 +109,7 @@ export const executionItemTypeNames: {
 } = {
   [ExecutionItemType.CONDITION]: { label: 'Condition', svgPath: mdiArrowDecision },
   [ExecutionItemType.STEP]: { label: 'Scraper step', svgPath: mdiCursorDefaultClick },
+  [ExecutionItemType.AI_ACTION]: { label: 'AI action', svgPath: mdiAutoFix },
 }
 
 export const flowActionTypeNames: { [key in FlowActionType]: string } = {

@@ -21,4 +21,9 @@ export const TERMS_DETAILS = [
     content:
       'Part of job execution. The simplest operation performed on the page, such as pressing a button, filling in an input, reading the content of an element, etc.',
   },
+  {
+    key: ExecutionItemType.AI_ACTION,
+    title: 'AI action',
+    content: 'Part of job execution. AI action.', //TODO: add more details
+  },
 ] as const

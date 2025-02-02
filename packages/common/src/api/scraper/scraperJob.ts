@@ -1,6 +1,7 @@
 import * as yup from 'yup'
 import { upsertExecutionConditionSchema, type ExecutionCondition } from './executionCondition'
 import { upsertScraperStepSchema, type ScraperStep } from './scraperStep'
+import { upsertAIActionSchema, type AIAction } from './aiAction'
 
 //TODO: data-feed and data-scrape execution types; data-feed will read database record for looping execution; data-scrape will scrape data from web page (scraped data structure would be an array of objects since tables can be scraped) and save to database
 //TODO: data in execution can work as dictionary storing key-value data from which data will be picked when needed by execution item
@@ -8,6 +9,7 @@ import { upsertScraperStepSchema, type ScraperStep } from './scraperStep'
 export enum ExecutionItemType {
   CONDITION = 'condition',
   STEP = 'step',
+  AI_ACTION = 'ai-action',
 }
 
 export type JobExecutionItem =
@@ -18,6 +20,10 @@ export type JobExecutionItem =
   | {
       type: ExecutionItemType.STEP
       step: ScraperStep
+    }
+  | {
+      type: ExecutionItemType.AI_ACTION
+      aiAction: AIAction
     }
 
 export const upsertJobExecutionItemSchema = yup.object({
@@ -37,6 +43,14 @@ export const upsertJobExecutionItemSchema = yup.object({
   step: upsertScraperStepSchema
     .when('type', {
       is: ExecutionItemType.STEP,
+      then: (schema) => schema.required(),
+      otherwise: (schema) => schema.strip(),
+    })
+    .optional(),
+
+  aiAction: upsertAIActionSchema
+    .when('type', {
+      is: ExecutionItemType.AI_ACTION,
       then: (schema) => schema.required(),
       otherwise: (schema) => schema.strip(),
     })
