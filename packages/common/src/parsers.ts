@@ -20,3 +20,7 @@ export function tryParseJSON<ValueType>(jsonString: string | null, defaultValue?
     return defaultValue ?? null
   }
 }
+
+export function unquote(value: string) {
+  return value.trim().replace(/^"|"$/g, '').replace(/^'|'$/g, '')
+}

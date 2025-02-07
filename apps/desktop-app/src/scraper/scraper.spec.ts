@@ -9,31 +9,16 @@ import {
   type FlowStep,
   type Procedure,
   type ProcedureExecutionResult,
-  type ScraperMode,
   type ValueQuery,
 } from '@web-scraper/common'
 
-import { initServer } from '../test-utils/serverMock'
 import '../test-utils/databaseMock'
+import { initServer } from '../test-utils/serverMock'
 
 import { type RequestDataCallback, type RequestDataSourceItemIdCallback } from '.'
 import '../test-utils/electronMock'
+import { ExposedScraper } from '../test-utils/scraper.helpers'
 import { Scraper } from './scraper'
-
-class ExposedScraper<ModeType extends ScraperMode> extends Scraper<ModeType> {
-  private getElementValue(selector: `${string} ${'input' | 'select'}`) {
-    return this.mainPage
-      ?.waitForSelector(selector)
-      ?.then((element) => element?.evaluate((input) => input.value))
-  }
-
-  public getInputElementValue(selector: `${string} input`) {
-    return this.getElementValue(selector)
-  }
-  public getSelectElementValue(selector: `${string} select`) {
-    return this.getElementValue(selector)
-  }
-}
 
 const actionStepBase = {
   id: 1,

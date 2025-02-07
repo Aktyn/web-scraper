@@ -1,4 +1,4 @@
-import { float, int, tryParseJSON } from './parsers'
+import { float, int, tryParseJSON, unquote } from './parsers'
 
 describe(int.name, () => {
   it('should return 0 when value is undefined', () => {
@@ -47,5 +47,29 @@ describe(tryParseJSON.name, () => {
 
   it('should fallback to null in case of error', () => {
     expect(tryParseJSON('{incorrect json}')).toBeNull()
+  })
+})
+
+describe('unquote', () => {
+  it('should remove double quotes from beginning and end', () => {
+    expect(unquote('"hello"')).toBe('hello')
+  })
+
+  it('should remove single quotes from beginning and end', () => {
+    expect(unquote("'hello'")).toBe('hello')
+  })
+
+  it('should handle strings without quotes', () => {
+    expect(unquote('hello')).toBe('hello')
+  })
+
+  it('should trim whitespace and remove quotes', () => {
+    expect(unquote('  "hello"  ')).toBe('hello')
+    expect(unquote("  'hello'  ")).toBe('hello')
+  })
+
+  it('should only remove quotes at beginning and end', () => {
+    expect(unquote('"hello"world"')).toBe('hello"world')
+    expect(unquote("'hello'world'")).toBe("hello'world")
   })
 })
