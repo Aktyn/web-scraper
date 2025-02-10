@@ -33,7 +33,7 @@
     "typecheck": "yarn workspaces foreach --all --parallel --topological run typecheck"
   },
   "devDependencies": {
-    "prettier": "^3.4.2",
+    "prettier": "^3.5.0",
     "shx": "^0.3.4"
   },
   "engines": {
