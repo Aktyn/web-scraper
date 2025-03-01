@@ -34,7 +34,7 @@ export const ScraperJobForm = memo<ScraperJobFormProps>(
           onSubmit={form.handleSubmit(onSubmit)}
           className="flex flex-col gap-y-4 items-start"
         >
-          <div className="flex flex-row flex-wrap items-stretch gap-x-4">
+          <div className="flex flex-col sm:flex-row flex-wrap items-stretch gap-x-4 gap-y-2">
             <FormInput
               control={form.control}
               name="name"

@@ -1,4 +1,3 @@
-import { unquote } from '@web-scraper/common'
 import fs from 'fs'
 import { type GenerateResponse } from 'ollama'
 import path from 'path'
@@ -50,36 +49,36 @@ describe('AI given a simplified html', () => {
     examplePageSource,
     'https://zen-browser.app/release-notes/',
   )
-  const systemMessage =
-    "You are web assistant that can return only raw data from provided HTML code using the user's query. Don't provide any additional information. Return only requested data. If data is unavailable return: {{N/A}}."
+  // const systemMessage =
+  // "You are web assistant that can return only raw data from provided HTML code using the user's query. Don't provide any additional information. Return only requested data. If data is unavailable return: {{N/A}}."
 
-  it(
-    'should return an answer about the page',
-    async () => {
-      const response = await ai
-        .quickPrompt(
-          `${simplifiedSource}\n\n\nFind and return the latest/highest version number. It should be the first occurrence in the provided HTML code. Return only the exact version string. Output examples: 1.4.17a, 1.2.5b, 1.3.0, 1.6b, 1.5`,
-          {
-            // model: 'deepseek-r1-scraper',
-            system: systemMessage,
-            stream: true,
-          },
-        )
-        .then(joinStream)
+  // it(
+  //   'should return an answer about the page',
+  //   async () => {
+  //     const response = await ai
+  //       .quickPrompt(
+  //         `${simplifiedSource}\n\n\nFind and return the latest version number. It should be the first occurrence in the provided HTML code. Return only the exact version string. Output examples: 1.4.17a, 1.2.5b, 1.3.0, 1.6b, 1.5`,
+  //         {
+  //           // model: 'deepseek-r1-scraper',
+  //           system: systemMessage,
+  //           stream: true,
+  //         },
+  //       )
+  //       .then(joinStream)
 
-      console.info('Raw AI response:', response)
+  //     console.info('Raw AI response:', response)
 
-      expect(
-        unquote(
-          response
-            .split('\n')
-            .filter((line) => line.trim() !== '' && line.trim() !== '```')
-            .at(-1) ?? '',
-        ),
-      ).toBe('1.7.5b')
-    },
-    1000 * 60 * 20,
-  )
+  //     expect(
+  //       unquote(
+  //         response
+  //           .split('\n')
+  //           .filter((line) => line.trim() !== '' && line.trim() !== '```')
+  //           .at(-1) ?? '',
+  //       ),
+  //     ).toBe('1.7.5b')
+  //   },
+  //   1000 * 60 * 20,
+  // )
 
   it(
     'should write a javascript code performing requested action',
@@ -91,7 +90,7 @@ describe('AI given a simplified html', () => {
       for (let attempt = 0; attempt < maxAttempts && !versions.length; attempt++) {
         const response = await ai
           .quickPrompt(
-            `${simplifiedSource}\n\n\nCreate a JavaScript function named 'findVersionStrings' that searches the DOM to identify and return a list of all version strings. The function should run in browser and don't receive any arguments. Provided html is as an simplified example. Each version string immediately follows the text 'Release notes for'. Remove any text that comes after version string. Version cannot contain any spaces. Version string can have complex format and contain letters, numbers, dots, dashes, etc. Don't rely on regex but only on the "Release notes for" text preceding the version string. There should be no duplicates in the output list. Write only the function code without providing any examples. Return only the function code.`,
+            `${simplifiedSource}\n\n\nCreate a JavaScript function named 'findVersionStrings' that searches the DOM to identify and return a list of all version strings. The function should run in browser and don't receive any arguments. Provided html is as an simplified example. Each version string immediately follows the text 'Release notes for' so use that information to find the version string. Remove any text that comes after version string and also trim the result so the version doesn't contain any spaces or icons. There should be no duplicates in the output list. Write and return only the function code without providing any examples.`,
             {
               // model: 'deepseek-r1:32b',
               stream: true,

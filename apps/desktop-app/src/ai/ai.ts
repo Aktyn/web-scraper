@@ -13,7 +13,8 @@ export class AI extends Ollama {
     options?: Partial<GenerateRequest & { stream: Stream }>,
   ) {
     const result = await super.generate({
-      model: 'phi4',
+      // model: 'phi4',
+      model: 'qwen2.5-coder:32b',
       prompt,
       keep_alive: 60 * 7, // in seconds
       ...options,

@@ -74,7 +74,7 @@ export function ExecutionItem({
         divProps.className,
       )}
     >
-      <div className="flex flex-col justify-start items-stretch">
+      <div className="flex grow flex-col justify-start items-stretch">
         <ExecutionItemHeader type={item.type} index={index} />
         {item.type === ExecutionItemType.CONDITION && (
           <div className="flex flex-col items-start justify-center px-2 py-1">

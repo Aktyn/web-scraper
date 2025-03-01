@@ -48,6 +48,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
           loading && 'pointer-events-none overflow-hidden',
         )}
         ref={ref}
+        type="button"
         {...props}
       >
         {asChild ? (

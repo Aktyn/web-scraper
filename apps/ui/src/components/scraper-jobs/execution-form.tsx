@@ -12,7 +12,10 @@ type ExecutionFormProps = ControllerRenderProps<UpsertScraperJobSchema, 'executi
 export const ExecutionForm = forwardRef<HTMLDivElement, ExecutionFormProps>(
   ({ value: execution, onChange, disabled }, ref) => {
     return (
-      <div ref={ref} className="flex flex-row flex-wrap items-center justify-start gap-4">
+      <div
+        ref={ref}
+        className="flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center justify-start gap-4"
+      >
         {execution.length > 0 && <ExecutionFlow execution={execution} onChange={onChange} />}
         <AddExecutionItemDropdown execution={execution} onChange={onChange}>
           <Button variant="secondary" disabled={disabled}>

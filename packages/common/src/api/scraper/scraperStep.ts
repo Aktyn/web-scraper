@@ -13,6 +13,7 @@ type StepBase<Type extends ScraperStepType, Data> = {
   data: Data
 }
 
+//TODO: use more sophisticated solution similar to findElementBy... from jest
 type ElementPath =
   | string
   | {

@@ -36,7 +36,7 @@ export const ExecutionFlow = memo<ExecutionFlowProps>(({ execution, onChange }) 
     <Measurer
       ref={containerRef}
       className={cn(
-        'inline-flex flex-row flex-wrap items-stretch justify-start relative gap-8',
+        'inline-flex flex-col sm:flex-row flex-wrap items-stretch justify-start relative gap-8',
         onChange && 'gap-x-5',
       )}
     >
@@ -52,7 +52,7 @@ export const ExecutionFlow = memo<ExecutionFlowProps>(({ execution, onChange }) 
                 >
                   <div
                     className={cn(
-                      'z-10 my-auto rounded-full box-border bg-linear-to-r',
+                      'z-10 my-auto aspect-square self-center rounded-full box-border bg-linear-to-r',
                       execution[index - 1].type === ExecutionItemType.CONDITION &&
                         'from-execution-condition/75',
                       execution[index - 1].type === ExecutionItemType.STEP &&
