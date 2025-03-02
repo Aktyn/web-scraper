@@ -1,5 +1,4 @@
-import { mdiCollapseAll, mdiDeveloperBoard, mdiExpandAll, mdiPageNext, mdiReload } from '@mdi/js'
-import Icon from '@mdi/react'
+import { ChevronsUp, ArrowRight, RefreshCw, ChevronsDown, Cpu } from 'lucide-react'
 import { useRef } from 'react'
 import { Spinner } from '~/components/common/spinner'
 import { TermInfo } from '~/components/common/term-info'
@@ -63,7 +62,7 @@ export function ScraperJobs() {
                   disabled={loading}
                   onClick={() => loadMore(true)}
                 >
-                  <Icon path={mdiReload} />
+                  <RefreshCw />
                 </Button>
               </TooltipTrigger>
               <TooltipContent side="bottom">Reload</TooltipContent>
@@ -75,7 +74,7 @@ export function ScraperJobs() {
                   size="icon"
                   onClick={() => scraperJobsListRef.current?.expandAll()}
                 >
-                  <Icon path={mdiExpandAll} />
+                  <ChevronsUp />
                 </Button>
               </TooltipTrigger>
               <TooltipContent side="bottom">Expand all</TooltipContent>
@@ -87,7 +86,7 @@ export function ScraperJobs() {
                   size="icon"
                   onClick={() => scraperJobsListRef.current?.collapseAll()}
                 >
-                  <Icon path={mdiCollapseAll} />
+                  <ChevronsDown />
                 </Button>
               </TooltipTrigger>
               <TooltipContent side="bottom">Collapse all</TooltipContent>
@@ -99,7 +98,7 @@ export function ScraperJobs() {
                 setView(View.SCRAPER_JOB_CREATOR)
               }}
             >
-              <Icon path={mdiDeveloperBoard} />
+              <Cpu />
               Open scraper job creator
             </Button>
           </div>
@@ -124,7 +123,7 @@ export function ScraperJobs() {
         <Fade in={hasMore && scraperJobs.length > 0} delay={scraperJobs.length * 100}>
           <div className="flex justify-center py-4">
             <Button variant="secondary" onClick={() => loadMore()}>
-              <Icon path={mdiPageNext} />
+              <ArrowRight />
               Load more
             </Button>
           </div>

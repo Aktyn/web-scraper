@@ -1,5 +1,4 @@
-import { mdiClose, mdiDelete, mdiPencil, mdiPlay } from '@mdi/js'
-import Icon from '@mdi/react'
+import { X, Trash, Pencil, Play } from 'lucide-react'
 import type { ScraperJob, UpsertScraperJobSchema } from '@web-scraper/common'
 import { forwardRef, memo, useEffect, useImperativeHandle, useState } from 'react'
 import { Config } from '~/config'
@@ -98,7 +97,7 @@ export const ScraperJobsList = memo(
                           }}
                         >
                           <span>
-                            <Icon path={mdiClose} />
+                            <X className="w-5 h-5" />
                             Exit edit mode
                           </span>
                         </Button>
@@ -117,7 +116,7 @@ export const ScraperJobsList = memo(
                           className="[&[disabled]]:opacity-50 [&[disabled]]:pointer-events-none"
                         >
                           <span>
-                            <Icon path={mdiPencil} />
+                            <Pencil className="w-5 h-5" />
                           </span>
                         </Button>
                         <Button
@@ -131,7 +130,7 @@ export const ScraperJobsList = memo(
                           }}
                         >
                           <span>
-                            <Icon path={mdiDelete} />
+                            <Trash className="w-5 h-5" />
                           </span>
                         </Button>
                         <Button
@@ -146,7 +145,7 @@ export const ScraperJobsList = memo(
                           className="[&[disabled]]:opacity-50 [&[disabled]]:pointer-events-none"
                         >
                           <span>
-                            <Icon path={mdiPlay} className="size-5" />
+                            <Play className="w-5 h-5" />
                           </span>
                         </Button>
                       </div>

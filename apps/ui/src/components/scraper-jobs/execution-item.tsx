@@ -1,12 +1,4 @@
-import {
-  mdiAssistant,
-  mdiKeyboardReturn,
-  mdiLink,
-  mdiPencil,
-  mdiTimerSand,
-  mdiDelete,
-} from '@mdi/js'
-import Icon from '@mdi/react'
+import { Bot, CornerDownLeft, Link, Pencil, Timer, Trash2 } from 'lucide-react'
 import {
   ExecutionItemType,
   FlowActionType,
@@ -35,6 +27,7 @@ import {
 import { Separator } from '../ui/separator'
 import { Tooltip, TooltipContent, TooltipTrigger } from '../ui/tooltip'
 import { ExecutionItemForm } from './execution-item-form'
+import { DynamicIcon } from 'lucide-react/dynamic'
 
 type ExecutionItemProps = {
   item: JobExecutionItem
@@ -106,7 +99,7 @@ export function ExecutionItem({
                 typeof item.step.data.element !== 'string' && (
                   <Tooltip>
                     <TooltipTrigger asChild>
-                      <Icon path={mdiAssistant} className="size-5" />
+                      <Bot className="size-5" />
                     </TooltipTrigger>
                     <TooltipContent>
                       Targeting element with AI
@@ -118,7 +111,7 @@ export function ExecutionItem({
               {item.step.type === ScraperStepType.FILL_INPUT && item.step.data.pressEnter && (
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <Icon path={mdiKeyboardReturn} className="size-5" />
+                    <CornerDownLeft className="size-5" />
                   </TooltipTrigger>
                   <TooltipContent>
                     Press enter with{' '}
@@ -131,7 +124,7 @@ export function ExecutionItem({
                 item.step.data.waitForNavigation && (
                   <Tooltip>
                     <TooltipTrigger asChild>
-                      <Icon path={mdiTimerSand} className="size-5" />
+                      <Timer className="size-5" />
                     </TooltipTrigger>
                     <TooltipContent>
                       {/* TODO: smart time formatting (the value will most likely be rounded to the nearest second) */}
@@ -148,7 +141,7 @@ export function ExecutionItem({
               <div className="flex flex-row items-center gap-x-2">
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <Icon path={mdiLink} className="size-5" />
+                    <Link className="size-5" />
                   </TooltipTrigger>
                   <TooltipContent>{item.step.data.url}</TooltipContent>
                 </Tooltip>
@@ -182,14 +175,14 @@ export function ExecutionItem({
                     item.type === ExecutionItemType.STEP && 'hover:bg-execution-step/50',
                   )}
                 >
-                  <Icon path={mdiPencil} />
+                  <Pencil />
                 </Button>
               </DialogTrigger>
               <DialogContent className="max-w-2xl">
                 <DialogHeader>
                   <DialogTitle>
-                    <Icon
-                      path={executionItemTypeNames[item.type].svgPath}
+                    <DynamicIcon
+                      name={executionItemTypeNames[item.type].iconName}
                       className="size-7 inline"
                     />
                     &nbsp;
@@ -219,7 +212,7 @@ export function ExecutionItem({
                 item.type === ExecutionItemType.STEP && 'hover:bg-execution-step/50',
               )}
             >
-              <Icon path={mdiDelete} />
+              <Trash2 />
             </Button>
           )}
         </div>
@@ -249,7 +242,7 @@ function ExecutionItemHeader({ type, index }: { type: ExecutionItemType; index: 
           type === ExecutionItemType.STEP && 'bg-execution-step text-execution-step-foreground',
         )}
       >
-        <Icon path={executionItemTypeNames[type].svgPath} className="size-4" />
+        <DynamicIcon name={executionItemTypeNames[type].iconName} className="size-4" />
         {executionItemTypeNames[type].label}
       </Badge>
     </div>

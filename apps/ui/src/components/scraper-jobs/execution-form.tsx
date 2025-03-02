@@ -1,5 +1,4 @@
-import { mdiPlus } from '@mdi/js'
-import Icon from '@mdi/react'
+import { Plus } from 'lucide-react'
 import type { UpsertScraperJobSchema } from '@web-scraper/common'
 import { forwardRef } from 'react'
 import type { ControllerRenderProps } from 'react-hook-form'
@@ -19,7 +18,7 @@ export const ExecutionForm = forwardRef<HTMLDivElement, ExecutionFormProps>(
         {execution.length > 0 && <ExecutionFlow execution={execution} onChange={onChange} />}
         <AddExecutionItemDropdown execution={execution} onChange={onChange}>
           <Button variant="secondary" disabled={disabled}>
-            <Icon path={mdiPlus} />
+            <Plus className="w-5 h-5" />
             Add execution item
           </Button>
         </AddExecutionItemDropdown>

@@ -1,7 +1,9 @@
-import Icon from '@mdi/react'
 import { ExecutionItemType, type UpsertScraperJobSchema } from '@web-scraper/common'
+import { DynamicIcon } from 'lucide-react/dynamic'
 import { memo, type PropsWithChildren, useCallback, useState } from 'react'
 import { executionItemTypeNames } from '~/lib/dictionaries'
+import { cn } from '~/lib/utils'
+import { TermInfo } from '../common/term-info'
 import {
   Dialog,
   DialogContent,
@@ -18,8 +20,6 @@ import {
   DropdownMenuTrigger,
 } from '../ui/dropdown-menu'
 import { ExecutionItemForm } from './execution-item-form'
-import { TermInfo } from '../common/term-info'
-import { cn } from '~/lib/utils'
 
 type AddExecutionItemDropdownProps = PropsWithChildren<{
   execution: UpsertScraperJobSchema['execution']
@@ -63,7 +63,7 @@ export const AddExecutionItemDropdown = memo<AddExecutionItemDropdownProps>(
                       className="text-base"
                       onSelect={(event) => event.preventDefault()}
                     >
-                      <Icon path={executionItemTypeNames[value].svgPath} />
+                      <DynamicIcon name={executionItemTypeNames[value].iconName} />
                       <span>{executionItemTypeNames[value].label}</span>
                       <TermInfo
                         term={value}
@@ -77,8 +77,8 @@ export const AddExecutionItemDropdown = memo<AddExecutionItemDropdownProps>(
                   <DialogContent className="max-w-2xl">
                     <DialogHeader>
                       <DialogTitle className="flex flex-row items-center gap-x-2">
-                        <Icon
-                          path={executionItemTypeNames[value].svgPath}
+                        <DynamicIcon
+                          name={executionItemTypeNames[value].iconName}
                           className="size-7 inline"
                         />
                         <span>{executionItemTypeNames[value].label}</span>

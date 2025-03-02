@@ -1,5 +1,4 @@
-import { mdiPlus } from '@mdi/js'
-import Icon from '@mdi/react'
+import { Plus } from 'lucide-react'
 import {
   ExecutionItemType,
   type JobExecutionItem,
@@ -66,7 +65,7 @@ export const ExecutionFlow = memo<ExecutionFlowProps>(({ execution, onChange }) 
                       size="icon"
                       className="rounded-[inherit] border-dashed border-2 text-foreground border-transparent bg-clip-padding bg-background"
                     >
-                      <Icon path={mdiPlus} />
+                      <Plus />
                     </Button>
                   </div>
                 </AddExecutionItemDropdown>

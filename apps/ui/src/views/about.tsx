@@ -1,5 +1,4 @@
-import { mdiGithub } from '@mdi/js'
-import Icon from '@mdi/react'
+import { Github } from 'lucide-react'
 import 'devicon/devicon.min.css'
 import aktynLogo from '~/assets/aktyn-logo.png'
 import { LabeledSeparator } from '~/components/common/labeled-separator'
@@ -81,7 +80,7 @@ function AuthorSection() {
           <Separator orientation="vertical" className="h-8!" />
           <Button variant="link" asChild className="gap-x-1">
             <a href="https://github.com/Aktyn" target="_blank">
-              <Icon path={mdiGithub} />
+              <Github />
               &nbsp;GitHub
             </a>
           </Button>

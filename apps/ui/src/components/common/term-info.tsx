@@ -1,5 +1,4 @@
-import { mdiInformation } from '@mdi/js'
-import Icon from '@mdi/react'
+import { Info } from 'lucide-react'
 import { Tooltip, TooltipContent, TooltipTrigger } from '../ui/tooltip'
 import { TERMS_DETAILS, type TermKey } from '~/lib/terms'
 
@@ -14,7 +13,7 @@ export function TermInfo({ term: termKey, className }: TermInfoProps) {
   return (
     <Tooltip>
       <TooltipTrigger asChild>
-        <Icon path={mdiInformation} className={className} />
+        <Info className={className} />
       </TooltipTrigger>
       <TooltipContent className="whitespace-pre-wrap text-left font-semibold max-w-(--breakpoint-xs)">
         <p className="font-bold">{term?.title}</p>

@@ -1,8 +1,7 @@
-import { mdiWindowClose, mdiWindowMaximize, mdiWindowMinimize, mdiWindowRestore } from '@mdi/js'
-import Icon from '@mdi/react'
 import { WindowStateChange } from '@web-scraper/common'
-import { Button } from './ui/button'
+import { Maximize, Minimize, Minus, X } from 'lucide-react'
 import { useView } from '~/context/view-context'
+import { Button } from './ui/button'
 
 export const WindowStateOptions = () => {
   const view = useView()
@@ -14,7 +13,7 @@ export const WindowStateOptions = () => {
         variant="ghost"
         onClick={() => window.electronAPI.changeWindowState(WindowStateChange.MINIMIZE)}
       >
-        <Icon path={mdiWindowMinimize} />
+        <Minus />
       </Button>
       <Button
         size="icon"
@@ -25,14 +24,14 @@ export const WindowStateOptions = () => {
           )
         }
       >
-        {view.maximized ? <Icon path={mdiWindowRestore} /> : <Icon path={mdiWindowMaximize} />}
+        {view.maximized ? <Minimize /> : <Maximize />}
       </Button>
       <Button
         size="icon"
         variant="ghost"
         onClick={() => window.electronAPI.changeWindowState(WindowStateChange.CLOSE)}
       >
-        <Icon path={mdiWindowClose} />
+        <X />
       </Button>
     </div>
   )

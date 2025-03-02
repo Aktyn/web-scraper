@@ -1,5 +1,4 @@
-import { mdiMenu } from '@mdi/js'
-import Icon from '@mdi/react'
+import { Menu } from 'lucide-react'
 import iconDark from '~/assets/icon-dark.svg'
 import icon from '~/assets/icon.svg'
 import { ModeToggle } from '~/components/mode-toggle'
@@ -47,7 +46,7 @@ export function Header() {
         <Sheet open={openSheet} onOpenChange={setOpenSheet}>
           <SheetTrigger asChild>
             <Button className="inline-flex md:hidden" size="icon" variant="outline">
-              <Icon path={mdiMenu} />
+              <Menu />
             </Button>
           </SheetTrigger>
           <SheetContent side="left" className="w-auto min-w-64">

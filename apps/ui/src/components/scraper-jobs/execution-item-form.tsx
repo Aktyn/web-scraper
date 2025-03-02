@@ -1,6 +1,5 @@
 import { yupResolver } from '@hookform/resolvers/yup'
-import { mdiAlert, mdiPencilBox, mdiPlus } from '@mdi/js'
-import Icon from '@mdi/react'
+import { AlertCircle, PenBox, Plus } from 'lucide-react'
 import {
   ExecutionItemType,
   FlowActionType,
@@ -94,7 +93,7 @@ export function ExecutionItemForm({
                 />
               ) : (
                 <div className="text-warning text-balance">
-                  <Icon path={mdiAlert} className="size-6 inline align-top" /> There is at least one
+                  <AlertCircle className="size-6 inline align-top" /> There is at least one
                   execution item required for this type of flow action.
                 </div>
               )}
@@ -153,8 +152,8 @@ export function ExecutionItemForm({
           disabled={form.formState.isSubmitted && !form.formState.isValid}
           className="ml-auto"
         >
-          <Icon path={editMode ? mdiPencilBox : mdiPlus} />
-          {editMode ? 'Update' : 'Add'}
+          {editMode ? <PenBox className="w-5 h-5" /> : <Plus className="w-5 h-5" />}
+          <span>{editMode ? 'Update' : 'Add'}</span>
         </Button>
       </form>
     </Form>

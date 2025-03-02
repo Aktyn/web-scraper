@@ -1,8 +1,7 @@
 import { memo } from 'react'
 import { Form, FormField, FormItem, FormLabel, FormMessage } from '../ui/form'
 import { yupResolver } from '@hookform/resolvers/yup'
-import { mdiContentSave } from '@mdi/js'
-import Icon from '@mdi/react'
+import { Save } from 'lucide-react'
 import {
   type ScraperJob,
   type UpsertScraperJobSchema,
@@ -69,7 +68,7 @@ export const ScraperJobForm = memo<ScraperJobFormProps>(
             disabled={form.formState.isSubmitted && !form.formState.isValid}
             data-loading={creating}
           >
-            <Icon path={mdiContentSave} />
+            <Save className="w-5 h-5" />
             <span>Save</span>
           </Button>
         </form>

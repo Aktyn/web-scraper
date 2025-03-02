@@ -1,5 +1,4 @@
-import { mdiChevronLeft } from '@mdi/js'
-import Icon from '@mdi/react'
+import { ChevronLeft } from 'lucide-react'
 import { type UpsertScraperJobSchema } from '@web-scraper/common'
 import { useCallback } from 'react'
 import { toast } from 'sonner'
@@ -56,7 +55,7 @@ export function ScraperJobCreator() {
               }
             }}
           >
-            <Icon path={mdiChevronLeft} />
+            <ChevronLeft />
             Return
           </Button>
         </div>

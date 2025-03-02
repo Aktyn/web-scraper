@@ -1,4 +1,4 @@
-import { mdiBell, mdiChip, mdiInformation, mdiViewDashboard } from '@mdi/js'
+import type { dynamicIconImports } from 'lucide-react/dynamic'
 import { Dashboard } from '~/views/dashboard'
 import { About } from './views/about'
 import { Notifications } from './views/notifications'
@@ -17,14 +17,14 @@ export const NAVIGATION = [
   {
     view: View.DASHBOARD,
     label: 'Dashboard',
-    svgPath: mdiViewDashboard,
+    iconName: 'layout-dashboard',
     component: Dashboard,
     subViews: [],
   },
   {
     view: View.SCRAPER_JOBS,
     label: 'Scraper jobs',
-    svgPath: mdiChip,
+    iconName: 'cpu',
     component: ScraperJobs,
     subViews: [
       {
@@ -37,15 +37,15 @@ export const NAVIGATION = [
   {
     view: View.NOTIFICATIONS,
     label: 'Notifications',
-    svgPath: mdiBell,
+    iconName: 'bell',
     component: Notifications,
     subViews: [],
   },
   {
     view: View.ABOUT,
     label: 'About',
-    svgPath: mdiInformation,
+    iconName: 'info',
     component: About,
     subViews: [],
   },
-]
+] satisfies Array<{ [key: string]: unknown; iconName: keyof typeof dynamicIconImports }>

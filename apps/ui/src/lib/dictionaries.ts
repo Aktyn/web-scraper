@@ -1,4 +1,3 @@
-import { mdiArrowDecision, mdiAutoFix, mdiCursorDefaultClick } from '@mdi/js'
 import {
   ActionStepErrorType,
   ActionStepType,
@@ -16,6 +15,7 @@ import {
   isRegularAction,
   type FlowStep,
 } from '@web-scraper/common'
+import type { dynamicIconImports } from 'lucide-react/dynamic'
 
 export const actionStepTypeNames: { [key in ActionStepType]: string } = {
   [ActionStepType.WAIT]: 'Wait',
@@ -105,11 +105,11 @@ export const routineExecutionTypeNames: { [key in RoutineExecutionType]: string 
 // TODO: check above dictionaries for deprecations
 
 export const executionItemTypeNames: {
-  [key in ExecutionItemType]: { label: string; svgPath: string }
+  [key in ExecutionItemType]: { label: string; iconName: keyof typeof dynamicIconImports }
 } = {
-  [ExecutionItemType.CONDITION]: { label: 'Condition', svgPath: mdiArrowDecision },
-  [ExecutionItemType.STEP]: { label: 'Scraper step', svgPath: mdiCursorDefaultClick },
-  [ExecutionItemType.AI_ACTION]: { label: 'AI action', svgPath: mdiAutoFix },
+  [ExecutionItemType.CONDITION]: { label: 'Condition', iconName: 'git-branch' },
+  [ExecutionItemType.STEP]: { label: 'Scraper step', iconName: 'mouse-pointer-click' },
+  [ExecutionItemType.AI_ACTION]: { label: 'AI action', iconName: 'wand-2' },
 }
 
 export const flowActionTypeNames: { [key in FlowActionType]: string } = {

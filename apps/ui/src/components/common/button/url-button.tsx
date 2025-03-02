@@ -1,5 +1,4 @@
-import { mdiOpenInNew } from '@mdi/js'
-import Icon from '@mdi/react'
+import { ExternalLink } from 'lucide-react'
 import type { AnchorHTMLAttributes, MouseEvent } from 'react'
 import { cn } from '~/lib/utils'
 
@@ -26,7 +25,7 @@ export const UrlButton = ({ children: url, maxWidth, readOnly, ...linkProps }: U
       {...linkProps}
     >
       <span className="overflow-hidden text-ellipsis whitespace-nowrap">{url}</span>
-      {!readOnly && <Icon path={mdiOpenInNew} className="size-4 min-w-4 inline-block" />}
+      {!readOnly && <ExternalLink className="size-4 min-w-4 inline-block" />}
     </Component>
   )
 }
