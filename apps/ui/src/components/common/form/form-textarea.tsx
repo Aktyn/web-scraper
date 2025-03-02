@@ -38,7 +38,7 @@ export function FormTextArea<
               {...textareaProps}
             />
           </FormControl>
-          <FormMessage reserveSpace />
+          <FormMessage />
         </FormItem>
       )}
     />

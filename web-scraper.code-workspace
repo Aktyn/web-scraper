@@ -21,11 +21,6 @@
 		"typescript.tsdk": "Root/node_modules/typescript/lib",
 		"typescript.preferences.includePackageJsonAutoImports": "on",
 		"testing.automaticallyOpenPeekView": "never",
-		"jest.disabledWorkspaceFolders": [
-			"web-scraper"
-		],
-		"jest.monitorLongRun": 30000,
-		"jest.runMode": "watch",
 		"cSpell.words": [
 			"Aktyn",
 			"autoincrement",
@@ -40,12 +35,14 @@
 			"qwen",
 			"Radosław",
 			"referrerpolicy",
+			"shadcn",
 			"sonner",
 			"targetcreated",
 			"tseslint"
 		],
 		"liveServer.settings.multiRootWorkspaceName": "web-scraper",
-		"eslint.useFlatConfig": true
+		"eslint.useFlatConfig": true,
+		"npm.packageManager": "yarn"
 	},
 	"launch": {
 		"version": "2.0.0",

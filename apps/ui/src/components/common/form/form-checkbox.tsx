@@ -25,7 +25,7 @@ export function FormCheckbox<
             </FormControl>
             <FormLabel>{label}</FormLabel>
           </div>
-          <FormMessage reserveSpace />
+          <FormMessage />
         </FormItem>
       )}
     />

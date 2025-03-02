@@ -10,7 +10,6 @@ export function GlobalProviders({ children }: PropsWithChildren) {
       <TooltipProvider delayDuration={16} skipDelayDuration={16} disableHoverableContent>
         <NotificationsModule.Provider>{children}</NotificationsModule.Provider>
         <Toaster
-          pauseWhenPageIsHidden
           duration={10_000}
           visibleToasts={16}
           expand

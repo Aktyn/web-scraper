@@ -2,6 +2,7 @@ import { mdiGithub } from '@mdi/js'
 import Icon from '@mdi/react'
 import 'devicon/devicon.min.css'
 import aktynLogo from '~/assets/aktyn-logo.png'
+import { LabeledSeparator } from '~/components/common/labeled-separator'
 import {
   Accordion,
   AccordionContent,
@@ -68,19 +69,17 @@ function Section({ children }: { children: React.ReactNode }) {
 function AuthorSection() {
   return (
     <Section>
-      <Separator orientation="horizontal" className="text-base text-muted-foreground">
-        Author
-      </Separator>
+      <LabeledSeparator className="text-base text-muted-foreground">Author</LabeledSeparator>
       <div className="flex flex-col items-center">
         <img src={aktynLogo} alt="Aktyn" className="size-12 rounded-full mb-2" />
         <div className="text-lg font-bold text-center">
           Radosław Krajewski
           <br />
         </div>
-        <div className="inline-grid grid-cols-[1fr_1px_1fr] items-center justify-center gap-x-6">
-          <span className="text-base font-medium text-right">Aktyn</span>
-          <Separator orientation="vertical" />
-          <Button variant="link" asChild className="gap-x-1 pl-0">
+        <div className="inline-flex *:not-data-[orientation]:flex-1 items-center justify-center gap-x-2">
+          <span className="text-base font-medium text-center px-4">Aktyn</span>
+          <Separator orientation="vertical" className="h-8!" />
+          <Button variant="link" asChild className="gap-x-1">
             <a href="https://github.com/Aktyn" target="_blank">
               <Icon path={mdiGithub} />
               &nbsp;GitHub
@@ -95,9 +94,9 @@ function AuthorSection() {
 function TechnologiesSection() {
   return (
     <Section>
-      <Separator orientation="horizontal" className="text-base text-muted-foreground">
+      <LabeledSeparator className="text-base text-muted-foreground">
         Used technologies
-      </Separator>
+      </LabeledSeparator>
       <ScrollArea className="max-w-full mx-auto">
         <div className="[&_i]:text-4xl flex flex-row justify-center px-2 gap-x-4">
           {technologies.map(({ name, icon }) => (

@@ -52,7 +52,7 @@ export function FormSelect<
               </SelectContent>
             </Select>
           </FormControl>
-          <FormMessage reserveSpace />
+          <FormMessage />
         </FormItem>
       )}
     />

@@ -1,7 +1,7 @@
 import Icon from '@mdi/react'
 import { useEffect, useState } from 'react'
 import { Button } from '~/components/ui/button'
-import { Fade } from '~/components/ui/fade'
+import { Fade } from '~/components/common/fade'
 import { useView } from '~/context/view-context'
 import { cn } from '~/lib/utils'
 import { NAVIGATION, type View } from '~/navigation'
@@ -51,7 +51,7 @@ function NavigationItem({
     <Button
       key={item.view}
       className={cn(
-        'opacity-100! hover:bg-accent/60 border border-primary duration-500 overflow-hidden',
+        'opacity-100! hover:bg-accent/60 border border-primary duration-500 overflow-hidden h-full cursor-pointer',
         active ? 'bg-accent hover:bg-accent' : 'border-transparent',
       )}
       variant="ghost"
@@ -62,7 +62,7 @@ function NavigationItem({
         onNavigate?.(item.view)
       }}
     >
-      <Icon path={item.svgPath} className="size-12" />
+      <Icon path={item.svgPath} className="size-6" />
       <div className="flex flex-col items-start relative">
         <span className={cn('transition-transform duration-500', subView ? '-translate-y-1' : '')}>
           {item.label}

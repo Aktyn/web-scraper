@@ -1,6 +1,7 @@
+import type { ComponentProps } from 'react'
 import type { ControllerProps, FieldPath, FieldValues } from 'react-hook-form'
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '~/components/ui/form'
-import { Input, type InputProps } from '~/components/ui/input'
+import { Input } from '~/components/ui/input'
 
 type FormInputProps<
   TFieldValues extends FieldValues = FieldValues,
@@ -8,7 +9,7 @@ type FormInputProps<
 > = Omit<ControllerProps<TFieldValues, TName>, 'render'> & {
   label: string
   placeholder?: string
-  inputProps?: InputProps
+  inputProps?: ComponentProps<'input'>
 }
 
 export function FormInput<
@@ -24,7 +25,7 @@ export function FormInput<
           <FormControl>
             <Input placeholder={placeholder} {...field} value={field.value ?? ''} {...inputProps} />
           </FormControl>
-          <FormMessage reserveSpace />
+          <FormMessage />
         </FormItem>
       )}
     />

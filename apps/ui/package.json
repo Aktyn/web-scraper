@@ -9,10 +9,11 @@
     "preview": "vite preview",
     "lint": "eslint src/**/*{.js,.jsx,.ts,.tsx} --fix",
     "format": "prettier --write src/**/*{.js,.jsx,.ts,.tsx}",
-    "typecheck": "tsc --noEmit --skipLibCheck"
+    "typecheck": "tsc --noEmit --skipLibCheck -p ./tsconfig.app.json",
+    "update-shadcn": "./scripts/update-shadcn.sh && yarn run format && yarn run lint"
   },
   "dependencies": {
-    "@hookform/resolvers": "^3.10.0",
+    "@hookform/resolvers": "^4.1.2",
     "@mdi/js": "^7.4.47",
     "@mdi/react": "^1.6.1",
     "@radix-ui/react-accordion": "^1.2.3",
@@ -35,9 +36,10 @@
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-hook-form": "^7.54.2",
-    "sonner": "^1.7.4",
+    "sonner": "^2.0.1",
     "tailwind-merge": "^3.0.1",
-    "tailwindcss-animate": "^1.0.7"
+    "tailwindcss-animate": "^1.0.7",
+    "zod": "^3.24.2"
   },
   "devDependencies": {
     "@eslint/js": "^9.20.0",

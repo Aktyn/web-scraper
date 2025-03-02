@@ -24,7 +24,7 @@ export function FormSwitch<
               <Switch checked={field.value} onCheckedChange={field.onChange} />
             </FormControl>
           </div>
-          <FormMessage reserveSpace />
+          <FormMessage />
         </FormItem>
       )}
     />

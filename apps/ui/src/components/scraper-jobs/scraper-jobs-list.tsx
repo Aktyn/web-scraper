@@ -10,7 +10,7 @@ import { ScrollArea, ScrollBar } from '../ui/scroll-area'
 import { Separator } from '../ui/separator'
 import { ExecutionFlow } from './execution-flow'
 import { cn } from '~/lib/utils'
-import { Fade } from '../ui/fade'
+import { Fade } from '../common/fade'
 import { ScraperJobForm } from './scraper-job-form'
 
 type ScraperJobsListHandle = {
@@ -108,7 +108,7 @@ export const ScraperJobsList = memo(
                           asChild
                           variant="ghost"
                           size="icon"
-                          loading={editingScraperJobId === scraperJob.id}
+                          data-loading={editingScraperJobId === scraperJob.id}
                           disabled={isEditing}
                           onClick={(event) => {
                             event.stopPropagation()
@@ -124,7 +124,7 @@ export const ScraperJobsList = memo(
                           asChild
                           variant="ghost"
                           size="icon"
-                          loading={deletingScraperJobId === scraperJob.id}
+                          data-loading={deletingScraperJobId === scraperJob.id}
                           onClick={(event) => {
                             event.stopPropagation()
                             onDelete(scraperJob.id)

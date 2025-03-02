@@ -14,6 +14,7 @@
   --radius-sm: calc(var(--radius) * 0.5);
   --radius-xs: calc(var(--radius) * 0.25);
 
+  --blur-2xs: 2px;
   --backdrop-blur-xs: 2px;
 
   --scale-golden: 1.618;
@@ -190,7 +191,7 @@
 
 @layer base {
   * {
-    @apply border-border outline-hidden;
+    @apply border-border outline-hidden [button]:not-disabled:cursor-pointer [button]:data-[loading=true]:pointer-events-none [button]:data-[loading=true]:*:opacity-50 [button]:data-[loading=true]:relative [button]:data-[loading=true]:*:blur-2xs;
   }
   body {
     @apply text-foreground;

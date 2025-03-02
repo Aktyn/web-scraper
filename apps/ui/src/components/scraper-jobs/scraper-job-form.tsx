@@ -56,7 +56,7 @@ export const ScraperJobForm = memo<ScraperJobFormProps>(
                 <FormItem className="flex flex-col justify-start">
                   <FormLabel>Execution</FormLabel>
                   <ExecutionForm {...field} />
-                  <FormMessage reserveSpace />
+                  <FormMessage />
                 </FormItem>
               )}
             />
@@ -67,10 +67,10 @@ export const ScraperJobForm = memo<ScraperJobFormProps>(
             variant="default"
             type="submit"
             disabled={form.formState.isSubmitted && !form.formState.isValid}
-            loading={creating}
+            data-loading={creating}
           >
             <Icon path={mdiContentSave} />
-            Save
+            <span>Save</span>
           </Button>
         </form>
       </Form>
