@@ -1,10 +1,10 @@
-import { ChevronsUp, ArrowRight, RefreshCw, ChevronsDown, Cpu } from 'lucide-react'
+import { ArrowRight, CopyMinus, CopyPlus, Cpu, RefreshCw } from 'lucide-react'
 import { useRef } from 'react'
+import { Fade } from '~/components/common/fade'
 import { Spinner } from '~/components/common/spinner'
 import { TermInfo } from '~/components/common/term-info'
 import { ScraperJobsList } from '~/components/scraper-jobs/scraper-jobs-list'
 import { Button } from '~/components/ui/button'
-import { Fade } from '~/components/common/fade'
 import { ScrollArea, ScrollBar } from '~/components/ui/scroll-area'
 import { Separator } from '~/components/ui/separator'
 import { Tooltip, TooltipContent, TooltipTrigger } from '~/components/ui/tooltip'
@@ -30,7 +30,7 @@ export function ScraperJobs() {
   } = useScraperJobs()
 
   return (
-    <div className="h-full flex flex-col items-stretch justify-start">
+    <div className="h-full grid grid-rows-[auto_1px_1fr] overflow-hidden justify-stretch items-start">
       <ScrollArea className="p-4">
         <div className="grid grid-cols-[1fr_auto_1fr] items-center justify-between min-w-full gap-x-4">
           <div className="flex items-center gap-x-2">
@@ -74,7 +74,7 @@ export function ScraperJobs() {
                   size="icon"
                   onClick={() => scraperJobsListRef.current?.expandAll()}
                 >
-                  <ChevronsUp />
+                  <CopyPlus />
                 </Button>
               </TooltipTrigger>
               <TooltipContent side="bottom">Expand all</TooltipContent>
@@ -86,7 +86,7 @@ export function ScraperJobs() {
                   size="icon"
                   onClick={() => scraperJobsListRef.current?.collapseAll()}
                 >
-                  <ChevronsDown />
+                  <CopyMinus />
                 </Button>
               </TooltipTrigger>
               <TooltipContent side="bottom">Collapse all</TooltipContent>
@@ -106,7 +106,7 @@ export function ScraperJobs() {
         <ScrollBar orientation="horizontal" />
       </ScrollArea>
       <Separator />
-      <ScrollArea className="flex-1">
+      <ScrollArea className="overflow-hidden max-h-full grid grid-rows-1">
         <Fade in={!loading && !scraperJobs.length}>
           <div className="flex justify-center py-4 text-lg font-bold text-muted-foreground">
             No scraper jobs found

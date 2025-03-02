@@ -191,7 +191,18 @@
 
 @layer base {
   * {
-    @apply border-border outline-hidden [button]:not-disabled:cursor-pointer [button]:data-[loading=true]:pointer-events-none [button]:data-[loading=true]:*:opacity-50 [button]:data-[loading=true]:relative [button]:data-[loading=true]:*:blur-2xs;
+    @apply border-border outline-hidden 
+      
+      [button]:not-disabled:cursor-pointer [button]:data-[loading=true]:pointer-events-none [button]:data-[loading=true]:*:opacity-50 [button]:data-[loading=true]:relative [button]:data-[loading=true]:*:blur-2xs 
+      
+      data-[slot=tooltip-content]:bg-popover! data-[slot=tooltip-content]:border data-[slot=tooltip-content]:text-popover-foreground!
+      data-[slot=tooltip-content]:**:[svg]:bg-popover! data-[slot=tooltip-content]:**:[svg]:fill-popover! data-[slot=tooltip-content]:**:[svg]:border-b data-[slot=tooltip-content]:**:[svg]:border-r
+
+      data-[slot=form-message]:text-destructive!
+      data-[slot=form-label]:data-[error=true]:text-destructive!
+
+      data-[slot=dialog-content]:max-h-screen data-[slot=dialog-content]:overflow-y-auto
+      data-[slot=dialog-overlay]:backdrop-blur-sm data-[slot=dialog-overlay]:bg-background/50!;
   }
   body {
     @apply text-foreground;
@@ -202,7 +213,21 @@
   .maximized #root {
     @apply rounded-none border-none;
   }
-  :not(.maximized) > body > div[role='dialog'] {
-    @apply rounded-2xl;
+}
+
+@layer components {
+  ::-webkit-scrollbar {
+    width: var(--spacing);
+    height: var(--spacing);
+  }
+  ::-webkit-scrollbar-track {
+    background-color: var(--color-muted);
+  }
+  ::-webkit-scrollbar-thumb {
+    border-radius: var(--radius);
+    background-color: var(--color-muted-foreground);
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background-color: var(--color-primary);
   }
 }

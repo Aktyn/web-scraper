@@ -65,21 +65,21 @@ export const ScraperJobsList = memo(
                 className="bg-card text-card-foreground animate-in fade-in slide-in-from-bottom-16 fill-mode-both duration-500"
                 style={{ animationDelay: `${(index % Config.PAGINATION_PAGE_SIZE) * 100}ms` }}
               >
-                <AccordionTrigger className="xs:px-4 gap-x-4 overflow-hidden hover:no-underline bg-background data-[state=open]:bg-card hover:bg-card transition-colors duration-200 cursor-pointer">
+                <AccordionTrigger className="xs:px-4 gap-x-4 overflow-hidden hover:no-underline bg-background data-[state=open]:bg-card hover:bg-card transition-colors duration-200 cursor-pointer *:[svg]:size-5 items-center *:[svg]:translate-y-0">
                   <ScrollArea className="flex-1">
                     <div className="flex flex-row items-center relative">
                       <div
                         className={cn(
-                          'flex flex-row items-baseline [&>span]:whitespace-nowrap [&>:is(span,a)]:py-2 opacity-100 transition-opacity duration-200',
+                          'flex flex-row items-baseline [&>span]:whitespace-nowrap [&>:is(span,a)]:py-2 opacity-100 transition-opacity duration-200 *:data-[slot=separator-root]:h-6 *:data-[slot=separator-root]:self-center *:data-[slot=separator-root]:mx-3',
                           isEditing && 'opacity-0 pointer-events-none',
                         )}
                       >
                         <span className="text-sm text-muted-foreground">Name:</span>&nbsp;
                         <span className="font-bold">{scraperJob.name}</span>
-                        <Separator orientation="vertical" className="self-stretch h-auto mx-3" />
+                        <Separator orientation="vertical" />
                         <span className="text-sm text-muted-foreground">Start URL:</span>&nbsp;
                         <UrlButton maxWidth="16rem">{scraperJob.startUrl}</UrlButton>
-                        <Separator orientation="vertical" className="self-stretch h-auto mx-3" />
+                        <Separator orientation="vertical" />
                         <span className="text-sm text-muted-foreground">Created:</span>&nbsp;
                         <span>
                           {scraperJob.createdAt.toLocaleString(undefined, { hour12: false })}

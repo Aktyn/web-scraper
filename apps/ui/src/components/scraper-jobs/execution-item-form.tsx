@@ -74,7 +74,7 @@ export function ExecutionItemForm({
         }}
         className={cn('flex flex-col gap-y-4 items-start', className)}
       >
-        <div className="flex flex-row flex-wrap items-stretch justify-start gap-y-2 gap-x-4 w-full">
+        <div className="flex flex-row flex-wrap items-stretch justify-start gap-4 w-full">
           {type === ExecutionItemType.CONDITION && (
             <>
               <FormSelect
@@ -150,7 +150,7 @@ export function ExecutionItemForm({
           variant="default"
           type="submit"
           disabled={form.formState.isSubmitted && !form.formState.isValid}
-          className="ml-auto"
+          className="w-full"
         >
           {editMode ? <PenBox className="w-5 h-5" /> : <Plus className="w-5 h-5" />}
           <span>{editMode ? 'Update' : 'Add'}</span>

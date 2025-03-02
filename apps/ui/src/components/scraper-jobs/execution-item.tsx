@@ -178,7 +178,7 @@ export function ExecutionItem({
                   <Pencil />
                 </Button>
               </DialogTrigger>
-              <DialogContent className="max-w-2xl">
+              <DialogContent className="max-w-2xl max-h-screen">
                 <DialogHeader>
                   <DialogTitle>
                     <DynamicIcon
