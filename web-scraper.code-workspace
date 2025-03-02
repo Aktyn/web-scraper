@@ -38,7 +38,8 @@
 			"shadcn",
 			"sonner",
 			"targetcreated",
-			"tseslint"
+			"tseslint",
+			"VITE"
 		],
 		"liveServer.settings.multiRootWorkspaceName": "web-scraper",
 		"eslint.useFlatConfig": true,

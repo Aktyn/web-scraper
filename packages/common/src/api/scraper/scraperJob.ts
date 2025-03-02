@@ -1,4 +1,4 @@
-import * as yup from 'yup'
+import { z } from 'zod'
 import { upsertExecutionConditionSchema, type ExecutionCondition } from './executionCondition'
 import { upsertScraperStepSchema, type ScraperStep } from './scraperStep'
 import { upsertAIActionSchema, type AIAction } from './aiAction'
@@ -26,38 +26,22 @@ export type JobExecutionItem =
       aiAction: AIAction
     }
 
-export const upsertJobExecutionItemSchema = yup.object({
-  type: yup
-    .mixed<ExecutionItemType>()
-    .oneOf(Object.values(ExecutionItemType))
-    .required('Execution item type is required'),
+export const upsertJobExecutionItemSchema = z.discriminatedUnion('type', [
+  z.object({
+    type: z.literal(ExecutionItemType.CONDITION),
+    condition: upsertExecutionConditionSchema,
+  }),
+  z.object({
+    type: z.literal(ExecutionItemType.STEP),
+    step: upsertScraperStepSchema,
+  }),
+  z.object({
+    type: z.literal(ExecutionItemType.AI_ACTION),
+    aiAction: upsertAIActionSchema,
+  }),
+])
 
-  condition: upsertExecutionConditionSchema
-    .when('type', {
-      is: ExecutionItemType.CONDITION,
-      then: (schema) => schema.required(),
-      otherwise: (schema) => schema.strip(),
-    })
-    .optional(),
-
-  step: upsertScraperStepSchema
-    .when('type', {
-      is: ExecutionItemType.STEP,
-      then: (schema) => schema.required(),
-      otherwise: (schema) => schema.strip(),
-    })
-    .optional(),
-
-  aiAction: upsertAIActionSchema
-    .when('type', {
-      is: ExecutionItemType.AI_ACTION,
-      then: (schema) => schema.required(),
-      otherwise: (schema) => schema.strip(),
-    })
-    .optional(),
-})
-
-export type UpsertJobExecutionItemSchema = yup.InferType<typeof upsertJobExecutionItemSchema>
+export type UpsertJobExecutionItemSchema = z.infer<typeof upsertJobExecutionItemSchema>
 
 export type ScraperJob = {
   id: number
@@ -79,17 +63,21 @@ export type ScraperJob = {
   // simplifiedPageStructureSnapshots?: Map<URL['href'], Readonly<SimplifiedPageStructure>>
 }
 
-export const upsertScraperJobSchema = yup
-  .object({
-    name: yup.string().required('Name is required'),
-    startUrl: yup.string().url('Start URL must be a valid URL').required('Start URL is required'),
-    execution: yup
-      .array()
-      .of(upsertJobExecutionItemSchema)
-      .default([])
-      .required()
-      .min(1, 'Execution cannot be empty'),
-  })
-  .required()
+export const upsertScraperJobSchema = z.object({
+  name: z.string({
+    required_error: 'Name is required',
+  }),
+  startUrl: z
+    .string({
+      required_error: 'Start URL is required',
+    })
+    .url('Start URL must be a valid URL'),
+  execution: z
+    .array(upsertJobExecutionItemSchema)
+    .default([])
+    .refine((items) => items.length >= 1, {
+      message: 'Execution cannot be empty',
+    }),
+})
 
-export type UpsertScraperJobSchema = yup.InferType<typeof upsertScraperJobSchema>
+export type UpsertScraperJobSchema = z.infer<typeof upsertScraperJobSchema>

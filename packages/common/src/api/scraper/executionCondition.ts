@@ -1,5 +1,4 @@
-import { transformNanToUndefined } from '../common'
-import * as yup from 'yup'
+import { z } from 'zod'
 
 export enum FlowActionType {
   JUMP = 'jump',
@@ -13,19 +12,19 @@ export type ExecutionCondition = {
   }
 }
 
-export const upsertExecutionConditionSchema = yup.object({
-  condition: yup.object().required(), //TODO
-  flowAction: yup
-    .object({
-      type: yup
-        .mixed<FlowActionType>()
-        .oneOf(Object.values(FlowActionType))
-        .required('Flow action type is required'),
-      targetExecutionItemIndex: yup
-        .number()
-        .transform(transformNanToUndefined)
-        .required('Target execution item index is required')
+export const upsertExecutionConditionSchema = z.object({
+  condition: z.object({}).passthrough(), //TODO
+  flowAction: z.object({
+    type: z.enum([FlowActionType.JUMP], {
+      errorMap: () => ({ message: 'Flow action type is required' }),
+    }),
+    targetExecutionItemIndex: z.preprocess(
+      (val) => (isNaN(Number(val)) ? undefined : Number(val)),
+      z
+        .number({
+          required_error: 'Target execution item index is required',
+        })
         .min(0, 'Target execution item index must be greater than or equal to 0'),
-    })
-    .required(),
+    ),
+  }),
 })

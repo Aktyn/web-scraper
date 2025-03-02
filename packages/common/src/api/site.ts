@@ -1,4 +1,4 @@
-import * as yup from 'yup'
+import { z } from 'zod'
 
 export interface Site {
   id: number
@@ -14,29 +14,23 @@ export interface SiteTag {
   description: string | null
 }
 
-export const upsertSiteTagSchema = yup.object({
-  name: yup.string().max(8).default('').required(),
-  description: yup.string().nullable().default(null).notRequired(),
+export const upsertSiteTagSchema = z.object({
+  name: z.string().max(8).default(''),
+  description: z.string().nullable().default(null).optional(),
 })
 
-export type UpsertSiteTagSchema = yup.InferType<typeof upsertSiteTagSchema>
+export type UpsertSiteTagSchema = z.infer<typeof upsertSiteTagSchema>
 
-export const upsertSiteSchema = yup
-  .object({
-    url: yup.string().url().default('').required(),
-    language: yup.string().nullable().default(null).notRequired(),
-    siteTags: yup
-      .array()
-      .of(
-        upsertSiteTagSchema.concat(
-          yup.object({
-            id: yup.number().default(0).required(),
-          }),
-        ),
-      )
-      .default([])
-      .required(),
-  })
-  .required()
+export const upsertSiteSchema = z.object({
+  url: z.string().url().default(''),
+  language: z.string().nullable().default(null).optional(),
+  siteTags: z
+    .array(
+      upsertSiteTagSchema.extend({
+        id: z.number().default(0),
+      }),
+    )
+    .default([]),
+})
 
-export type UpsertSiteSchema = yup.InferType<typeof upsertSiteSchema>
+export type UpsertSiteSchema = z.infer<typeof upsertSiteSchema>
