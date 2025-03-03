@@ -33,7 +33,7 @@ describe('Database.site', () => {
   it('should throw error when given url is incorrect', async () => {
     await expect(
       Database.site
-        .createSite({ url: 'https://example', language: 'PL', siteTags: [] })
+        .createSite({ url: 'incorrect url', language: 'PL', siteTags: [] })
         .catch((code) => code),
     ).resolves.toBe(ErrorCode.INCORRECT_DATA)
   })

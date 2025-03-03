@@ -15,9 +15,7 @@ export type PaginatedApiResponse<DataType, IdProperty extends keyof DataType> =
   | ApiError
   | {
       data: DataType[]
-      cursor?: {
-        [key in IdProperty]: DataType[IdProperty]
-      }
+      next?: DataType[IdProperty]
     }
 
 // Note: this should be compatible with prisma type of the same name
@@ -59,9 +57,7 @@ export type PaginatedRequest<
   OmitInFilters extends keyof DataType = never,
 > = {
   count: number
-  cursor?: {
-    [key in IdProperty]: DataType[IdProperty]
-  }
+  cursor?: DataType[IdProperty]
   filters?: DataFilter<Omit<DataType, OmitInFilters>>[] | string
 }
 

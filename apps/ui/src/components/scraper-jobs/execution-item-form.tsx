@@ -1,7 +1,11 @@
-import { AlertCircle, PenBox, Plus } from 'lucide-react'
+import { zodResolver } from '@hookform/resolvers/zod'
 import {
+  ActionStepType,
+  elementSelectorSchema,
+  ElementSelectorType,
   ExecutionItemType,
   FlowActionType,
+  pressButtonSchema,
   ScraperStepType,
   upsertExecutionConditionSchema,
   upsertJobExecutionItemSchema,
@@ -9,6 +13,8 @@ import {
   type JobExecutionItem,
   type UpsertJobExecutionItemSchema,
 } from '@web-scraper/common'
+import { AlertCircle, PenBox, Plus } from 'lucide-react'
+import { useState } from 'react'
 import { useForm, useFormContext, type Control } from 'react-hook-form'
 import { flowActionTypeNames, scraperStepTypeNames } from '~/lib/dictionaries'
 import { cn } from '~/lib/utils'
@@ -19,8 +25,6 @@ import { Button } from '../ui/button'
 import { Form } from '../ui/form'
 import { Label } from '../ui/label'
 import { Switch } from '../ui/switch'
-import { useState } from 'react'
-import { zodResolver } from '@hookform/resolvers/zod'
 
 type ExecutionItemFormProps = {
   item: ExecutionItemType | JobExecutionItem
@@ -45,29 +49,33 @@ export function ExecutionItemForm({
             type: item,
             condition:
               item === ExecutionItemType.CONDITION
-                ? upsertExecutionConditionSchema.parse({})
+                ? upsertExecutionConditionSchema.parse({
+                    condition: {},
+                    flowAction: {
+                      type: FlowActionType.JUMP,
+                      targetExecutionItemIndex: 0,
+                    },
+                  })
                 : undefined,
-            step: item === ExecutionItemType.STEP ? upsertScraperStepSchema.parse({}) : undefined,
+            step:
+              item === ExecutionItemType.STEP
+                ? upsertScraperStepSchema.parse({
+                    type: ActionStepType.PRESS_BUTTON,
+                    data: pressButtonSchema.parse({
+                      element: elementSelectorSchema.parse({
+                        type: ElementSelectorType.HTML_SELECTOR,
+                        selector: '',
+                      }),
+                      valueQuery: '',
+                      pressEnter: false,
+                      delayEnter: 0,
+                      waitForNavigation: false,
+                    }),
+                  })
+                : undefined,
             // aiAction: item === ExecutionItemType.AI_ACTION ? {} : undefined,
           })
-        : // ? {
-          //     type,
-          //     condition:
-          //       type === ExecutionItemType.CONDITION
-          //         ? {
-          //             condition: {},
-          //             flowAction: { type: FlowActionType.JUMP, targetExecutionItemIndex: 0 },
-          //           }
-          //         : undefined,
-          //     step: type === ExecutionItemType.STEP ? upsertScraperStepSchema.parse({}) : undefined,
-          //     aiAction:
-          //       type === ExecutionItemType.AI_ACTION
-          //         ? {
-          //             prompt: '',
-          //           }
-          //         : undefined,
-          //   }
-          item,
+        : item,
   })
 
   const type = form.watch('type')
@@ -200,7 +208,12 @@ function ActionStepDataFields({ control, defaultUseAI }: ActionStepDataFieldsPro
           placeholder="E.g., 'Search input', 'Login button'"
         />
       ) : (
-        <FormInput key="element" control={control} name="step.data.element" label="Element path" />
+        <FormInput
+          key="element"
+          control={control}
+          name="step.data.element.selector" //TODO: more complex form element for step.data.element with type select
+          label="Element path"
+        />
       )}
       <div className="flex items-center space-x-2">
         <Switch id="ai-prompt" checked={useAI} onCheckedChange={setUseAI} />

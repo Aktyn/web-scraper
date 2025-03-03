@@ -98,7 +98,7 @@ export function getDataSourceItems(
       SELECT * FROM "${tableName}"
       WHERE id <= (
         SELECT id FROM "${tableName}"
-        WHERE id = ${request.cursor.id}
+        WHERE id = ${request.cursor}
       )${whereSql ? ` AND ${whereSql}` : ''}
       ORDER BY id DESC
       LIMIT ${request.count}

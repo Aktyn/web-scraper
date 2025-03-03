@@ -13,7 +13,7 @@ export enum ScraperStepType {
   REDIRECT = 'redirect',
 }
 
-const elementSelectorSchema = z.discriminatedUnion('type', [
+export const elementSelectorSchema = z.discriminatedUnion('type', [
   z.object({
     type: z.literal(ElementSelectorType.HTML_SELECTOR),
     selector: z.string(),
@@ -35,7 +35,7 @@ const waitForNavigationTimeout = z.preprocess(
   z.number().nullable().default(null).optional(),
 )
 
-const fillInputSchema = z.object({
+export const fillInputSchema = z.object({
   element: elementSelectorSchema,
   valueQuery: valueQuerySchema,
   pressEnter: z.boolean().nullable().default(null).optional(),
@@ -48,13 +48,13 @@ const fillInputSchema = z.object({
   waitForNavigationTimeout: waitForNavigationTimeout,
 })
 
-const selectOptionSchema = z.object({
+export const selectOptionSchema = z.object({
   element: elementSelectorSchema,
   valueQuery: valueQuerySchema,
   waitForElementTimeout: waitForElementTimeoutSchema,
 })
 
-const pressButtonSchema = z.object({
+export const pressButtonSchema = z.object({
   element: elementSelectorSchema,
   valueQuery: valueQuerySchema,
   pressEnter: z.boolean().nullable().default(null).optional(),

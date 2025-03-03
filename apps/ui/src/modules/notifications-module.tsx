@@ -134,7 +134,7 @@ function NotificationsProvider({ children }: PropsWithChildren) {
         ? filterNotifications(notificationsStore.current, filters)
         : notificationsStore.current
 
-      const from = cursor?.index ?? filteredNotifications.length
+      const from = cursor ?? filteredNotifications.length
       const to = Math.max(from - count, 0)
       return {
         data: filteredNotifications.slice(to, from),

@@ -13,7 +13,7 @@ export function getSiteTags(request: PaginatedRequest<SiteTag, 'id'>) {
   return Database.prisma.siteTag.findMany({
     take: request.count,
     skip: request.cursor ? 1 : 0,
-    cursor: request.cursor,
+    cursor: request.cursor ? { id: request.cursor } : undefined,
     where:
       Array.isArray(request.filters) && request.filters?.length
         ? {

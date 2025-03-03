@@ -20,12 +20,8 @@ export function usePaginatedApiRequest<
 
   const [data, setData] = useState<DataType[]>([])
   const [loading, setLoading] = useState(false)
-  const [cursor, setCursor] = useState<
-    | {
-        [key in IdProperty]: DataType[IdProperty]
-      }
-    | undefined
-  >(undefined)
+  const [cursor, setCursor] = useState<DataType[IdProperty] | undefined>(undefined)
+
   const load = useCallback(
     (
       config: ApiRequestConfigType<DataType>,
@@ -61,7 +57,7 @@ export function usePaginatedApiRequest<
             return
           }
 
-          setCursor(response.cursor)
+          setCursor(response.next)
           setData((prev) => [...prev, ...response.data])
           setLoading(false)
         })
