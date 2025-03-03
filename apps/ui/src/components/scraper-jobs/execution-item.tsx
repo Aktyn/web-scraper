@@ -1,5 +1,6 @@
 import { Bot, CornerDownLeft, Link, Pencil, Timer, Trash2 } from 'lucide-react'
 import {
+  ElementSelectorType,
   ExecutionItemType,
   FlowActionType,
   parseTime,
@@ -96,7 +97,7 @@ export function ExecutionItem({
                 {scraperStepTypeNames[item.step.type]}
               </span>
               {item.step.type !== ScraperStepType.REDIRECT &&
-                typeof item.step.data.element !== 'string' && (
+                item.step.data.element.type === ElementSelectorType.AI_PROMPT && (
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <Bot className="size-5" />

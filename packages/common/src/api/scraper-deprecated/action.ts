@@ -2,8 +2,6 @@
 
 import * as yup from 'yup'
 
-import { transformNanToUndefined } from '../common'
-
 import type { MapSiteError } from './common'
 
 export enum CaptchaSolverType {
@@ -169,12 +167,8 @@ export const upsertActionStepSchema = yup.object({
     .required('Type is required'),
   data: yup
     .object({
-      duration: yup
-        .number()
-        .notRequired()
-        .nullable()
-        .default(null)
-        .transform(transformNanToUndefined),
+      duration: yup.number().notRequired().nullable().default(null),
+      // .transform(transformNanToUndefined),
       element: yup.string().notRequired().nullable().default(null),
       valueQuery: yup
         .string()
@@ -199,7 +193,7 @@ export const upsertActionStepSchema = yup.object({
       pressEnter: yup.boolean().nullable().default(null).notRequired(),
       delayEnter: yup
         .number()
-        .transform(transformNanToUndefined)
+        // .transform(transformNanToUndefined)
         .nullable()
         .default(null)
         .notRequired(),
@@ -219,19 +213,19 @@ export const upsertActionStepSchema = yup.object({
         .notRequired(),
       timeout: yup
         .number()
-        .transform(transformNanToUndefined)
+        // .transform(transformNanToUndefined)
         .nullable()
         .default(null)
         .notRequired(),
       waitForElementTimeout: yup
         .number()
-        .transform(transformNanToUndefined)
+        // .transform(transformNanToUndefined)
         .nullable()
         .default(null)
         .notRequired(),
       waitForNavigationTimeout: yup
         .number()
-        .transform(transformNanToUndefined)
+        // .transform(transformNanToUndefined)
         .nullable()
         .default(null)
         .notRequired(),

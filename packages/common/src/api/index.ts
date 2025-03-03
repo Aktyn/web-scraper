@@ -2,6 +2,6 @@ export * from './electronAPI'
 export * from './window'
 export * from './common'
 export * from './site'
-export * from './scraper-deprecated'
 export type * from './user'
 export * from './scraper'
+export * from './scraper-deprecated' //TODO: remove this

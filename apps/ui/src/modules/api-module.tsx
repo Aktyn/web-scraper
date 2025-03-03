@@ -11,7 +11,6 @@ import {
 import { ElectronToRendererMessage, type ElectronApi } from '@web-scraper/common'
 
 import { noop } from '~/lib/utils'
-import { scraperExecutionScopeNames } from '~/lib/dictionaries'
 
 export type ApiEventListenerType = <MessageType extends ElectronToRendererMessage>(
   message: MessageType,
@@ -70,76 +69,76 @@ const ApiProvider = ({ children }: PropsWithChildren) => {
       [ElectronToRendererMessage.siteInstructionsTestingSessionClosed]: (_, sessionId) => {
         console.info(`Site instructions testing session closed (id: ${sessionId})`)
       },
-      [ElectronToRendererMessage.routineExecutionStarted]: (_, executionId, routine) => {
-        console.info(`Routine execution started (id: ${executionId}; routine: ${routine.name})`)
-      },
-      [ElectronToRendererMessage.routineExecutionResult]: (_, executionId, results) => {
-        console.info(
-          `Routine execution results (execution id: ${executionId}; routine: ${results.routine.name})`,
-        )
-      },
-      [ElectronToRendererMessage.routineExecutionFinished]: (_, executionId) => {
-        console.info(`Routine execution finished (id: ${executionId})`)
-      },
-      [ElectronToRendererMessage.scraperExecutionStarted]: (
-        _,
-        scraperId,
-        mode,
-        _executionId,
-        data,
-      ) => {
-        console.info(
-          `Scraper execution started (id: ${scraperId}; mode: ${mode}; scope: ${
-            scraperExecutionScopeNames[data.scope]
-          })`,
-        )
-      },
-      [ElectronToRendererMessage.scraperExecutionResult]: (
-        _,
-        scraperId,
-        mode,
-        _executionId,
-        data,
-      ) => {
-        console.info(
-          `Scraper execution returned some result (id: ${scraperId}; mode: ${mode}; scope: ${
-            scraperExecutionScopeNames[data.scope]
-          })`,
-        )
-      },
-      [ElectronToRendererMessage.scraperExecutionFinished]: (
-        _,
-        scraperId,
-        mode,
-        _executionId,
-        data,
-      ) => {
-        console.info(
-          `Scraper execution finished (id: ${scraperId}; mode: ${mode}; scope: ${
-            scraperExecutionScopeNames[data.scope]
-          })`,
-        )
-      },
-      [ElectronToRendererMessage.requestManualDataForActionStep]: (
-        _,
-        requestId,
-        actionStep,
-        valueQuery,
-      ) => {
-        console.info(
-          `Manual data requested for action step (id: ${requestId}; step type: ${actionStep.type}; value query: ${valueQuery})`,
-        )
-      },
-      [ElectronToRendererMessage.requestDataSourceItemIdForActionStep]: (
-        _,
-        requestId,
-        actionStep,
-        dataSourceQuery,
-      ) => {
-        console.info(
-          `Manual data requested for action step (id: ${requestId}; step type: ${actionStep.type}; data source query: ${dataSourceQuery})`,
-        )
-      },
+      // [ElectronToRendererMessage.routineExecutionStarted]: (_, executionId, routine) => {
+      //   console.info(`Routine execution started (id: ${executionId}; routine: ${routine.name})`)
+      // },
+      // [ElectronToRendererMessage.routineExecutionResult]: (_, executionId, results) => {
+      //   console.info(
+      //     `Routine execution results (execution id: ${executionId}; routine: ${results.routine.name})`,
+      //   )
+      // },
+      // [ElectronToRendererMessage.routineExecutionFinished]: (_, executionId) => {
+      //   console.info(`Routine execution finished (id: ${executionId})`)
+      // },
+      // [ElectronToRendererMessage.scraperExecutionStarted]: (
+      //   _,
+      //   scraperId,
+      //   mode,
+      //   _executionId,
+      //   _data,
+      // ) => {
+      //   console.info(
+      //     `Scraper execution started (id: ${scraperId}; mode: ${mode}; scope: ${
+      //       '' // scraperExecutionScopeNames[data.scope] //TODO: implement
+      //     })`,
+      //   )
+      // },
+      // [ElectronToRendererMessage.scraperExecutionResult]: (
+      //   _,
+      //   scraperId,
+      //   mode,
+      //   _executionId,
+      //   _data,
+      // ) => {
+      //   console.info(
+      //     `Scraper execution returned some result (id: ${scraperId}; mode: ${mode}; scope: ${
+      //       '' // scraperExecutionScopeNames[data.scope] //TODO: implement
+      //     })`,
+      //   )
+      // },
+      // [ElectronToRendererMessage.scraperExecutionFinished]: (
+      //   _,
+      //   scraperId,
+      //   mode,
+      //   _executionId,
+      //   _data,
+      // ) => {
+      //   console.info(
+      //     `Scraper execution finished (id: ${scraperId}; mode: ${mode}; scope: ${
+      //       '' // scraperExecutionScopeNames[data.scope] //TODO: implement
+      //     })`,
+      //   )
+      // },
+      // [ElectronToRendererMessage.requestManualDataForActionStep]: (
+      //   _,
+      //   requestId,
+      //   actionStep,
+      //   valueQuery,
+      // ) => {
+      //   console.info(
+      //     `Manual data requested for action step (id: ${requestId}; step type: ${actionStep.type}; value query: ${valueQuery})`,
+      //   )
+      // },
+      // [ElectronToRendererMessage.requestDataSourceItemIdForActionStep]: (
+      //   _,
+      //   requestId,
+      //   actionStep,
+      //   dataSourceQuery,
+      // ) => {
+      //   console.info(
+      //     `Manual data requested for action step (id: ${requestId}; step type: ${actionStep.type}; data source query: ${dataSourceQuery})`,
+      //   )
+      // },
     }
 
     for (const key in eventsHandlers) {

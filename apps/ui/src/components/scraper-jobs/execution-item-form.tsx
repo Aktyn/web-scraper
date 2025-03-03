@@ -1,9 +1,9 @@
-import { yupResolver } from '@hookform/resolvers/yup'
 import { AlertCircle, PenBox, Plus } from 'lucide-react'
 import {
   ExecutionItemType,
   FlowActionType,
   ScraperStepType,
+  upsertExecutionConditionSchema,
   upsertJobExecutionItemSchema,
   upsertScraperStepSchema,
   type JobExecutionItem,
@@ -20,7 +20,7 @@ import { Form } from '../ui/form'
 import { Label } from '../ui/label'
 import { Switch } from '../ui/switch'
 import { useState } from 'react'
-import { FormTextArea } from '../common/form/form-textarea'
+import { zodResolver } from '@hookform/resolvers/zod'
 
 type ExecutionItemFormProps = {
   item: ExecutionItemType | JobExecutionItem
@@ -36,32 +36,41 @@ export function ExecutionItemForm({
   className,
 }: ExecutionItemFormProps) {
   const editMode = typeof item !== 'string'
-  const type = editMode ? item.type : item
 
   const form = useForm<UpsertJobExecutionItemSchema>({
-    resolver: yupResolver(upsertJobExecutionItemSchema),
+    resolver: zodResolver(upsertJobExecutionItemSchema),
     defaultValues:
       typeof item === 'string'
-        ? {
-            type,
+        ? upsertJobExecutionItemSchema.parse({
+            type: item,
             condition:
-              type === ExecutionItemType.CONDITION
-                ? {
-                    condition: {},
-                    flowAction: { type: FlowActionType.JUMP, targetExecutionItemIndex: 0 },
-                  }
+              item === ExecutionItemType.CONDITION
+                ? upsertExecutionConditionSchema.parse({})
                 : undefined,
-            step:
-              type === ExecutionItemType.STEP ? upsertScraperStepSchema.getDefault() : undefined,
-            aiAction:
-              type === ExecutionItemType.AI_ACTION
-                ? {
-                    prompt: '',
-                  }
-                : undefined,
-          }
-        : item,
+            step: item === ExecutionItemType.STEP ? upsertScraperStepSchema.parse({}) : undefined,
+            // aiAction: item === ExecutionItemType.AI_ACTION ? {} : undefined,
+          })
+        : // ? {
+          //     type,
+          //     condition:
+          //       type === ExecutionItemType.CONDITION
+          //         ? {
+          //             condition: {},
+          //             flowAction: { type: FlowActionType.JUMP, targetExecutionItemIndex: 0 },
+          //           }
+          //         : undefined,
+          //     step: type === ExecutionItemType.STEP ? upsertScraperStepSchema.parse({}) : undefined,
+          //     aiAction:
+          //       type === ExecutionItemType.AI_ACTION
+          //         ? {
+          //             prompt: '',
+          //           }
+          //         : undefined,
+          //   }
+          item,
   })
+
+  const type = form.watch('type')
 
   return (
     <Form {...form}>
@@ -112,17 +121,19 @@ export function ExecutionItemForm({
               </div>
               <ActionStepDataFields
                 control={form.control}
-                defaultUseAI={
-                  editMode &&
-                  item.type === ExecutionItemType.STEP &&
-                  item.step.type !== ScraperStepType.REDIRECT &&
-                  typeof item.step.data.element === 'object' &&
-                  item.step.data.element !== null
-                }
+                //TODO
+                defaultUseAI={false}
+                // defaultUseAI={
+                //   editMode &&
+                //   item.type === ExecutionItemType.STEP &&
+                //   item.step.type !== ScraperStepType.REDIRECT &&
+                //   typeof item.step.data.element === 'object' &&
+                //   item.step.data.element !== null
+                // }
               />
             </>
           )}
-          {type === ExecutionItemType.AI_ACTION && (
+          {/* {type === ExecutionItemType.AI_ACTION && (
             <FormTextArea
               className="w-full"
               control={form.control}
@@ -130,7 +141,7 @@ export function ExecutionItemForm({
               label="AI action prompt. Supports value queries."
               placeholder="E.g., 'Login with username {{users.login}} and password {{users.password}}'"
             />
-          )}
+          )} */}
           {/* 
           <FormField
             control={form.control}

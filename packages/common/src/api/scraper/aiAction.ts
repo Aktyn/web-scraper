@@ -5,6 +5,7 @@ export type AIAction = {
   prompt: string
 }
 
+//TODO: possible deprecation
 export const upsertAIActionSchema = z.object({
   prompt: z.string({
     required_error: 'Prompt is required',

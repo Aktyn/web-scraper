@@ -1,10 +1,14 @@
 import * as yup from 'yup'
 
 import { ErrorCode } from '../../error'
-import { transformNanToUndefined, type ApiError } from '../common'
+import type { ApiError } from '../common'
 
 import { DataSourceColumnType, type DataSourceItem, type DataSourceStructure } from './dataSource'
 import type { Procedure, ProcedureExecutionResult } from './procedure'
+
+function transformNanToUndefined(value: number | undefined) {
+  return value === undefined ? undefined : Number(value)
+}
 
 export interface Routine {
   id: number

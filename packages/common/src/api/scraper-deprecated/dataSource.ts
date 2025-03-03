@@ -1,6 +1,6 @@
 import * as yup from 'yup'
 
-import { MAX_SQLITE_INTEGER, transformNanToUndefined } from '../common'
+import { MAX_SQLITE_INTEGER } from '../common'
 
 //NOTE: values must be proper SQLite types
 export enum DataSourceColumnType {
@@ -65,16 +65,12 @@ export const upsertDataSourceItemSchema = yup.object({
     .of(
       yup.object({
         columnName: yup.string().required().min(1),
-        value: yup.lazy((from) =>
-          typeof from === 'string'
-            ? yup.string().notRequired().nullable().default(null)
-            : yup
-                .number()
-                .notRequired()
-                .nullable()
-                .default(null)
-                .max(MAX_SQLITE_INTEGER)
-                .transform(transformNanToUndefined),
+        value: yup.lazy(
+          (from) =>
+            typeof from === 'string'
+              ? yup.string().notRequired().nullable().default(null)
+              : yup.number().notRequired().nullable().default(null).max(MAX_SQLITE_INTEGER),
+          // .transform(transformNanToUndefined),
         ),
       }),
     ),

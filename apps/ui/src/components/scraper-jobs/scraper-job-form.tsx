@@ -1,6 +1,5 @@
 import { memo } from 'react'
 import { Form, FormField, FormItem, FormLabel, FormMessage } from '../ui/form'
-import { yupResolver } from '@hookform/resolvers/yup'
 import { Save } from 'lucide-react'
 import {
   type ScraperJob,
@@ -11,6 +10,7 @@ import { useForm } from 'react-hook-form'
 import { FormInput } from '../common/form/form-input'
 import { Button } from '../ui/button'
 import { ExecutionForm } from './execution-form'
+import { zodResolver } from '@hookform/resolvers/zod'
 
 type ScraperJobFormProps = {
   onSubmit: (values: UpsertScraperJobSchema) => void
@@ -21,9 +21,13 @@ type ScraperJobFormProps = {
 export const ScraperJobForm = memo<ScraperJobFormProps>(
   ({ onSubmit, scraperJob, creating }) => {
     const form = useForm<UpsertScraperJobSchema>({
-      resolver: yupResolver(upsertScraperJobSchema),
+      resolver: zodResolver(upsertScraperJobSchema),
       mode: 'onSubmit',
-      defaultValues: scraperJob ?? upsertScraperJobSchema.getDefault(),
+      defaultValues: scraperJob ?? {
+        name: '',
+        startUrl: '',
+        execution: [],
+      },
     })
 
     return (

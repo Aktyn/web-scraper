@@ -1,7 +1,6 @@
 import type { ErrorCode } from '../error'
 
 export const MAX_SQLITE_INTEGER = 2147483647 as const
-export const transformNanToUndefined = (value: number) => (isNaN(value) ? undefined : value)
 
 export interface ApiError {
   errorCode: ErrorCode
@@ -85,6 +84,7 @@ export type PaginatedApiFunctionWithEncryptedData<
   password: string | null,
 ) => Promise<PaginatedApiResponse<DataType, IdProperty>>
 
+//TODO: possibly deprecated type
 export type ApiResponse<DataType> =
   | ApiError
   | {

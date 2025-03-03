@@ -4,15 +4,7 @@ export enum FlowActionType {
   JUMP = 'jump',
 }
 
-export type ExecutionCondition = {
-  condition: object //TODO
-  flowAction: {
-    type: FlowActionType.JUMP
-    targetExecutionItemIndex: number
-  }
-}
-
-export const upsertExecutionConditionSchema = z.object({
+const executionConditionSchema = z.object({
   condition: z.object({}).passthrough(), //TODO
   flowAction: z.object({
     type: z.enum([FlowActionType.JUMP], {
@@ -28,3 +20,8 @@ export const upsertExecutionConditionSchema = z.object({
     ),
   }),
 })
+export type ExecutionCondition = z.infer<typeof executionConditionSchema>
+
+export const upsertExecutionConditionSchema = executionConditionSchema
+
+export type UpsertExecutionConditionSchema = ExecutionCondition

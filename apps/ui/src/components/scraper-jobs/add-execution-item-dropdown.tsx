@@ -53,8 +53,8 @@ export const AddExecutionItemDropdown = memo<AddExecutionItemDropdownProps>(
           <DropdownMenuGroup>
             {Object.values(ExecutionItemType).map((value) => {
               const disabled =
-                value === ExecutionItemType.AI_ACTION || //TODO: enable ai-action when supported
-                (value === ExecutionItemType.CONDITION && !execution.length)
+                // value === ExecutionItemType.AI_ACTION || //TODO: enable ai-action when supported
+                value === ExecutionItemType.CONDITION && !execution.length
 
               return (
                 <Dialog key={value} onOpenChange={setAddExecutionItemDropdownOpen}>
