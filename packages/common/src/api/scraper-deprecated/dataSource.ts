@@ -1,6 +1,4 @@
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-//@ts-nocheck
-import * as yup from 'yup'
+import { z } from 'zod'
 
 import { MAX_SQLITE_INTEGER } from '../common'
 
@@ -27,55 +25,43 @@ export interface DataSourceItem {
   data: { columnName: string; value: number | string | null }[]
 }
 
-export const upsertDataSourceStructureSchema = yup.object({
-  name: yup
+export const upsertDataSourceStructureSchema = z.object({
+  name: z
     .string()
-    .required()
     .min(1)
     .max(32)
-    .matches(/^[^.]+$/u, 'Cannot contain dot (.) character')
+    .regex(/^[^.]+$/u, 'Cannot contain dot (.) character')
     .default(''),
-  columns: yup
-    .array()
-    .required()
-    .min(1, 'There must be at least 1 column defined')
-    .of(
-      yup.object({
-        name: yup
+  columns: z
+    .array(
+      z.object({
+        name: z
           .string()
-          .required('Column name is required')
           .min(1, 'Column name is required')
           .max(32)
-          .notOneOf(['id', 'ID', 'Id', 'iD'], 'id column is reserved')
-          .matches(/^[^.]+$/u, 'Cannot contain dot (.) character')
+          .refine((val) => !['id', 'ID', 'Id', 'iD'].includes(val), 'id column is reserved')
+          .refine((val) => /^[^.]+$/u.test(val), 'Cannot contain dot (.) character')
           .default(''),
-        type: yup
-          .mixed<DataSourceColumnType>()
-          .required('Type is required')
-          .oneOf(Object.values(DataSourceColumnType)),
+        type: z.enum(Object.values(DataSourceColumnType) as [string, ...string[]]),
       }),
-    ),
+    )
+    .min(1, 'There must be at least 1 column defined'),
 })
 
-export type UpsertDataSourceStructureSchema = yup.InferType<typeof upsertDataSourceStructureSchema>
+export type UpsertDataSourceStructureSchema = z.infer<typeof upsertDataSourceStructureSchema>
 
-export const upsertDataSourceItemSchema = yup.object({
-  data: yup
-    .array()
-    .required()
-    .min(1)
-    .of(
-      yup.object({
-        columnName: yup.string().required().min(1),
-        value: yup.lazy(
-          (from) =>
-            typeof from === 'string'
-              ? yup.string().notRequired().nullable().default(null)
-              : yup.number().notRequired().nullable().default(null).max(MAX_SQLITE_INTEGER),
-          // .transform(transformNanToUndefined),
-        ),
+export const upsertDataSourceItemSchema = z.object({
+  data: z
+    .array(
+      z.object({
+        columnName: z.string().min(1),
+        value: z.union([
+          z.string().nullable().default(null),
+          z.number().max(MAX_SQLITE_INTEGER).nullable().default(null),
+        ]),
       }),
-    ),
+    )
+    .min(1),
 })
 
-export type UpsertDataSourceItemSchema = yup.InferType<typeof upsertDataSourceItemSchema>
+export type UpsertDataSourceItemSchema = z.infer<typeof upsertDataSourceItemSchema>

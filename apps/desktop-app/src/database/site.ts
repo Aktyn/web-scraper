@@ -73,7 +73,7 @@ export async function getSiteByInstructionsId(siteInstructionsId: SiteInstructio
 
 function validateUpsertSchema(data: UpsertSiteSchema) {
   try {
-    upsertSiteSchema.validateSync(data)
+    return upsertSiteSchema.parse(data)
   } catch {
     throw ErrorCode.INCORRECT_DATA
   }
@@ -107,15 +107,15 @@ async function throwIfUrlExists(url: string, omitId?: DatabaseSite['id']) {
 }
 
 export async function createSite(data: UpsertSiteSchema) {
-  validateUpsertSchema(data)
-  await throwIfUrlExists(data.url)
+  const schema = validateUpsertSchema(data)
+  await throwIfUrlExists(schema.url)
 
   return Database.prisma.site.create({
     data: {
-      url: data.url.toLowerCase(),
-      language: data.language,
+      url: schema.url.toLowerCase(),
+      language: schema.language,
       Tags: {
-        create: data.siteTags.map((siteTag) => ({
+        create: schema.siteTags.map((siteTag) => ({
           tagId: siteTag.id,
         })),
       },
@@ -131,8 +131,8 @@ export async function createSite(data: UpsertSiteSchema) {
 }
 
 export async function updateSite(id: number, data: UpsertSiteSchema) {
-  validateUpsertSchema(data)
-  await throwIfUrlExists(data.url, id)
+  const schema = validateUpsertSchema(data)
+  await throwIfUrlExists(schema.url, id)
 
   await Database.prisma.siteTagsRelation.deleteMany({
     where: {
@@ -143,10 +143,10 @@ export async function updateSite(id: number, data: UpsertSiteSchema) {
   return Database.prisma.site.update({
     where: { id },
     data: {
-      url: data.url.toLowerCase(),
-      language: data.language,
+      url: schema.url.toLowerCase(),
+      language: schema.language,
       Tags: {
-        create: data.siteTags.map((siteTag) => ({
+        create: schema.siteTags.map((siteTag) => ({
           tagId: siteTag.id,
         })),
       },

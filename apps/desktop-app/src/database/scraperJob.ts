@@ -26,33 +26,33 @@ export function getScraperJobs(request: PaginatedRequest<ScraperJob, 'id'>) {
 
 function validateUpsertSchema(data: UpsertScraperJobSchema) {
   try {
-    upsertScraperJobSchema.validateSync(data)
+    return upsertScraperJobSchema.parse(data)
   } catch {
     throw ErrorCode.INCORRECT_DATA
   }
 }
 
 export function createScraperJob(data: UpsertScraperJobSchema) {
-  validateUpsertSchema(data)
+  const schema = validateUpsertSchema(data)
 
   return Database.prisma.scraperJob.create({
     data: {
-      name: data.name,
-      startUrl: data.startUrl,
-      execution: JSON.stringify(data.execution),
+      name: schema.name,
+      startUrl: schema.startUrl,
+      execution: JSON.stringify(schema.execution),
     },
   })
 }
 
 export function updateScraperJob(id: ScraperJob['id'], data: UpsertScraperJobSchema) {
-  validateUpsertSchema(data)
+  const schema = validateUpsertSchema(data)
 
   return Database.prisma.scraperJob.update({
     where: { id },
     data: {
-      name: data.name,
-      startUrl: data.startUrl,
-      execution: JSON.stringify(data.execution),
+      name: schema.name,
+      startUrl: schema.startUrl,
+      execution: JSON.stringify(schema.execution),
     },
   })
 }

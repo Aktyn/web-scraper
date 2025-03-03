@@ -60,7 +60,7 @@ export async function getRoutine(routineId: number) {
 
 function validateUpsertSchema(data: UpsertRoutineSchema) {
   try {
-    upsertRoutineSchema.validateSync(data)
+    return upsertRoutineSchema.parse(data)
   } catch {
     throw ErrorCode.INCORRECT_DATA
   }
@@ -87,17 +87,17 @@ async function throwIfNameExists(name: string, omitId?: Routine['id']) {
 }
 
 export async function createRoutine(data: UpsertRoutineSchema) {
-  validateUpsertSchema(data)
-  await throwIfNameExists(data.name)
+  const schema = validateUpsertSchema(data)
+  await throwIfNameExists(schema.name)
 
   const newRoutine = await Database.prisma.routine.create({
     data: {
-      name: data.name,
-      description: data.description,
-      stopOnError: data.stopOnError,
-      executionPlan: JSON.stringify(data.executionPlan),
+      name: schema.name,
+      description: schema.description,
+      stopOnError: schema.stopOnError,
+      executionPlan: JSON.stringify(schema.executionPlan),
       Procedures: {
-        create: data.procedureIds.map((id) => ({
+        create: schema.procedureIds.map((id) => ({
           procedureId: id,
         })),
       },
@@ -115,8 +115,8 @@ export async function createRoutine(data: UpsertRoutineSchema) {
 }
 
 export async function updateRoutine(id: Routine['id'], data: UpsertRoutineSchema) {
-  validateUpsertSchema(data)
-  await throwIfNameExists(data.name, id)
+  const schema = validateUpsertSchema(data)
+  await throwIfNameExists(schema.name, id)
 
   await Database.prisma.routineProcedureRelation.deleteMany({
     where: {
@@ -127,12 +127,12 @@ export async function updateRoutine(id: Routine['id'], data: UpsertRoutineSchema
   const updatedRoutine = await Database.prisma.routine.update({
     where: { id },
     data: {
-      name: data.name,
-      description: data.description,
-      stopOnError: data.stopOnError,
-      executionPlan: JSON.stringify(data.executionPlan),
+      name: schema.name,
+      description: schema.description,
+      stopOnError: schema.stopOnError,
+      executionPlan: JSON.stringify(schema.executionPlan),
       Procedures: {
-        create: data.procedureIds.map((id) => ({
+        create: schema.procedureIds.map((id) => ({
           procedureId: id,
         })),
       },

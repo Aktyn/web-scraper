@@ -9,13 +9,10 @@ import { Scraper } from '../../../scraper'
 import {
   broadcastMessage,
   handleApiRequest,
-  responseToBroadcastedMessage,
   successResponse,
   type RequestHandlersSchema,
 } from '../helpers'
 import { parseDatabaseSite } from '../parsers/siteParser'
-
-import { onManualDataRequest, onManualDataSourceItemIdRequest } from './helpers'
 
 export const scraperSessionHandler = {
   [RendererToElectronMessage.getSiteInstructionsTestingSessions]: handleApiRequest(
@@ -103,83 +100,83 @@ export const scraperSessionHandler = {
       return successResponse
     },
   ),
-  [RendererToElectronMessage.testActionStep]: handleApiRequest(
-    RendererToElectronMessage.testActionStep,
-    (sessionId, actionStep) => {
-      const scraper = Scraper.getInstances(Scraper.Mode.TESTING).get(sessionId)
-      if (!scraper) {
-        throw ErrorCode.NOT_FOUND
-      }
+  // [RendererToElectronMessage.testActionStep]: handleApiRequest(
+  //   RendererToElectronMessage.testActionStep,
+  //   (sessionId, actionStep) => {
+  //     const scraper = Scraper.getInstances(Scraper.Mode.TESTING).get(sessionId)
+  //     if (!scraper) {
+  //       throw ErrorCode.NOT_FOUND
+  //     }
 
-      return scraper.performActionStep(
-        actionStep,
-        onManualDataRequest,
-        onManualDataSourceItemIdRequest,
-      )
-    },
-  ),
-  [RendererToElectronMessage.testAction]: handleApiRequest(
-    RendererToElectronMessage.testAction,
-    (sessionId, action) => {
-      const scraper = Scraper.getInstances(Scraper.Mode.TESTING).get(sessionId)
-      if (!scraper) {
-        throw ErrorCode.NOT_FOUND
-      }
+  //     return scraper.performActionStep(
+  //       actionStep,
+  //       onManualDataRequest,
+  //       onManualDataSourceItemIdRequest,
+  //     )
+  //   },
+  // ),
+  // [RendererToElectronMessage.testAction]: handleApiRequest(
+  //   RendererToElectronMessage.testAction,
+  //   (sessionId, action) => {
+  //     const scraper = Scraper.getInstances(Scraper.Mode.TESTING).get(sessionId)
+  //     if (!scraper) {
+  //       throw ErrorCode.NOT_FOUND
+  //     }
 
-      return scraper.performAction(
-        action,
-        scraper.getOptions().lockURL,
-        onManualDataRequest,
-        onManualDataSourceItemIdRequest,
-      )
-    },
-  ),
-  [RendererToElectronMessage.testFlow]: handleApiRequest(
-    RendererToElectronMessage.testFlow,
-    (sessionId, flow, actions) => {
-      const scraper = Scraper.getInstances(Scraper.Mode.TESTING).get(sessionId)
-      if (!scraper) {
-        throw ErrorCode.NOT_FOUND
-      }
+  //     return scraper.performAction(
+  //       action,
+  //       scraper.getOptions().lockURL,
+  //       onManualDataRequest,
+  //       onManualDataSourceItemIdRequest,
+  //     )
+  //   },
+  // ),
+  // [RendererToElectronMessage.testFlow]: handleApiRequest(
+  //   RendererToElectronMessage.testFlow,
+  //   (sessionId, flow, actions) => {
+  //     const scraper = Scraper.getInstances(Scraper.Mode.TESTING).get(sessionId)
+  //     if (!scraper) {
+  //       throw ErrorCode.NOT_FOUND
+  //     }
 
-      return scraper.performFlow(
-        flow,
-        actions,
-        scraper.getOptions().lockURL,
-        onManualDataRequest,
-        onManualDataSourceItemIdRequest,
-      )
-    },
-  ),
-  [RendererToElectronMessage.testProcedure]: handleApiRequest(
-    RendererToElectronMessage.testProcedure,
-    (sessionId, procedure, actions) => {
-      const scraper = Scraper.getInstances(Scraper.Mode.TESTING).get(sessionId)
-      if (!scraper) {
-        throw ErrorCode.NOT_FOUND
-      }
+  //     return scraper.performFlow(
+  //       flow,
+  //       actions,
+  //       scraper.getOptions().lockURL,
+  //       onManualDataRequest,
+  //       onManualDataSourceItemIdRequest,
+  //     )
+  //   },
+  // ),
+  // [RendererToElectronMessage.testProcedure]: handleApiRequest(
+  //   RendererToElectronMessage.testProcedure,
+  //   (sessionId, procedure, actions) => {
+  //     const scraper = Scraper.getInstances(Scraper.Mode.TESTING).get(sessionId)
+  //     if (!scraper) {
+  //       throw ErrorCode.NOT_FOUND
+  //     }
 
-      return scraper.performProcedure(
-        scraper.getOptions().lockURL,
-        procedure,
-        actions,
-        onManualDataRequest,
-        onManualDataSourceItemIdRequest,
-      )
-    },
-  ),
-  [RendererToElectronMessage.returnManualDataForActionStep]: handleApiRequest(
-    RendererToElectronMessage.returnManualDataForActionStep,
-    async (originMessage, requestId, value) => {
-      await responseToBroadcastedMessage(originMessage, requestId, value)
-      return successResponse
-    },
-  ),
-  [RendererToElectronMessage.returnDataSourceItemIdForActionStep]: handleApiRequest(
-    RendererToElectronMessage.returnDataSourceItemIdForActionStep,
-    async (originMessage, requestId, itemId) => {
-      await responseToBroadcastedMessage(originMessage, requestId, itemId)
-      return successResponse
-    },
-  ),
+  //     return scraper.performProcedure(
+  //       scraper.getOptions().lockURL,
+  //       procedure,
+  //       actions,
+  //       onManualDataRequest,
+  //       onManualDataSourceItemIdRequest,
+  //     )
+  //   },
+  // ),
+  // [RendererToElectronMessage.returnManualDataForActionStep]: handleApiRequest(
+  //   RendererToElectronMessage.returnManualDataForActionStep,
+  //   async (originMessage, requestId, value) => {
+  //     await responseToBroadcastedMessage(originMessage, requestId, value)
+  //     return successResponse
+  //   },
+  // ),
+  // [RendererToElectronMessage.returnDataSourceItemIdForActionStep]: handleApiRequest(
+  //   RendererToElectronMessage.returnDataSourceItemIdForActionStep,
+  //   async (originMessage, requestId, itemId) => {
+  //     await responseToBroadcastedMessage(originMessage, requestId, itemId)
+  //     return successResponse
+  //   },
+  // ),
 } satisfies Partial<RequestHandlersSchema>

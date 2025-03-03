@@ -28,7 +28,7 @@ export function getSiteTags(request: PaginatedRequest<SiteTag, 'id'>) {
 
 function validateUpsertSchema(data: UpsertSiteTagSchema) {
   try {
-    upsertSiteTagSchema.validateSync(data)
+    return upsertSiteTagSchema.parse(data)
   } catch {
     throw ErrorCode.INCORRECT_DATA
   }
@@ -62,26 +62,26 @@ async function throwIfNameExists(name: string, omitId?: DatabaseSiteTag['id']) {
 }
 
 export async function createSiteTag(data: UpsertSiteTagSchema) {
-  validateUpsertSchema(data)
-  await throwIfNameExists(data.name)
+  const schema = validateUpsertSchema(data)
+  await throwIfNameExists(schema.name)
 
   return Database.prisma.siteTag.create({
     data: {
-      name: data.name,
-      description: data.description,
+      name: schema.name,
+      description: schema.description,
     },
   })
 }
 
 export async function updateSiteTag(id: number, data: UpsertSiteTagSchema) {
-  validateUpsertSchema(data)
-  await throwIfNameExists(data.name, id)
+  const schema = validateUpsertSchema(data)
+  await throwIfNameExists(schema.name, id)
 
   return Database.prisma.siteTag.update({
     where: { id },
     data: {
-      name: data.name,
-      description: data.description,
+      name: schema.name,
+      description: schema.description,
     },
   })
 }

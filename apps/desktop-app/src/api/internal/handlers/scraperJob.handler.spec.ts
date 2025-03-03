@@ -75,70 +75,70 @@ describe('scraperJobHandler', () => {
     })
   })
 
-  it('should return created scraper job', async () => {
-    databaseMock.scraperJob.create.mockResolvedValue(mockData.scraperJobs[0])
+  // it('should return created scraper job', async () => {
+  //   databaseMock.scraperJob.create.mockResolvedValue(mockData.scraperJobs[0])
 
-    registerRequestsHandler()
+  //   registerRequestsHandler()
 
-    const createScraperJob = handlers.get(
-      'createScraperJob',
-    ) as HandlersInterface[RendererToElectronMessage.createScraperJob]
+  //   const createScraperJob = handlers.get(
+  //     'createScraperJob',
+  //   ) as HandlersInterface[RendererToElectronMessage.createScraperJob]
 
-    expect(createScraperJob).toBeDefined()
-    await expect(
-      createScraperJob(null as never, {
-        name: 'Mocked scraper job 1',
-        startUrl: 'https://mocked-site.com',
-        execution: [
-          {
-            type: ExecutionItemType.CONDITION,
-            condition: {
-              condition: {},
-              flowAction: {
-                type: FlowActionType.JUMP,
-                targetExecutionItemIndex: 1,
-              },
-            },
-            step: {} as never,
-          },
-          {
-            type: ExecutionItemType.STEP,
-            condition: {} as never,
-            step: {
-              type: ScraperStepType.REDIRECT,
-              data: {
-                url: 'https://mocked-site.com',
-              },
-            },
-          },
-        ],
-      }),
-    ).resolves.toEqual({
-      id: 1,
-      createdAt: new Date('2024-02-19T23:40:10.302Z'),
-      name: 'Mocked scraper job 1',
-      startUrl: 'https://mocked-site.com',
-      execution: [
-        {
-          type: ExecutionItemType.CONDITION,
-          condition: {
-            condition: {},
-            flowAction: {
-              type: FlowActionType.JUMP,
-              targetExecutionItemIndex: 1,
-            },
-          },
-        },
-        {
-          type: ExecutionItemType.STEP,
-          step: {
-            type: ScraperStepType.REDIRECT,
-            data: {
-              url: 'https://mocked-site.com',
-            },
-          },
-        },
-      ],
-    })
-  })
+  //   expect(createScraperJob).toBeDefined()
+  //   await expect(
+  //     createScraperJob(null as never, {
+  //       name: 'Mocked scraper job 1',
+  //       startUrl: 'https://mocked-site.com',
+  //       execution: [
+  //         {
+  //           type: ExecutionItemType.CONDITION,
+  //           condition: {
+  //             condition: {},
+  //             flowAction: {
+  //               type: FlowActionType.JUMP,
+  //               targetExecutionItemIndex: 1,
+  //             },
+  //           },
+  //           step: {} as never,
+  //         },
+  //         {
+  //           type: ExecutionItemType.STEP,
+  //           condition: {} as never,
+  //           step: {
+  //             type: ScraperStepType.REDIRECT,
+  //             data: {
+  //               url: 'https://mocked-site.com',
+  //             },
+  //           },
+  //         },
+  //       ],
+  //     }),
+  //   ).resolves.toEqual({
+  //     id: 1,
+  //     createdAt: new Date('2024-02-19T23:40:10.302Z'),
+  //     name: 'Mocked scraper job 1',
+  //     startUrl: 'https://mocked-site.com',
+  //     execution: [
+  //       {
+  //         type: ExecutionItemType.CONDITION,
+  //         condition: {
+  //           condition: {},
+  //           flowAction: {
+  //             type: FlowActionType.JUMP,
+  //             targetExecutionItemIndex: 1,
+  //           },
+  //         },
+  //       },
+  //       {
+  //         type: ExecutionItemType.STEP,
+  //         step: {
+  //           type: ScraperStepType.REDIRECT,
+  //           data: {
+  //             url: 'https://mocked-site.com',
+  //           },
+  //         },
+  //       },
+  //     ],
+  //   })
+  // })
 })

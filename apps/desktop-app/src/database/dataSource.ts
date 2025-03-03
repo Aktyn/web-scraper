@@ -125,7 +125,7 @@ export function getAllDataSourceItems(dataSourceName: string) {
 
 function validateDataSourceStructureUpsertSchema(data: UpsertDataSourceStructureSchema) {
   try {
-    upsertDataSourceStructureSchema.validateSync(data)
+    upsertDataSourceStructureSchema.parse(data)
   } catch {
     throw ErrorCode.INCORRECT_DATA
   }
@@ -176,7 +176,7 @@ export async function updateDataSource(
 
 function validateDataSourceItemUpsertSchema(data: UpsertDataSourceItemSchema) {
   try {
-    upsertDataSourceItemSchema.validateSync(data)
+    return upsertDataSourceItemSchema.parse(data)
   } catch {
     throw ErrorCode.INCORRECT_DATA
   }
@@ -227,13 +227,13 @@ export async function createDataSourceItem(
   dataSourceName: DataSourceStructure['name'],
   data: UpsertDataSourceItemSchema,
 ) {
-  validateDataSourceItemUpsertSchema(data)
+  const schema = validateDataSourceItemUpsertSchema(data)
 
   const tableName = 'DataSource.' + dataSourceName
 
   await Database.prisma.$executeRawUnsafe(`
-    INSERT INTO "${tableName}" (${parseColumnNames(data)})
-    VALUES (${parseColumnValues(data)});
+    INSERT INTO "${tableName}" (${parseColumnNames(schema)})
+    VALUES (${parseColumnValues(schema)});
   `)
 }
 
@@ -266,13 +266,13 @@ export async function updateDataSourceItem(
   itemId: DataSourceItem['id'],
   data: UpsertDataSourceItemSchema,
 ) {
-  validateDataSourceItemUpsertSchema(data)
+  const schema = validateDataSourceItemUpsertSchema(data)
 
   const tableName = 'DataSource.' + dataSourceName
 
   await Database.prisma.$executeRawUnsafe(`
     UPDATE "${tableName}"
-    SET (${parseColumnNames(data)}) = (${parseColumnValues(data)})
+    SET (${parseColumnNames(schema)}) = (${parseColumnValues(schema)})
     WHERE id = ${itemId};
   `)
 

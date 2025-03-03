@@ -1,6 +1,4 @@
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-//@ts-nocheck
-import * as yup from 'yup'
+import { z } from 'zod'
 
 import type { Site } from '../site'
 
@@ -93,46 +91,27 @@ export interface SiteProcedures {
   procedures: Procedure[]
 }
 
-type FlowSchemaTypeHelper = yup.ObjectSchema<
-  {
-    actionName: string
-    globalReturnValues: string[]
-    onSuccess: object | null
-    onFailure: object | null
-  },
-  yup.AnyObject,
-  {
-    actionName: undefined
-    globalReturnValues: string[]
-    onSuccess: null
-    onFailure: null
-  },
-  ''
->
+type FlowSchemaTypeHelper = z.ZodObject<{
+  actionName: z.ZodString
+  globalReturnValues: z.ZodArray<z.ZodString, 'many'>
+  onSuccess: z.ZodUnion<[z.ZodObject<Record<string, z.ZodTypeAny>>, z.ZodNull]>
+  onFailure: z.ZodUnion<[z.ZodObject<Record<string, z.ZodTypeAny>>, z.ZodNull]>
+}>
 
-const upsertFlowSchema: FlowSchemaTypeHelper = yup.object({
-  actionName: yup
-    .string()
-    .matches(/^(action|global)\.[^.]+$/, 'Action name is invalid')
-    .required('Action name is required'),
-  globalReturnValues: yup
-    .array()
-    .of(yup.string().required('Value is required'))
-    .default([])
-    .required('Global return values are required'),
-  onSuccess: yup.lazy(() =>
-    upsertFlowSchema.nullable().default(null).notRequired(),
-  ) as unknown as yup.ObjectSchema<yup.AnyObject>,
-  onFailure: yup.lazy(() =>
-    upsertFlowSchema.nullable().default(null).notRequired(),
-  ) as unknown as yup.ObjectSchema<yup.AnyObject>,
+const upsertFlowSchema = z.object({
+  actionName: z.string().regex(/^(action|global)\.[^.]+$/, 'Action name is invalid'),
+  globalReturnValues: z.array(z.string().min(1, 'Value is required')),
+  onSuccess: z.lazy(() => z.union([upsertFlowSchema, z.null()])),
+  onFailure: z.lazy(() => z.union([upsertFlowSchema, z.null()])),
+}) as unknown as FlowSchemaTypeHelper
+
+export const upsertProcedureSchema = z.object({
+  name: z.string().min(1, 'Name is required'),
+  type: z.enum(Object.values(ProcedureType) as [string, ...string[]]),
+  startUrl: z.string().default('{{URL.ORIGIN}}'),
+  waitFor: z.string().nullable().default(null).optional(),
+  siteInstructionsId: z.number(),
+  flow: z.union([upsertFlowSchema, z.null()]).default(null).optional(),
 })
 
-export const upsertProcedureSchema = yup.object({
-  name: yup.string().required('Name is required'),
-  type: yup.mixed<ProcedureType>().oneOf(Object.values(ProcedureType)).required('Type is required'),
-  startUrl: yup.string().default('{{URL.ORIGIN}}').required('Start URL is required'),
-  waitFor: yup.string().nullable().default(null).notRequired(),
-  siteInstructionsId: yup.number().required(),
-  flow: upsertFlowSchema.nullable().default(null).notRequired(),
-})
+export type UpsertProcedureSchema = z.infer<typeof upsertProcedureSchema>

@@ -1,7 +1,5 @@
 //TODO: remove this file and all unused types
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-//@ts-nocheck
-import * as yup from 'yup'
+import { z } from 'zod'
 
 import type { MapSiteError } from './common'
 
@@ -153,99 +151,72 @@ export const dataSourceQueryRegex = new RegExp(
   'u',
 )
 
-const mapSiteErrorSchema = yup.object({
-  content: yup.string().required('Content is required'),
-  errorType: yup
-    .mixed<ActionStepErrorType>()
-    .oneOf(Object.values(ActionStepErrorType))
-    .required('Error type is required'),
+const mapSiteErrorSchema = z.object({
+  content: z.string().min(1, 'Content is required'),
+  errorType: z.enum(Object.values(ActionStepErrorType) as [string, ...string[]]),
 })
 
-export const upsertActionStepSchema = yup.object({
-  type: yup
-    .mixed<ActionStepType>()
-    .oneOf(Object.values(ActionStepType))
-    .required('Type is required'),
-  data: yup
+export const upsertActionStepSchema = z.object({
+  type: z.enum(Object.values(ActionStepType) as [string, ...string[]]),
+  data: z
     .object({
-      duration: yup.number().notRequired().nullable().default(null),
-      // .transform(transformNanToUndefined),
-      element: yup.string().notRequired().nullable().default(null),
-      valueQuery: yup
+      duration: z.number().nullable().default(null).optional(),
+      element: z.string().nullable().default(null).optional(),
+      valueQuery: z
         .string()
-        .notRequired()
         .nullable()
         .default(null)
-        .matches(valueQueryRegex, 'Must be a path to data source column or Custom.anything'),
-      dataSourceQuery: yup
+        .optional()
+        .refine(
+          (val) => !val || valueQueryRegex.test(val),
+          'Must be a path to data source column or Custom.anything',
+        ),
+      dataSourceQuery: z
         .string()
-        .notRequired()
         .nullable()
         .default(null)
-        .matches(dataSourceQueryRegex, 'Must be a path to data source'),
-      saveDataType: yup
-        .mixed<SaveDataType>()
-        .notRequired()
-        .oneOf(Object.values(SaveDataType))
-        .nullable()
-        .default(null),
-      saveToDataSourceValue: yup.string().notRequired().nullable().default(null),
-      waitForNavigation: yup.boolean().nullable().default(null).notRequired(),
-      pressEnter: yup.boolean().nullable().default(null).notRequired(),
-      delayEnter: yup
-        .number()
-        // .transform(transformNanToUndefined)
+        .optional()
+        .refine((val) => !val || dataSourceQueryRegex.test(val), 'Must be a path to data source'),
+      saveDataType: z
+        .enum(Object.values(SaveDataType) as [string, ...string[]])
         .nullable()
         .default(null)
-        .notRequired(),
-      solver: yup
-        .mixed<CaptchaSolverType>()
-        .notRequired()
-        .oneOf(Object.values(CaptchaSolverType))
+        .optional(),
+      saveToDataSourceValue: z.string().nullable().default(null).optional(),
+      waitForNavigation: z.boolean().nullable().default(null).optional(),
+      pressEnter: z.boolean().nullable().default(null).optional(),
+      delayEnter: z.number().nullable().default(null).optional(),
+      solver: z
+        .enum(Object.values(CaptchaSolverType) as [string, ...string[]])
         .nullable()
-        .default(null),
-      elements: yup.array().of(yup.string()).notRequired().nullable().default([]),
-      mapError: yup.array().of(mapSiteErrorSchema).notRequired().nullable().default([]),
-      mapSuccess: yup
-        .array()
-        .of(mapSiteErrorSchema.omit(['errorType']))
+        .default(null)
+        .optional(),
+      elements: z.array(z.string()).nullable().default([]).optional(),
+      mapError: z.array(mapSiteErrorSchema).nullable().default([]).optional(),
+      mapSuccess: z
+        .array(mapSiteErrorSchema.omit({ errorType: true }))
         .nullable()
         .default([])
-        .notRequired(),
-      timeout: yup
-        .number()
-        // .transform(transformNanToUndefined)
-        .nullable()
-        .default(null)
-        .notRequired(),
-      waitForElementTimeout: yup
-        .number()
-        // .transform(transformNanToUndefined)
-        .nullable()
-        .default(null)
-        .notRequired(),
-      waitForNavigationTimeout: yup
-        .number()
-        // .transform(transformNanToUndefined)
-        .nullable()
-        .default(null)
-        .notRequired(),
+        .optional(),
+      timeout: z.number().nullable().default(null).optional(),
+      waitForElementTimeout: z.number().nullable().default(null).optional(),
+      waitForNavigationTimeout: z.number().nullable().default(null).optional(),
     })
     .partial()
     .nullable()
     .default(null)
-    .notRequired(),
-  orderIndex: yup.number().required(),
-  actionId: yup.number().required(),
+    .optional(),
+  orderIndex: z.number(),
+  actionId: z.number(),
 })
 
-export const upsertActionSchema = yup.object({
-  name: yup.string().default('').required('Name is required'),
-  url: yup.string().nullable().default(null).notRequired(),
-  siteInstructionsId: yup.number().required(),
-  actionSteps: yup
-    .array()
-    .of(upsertActionStepSchema.omit(['actionId', 'orderIndex']))
-    .default([])
-    .required(),
+export const upsertActionSchema = z.object({
+  name: z.string().min(1, 'Name is required').default(''),
+  url: z.string().nullable().default(null).optional(),
+  siteInstructionsId: z.number(),
+  actionSteps: z
+    .array(upsertActionStepSchema.omit({ actionId: true, orderIndex: true }))
+    .default([]),
 })
+
+export type UpsertActionSchema = z.infer<typeof upsertActionSchema>

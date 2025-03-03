@@ -80,7 +80,7 @@ export async function getProcedureFlow(flowStep: DatabaseFlowStep): Promise<Data
 
 function validateUpsertSchema(data: UpsertSiteInstructionsSchema) {
   try {
-    upsertSiteInstructionsSchema.validateSync(data)
+    return upsertSiteInstructionsSchema.parse(data)
   } catch {
     throw ErrorCode.INCORRECT_DATA
   }
@@ -115,16 +115,13 @@ async function deleteSiteInstructions(siteId: Site['id']) {
   })
 }
 
-export async function setSiteInstructions(
-  siteId: Site['id'],
-  instructionsSchema: UpsertSiteInstructionsSchema,
-) {
-  validateUpsertSchema(instructionsSchema)
+export async function setSiteInstructions(siteId: Site['id'], data: UpsertSiteInstructionsSchema) {
+  const schema = validateUpsertSchema(data)
 
   //TODO: backup current site instructions before deleting them in case of an error in next steps
   await safePromise(deleteSiteInstructions(siteId))
 
-  if (!instructionsSchema.actions.length && !instructionsSchema.procedures.length) {
+  if (!schema.actions.length && !schema.procedures.length) {
     return
   }
 
@@ -167,7 +164,7 @@ export async function setSiteInstructions(
     data: {
       siteId,
       Actions: {
-        create: instructionsSchema.actions.map((action) => ({
+        create: schema.actions.map((action) => ({
           name: action.name,
           url: action.url,
           ActionSteps: {
@@ -181,7 +178,7 @@ export async function setSiteInstructions(
       },
       Procedures: {
         create: await Promise.all(
-          instructionsSchema.procedures.map(async (procedure) => ({
+          schema.procedures.map(async (procedure) => ({
             name: procedure.name,
             type: procedure.type,
             startUrl: procedure.startUrl,
