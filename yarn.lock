@@ -3808,7 +3808,7 @@ __metadata:
     jest: "npm:^29.7.0"
     jest-mock-extended: "npm:^3.0.7"
     nodemon: "npm:^3.1.9"
-    ollama: "npm:^0.5.12"
+    ollama: "npm:^0.5.14"
     prettier: "npm:^3.5.0"
     prettify-xml: "npm:^1.2.0"
     prisma: "npm:^6.3.1"
@@ -10427,12 +10427,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ollama@npm:^0.5.12":
-  version: 0.5.12
-  resolution: "ollama@npm:0.5.12"
+"ollama@npm:^0.5.14":
+  version: 0.5.14
+  resolution: "ollama@npm:0.5.14"
   dependencies:
     whatwg-fetch: "npm:^3.6.20"
-  checksum: 10c0/09944a14b6bd3a92f219ff635b33b14fb4e4095f04208ed9a25d6aceacd63ee9a95b13e2950d162842954c8cd83ec51dc782b4674460f83fb042e045727337b3
+  checksum: 10c0/662d07c4d04630a00b27cae5fad53d8a95682099856ea990072b9e00c64651e4d40d429d93cbe00c919b723cc9d907218a8dbfcf6af7a8f1940a67e754eb36a8
   languageName: node
   linkType: hard
 
