@@ -1,3 +1,5 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+//@ts-nocheck
 import * as yup from 'yup'
 
 import type { Site } from '../site'

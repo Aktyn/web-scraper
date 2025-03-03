@@ -7,6 +7,7 @@ import prettier from 'eslint-plugin-prettier'
 import eslintConfigPrettier from 'eslint-config-prettier'
 import importPlugin from 'eslint-plugin-import'
 import typescriptEslint from 'typescript-eslint'
+import reactCompiler from 'eslint-plugin-react-compiler'
 
 export default tseslint.config(
   { ignores: ['dist', 'node_modules', 'vite.config.ts'] },
@@ -28,6 +29,7 @@ export default tseslint.config(
       prettier: prettier,
       import: importPlugin,
       '@typescript-eslint': typescriptEslint.plugin,
+      'react-compiler': reactCompiler,
     },
     rules: {
       ...reactHooks.configs.recommended.rules,
@@ -100,6 +102,7 @@ export default tseslint.config(
       '@typescript-eslint/consistent-type-exports': 'error',
       '@typescript-eslint/no-floating-promises': 'error',
       '@typescript-eslint/no-non-null-assertion': 'off',
+      'react-compiler/react-compiler': 'error',
     },
   },
 )

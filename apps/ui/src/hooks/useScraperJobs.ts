@@ -33,8 +33,7 @@ export function useScraperJobs() {
     loadMore()
 
     return () => clearData()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [clearData, loadMore])
 
   const deleteScraperJob = useCallback(
     (scraperJobId: ScraperJob['id']) => {

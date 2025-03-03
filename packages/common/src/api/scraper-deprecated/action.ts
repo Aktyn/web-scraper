@@ -1,5 +1,6 @@
 //TODO: remove this file and all unused types
-
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+//@ts-nocheck
 import * as yup from 'yup'
 
 import type { MapSiteError } from './common'

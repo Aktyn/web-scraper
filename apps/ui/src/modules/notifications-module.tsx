@@ -9,7 +9,6 @@ import {
   useRef,
   useState,
   type Context,
-  type DependencyList,
   type PropsWithChildren,
 } from 'react'
 import { noop } from '~/lib/utils'
@@ -197,10 +196,7 @@ function NotificationsProvider({ children }: PropsWithChildren) {
   )
 }
 
-function useNotifications(
-  newNotificationsListener?: NewNotificationListener,
-  deps: DependencyList = [],
-) {
+function useNotifications(newNotificationsListener?: NewNotificationListener) {
   const context = useContext(NotificationsContext)
 
   useEffect(() => {
@@ -212,8 +208,7 @@ function useNotifications(
     return () => {
       context.unregisterNewNotificationsListener(newNotificationsListener)
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [context, newNotificationsListener, ...deps])
+  }, [context, newNotificationsListener])
 
   return useMemo(
     () => ({

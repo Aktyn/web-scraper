@@ -1,11 +1,9 @@
-/* eslint-disable react-refresh/only-export-components */
 import {
   createContext,
   useCallback,
   useContext,
   useEffect,
   useRef,
-  type DependencyList,
   type PropsWithChildren,
 } from 'react'
 import { ElectronToRendererMessage, type ElectronApi } from '@web-scraper/common'
@@ -22,6 +20,7 @@ const ApiContext = createContext({
   removeEventsListener: noop as (listener: ApiEventListenerType) => void,
 })
 
+// eslint-disable-next-line react-refresh/only-export-components
 const ApiProvider = ({ children }: PropsWithChildren) => {
   const listenersRef = useRef(new Set<ApiEventListenerType>())
 
@@ -160,7 +159,6 @@ const ApiProvider = ({ children }: PropsWithChildren) => {
 function useEvent<MessageType extends ElectronToRendererMessage>(
   eventName: MessageType,
   callback: Parameters<ElectronApi[MessageType]>[0],
-  deps: DependencyList = [],
 ) {
   const apiEventContext = useContext(ApiContext)
 
@@ -176,8 +174,7 @@ function useEvent<MessageType extends ElectronToRendererMessage>(
     return () => {
       apiEventContext.removeEventsListener(handleApiEvent as ApiEventListenerType)
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [eventName, ...deps])
+  }, [apiEventContext, callback, eventName])
 }
 
 export const ApiModule = {
