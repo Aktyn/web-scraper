@@ -24,9 +24,12 @@
 	"settings": {
 		"cSpell.words": [
 			"Aktyn",
+			"Avenir",
+			"grayscale",
 			"Krajewski",
 			"Radosław",
 			"shadcn",
+			"sonner",
 			"uuidv"
 		],
 		"npm.packageManager": "npm",

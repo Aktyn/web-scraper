@@ -33,7 +33,7 @@ export default tseslint.config(
         "warn",
         {
           allowConstantExport: true,
-          allowExportNames: ["buttonVariants", "useFormField"],
+          allowExportNames: ["buttonVariants", "badgeVariants", "useFormField"],
         },
       ],
       "react-compiler/react-compiler": "error",

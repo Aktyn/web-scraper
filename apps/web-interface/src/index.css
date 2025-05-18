@@ -25,19 +25,16 @@
 
   --breakpoint-xs: 480px;
 
-  --default-transition-duration: 200ms;
-  --transition-duration: 200ms;
-  --transition-duration-view-transition: 400ms;
-  --transition-delay-view-transition: 400ms;
+  --ease-bounce: cubic-bezier(.5, -0.5, .5, 1.5);
+  --transition-duration-bounce: 600ms;
 
-  --ease: ease-in-out;
-  --ease-spring: cubic-bezier(0.25, 0, 0.15, 1.5);
-  --ease-spring-soft: cubic-bezier(0.5, 0, 0.25, 1.25);
+  --default-transition-duration: 300ms;
+  --default-transition-timing-function: ease-in-out;
 
-  --font:
-    Inter Variable, Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  --font: "Inter Variable", Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
 
   --color-background: hsl(var(--background));
+  --color-background-darker: hsl(var(--background-darker));
   --color-foreground: hsl(var(--foreground));
 
   --color-card: hsl(var(--card));
@@ -128,34 +125,36 @@
 
 @layer base {
   :root {
-    --background: 199 47% 4%;
-    --foreground: 199 7.3% 97.5%;
+    /* Colors are from https://catppuccin.com/palette/ (Mocha) */
+    --background: 240 21% 12%;
+    --background-darker: 240 23% 9%;
+    --foreground: 226 64% 88%;
 
-    --muted: 199 36.5% 15%;
-    --muted-foreground: 199 7.3% 55%;
+    --muted: 237 16% 23%;
+    --muted-foreground: 237 16% 64%;
 
-    --popover: 199 50.4% 6.5%;
-    --popover-foreground: 199 7.3% 97.5%;
+    --popover: 240 21% 12%;
+    --popover-foreground: 226 64% 88%;
 
-    --card: 199 50.4% 6.5%;
-    --card-foreground: 199 7.3% 97.5%;
+    --card: 237 16% 23%;
+    --card-foreground: 226 64% 88%;
 
-    --border: 199 36.5% 15%;
-    --input: 199 36.5% 15%;
+    --border: 234 13% 31%;
+    --input: 234 13% 31%;
 
-    --primary: 199 73% 50%;
-    --primary-foreground: 199 7.3% 5%;
+    --primary: 189 71% 73%;
+    --primary-foreground: 189 71% 15%;
 
-    --secondary: 199 36.5% 15%;
-    --secondary-foreground: 199 7.3% 97.5%;
+    --secondary: 267 84% 81%;
+    --secondary-foreground: 240 21% 15%;
 
-    --accent: 199 36.5% 15%;
-    --accent-foreground: 199 7.3% 97.5%;
+    --accent: 267 84% 81%;
+    --accent-foreground: 267 84% 95%;
 
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 199 7.3% 97.5%;
+    --destructive: 343 81% 75%;
+    --destructive-foreground: 240 21% 15%;
 
-    --ring: 199 73% 50%;
+    --ring: 199 76% 69%;
 
     --radius: 0.5rem;
   }
@@ -169,7 +168,7 @@
   }
 
   #root {
-    @apply h-screen w-screen;
+    @apply h-screen w-screen flex flex-row items-stretch overflow-hidden;
   }
 
   input[type="number"]::-webkit-inner-spin-button,
@@ -183,7 +182,11 @@
     appearance: textfield !important;
   }
 
-  [data-slot="button"], [data-slot="popover-trigger"], [data-slot="accordion-trigger"], [data-slot="dialog-trigger"] {
+  [data-slot="button"],
+  [data-slot="popover-trigger"],
+  [data-slot="accordion-trigger"],
+  [data-slot="dialog-trigger"],
+  [data-slot="tooltip-trigger"] {
     @apply not-disabled:cursor-pointer;
   }
 
@@ -201,9 +204,9 @@
       has-[+[data-slot="dual-range-slider"]]:leading-loose! has-[+[data-slot="dual-range-slider"]:disabled]:opacity-50 has-[+[data-slot="dual-range-slider"]]:text-muted-foreground
 
       [button[role="checkbox"]+&]:inline! [button[role="checkbox"]+&]:align-text-top [button[role="checkbox"]+&]:ml-2 [button[role="checkbox"]:not(:disabled)+&]:cursor-pointer;
-  }
+  }*/
 
   [data-slot="dialog-content"] {
     @apply max-h-full;
-  } */
+  }
 }

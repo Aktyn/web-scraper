@@ -1,17 +1,53 @@
-import { Button } from "@/components/shadcn/button"
+import { Code } from "./components/common/code"
+import { Sidebar } from "./components/layout/sidebar"
 import { ScrollArea } from "./components/shadcn/scroll-area"
+import { Toaster } from "./components/shadcn/sonner"
+import { TooltipProvider } from "./components/shadcn/tooltip"
 
 export default function App() {
   return (
-    <ScrollArea className="h-full w-full">
-      <div className="flex flex-col items-center justify-center gap-4 p-4">
-        <div className="flex flex-col items-stretch max-w-64">
-          <img src="/aktyn-icon.png" />
-          <img src="/web-scraper-icon.png" />
-        </div>
-        <p>TODO</p>
-        <Button variant="default">Click me</Button>
-      </div>
-    </ScrollArea>
+    <TooltipProvider>
+      <Sidebar />
+      <main className="grow flex flex-col justify-center">
+        <ScrollArea className="w-full overflow-hidden">
+          <div className="p-4 flex items-center justify-center min-h-full">
+            <Code>{JSON.stringify(test, null, 2)}</Code>
+          </div>
+        </ScrollArea>
+      </main>
+      <Toaster />
+    </TooltipProvider>
   )
+}
+
+const test = {
+  $schema: "https://turbo.build/schema.json",
+  tasks: {
+    build: {
+      dependsOn: ["^build"],
+      outputs: ["dist/**", "lib/**", "!**/node_modules/**"],
+    },
+    start: {
+      dependsOn: ["^build", "build"],
+      cache: false,
+      persistent: true,
+    },
+    lint: {},
+    test: {
+      dependsOn: ["^build"],
+    },
+    "test:coverage": {
+      dependsOn: ["^build"],
+    },
+    "test:watch": {
+      dependsOn: ["^build"],
+    },
+    typecheck: {
+      dependsOn: ["^build"],
+    },
+    dev: {
+      cache: false,
+      persistent: true,
+    },
+  },
 }

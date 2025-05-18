@@ -1,32 +1,39 @@
+import { cn } from "@/lib/utils"
 import hljs from "highlight.js/lib/core"
+import json from "highlight.js/lib/languages/json"
 import type { PropsWithChildren } from "react"
 import { useEffect, useRef } from "react"
 
-import json from "highlight.js/lib/languages/json"
-import { ScrollArea } from "../shadcn/scroll-area"
-import { cn } from "@/lib/utils"
 hljs.registerLanguage("json", json)
 
 type CodeProps = PropsWithChildren<{
   className?: string
 }>
 
-//TODO: utilize or remove this component
-
 export function Code({ children, className }: CodeProps) {
   const ref = useRef<HTMLPreElement>(null)
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   useEffect(() => {
-    if (ref.current) {
-      hljs.highlightElement(ref.current)
+    const element = ref.current
+    if (!element) {
+      return
+    }
+
+    timeoutRef.current = setTimeout(() => {
+      hljs.highlightElement(element)
+    }, 4)
+
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current)
+      }
     }
   }, [])
 
   return (
-    <ScrollArea className={cn("overflow-hidden max-h-screen", className)}>
-      <pre ref={ref} className="bg-transparent!">
-        <code>{children}</code>
-      </pre>
-    </ScrollArea>
+    <pre ref={ref} className={cn("bg-transparent!", className)}>
+      <code>{children}</code>
+    </pre>
   )
 }
