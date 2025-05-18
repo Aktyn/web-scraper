@@ -26,7 +26,8 @@
 			"Aktyn",
 			"Krajewski",
 			"Radosław",
-			"shadcn"
+			"shadcn",
+			"uuidv"
 		],
 		"npm.packageManager": "npm",
 		"vitest.maximumConfigs": 4

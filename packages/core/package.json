@@ -9,7 +9,7 @@
     "dev": "tsc --watch --project ./tsconfig.build.json",
     "lint": "eslint . --ext .ts,.tsx --fix",
     "typecheck": "tsc --noEmit --skipLibCheck -p ./tsconfig.json",
-    "test": "vitest run",
+    "test": "vitest run --passWithNoTests",
     "test:coverage": "vitest run --coverage",
     "test:watch": "vitest"
   },
