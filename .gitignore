@@ -1,30 +1,15 @@
 .directory
-.idea/
 .vscode/
 node_modules
 
-# testing
 coverage/
 
-# logs
 npm-debug.log*
-yarn-error.log
 
-# local env files
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
+.env
 
-tsconfig.tsbuildinfo
+*.tsbuildinfo
+.turbo
 
-dist/
-release/
-build/
-user-panel-build/
-
-# Sqlite3 databases
 *.db
 *.db-journal
-erd.pdf
-*storybook.log

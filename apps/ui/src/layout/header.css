@@ -1,8 +1,0 @@
-body:not(body:has(div[role='dialog'])) .header {
-  -webkit-app-region: drag;
-  user-select: none;
-}
-
-.header button {
-  -webkit-app-region: no-drag;
-}

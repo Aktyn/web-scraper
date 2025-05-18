@@ -1,5 +1,5 @@
 {
-  "name": "@web-scraper/common",
+  "name": "@web-scraper/core",
   "version": "1.0.0",
   "private": true,
   "main": "dist/index.js",
@@ -14,7 +14,7 @@
     "test:watch": "vitest"
   },
   "dependencies": {
-    "uuid": "^11.1.0"
+    "@web-scraper/common": "*"
   },
   "devDependencies": {
     "@eslint/js": "^9.26.0",

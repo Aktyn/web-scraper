@@ -1,757 +1,0 @@
-[2K[1G[2m$ jest[22m
-[1m[2mDetermining test suites to run...[22m[22m[999D[K
-
-[1mTest Suites: [22m0 of 11 total
-[1mTests:       [22m0 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        0 s, estimated 43 s
-[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1Ats-jest[versions] (WARN) Version 27.5.1 of jest installed has not been tested with ts-jest. If you're experiencing issues, consider using a supported version (>=29.0.0 <30.0.0-0). Please do not report issues in ts-jest if you are using unsupported versions.
-
-
-[1mTest Suites: [22m0 of 11 total
-[1mTests:       [22m0 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        0 s, estimated 43 s
-[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/scraper/[22m[1mscraper.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msite.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msiteTag.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1mscraperSession.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1mroutine.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1muserSettings.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msiteInstructions.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/utils/[22m[1mcrypto.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/[22m[1mrequestHandler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/database/[22m[1msite.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/database/[22m[1msiteTag.spec.ts[22m
-
-[1mTest Suites: [22m0 of 11 total
-[1mTests:       [22m0 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        0 s, estimated 43 s
-[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1Ats-jest[versions] (WARN) Version 27.5.1 of jest installed has not been tested with ts-jest. If you're experiencing issues, consider using a supported version (>=29.0.0 <30.0.0-0). Please do not report issues in ts-jest if you are using unsupported versions.
-
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/scraper/[22m[1mscraper.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msite.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msiteTag.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1mscraperSession.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1mroutine.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1muserSettings.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msiteInstructions.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/utils/[22m[1mcrypto.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/[22m[1mrequestHandler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/database/[22m[1msite.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/database/[22m[1msiteTag.spec.ts[22m
-
-[1mTest Suites: [22m0 of 11 total
-[1mTests:       [22m0 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        0 s, estimated 43 s
-[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1Ats-jest[versions] (WARN) Version 27.5.1 of jest installed has not been tested with ts-jest. If you're experiencing issues, consider using a supported version (>=29.0.0 <30.0.0-0). Please do not report issues in ts-jest if you are using unsupported versions.
-
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/scraper/[22m[1mscraper.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msite.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msiteTag.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1mscraperSession.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1mroutine.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1muserSettings.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msiteInstructions.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/utils/[22m[1mcrypto.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/[22m[1mrequestHandler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/database/[22m[1msite.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/database/[22m[1msiteTag.spec.ts[22m
-
-[1mTest Suites: [22m0 of 11 total
-[1mTests:       [22m0 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        0 s, estimated 43 s
-[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1Ats-jest[versions] (WARN) Version 27.5.1 of jest installed has not been tested with ts-jest. If you're experiencing issues, consider using a supported version (>=29.0.0 <30.0.0-0). Please do not report issues in ts-jest if you are using unsupported versions.
-
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/scraper/[22m[1mscraper.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msite.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msiteTag.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1mscraperSession.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1mroutine.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1muserSettings.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msiteInstructions.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/utils/[22m[1mcrypto.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/[22m[1mrequestHandler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/database/[22m[1msite.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/database/[22m[1msiteTag.spec.ts[22m
-
-[1mTest Suites: [22m0 of 11 total
-[1mTests:       [22m0 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        0 s, estimated 43 s
-[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1Ats-jest[versions] (WARN) Version 27.5.1 of jest installed has not been tested with ts-jest. If you're experiencing issues, consider using a supported version (>=29.0.0 <30.0.0-0). Please do not report issues in ts-jest if you are using unsupported versions.
-
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/scraper/[22m[1mscraper.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msite.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msiteTag.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1mscraperSession.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1mroutine.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1muserSettings.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msiteInstructions.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/utils/[22m[1mcrypto.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/[22m[1mrequestHandler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/database/[22m[1msite.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/database/[22m[1msiteTag.spec.ts[22m
-
-[1mTest Suites: [22m0 of 11 total
-[1mTests:       [22m0 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        0 s, estimated 43 s
-[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1Ats-jest[versions] (WARN) Version 27.5.1 of jest installed has not been tested with ts-jest. If you're experiencing issues, consider using a supported version (>=29.0.0 <30.0.0-0). Please do not report issues in ts-jest if you are using unsupported versions.
-
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/scraper/[22m[1mscraper.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msite.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msiteTag.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1mscraperSession.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1mroutine.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1muserSettings.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msiteInstructions.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/utils/[22m[1mcrypto.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/[22m[1mrequestHandler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/database/[22m[1msite.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/database/[22m[1msiteTag.spec.ts[22m
-
-[1mTest Suites: [22m0 of 11 total
-[1mTests:       [22m0 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        0 s, estimated 43 s
-[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1Ats-jest[versions] (WARN) Version 27.5.1 of jest installed has not been tested with ts-jest. If you're experiencing issues, consider using a supported version (>=29.0.0 <30.0.0-0). Please do not report issues in ts-jest if you are using unsupported versions.
-
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/scraper/[22m[1mscraper.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msite.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msiteTag.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1mscraperSession.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1mroutine.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1muserSettings.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msiteInstructions.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/utils/[22m[1mcrypto.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/[22m[1mrequestHandler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/database/[22m[1msite.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/database/[22m[1msiteTag.spec.ts[22m
-
-[1mTest Suites: [22m0 of 11 total
-[1mTests:       [22m0 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        0 s, estimated 43 s
-[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1Ats-jest[versions] (WARN) Version 27.5.1 of jest installed has not been tested with ts-jest. If you're experiencing issues, consider using a supported version (>=29.0.0 <30.0.0-0). Please do not report issues in ts-jest if you are using unsupported versions.
-
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/scraper/[22m[1mscraper.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msite.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msiteTag.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1mscraperSession.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1mroutine.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1muserSettings.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msiteInstructions.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/utils/[22m[1mcrypto.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/[22m[1mrequestHandler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/database/[22m[1msite.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/database/[22m[1msiteTag.spec.ts[22m
-
-[1mTest Suites: [22m0 of 11 total
-[1mTests:       [22m0 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        0 s, estimated 43 s
-[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1Ats-jest[versions] (WARN) Version 27.5.1 of jest installed has not been tested with ts-jest. If you're experiencing issues, consider using a supported version (>=29.0.0 <30.0.0-0). Please do not report issues in ts-jest if you are using unsupported versions.
-
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/scraper/[22m[1mscraper.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msite.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msiteTag.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1mscraperSession.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1mroutine.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1muserSettings.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msiteInstructions.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/utils/[22m[1mcrypto.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/[22m[1mrequestHandler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/database/[22m[1msite.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/database/[22m[1msiteTag.spec.ts[22m
-
-[1mTest Suites: [22m0 of 11 total
-[1mTests:       [22m0 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        0 s, estimated 43 s
-[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1Ats-jest[versions] (WARN) Version 27.5.1 of jest installed has not been tested with ts-jest. If you're experiencing issues, consider using a supported version (>=29.0.0 <30.0.0-0). Please do not report issues in ts-jest if you are using unsupported versions.
-
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/scraper/[22m[1mscraper.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msite.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msiteTag.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1mscraperSession.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1mroutine.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1muserSettings.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msiteInstructions.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/utils/[22m[1mcrypto.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/[22m[1mrequestHandler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/database/[22m[1msite.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/database/[22m[1msiteTag.spec.ts[22m
-
-[1mTest Suites: [22m0 of 11 total
-[1mTests:       [22m0 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        0 s, estimated 43 s
-[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1Ats-jest[versions] (WARN) Version 27.5.1 of jest installed has not been tested with ts-jest. If you're experiencing issues, consider using a supported version (>=29.0.0 <30.0.0-0). Please do not report issues in ts-jest if you are using unsupported versions.
-
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/scraper/[22m[1mscraper.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msite.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msiteTag.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1mscraperSession.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1mroutine.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1muserSettings.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msiteInstructions.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/utils/[22m[1mcrypto.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/[22m[1mrequestHandler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/database/[22m[1msite.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/database/[22m[1msiteTag.spec.ts[22m
-
-[1mTest Suites: [22m0 of 11 total
-[1mTests:       [22m0 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        0 s, estimated 43 s
-[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1Ats-jest[versions] (WARN) Version 27.5.1 of jest installed has not been tested with ts-jest. If you're experiencing issues, consider using a supported version (>=29.0.0 <30.0.0-0). Please do not report issues in ts-jest if you are using unsupported versions.
-
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/scraper/[22m[1mscraper.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msite.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msiteTag.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1mscraperSession.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1mroutine.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1muserSettings.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msiteInstructions.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/utils/[22m[1mcrypto.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/[22m[1mrequestHandler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/database/[22m[1msite.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/database/[22m[1msiteTag.spec.ts[22m
-
-[1mTest Suites: [22m0 of 11 total
-[1mTests:       [22m0 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        0 s, estimated 43 s
-[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/scraper/[22m[1mscraper.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msite.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msiteTag.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1mscraperSession.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1mroutine.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1muserSettings.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msiteInstructions.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/utils/[22m[1mcrypto.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/[22m[1mrequestHandler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/database/[22m[1msite.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/database/[22m[1msiteTag.spec.ts[22m
-
-[1mTest Suites: [22m0 of 11 total
-[1mTests:       [22m0 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        1 s, estimated 43 s
-[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/scraper/[22m[1mscraper.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msite.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msiteTag.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1mscraperSession.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1mroutine.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1muserSettings.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msiteInstructions.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/utils/[22m[1mcrypto.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/[22m[1mrequestHandler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/database/[22m[1msite.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/database/[22m[1msiteTag.spec.ts[22m
-
-[1mTest Suites: [22m0 of 11 total
-[1mTests:       [22m0 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        2 s, estimated 43 s
-[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[0m[7m[1m[32m PASS [39m[22m[27m[0m ]8;;file:///home/aktyn/Programming/web-scraper/apps/desktop-app/src/utils/crypto.spec.ts[2msrc/utils/[22m[1mcrypto.spec.ts[22m]8;;
-
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/scraper/[22m[1mscraper.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msite.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msiteTag.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1mscraperSession.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1mroutine.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1muserSettings.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msiteInstructions.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/utils/[22m[1mcrypto.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/[22m[1mrequestHandler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/database/[22m[1msite.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/database/[22m[1msiteTag.spec.ts[22m
-
-[1mTest Suites: [22m0 of 11 total
-[1mTests:       [22m0 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        2 s, estimated 43 s
-[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/scraper/[22m[1mscraper.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msite.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msiteTag.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1mscraperSession.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1mroutine.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1muserSettings.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msiteInstructions.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/utils/[22m[1mcrypto.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/[22m[1mrequestHandler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/database/[22m[1msite.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/database/[22m[1msiteTag.spec.ts[22m
-
-[1mTest Suites: [22m0 of 11 total
-[1mTests:       [22m0 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        2 s, estimated 43 s
-[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[0m[7m[1m[32m PASS [39m[22m[27m[0m ]8;;file:///home/aktyn/Programming/web-scraper/apps/desktop-app/src/database/siteTag.spec.ts[2msrc/database/[22m[1msiteTag.spec.ts[22m]8;;
-
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/scraper/[22m[1mscraper.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msite.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msiteTag.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1mscraperSession.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1mroutine.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1muserSettings.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msiteInstructions.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/utils/[22m[1mcrypto.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/[22m[1mrequestHandler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/database/[22m[1msite.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/database/[22m[1msiteTag.spec.ts[22m
-
-[1mTest Suites: [22m0 of 11 total
-[1mTests:       [22m0 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        2 s, estimated 43 s
-[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[0m[7m[1m[32m PASS [39m[22m[27m[0m ]8;;file:///home/aktyn/Programming/web-scraper/apps/desktop-app/src/database/site.spec.ts[2msrc/database/[22m[1msite.spec.ts[22m]8;;
-
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/scraper/[22m[1mscraper.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msite.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msiteTag.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1mscraperSession.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1mroutine.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1muserSettings.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msiteInstructions.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/utils/[22m[1mcrypto.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/[22m[1mrequestHandler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/database/[22m[1msite.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/database/[22m[1msiteTag.spec.ts[22m
-
-[1mTest Suites: [22m0 of 11 total
-[1mTests:       [22m0 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        2 s, estimated 43 s
-[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/scraper/[22m[1mscraper.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msite.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msiteTag.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1mscraperSession.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1mroutine.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1muserSettings.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msiteInstructions.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/[22m[1mrequestHandler.spec.ts[22m
-
-[1mTest Suites: [22m[1m[32m3 passed[39m[22m, 3 of 11 total
-[1mTests:       [22m[1m[32m9 passed[39m[22m, 9 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        2 s, estimated 43 s
-[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[0m[7m[1m[32m PASS [39m[22m[27m[0m ]8;;file:///home/aktyn/Programming/web-scraper/apps/desktop-app/src/api/internal/requestHandler.spec.ts[2msrc/api/internal/[22m[1mrequestHandler.spec.ts[22m]8;;
-
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/scraper/[22m[1mscraper.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msite.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msiteTag.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1mscraperSession.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1mroutine.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1muserSettings.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msiteInstructions.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/[22m[1mrequestHandler.spec.ts[22m
-
-[1mTest Suites: [22m[1m[32m3 passed[39m[22m, 3 of 11 total
-[1mTests:       [22m[1m[32m9 passed[39m[22m, 9 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        2 s, estimated 43 s
-[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/scraper/[22m[1mscraper.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msite.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msiteTag.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1mscraperSession.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1mroutine.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1muserSettings.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msiteInstructions.handler.spec.ts[22m
-
-[1mTest Suites: [22m[1m[32m4 passed[39m[22m, 4 of 11 total
-[1mTests:       [22m[1m[32m10 passed[39m[22m, 10 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        2 s, estimated 43 s
-[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/scraper/[22m[1mscraper.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msite.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msiteTag.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1mscraperSession.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1mroutine.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1muserSettings.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msiteInstructions.handler.spec.ts[22m
-
-[1mTest Suites: [22m[1m[32m4 passed[39m[22m, 4 of 11 total
-[1mTests:       [22m[1m[32m11 passed[39m[22m, 11 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        3 s, estimated 43 s
-[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/scraper/[22m[1mscraper.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msite.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msiteTag.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1mscraperSession.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1mroutine.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1muserSettings.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msiteInstructions.handler.spec.ts[22m
-
-[1mTest Suites: [22m[1m[32m4 passed[39m[22m, 4 of 11 total
-[1mTests:       [22m[1m[32m14 passed[39m[22m, 14 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        3 s, estimated 43 s
-[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/scraper/[22m[1mscraper.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msite.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msiteTag.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1mscraperSession.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1mroutine.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1muserSettings.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msiteInstructions.handler.spec.ts[22m
-
-[1mTest Suites: [22m[1m[32m4 passed[39m[22m, 4 of 11 total
-[1mTests:       [22m[1m[32m15 passed[39m[22m, 15 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        3 s, estimated 43 s
-[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[0m[7m[1m[32m PASS [39m[22m[27m[0m ]8;;file:///home/aktyn/Programming/web-scraper/apps/desktop-app/src/api/internal/handlers/routine.handler.spec.ts[2msrc/api/internal/handlers/[22m[1mroutine.handler.spec.ts[22m]8;;
-
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/scraper/[22m[1mscraper.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msite.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msiteTag.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1mscraperSession.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1mroutine.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1muserSettings.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msiteInstructions.handler.spec.ts[22m
-
-[1mTest Suites: [22m[1m[32m4 passed[39m[22m, 4 of 11 total
-[1mTests:       [22m[1m[32m15 passed[39m[22m, 15 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        3 s, estimated 43 s
-[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A  [1m● [22mConsole
-
-    [2mconsole.log[22m
-      [API request] [name: getRoutines] [args: []]
-[2m[22m
-[2m      [2mat [22m[2msrc/api/internal/helpers.ts[2m:23:13[22m[2m[22m
-
-    [2mconsole.log[22m
-      [API request] [name: getRoutine] [args: [1]]
-[2m[22m
-[2m      [2mat [22m[2msrc/api/internal/helpers.ts[2m:23:13[22m[2m[22m
-
-
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/scraper/[22m[1mscraper.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msite.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msiteTag.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1mscraperSession.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1mroutine.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1muserSettings.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msiteInstructions.handler.spec.ts[22m
-
-[1mTest Suites: [22m[1m[32m4 passed[39m[22m, 4 of 11 total
-[1mTests:       [22m[1m[32m15 passed[39m[22m, 15 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        3 s, estimated 43 s
-[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/scraper/[22m[1mscraper.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msite.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msiteTag.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1mscraperSession.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1muserSettings.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msiteInstructions.handler.spec.ts[22m
-
-[1mTest Suites: [22m[1m[32m5 passed[39m[22m, 5 of 11 total
-[1mTests:       [22m[1m[32m16 passed[39m[22m, 16 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        3 s, estimated 43 s
-[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[0m[7m[1m[32m PASS [39m[22m[27m[0m ]8;;file:///home/aktyn/Programming/web-scraper/apps/desktop-app/src/api/internal/handlers/userSettings.handler.spec.ts[2msrc/api/internal/handlers/[22m[1muserSettings.handler.spec.ts[22m]8;;
-
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/scraper/[22m[1mscraper.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msite.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msiteTag.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1mscraperSession.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1muserSettings.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msiteInstructions.handler.spec.ts[22m
-
-[1mTest Suites: [22m[1m[32m5 passed[39m[22m, 5 of 11 total
-[1mTests:       [22m[1m[32m16 passed[39m[22m, 16 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        3 s, estimated 43 s
-[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A  [1m● [22mConsole
-
-    [2mconsole.log[22m
-      [API request] [name: getUserSettings] [args: []]
-[2m[22m
-[2m      [2mat [22m[2msrc/api/internal/helpers.ts[2m:23:13[22m[2m[22m
-
-    [2mconsole.log[22m
-      [API request] [name: setUserSetting] [args: ["tablesCompactMode",false]]
-[2m[22m
-[2m      [2mat [22m[2msrc/api/internal/helpers.ts[2m:23:13[22m[2m[22m
-
-
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/scraper/[22m[1mscraper.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msite.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msiteTag.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1mscraperSession.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1muserSettings.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msiteInstructions.handler.spec.ts[22m
-
-[1mTest Suites: [22m[1m[32m5 passed[39m[22m, 5 of 11 total
-[1mTests:       [22m[1m[32m16 passed[39m[22m, 16 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        3 s, estimated 43 s
-[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[0m[7m[1m[32m PASS [39m[22m[27m[0m ]8;;file:///home/aktyn/Programming/web-scraper/apps/desktop-app/src/api/internal/handlers/siteInstructions.handler.spec.ts[2msrc/api/internal/handlers/[22m[1msiteInstructions.handler.spec.ts[22m]8;;
-
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/scraper/[22m[1mscraper.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msite.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msiteTag.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1mscraperSession.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1muserSettings.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msiteInstructions.handler.spec.ts[22m
-
-[1mTest Suites: [22m[1m[32m5 passed[39m[22m, 5 of 11 total
-[1mTests:       [22m[1m[32m16 passed[39m[22m, 16 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        3 s, estimated 43 s
-[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A  [1m● [22mConsole
-
-    [2mconsole.log[22m
-      [API request] [name: getSiteInstructions] [args: [1]]
-[2m[22m
-[2m      [2mat [22m[2msrc/api/internal/helpers.ts[2m:23:13[22m[2m[22m
-
-    [2mconsole.log[22m
-      [API request] [name: setSiteInstructions] [args: [1,{"procedures":[],"actions":[]}]]
-[2m[22m
-[2m      [2mat [22m[2msrc/api/internal/helpers.ts[2m:23:13[22m[2m[22m
-
-
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/scraper/[22m[1mscraper.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msite.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msiteTag.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1mscraperSession.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1muserSettings.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msiteInstructions.handler.spec.ts[22m
-
-[1mTest Suites: [22m[1m[32m5 passed[39m[22m, 5 of 11 total
-[1mTests:       [22m[1m[32m16 passed[39m[22m, 16 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        3 s, estimated 43 s
-[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/scraper/[22m[1mscraper.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msite.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msiteTag.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1mscraperSession.handler.spec.ts[22m
-
-[1mTest Suites: [22m[1m[32m7 passed[39m[22m, 7 of 11 total
-[1mTests:       [22m[1m[32m19 passed[39m[22m, 19 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        3 s, estimated 43 s
-[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/scraper/[22m[1mscraper.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msite.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msiteTag.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1mscraperSession.handler.spec.ts[22m
-
-[1mTest Suites: [22m[1m[32m7 passed[39m[22m, 7 of 11 total
-[1mTests:       [22m[1m[32m20 passed[39m[22m, 20 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        3 s, estimated 43 s
-[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[0m[7m[1m[32m PASS [39m[22m[27m[0m ]8;;file:///home/aktyn/Programming/web-scraper/apps/desktop-app/src/api/internal/handlers/scraperSession.handler.spec.ts[2msrc/api/internal/handlers/[22m[1mscraperSession.handler.spec.ts[22m]8;;
-
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/scraper/[22m[1mscraper.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msite.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msiteTag.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1mscraperSession.handler.spec.ts[22m
-
-[1mTest Suites: [22m[1m[32m7 passed[39m[22m, 7 of 11 total
-[1mTests:       [22m[1m[32m20 passed[39m[22m, 20 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        3 s, estimated 43 s
-[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A  [1m● [22mConsole
-
-    [2mconsole.info[22m
-      [Scraper (mode: TESTING) (id: 91257b62)] Instance created
-[2m[22m
-[2m      [2mat Logger.info ([22m[2m../../packages/common/src/logger.ts[2m:12:13)[22m[2m[22m
-
-    [2mconsole.log[22m
-      [API request] [name: getSiteInstructionsTestingSessions] [args: []]
-[2m[22m
-[2m      [2mat [22m[2msrc/api/internal/helpers.ts[2m:23:13[22m[2m[22m
-
-    [2mconsole.info[22m
-      Browser initialized with user agent: Mozilla/5.0 (X11; U; Linux x86_64; en-AU) AppleWebKit/534.35 (KHTML, like Gecko) Chrome/11.0.696.65 Safari/534.35 Puffin/3.9174IT; slot: 0
-[2m[22m
-[2m      [2mat [22m[2msrc/scraper/scraperBrowser.ts[2m:119:17[22m[2m[22m
-
-    [2mconsole.log[22m
-      [API request] [name: getSiteInstructionsTestingSessions] [args: []]
-[2m[22m
-[2m      [2mat [22m[2msrc/api/internal/helpers.ts[2m:23:13[22m[2m[22m
-
-
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/scraper/[22m[1mscraper.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msite.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msiteTag.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1mscraperSession.handler.spec.ts[22m
-
-[1mTest Suites: [22m[1m[32m7 passed[39m[22m, 7 of 11 total
-[1mTests:       [22m[1m[32m20 passed[39m[22m, 20 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        3 s, estimated 43 s
-[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/scraper/[22m[1mscraper.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msite.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msiteTag.handler.spec.ts[22m
-
-[1mTest Suites: [22m[1m[32m8 passed[39m[22m, 8 of 11 total
-[1mTests:       [22m[1m[32m21 passed[39m[22m, 21 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        3 s, estimated 43 s
-[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/scraper/[22m[1mscraper.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msite.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msiteTag.handler.spec.ts[22m
-
-[1mTest Suites: [22m[1m[32m8 passed[39m[22m, 8 of 11 total
-[1mTests:       [22m[1m[32m23 passed[39m[22m, 23 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        4 s, estimated 43 s
-[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[0m[7m[1m[32m PASS [39m[22m[27m[0m ]8;;file:///home/aktyn/Programming/web-scraper/apps/desktop-app/src/api/internal/handlers/siteTag.handler.spec.ts[2msrc/api/internal/handlers/[22m[1msiteTag.handler.spec.ts[22m]8;;
-
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/scraper/[22m[1mscraper.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msite.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msiteTag.handler.spec.ts[22m
-
-[1mTest Suites: [22m[1m[32m8 passed[39m[22m, 8 of 11 total
-[1mTests:       [22m[1m[32m23 passed[39m[22m, 23 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        4 s, estimated 43 s
-[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A  [1m● [22mConsole
-
-    [2mconsole.log[22m
-      [API request] [name: getSiteTags] [args: [{"count":20}]]
-[2m[22m
-[2m      [2mat [22m[2msrc/api/internal/helpers.ts[2m:23:13[22m[2m[22m
-
-    [2mconsole.log[22m
-      [API request] [name: deleteSiteTag] [args: [1]]
-[2m[22m
-[2m      [2mat [22m[2msrc/api/internal/helpers.ts[2m:23:13[22m[2m[22m
-
-    [2mconsole.log[22m
-      [API request] [name: updateSiteTag] [args: [1,{"name":"Mock-1","description":"Mocked site 1"}]]
-[2m[22m
-[2m      [2mat [22m[2msrc/api/internal/helpers.ts[2m:23:13[22m[2m[22m
-
-    [2mconsole.log[22m
-      [API request] [name: createSiteTag] [args: [{"name":"Mock-1","description":"Mocked site 1"}]]
-[2m[22m
-[2m      [2mat [22m[2msrc/api/internal/helpers.ts[2m:23:13[22m[2m[22m
-
-
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/scraper/[22m[1mscraper.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msite.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msiteTag.handler.spec.ts[22m
-
-[1mTest Suites: [22m[1m[32m8 passed[39m[22m, 8 of 11 total
-[1mTests:       [22m[1m[32m23 passed[39m[22m, 23 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        4 s, estimated 43 s
-[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/scraper/[22m[1mscraper.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msite.handler.spec.ts[22m
-
-[1mTest Suites: [22m[1m[32m9 passed[39m[22m, 9 of 11 total
-[1mTests:       [22m[1m[32m25 passed[39m[22m, 25 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        4 s, estimated 43 s
-[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[0m[7m[1m[32m PASS [39m[22m[27m[0m ]8;;file:///home/aktyn/Programming/web-scraper/apps/desktop-app/src/api/internal/handlers/site.handler.spec.ts[2msrc/api/internal/handlers/[22m[1msite.handler.spec.ts[22m]8;;
-
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/scraper/[22m[1mscraper.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msite.handler.spec.ts[22m
-
-[1mTest Suites: [22m[1m[32m9 passed[39m[22m, 9 of 11 total
-[1mTests:       [22m[1m[32m25 passed[39m[22m, 25 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        4 s, estimated 43 s
-[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A  [1m● [22mConsole
-
-    [2mconsole.log[22m
-      [API request] [name: getSites] [args: [{"count":20}]]
-[2m[22m
-[2m      [2mat [22m[2msrc/api/internal/helpers.ts[2m:23:13[22m[2m[22m
-
-    [2mconsole.log[22m
-      [API request] [name: getSite] [args: [1]]
-[2m[22m
-[2m      [2mat [22m[2msrc/api/internal/helpers.ts[2m:23:13[22m[2m[22m
-
-    [2mconsole.log[22m
-      [API request] [name: createSite] [args: [{"url":"https://mocked-site.com","language":"en","siteTags":[]}]]
-[2m[22m
-[2m      [2mat [22m[2msrc/api/internal/helpers.ts[2m:23:13[22m[2m[22m
-
-    [2mconsole.log[22m
-      [API request] [name: deleteSite] [args: [1]]
-[2m[22m
-[2m      [2mat [22m[2msrc/api/internal/helpers.ts[2m:23:13[22m[2m[22m
-
-    [2mconsole.log[22m
-      [API request] [name: updateSite] [args: [1,{"url":"https://mocked-site.com","language":"en","siteTags":[]}]]
-[2m[22m
-[2m      [2mat [22m[2msrc/api/internal/helpers.ts[2m:23:13[22m[2m[22m
-
-
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/scraper/[22m[1mscraper.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msite.handler.spec.ts[22m
-
-[1mTest Suites: [22m[1m[32m9 passed[39m[22m, 9 of 11 total
-[1mTests:       [22m[1m[32m25 passed[39m[22m, 25 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        4 s, estimated 43 s
-[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/scraper/[22m[1mscraper.spec.ts[22m
-
-[1mTest Suites: [22m[1m[32m10 passed[39m[22m, 10 of 11 total
-[1mTests:       [22m[1m[32m27 passed[39m[22m, 27 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        4 s, estimated 43 s
-[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/scraper/[22m[1mscraper.spec.ts[22m
-
-[1mTest Suites: [22m[1m[32m10 passed[39m[22m, 10 of 11 total
-[1mTests:       [22m[1m[32m27 passed[39m[22m, 27 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        5 s, estimated 43 s
-[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/scraper/[22m[1mscraper.spec.ts[22m
-
-[1mTest Suites: [22m[1m[32m10 passed[39m[22m, 10 of 11 total
-[1mTests:       [22m[1m[32m27 passed[39m[22m, 27 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        6 s, estimated 43 s
-[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/scraper/[22m[1mscraper.spec.ts[22m
-
-[1mTest Suites: [22m[1m[32m10 passed[39m[22m, 10 of 11 total
-[1mTests:       [22m[1m[32m28 passed[39m[22m, 28 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        6 s, estimated 43 s
-[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/scraper/[22m[1mscraper.spec.ts[22m
-
-[1mTest Suites: [22m[1m[32m10 passed[39m[22m, 10 of 11 total
-[1mTests:       [22m[1m[32m29 passed[39m[22m, 29 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        7 s, estimated 43 s
-[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/scraper/[22m[1mscraper.spec.ts[22m
-
-[1mTest Suites: [22m[1m[32m10 passed[39m[22m, 10 of 11 total
-[1mTests:       [22m[1m[32m29 passed[39m[22m, 29 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        8 s, estimated 43 s
-[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m

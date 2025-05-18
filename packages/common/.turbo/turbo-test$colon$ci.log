@@ -1,263 +1,0 @@
-[1m[2mDetermining test suites to run...[22m[22m[999D[K
-
-[1mTest Suites: [22m0 of 8 total
-[1mTests:       [22m0 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        0 s, estimated 3 s
-[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[999D[K
-
-[1mTest Suites: [22m0 of 8 total
-[1mTests:       [22m0 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        0 s, estimated 3 s
-[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/scraper-deprecated/[22m[1mroutine.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1masync.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mcommon.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/scraper-deprecated/[22m[1mcommon.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mmath.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mcache.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mparsers.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mtime.test.ts[22m
-
-[1mTest Suites: [22m0 of 8 total
-[1mTests:       [22m0 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        0 s, estimated 3 s
-[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/scraper-deprecated/[22m[1mroutine.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1masync.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mcommon.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/scraper-deprecated/[22m[1mcommon.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mmath.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mcache.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mparsers.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mtime.test.ts[22m
-
-[1mTest Suites: [22m0 of 8 total
-[1mTests:       [22m0 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        1 s, estimated 3 s
-[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[0m[7m[1m[32m PASS [39m[22m[27m[0m [2msrc/[22m[1mmath.spec.ts[22m
-
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/scraper-deprecated/[22m[1mroutine.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1masync.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mcommon.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/scraper-deprecated/[22m[1mcommon.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mmath.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mcache.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mparsers.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mtime.test.ts[22m
-
-[1mTest Suites: [22m0 of 8 total
-[1mTests:       [22m0 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        1 s, estimated 3 s
-[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/scraper-deprecated/[22m[1mroutine.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1masync.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mcommon.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/scraper-deprecated/[22m[1mcommon.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mmath.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mcache.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mparsers.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mtime.test.ts[22m
-
-[1mTest Suites: [22m0 of 8 total
-[1mTests:       [22m0 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        1 s, estimated 3 s
-[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[0m[7m[1m[32m PASS [39m[22m[27m[0m [2msrc/api/scraper-deprecated/[22m[1mcommon.spec.ts[22m
-
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/scraper-deprecated/[22m[1mroutine.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1masync.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mcommon.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/scraper-deprecated/[22m[1mcommon.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mmath.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mcache.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mparsers.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mtime.test.ts[22m
-
-[1mTest Suites: [22m0 of 8 total
-[1mTests:       [22m0 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        1 s, estimated 3 s
-[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A  [1m● [22mConsole
-
-    [2m[33mconsole.warn[39m[22m
-[33m      Unknown special code: URL.ORIGIN[39m
-[2m[22m
-[2m    [0m [90m 46 |[39m     }[22m
-[2m     [90m 47 |[39m[22m
-[2m    [31m[1m>[22m[2m[39m[90m 48 |[39m     console[33m.[39mwarn([32m`Unknown special code: ${specialCode}`[39m)[22m
-[2m     [90m    |[39m             [31m[1m^[22m[2m[39m[22m
-[2m     [90m 49 |[39m     [36mreturn[39m [32m''[39m[22m
-[2m     [90m 50 |[39m   })[22m
-[2m     [90m 51 |[39m }[0m[22m
-[2m[22m
-[2m      [2mat warn ([22m[2msrc/api/scraper-deprecated/common.ts[2m:48:13)[22m[2m[22m
-[2m          at String.replace (<anonymous>)[22m
-[2m      [2mat replace ([22m[2msrc/api/scraper-deprecated/common.ts[2m:27:16)[22m[2m[22m
-[2m      [2mat Object.<anonymous> ([22m[2m[0m[36msrc/api/scraper-deprecated/common.spec.ts[39m[0m[2m:16:36)[22m[2m[22m
-
-    [2m[33mconsole.warn[39m[22m
-[33m      Unknown special code: NONEXISTINGSPECIALCODE[39m
-[2m[22m
-[2m    [0m [90m 46 |[39m     }[22m
-[2m     [90m 47 |[39m[22m
-[2m    [31m[1m>[22m[2m[39m[90m 48 |[39m     console[33m.[39mwarn([32m`Unknown special code: ${specialCode}`[39m)[22m
-[2m     [90m    |[39m             [31m[1m^[22m[2m[39m[22m
-[2m     [90m 49 |[39m     [36mreturn[39m [32m''[39m[22m
-[2m     [90m 50 |[39m   })[22m
-[2m     [90m 51 |[39m }[0m[22m
-[2m[22m
-[2m      [2mat warn ([22m[2msrc/api/scraper-deprecated/common.ts[2m:48:13)[22m[2m[22m
-[2m          at String.replace (<anonymous>)[22m
-[2m      [2mat replace ([22m[2msrc/api/scraper-deprecated/common.ts[2m:27:16)[22m[2m[22m
-[2m      [2mat Object.<anonymous> ([22m[2m[0m[36msrc/api/scraper-deprecated/common.spec.ts[39m[0m[2m:17:36)[22m[2m[22m
-
-    [2m[33mconsole.warn[39m[22m
-[33m      Unknown special code: URL.ORIGIN[39m
-[2m[22m
-[2m    [0m [90m 46 |[39m     }[22m
-[2m     [90m 47 |[39m[22m
-[2m    [31m[1m>[22m[2m[39m[90m 48 |[39m     console[33m.[39mwarn([32m`Unknown special code: ${specialCode}`[39m)[22m
-[2m     [90m    |[39m             [31m[1m^[22m[2m[39m[22m
-[2m     [90m 49 |[39m     [36mreturn[39m [32m''[39m[22m
-[2m     [90m 50 |[39m   })[22m
-[2m     [90m 51 |[39m }[0m[22m
-[2m[22m
-[2m      [2mat warn ([22m[2msrc/api/scraper-deprecated/common.ts[2m:48:13)[22m[2m[22m
-[2m          at String.replace (<anonymous>)[22m
-[2m      [2mat replace ([22m[2msrc/api/scraper-deprecated/common.ts[2m:27:16)[22m[2m[22m
-[2m      [2mat Object.<anonymous> ([22m[2m[0m[36msrc/api/scraper-deprecated/common.spec.ts[39m[0m[2m:33:36)[22m[2m[22m
-
-
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/scraper-deprecated/[22m[1mroutine.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1masync.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mcommon.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/scraper-deprecated/[22m[1mcommon.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mmath.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mcache.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mparsers.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mtime.test.ts[22m
-
-[1mTest Suites: [22m0 of 8 total
-[1mTests:       [22m0 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        1 s, estimated 3 s
-[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[0m[7m[1m[32m PASS [39m[22m[27m[0m [2msrc/[22m[1mcache.spec.ts[22m
-
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/scraper-deprecated/[22m[1mroutine.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1masync.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mcommon.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/scraper-deprecated/[22m[1mcommon.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mmath.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mcache.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mparsers.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mtime.test.ts[22m
-
-[1mTest Suites: [22m0 of 8 total
-[1mTests:       [22m0 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        1 s, estimated 3 s
-[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[0m[7m[1m[32m PASS [39m[22m[27m[0m [2msrc/[22m[1mparsers.spec.ts[22m
-
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/scraper-deprecated/[22m[1mroutine.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1masync.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mcommon.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/scraper-deprecated/[22m[1mcommon.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mmath.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mcache.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mparsers.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mtime.test.ts[22m
-
-[1mTest Suites: [22m0 of 8 total
-[1mTests:       [22m0 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        1 s, estimated 3 s
-[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[0m[7m[1m[32m PASS [39m[22m[27m[0m [2msrc/[22m[1mtime.test.ts[22m
-
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/scraper-deprecated/[22m[1mroutine.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1masync.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mcommon.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/scraper-deprecated/[22m[1mcommon.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mmath.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mcache.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mparsers.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mtime.test.ts[22m
-
-[1mTest Suites: [22m0 of 8 total
-[1mTests:       [22m0 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        1 s, estimated 3 s
-[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/scraper-deprecated/[22m[1mroutine.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1masync.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mcommon.spec.ts[22m
-
-[1mTest Suites: [22m[1m[32m5 passed[39m[22m, 5 of 8 total
-[1mTests:       [22m[1m[32m38 passed[39m[22m, 38 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        1 s, estimated 3 s
-[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[0m[7m[1m[32m PASS [39m[22m[27m[0m [2msrc/[22m[1mcommon.spec.ts[22m
-
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/scraper-deprecated/[22m[1mroutine.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1masync.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1mcommon.spec.ts[22m
-
-[1mTest Suites: [22m[1m[32m5 passed[39m[22m, 5 of 8 total
-[1mTests:       [22m[1m[32m38 passed[39m[22m, 38 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        1 s, estimated 3 s
-[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/scraper-deprecated/[22m[1mroutine.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1masync.spec.ts[22m
-
-[1mTest Suites: [22m[1m[32m6 passed[39m[22m, 6 of 8 total
-[1mTests:       [22m[1m[32m56 passed[39m[22m, 56 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        2 s, estimated 3 s
-[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[0m[7m[1m[32m PASS [39m[22m[27m[0m [2msrc/api/scraper-deprecated/[22m[1mroutine.spec.ts[22m
-
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/scraper-deprecated/[22m[1mroutine.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1masync.spec.ts[22m
-
-[1mTest Suites: [22m[1m[32m6 passed[39m[22m, 6 of 8 total
-[1mTests:       [22m[1m[32m56 passed[39m[22m, 56 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        2 s, estimated 3 s
-[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[0m[7m[1m[32m PASS [39m[22m[27m[0m [2msrc/[22m[1masync.spec.ts[22m
-
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/scraper-deprecated/[22m[1mroutine.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/[22m[1masync.spec.ts[22m
-
-[1mTest Suites: [22m[1m[32m6 passed[39m[22m, 6 of 8 total
-[1mTests:       [22m[1m[32m56 passed[39m[22m, 56 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        2 s, estimated 3 s
-[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[999D[K----------------------------|---------|----------|---------|---------|-----------------------
-File                        | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s     
-----------------------------|---------|----------|---------|---------|-----------------------
-[32;1mAll files                  [0m | [32;1m  86.08[0m | [33;1m   69.23[0m | [32;1m  81.63[0m | [32;1m  85.37[0m | [31;1m                     [0m 
-[32;1m src                       [0m | [32;1m   95.3[0m | [32;1m   81.33[0m | [32;1m    100[0m | [32;1m  94.96[0m | [31;1m                     [0m 
-[32;1m  async.ts                 [0m | [32;1m  86.84[0m | [33;1m   71.42[0m | [32;1m    100[0m | [32;1m  85.29[0m | [31;1m16,62-65             [0m 
-[32;1m  cache.ts                 [0m | [32;1m    100[0m | [32;1m     100[0m | [32;1m    100[0m | [32;1m    100[0m | [33;1m                     [0m 
-[32;1m  common.ts                [0m | [32;1m  97.22[0m | [33;1m   71.42[0m | [32;1m    100[0m | [32;1m  97.22[0m | [31;1m39                   [0m 
-[32;1m  error.ts                 [0m | [32;1m    100[0m | [32;1m     100[0m | [32;1m    100[0m | [32;1m    100[0m | [33;1m                     [0m 
-[32;1m  math.ts                  [0m | [32;1m    100[0m | [32;1m     100[0m | [32;1m    100[0m | [32;1m    100[0m | [33;1m                     [0m 
-[32;1m  parsers.ts               [0m | [32;1m  91.66[0m | [33;1m   58.33[0m | [32;1m    100[0m | [32;1m   87.5[0m | [31;1m15                   [0m 
-[32;1m  time.ts                  [0m | [32;1m    100[0m | [32;1m      96[0m | [32;1m    100[0m | [32;1m    100[0m | [33;1m78                   [0m 
-[33;1m src/api                   [0m | [33;1m  66.66[0m | [31;1m       0[0m | [31;1m      0[0m | [33;1m     75[0m | [31;1m                     [0m 
-[33;1m  common.ts                [0m | [33;1m  66.66[0m | [31;1m       0[0m | [31;1m      0[0m | [33;1m     75[0m | [31;1m12                   [0m 
-[33;1m src/api/scraper-deprecated[0m | [33;1m  75.42[0m | [33;1m   60.31[0m | [33;1m  56.25[0m | [33;1m  73.63[0m | [31;1m                     [0m 
-[32;1m  common.ts                [0m | [32;1m  89.47[0m | [31;1m   46.66[0m | [33;1m  66.66[0m | [32;1m  89.47[0m | [31;1m12,31                [0m 
-[32;1m  dataSource.ts            [0m | [32;1m  88.88[0m | [33;1m      50[0m | [33;1m     50[0m | [32;1m  88.88[0m | [31;1m69                   [0m 
-[33;1m  routine.ts               [0m | [33;1m  71.11[0m | [33;1m    65.9[0m | [33;1m  54.54[0m | [33;1m  68.29[0m | [31;1m...64-273,322,337-340[0m 
-----------------------------|---------|----------|---------|---------|-----------------------
-
-[1mTest Suites: [22m[1m[32m8 passed[39m[22m, 8 total
-[1mTests:       [22m[1m[32m58 passed[39m[22m, 58 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        2.2 s, estimated 3 s
-[2mRan all test suites[22m[2m.[22m

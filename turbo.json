@@ -1,0 +1,48 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "tasks": {
+    "build": {
+      "dependsOn": [
+        "^build"
+      ],
+      "outputs": [
+        "dist/**",
+        "lib/**",
+        "!**/node_modules/**"
+      ]
+    },
+    "start": {
+      "dependsOn": [
+        "^build",
+        "build"
+      ],
+      "cache": false,
+      "persistent": true
+    },
+    "lint": {},
+    "test": {
+      "dependsOn": [
+        "^build"
+      ]
+    },
+    "test:coverage": {
+      "dependsOn": [
+        "^build"
+      ]
+    },
+    "test:watch": {
+      "dependsOn": [
+        "^build"
+      ]
+    },
+    "typecheck": {
+      "dependsOn": [
+        "^build"
+      ]
+    },
+    "dev": {
+      "cache": false,
+      "persistent": true
+    }
+  }
+}

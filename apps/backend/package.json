@@ -1,20 +1,19 @@
 {
-  "name": "@web-scraper/common",
+  "name": "@web-scraper/backend",
   "version": "1.0.0",
   "private": true,
-  "main": "dist/index.js",
-  "types": "src/index.ts",
   "scripts": {
-    "build": "tsc --project ./tsconfig.build.json",
-    "dev": "tsc --watch --project ./tsconfig.build.json",
-    "lint": "eslint . --ext .ts,.tsx --fix",
+    "build": "tsc -p ./tsconfig.build.json",
+    "dev": "tsx --watch src/index.ts",
+    "start": "node --expose-gc dist/index.js",
+    "lint": "eslint \"src/**/*{.ts,.tsx}\" --fix",
     "typecheck": "tsc --noEmit --skipLibCheck -p ./tsconfig.json",
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
     "test:watch": "vitest"
   },
   "dependencies": {
-    "uuid": "^11.1.0"
+    "@web-scraper/core": "*"
   },
   "devDependencies": {
     "@eslint/js": "^9.26.0",
@@ -25,6 +24,7 @@
     "eslint-plugin-import": "^2.31.0",
     "eslint-plugin-prettier": "^5.2.6",
     "prettier": "^3.5.3",
+    "tsx": "^4.19.4",
     "typescript": "^5.8.3",
     "typescript-eslint": "^8.31.1",
     "vitest": "^3.1.2"

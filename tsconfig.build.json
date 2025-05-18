@@ -1,0 +1,17 @@
+{
+  "files": [], // No top-level files to compile directly
+  "references": [
+    {
+      "path": "packages/core"
+    },
+    {
+      "path": "packages/common"
+    },
+    {
+      "path": "apps/backend"
+    },
+    {
+      "path": "apps/web-interface"
+    }
+  ]
+}

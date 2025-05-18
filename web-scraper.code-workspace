@@ -9,51 +9,38 @@
 			"path": "./packages/common"
 		},
 		{
-			"name": "Desktop app",
-			"path": "./apps/desktop-app"
+			"name": "Core",
+			"path": "./packages/core"
 		},
 		{
-			"name": "UI",
-			"path": "./apps/ui"
+			"name": "Backend",
+			"path": "./apps/backend"
+		},
+		{
+			"name": "Web Interface",
+			"path": "./apps/web-interface"
 		},
 	],
 	"settings": {
-		"typescript.tsdk": "Root/node_modules/typescript/lib",
-		"typescript.preferences.includePackageJsonAutoImports": "on",
-		"testing.automaticallyOpenPeekView": "never",
 		"cSpell.words": [
 			"Aktyn",
-			"autoincrement",
-			"deepseek",
-			"devicon",
-			"framenavigated",
 			"Krajewski",
-			"Lumia",
-			"modelfile",
-			"ollama",
-			"prosopo",
-			"qwen",
 			"Radosław",
-			"referrerpolicy",
-			"shadcn",
-			"sonner",
-			"targetcreated",
-			"tseslint",
-			"VITE"
+			"shadcn"
 		],
-		"liveServer.settings.multiRootWorkspaceName": "web-scraper",
-		"eslint.useFlatConfig": true,
-		"npm.packageManager": "yarn"
+		"npm.packageManager": "npm",
+		"vitest.maximumConfigs": 4
 	},
 	"launch": {
-		"version": "2.0.0",
+		"version": "3.0.0",
 		"configurations": [
 			{
 				"type": "node",
 				"request": "launch",
 				"name": "Development",
-				"runtimeExecutable": "yarn",
+				"runtimeExecutable": "npm",
 				"runtimeArgs": [
+					"run",
 					"dev"
 				],
 				"cwd": "${workspaceFolder}",

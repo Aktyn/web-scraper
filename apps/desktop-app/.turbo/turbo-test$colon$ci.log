@@ -1,1482 +1,0 @@
-[1m[2mDetermining test suites to run...[22m[22m[999D[K
-
-[1mTest Suites: [22m0 of 12 total
-[1mTests:       [22m0 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        0 s, estimated 64 s
-[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/scraper/[22m[1mscraper.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msite.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msiteTag.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1mscraperSession.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msiteInstructions.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1mroutine.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1mscraperJob.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1muserSettings.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/database/[22m[1msite.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/database/[22m[1msiteTag.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/utils/[22m[1mcrypto.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/[22m[1mrequestHandler.spec.ts[22m
-
-[1mTest Suites: [22m0 of 12 total
-[1mTests:       [22m0 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        0 s, estimated 64 s
-[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/scraper/[22m[1mscraper.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msite.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msiteTag.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1mscraperSession.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msiteInstructions.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1mroutine.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1mscraperJob.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1muserSettings.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/database/[22m[1msite.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/database/[22m[1msiteTag.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/utils/[22m[1mcrypto.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/[22m[1mrequestHandler.spec.ts[22m
-
-[1mTest Suites: [22m0 of 12 total
-[1mTests:       [22m0 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        1 s, estimated 64 s
-[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/scraper/[22m[1mscraper.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msite.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msiteTag.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1mscraperSession.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msiteInstructions.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1mroutine.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1mscraperJob.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1muserSettings.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/database/[22m[1msite.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/database/[22m[1msiteTag.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/utils/[22m[1mcrypto.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/[22m[1mrequestHandler.spec.ts[22m
-
-[1mTest Suites: [22m0 of 12 total
-[1mTests:       [22m0 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        2 s, estimated 64 s
-[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/scraper/[22m[1mscraper.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msite.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msiteTag.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1mscraperSession.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msiteInstructions.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1mroutine.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1mscraperJob.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1muserSettings.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/database/[22m[1msite.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/database/[22m[1msiteTag.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/utils/[22m[1mcrypto.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/[22m[1mrequestHandler.spec.ts[22m
-
-[1mTest Suites: [22m0 of 12 total
-[1mTests:       [22m0 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        3 s, estimated 64 s
-[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/scraper/[22m[1mscraper.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msite.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msiteTag.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1mscraperSession.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msiteInstructions.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1mroutine.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1mscraperJob.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1muserSettings.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/database/[22m[1msite.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/database/[22m[1msiteTag.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/utils/[22m[1mcrypto.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/[22m[1mrequestHandler.spec.ts[22m
-
-[1mTest Suites: [22m0 of 12 total
-[1mTests:       [22m0 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        4 s, estimated 64 s
-[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[0m[7m[1m[32m PASS [39m[22m[27m[0m [2msrc/utils/[22m[1mcrypto.spec.ts[22m
-
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/scraper/[22m[1mscraper.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msite.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msiteTag.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1mscraperSession.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msiteInstructions.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1mroutine.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1mscraperJob.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1muserSettings.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/database/[22m[1msite.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/database/[22m[1msiteTag.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/utils/[22m[1mcrypto.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/[22m[1mrequestHandler.spec.ts[22m
-
-[1mTest Suites: [22m0 of 12 total
-[1mTests:       [22m0 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        4 s, estimated 64 s
-[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/scraper/[22m[1mscraper.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msite.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msiteTag.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1mscraperSession.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msiteInstructions.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1mroutine.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1mscraperJob.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1muserSettings.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/database/[22m[1msite.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/database/[22m[1msiteTag.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/utils/[22m[1mcrypto.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/[22m[1mrequestHandler.spec.ts[22m
-
-[1mTest Suites: [22m0 of 12 total
-[1mTests:       [22m0 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        4 s, estimated 64 s
-[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/scraper/[22m[1mscraper.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msite.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msiteTag.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1mscraperSession.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msiteInstructions.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1mroutine.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1mscraperJob.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1muserSettings.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/database/[22m[1msite.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/database/[22m[1msiteTag.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/[22m[1mrequestHandler.spec.ts[22m
-
-[1mTest Suites: [22m[1m[32m1 passed[39m[22m, 1 of 12 total
-[1mTests:       [22m[1m[32m2 passed[39m[22m, 2 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        5 s, estimated 64 s
-[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/scraper/[22m[1mscraper.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msite.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msiteTag.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1mscraperSession.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msiteInstructions.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1mroutine.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1mscraperJob.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1muserSettings.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/database/[22m[1msite.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/database/[22m[1msiteTag.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/[22m[1mrequestHandler.spec.ts[22m
-
-[1mTest Suites: [22m[1m[32m1 passed[39m[22m, 1 of 12 total
-[1mTests:       [22m[1m[32m2 passed[39m[22m, 2 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        5 s, estimated 64 s
-[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[0m[7m[1m[32m PASS [39m[22m[27m[0m [2msrc/database/[22m[1msiteTag.spec.ts[22m ([0m[1m[41m5.783 s[49m[22m[0m)
-
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/scraper/[22m[1mscraper.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msite.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msiteTag.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1mscraperSession.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msiteInstructions.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1mroutine.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1mscraperJob.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1muserSettings.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/database/[22m[1msite.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/database/[22m[1msiteTag.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/[22m[1mrequestHandler.spec.ts[22m
-
-[1mTest Suites: [22m[1m[32m1 passed[39m[22m, 1 of 12 total
-[1mTests:       [22m[1m[32m2 passed[39m[22m, 2 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        5 s, estimated 64 s
-[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[0m[7m[1m[32m PASS [39m[22m[27m[0m [2msrc/database/[22m[1msite.spec.ts[22m ([0m[1m[41m5.818 s[49m[22m[0m)
-
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/scraper/[22m[1mscraper.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msite.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msiteTag.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1mscraperSession.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msiteInstructions.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1mroutine.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1mscraperJob.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1muserSettings.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/database/[22m[1msite.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/database/[22m[1msiteTag.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/[22m[1mrequestHandler.spec.ts[22m
-
-[1mTest Suites: [22m[1m[32m1 passed[39m[22m, 1 of 12 total
-[1mTests:       [22m[1m[32m2 passed[39m[22m, 2 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        5 s, estimated 64 s
-[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/scraper/[22m[1mscraper.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msite.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msiteTag.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1mscraperSession.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msiteInstructions.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1mroutine.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1mscraperJob.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1muserSettings.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/[22m[1mrequestHandler.spec.ts[22m
-
-[1mTest Suites: [22m[1m[32m3 passed[39m[22m, 3 of 12 total
-[1mTests:       [22m[1m[32m9 passed[39m[22m, 9 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        5 s, estimated 64 s
-[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/scraper/[22m[1mscraper.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msite.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msiteTag.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1mscraperSession.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msiteInstructions.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1mroutine.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1mscraperJob.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1muserSettings.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/[22m[1mrequestHandler.spec.ts[22m
-
-[1mTest Suites: [22m[1m[32m3 passed[39m[22m, 3 of 12 total
-[1mTests:       [22m[1m[32m9 passed[39m[22m, 9 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        6 s, estimated 64 s
-[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[0m[7m[1m[32m PASS [39m[22m[27m[0m [2msrc/api/internal/[22m[1mrequestHandler.spec.ts[22m ([0m[1m[41m6.396 s[49m[22m[0m)
-
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/scraper/[22m[1mscraper.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msite.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msiteTag.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1mscraperSession.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msiteInstructions.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1mroutine.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1mscraperJob.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1muserSettings.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/[22m[1mrequestHandler.spec.ts[22m
-
-[1mTest Suites: [22m[1m[32m3 passed[39m[22m, 3 of 12 total
-[1mTests:       [22m[1m[32m9 passed[39m[22m, 9 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        6 s, estimated 64 s
-[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/scraper/[22m[1mscraper.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msite.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msiteTag.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1mscraperSession.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msiteInstructions.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1mroutine.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1mscraperJob.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1muserSettings.handler.spec.ts[22m
-
-[1mTest Suites: [22m[1m[32m4 passed[39m[22m, 4 of 12 total
-[1mTests:       [22m[1m[32m10 passed[39m[22m, 10 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        6 s, estimated 64 s
-[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/scraper/[22m[1mscraper.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msite.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msiteTag.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1mscraperSession.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msiteInstructions.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1mroutine.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1mscraperJob.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1muserSettings.handler.spec.ts[22m
-
-[1mTest Suites: [22m[1m[32m4 passed[39m[22m, 4 of 12 total
-[1mTests:       [22m[1m[32m16 passed[39m[22m, 16 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        7 s, estimated 64 s
-[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[0m[7m[1m[32m PASS [39m[22m[27m[0m [2msrc/api/internal/handlers/[22m[1mroutine.handler.spec.ts[22m ([0m[1m[41m7.204 s[49m[22m[0m)
-
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/scraper/[22m[1mscraper.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msite.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msiteTag.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1mscraperSession.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msiteInstructions.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1mroutine.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1mscraperJob.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1muserSettings.handler.spec.ts[22m
-
-[1mTest Suites: [22m[1m[32m4 passed[39m[22m, 4 of 12 total
-[1mTests:       [22m[1m[32m16 passed[39m[22m, 16 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        7 s, estimated 64 s
-[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A  [1m● [22mConsole
-
-    [2mconsole.log[22m
-      [API request] [name: getRoutines] [args: []]
-[2m[22m
-[2m      [2mat [22m[2msrc/api/internal/helpers.ts[2m:24:13[22m[2m[22m
-
-    [2mconsole.log[22m
-      [API request] [name: getRoutine] [args: [1]]
-[2m[22m
-[2m      [2mat [22m[2msrc/api/internal/helpers.ts[2m:24:13[22m[2m[22m
-
-
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/scraper/[22m[1mscraper.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msite.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msiteTag.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1mscraperSession.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msiteInstructions.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1mroutine.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1mscraperJob.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1muserSettings.handler.spec.ts[22m
-
-[1mTest Suites: [22m[1m[32m4 passed[39m[22m, 4 of 12 total
-[1mTests:       [22m[1m[32m16 passed[39m[22m, 16 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        7 s, estimated 64 s
-[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[0m[7m[1m[32m PASS [39m[22m[27m[0m [2msrc/api/internal/handlers/[22m[1muserSettings.handler.spec.ts[22m ([0m[1m[41m7.221 s[49m[22m[0m)
-
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/scraper/[22m[1mscraper.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msite.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msiteTag.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1mscraperSession.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msiteInstructions.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1mroutine.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1mscraperJob.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1muserSettings.handler.spec.ts[22m
-
-[1mTest Suites: [22m[1m[32m4 passed[39m[22m, 4 of 12 total
-[1mTests:       [22m[1m[32m16 passed[39m[22m, 16 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        7 s, estimated 64 s
-[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A  [1m● [22mConsole
-
-    [2mconsole.log[22m
-      [API request] [name: getUserSettings] [args: []]
-[2m[22m
-[2m      [2mat [22m[2msrc/api/internal/helpers.ts[2m:24:13[22m[2m[22m
-
-    [2mconsole.log[22m
-      [API request] [name: setUserSetting] [args: ["tablesCompactMode",false]]
-[2m[22m
-[2m      [2mat [22m[2msrc/api/internal/helpers.ts[2m:24:13[22m[2m[22m
-
-
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/scraper/[22m[1mscraper.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msite.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msiteTag.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1mscraperSession.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msiteInstructions.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1mroutine.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1mscraperJob.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1muserSettings.handler.spec.ts[22m
-
-[1mTest Suites: [22m[1m[32m4 passed[39m[22m, 4 of 12 total
-[1mTests:       [22m[1m[32m16 passed[39m[22m, 16 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        7 s, estimated 64 s
-[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[0m[7m[1m[32m PASS [39m[22m[27m[0m [2msrc/api/internal/handlers/[22m[1mscraperJob.handler.spec.ts[22m ([0m[1m[41m7.213 s[49m[22m[0m)
-
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/scraper/[22m[1mscraper.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msite.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msiteTag.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1mscraperSession.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msiteInstructions.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1mroutine.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1mscraperJob.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1muserSettings.handler.spec.ts[22m
-
-[1mTest Suites: [22m[1m[32m4 passed[39m[22m, 4 of 12 total
-[1mTests:       [22m[1m[32m16 passed[39m[22m, 16 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        7 s, estimated 64 s
-[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A  [1m● [22mConsole
-
-    [2mconsole.log[22m
-      [API request] [name: getScraperJobs] [args: [{"count":20}]]
-[2m[22m
-[2m      [2mat [22m[2msrc/api/internal/helpers.ts[2m:24:13[22m[2m[22m
-
-    [2mconsole.log[22m
-      [API request] [name: createScraperJob] [args: [{"name":"Mocked scraper job 1","startUrl":"https://mocked-site.com","execution":[{"type":"condition","condition":{"condition":{},"flowAction":{"type":"jump","targetExecutionItemIndex":1}},"step":{}},{"type":"step","condition":{},"step":{"type":"redirect","data":{"url":"https://mocked-site.com"}}}]}]]
-[2m[22m
-[2m      [2mat [22m[2msrc/api/internal/helpers.ts[2m:24:13[22m[2m[22m
-
-
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/scraper/[22m[1mscraper.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msite.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msiteTag.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1mscraperSession.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msiteInstructions.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1mroutine.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1mscraperJob.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1muserSettings.handler.spec.ts[22m
-
-[1mTest Suites: [22m[1m[32m4 passed[39m[22m, 4 of 12 total
-[1mTests:       [22m[1m[32m16 passed[39m[22m, 16 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        7 s, estimated 64 s
-[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[0m[7m[1m[32m PASS [39m[22m[27m[0m [2msrc/api/internal/handlers/[22m[1msiteInstructions.handler.spec.ts[22m ([0m[1m[41m7.225 s[49m[22m[0m)
-
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/scraper/[22m[1mscraper.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msite.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msiteTag.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1mscraperSession.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msiteInstructions.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1mroutine.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1mscraperJob.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1muserSettings.handler.spec.ts[22m
-
-[1mTest Suites: [22m[1m[32m4 passed[39m[22m, 4 of 12 total
-[1mTests:       [22m[1m[32m16 passed[39m[22m, 16 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        7 s, estimated 64 s
-[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A  [1m● [22mConsole
-
-    [2mconsole.log[22m
-      [API request] [name: getSiteInstructions] [args: [1]]
-[2m[22m
-[2m      [2mat [22m[2msrc/api/internal/helpers.ts[2m:24:13[22m[2m[22m
-
-    [2mconsole.log[22m
-      [API request] [name: setSiteInstructions] [args: [1,{"procedures":[],"actions":[]}]]
-[2m[22m
-[2m      [2mat [22m[2msrc/api/internal/helpers.ts[2m:24:13[22m[2m[22m
-
-
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/scraper/[22m[1mscraper.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msite.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msiteTag.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1mscraperSession.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msiteInstructions.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1mroutine.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1mscraperJob.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1muserSettings.handler.spec.ts[22m
-
-[1mTest Suites: [22m[1m[32m4 passed[39m[22m, 4 of 12 total
-[1mTests:       [22m[1m[32m16 passed[39m[22m, 16 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        7 s, estimated 64 s
-[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/scraper/[22m[1mscraper.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msite.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msiteTag.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1mscraperSession.handler.spec.ts[22m
-
-[1mTest Suites: [22m[1m[32m8 passed[39m[22m, 8 of 12 total
-[1mTests:       [22m[1m[32m23 passed[39m[22m, 23 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        7 s, estimated 64 s
-[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[0m[7m[1m[32m PASS [39m[22m[27m[0m [2msrc/api/internal/handlers/[22m[1mscraperSession.handler.spec.ts[22m ([0m[1m[41m7.299 s[49m[22m[0m)
-
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/scraper/[22m[1mscraper.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msite.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msiteTag.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1mscraperSession.handler.spec.ts[22m
-
-[1mTest Suites: [22m[1m[32m8 passed[39m[22m, 8 of 12 total
-[1mTests:       [22m[1m[32m23 passed[39m[22m, 23 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        7 s, estimated 64 s
-[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A  [1m● [22mConsole
-
-    [2mconsole.info[22m
-      [Scraper (mode: TESTING) (id: k9tsgkap)] Instance created
-[2m[22m
-[2m      [2mat Logger.info ([22m[2m../../packages/common/src/logger.ts[2m:12:13)[22m[2m[22m
-
-    [2mconsole.log[22m
-      [API request] [name: getSiteInstructionsTestingSessions] [args: []]
-[2m[22m
-[2m      [2mat [22m[2msrc/api/internal/helpers.ts[2m:24:13[22m[2m[22m
-
-    [2mconsole.info[22m
-      Browser initialized with user agent: Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10_6_5; en-US) AppleWebKit/534.13 (KHTML, like Gecko) Chrome/9.0.597.15 Safari/534.13; slot: 0
-[2m[22m
-[2m      [2mat [22m[2msrc/scraper/scraperBrowser.ts[2m:118:17[22m[2m[22m
-
-    [2mconsole.log[22m
-      [API request] [name: getSiteInstructionsTestingSessions] [args: []]
-[2m[22m
-[2m      [2mat [22m[2msrc/api/internal/helpers.ts[2m:24:13[22m[2m[22m
-
-
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/scraper/[22m[1mscraper.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msite.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msiteTag.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1mscraperSession.handler.spec.ts[22m
-
-[1mTest Suites: [22m[1m[32m8 passed[39m[22m, 8 of 12 total
-[1mTests:       [22m[1m[32m23 passed[39m[22m, 23 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        7 s, estimated 64 s
-[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/scraper/[22m[1mscraper.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msite.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msiteTag.handler.spec.ts[22m
-
-[1mTest Suites: [22m[1m[32m9 passed[39m[22m, 9 of 12 total
-[1mTests:       [22m[1m[32m23 passed[39m[22m, 23 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        7 s, estimated 64 s
-[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/scraper/[22m[1mscraper.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msite.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msiteTag.handler.spec.ts[22m
-
-[1mTest Suites: [22m[1m[32m9 passed[39m[22m, 9 of 12 total
-[1mTests:       [22m[1m[32m25 passed[39m[22m, 25 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        7 s, estimated 64 s
-[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/scraper/[22m[1mscraper.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msite.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msiteTag.handler.spec.ts[22m
-
-[1mTest Suites: [22m[1m[32m9 passed[39m[22m, 9 of 12 total
-[1mTests:       [22m[1m[32m25 passed[39m[22m, 25 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        8 s, estimated 64 s
-[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[0m[7m[1m[32m PASS [39m[22m[27m[0m [2msrc/api/internal/handlers/[22m[1msiteTag.handler.spec.ts[22m ([0m[1m[41m8.002 s[49m[22m[0m)
-
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/scraper/[22m[1mscraper.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msite.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msiteTag.handler.spec.ts[22m
-
-[1mTest Suites: [22m[1m[32m9 passed[39m[22m, 9 of 12 total
-[1mTests:       [22m[1m[32m25 passed[39m[22m, 25 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        8 s, estimated 64 s
-[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A  [1m● [22mConsole
-
-    [2mconsole.log[22m
-      [API request] [name: getSiteTags] [args: [{"count":20}]]
-[2m[22m
-[2m      [2mat [22m[2msrc/api/internal/helpers.ts[2m:24:13[22m[2m[22m
-
-    [2mconsole.log[22m
-      [API request] [name: deleteSiteTag] [args: [1]]
-[2m[22m
-[2m      [2mat [22m[2msrc/api/internal/helpers.ts[2m:24:13[22m[2m[22m
-
-    [2mconsole.log[22m
-      [API request] [name: updateSiteTag] [args: [1,{"name":"Mock-1","description":"Mocked site 1"}]]
-[2m[22m
-[2m      [2mat [22m[2msrc/api/internal/helpers.ts[2m:24:13[22m[2m[22m
-
-    [2mconsole.log[22m
-      [API request] [name: createSiteTag] [args: [{"name":"Mock-1","description":"Mocked site 1"}]]
-[2m[22m
-[2m      [2mat [22m[2msrc/api/internal/helpers.ts[2m:24:13[22m[2m[22m
-
-
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/scraper/[22m[1mscraper.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msite.handler.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msiteTag.handler.spec.ts[22m
-
-[1mTest Suites: [22m[1m[32m9 passed[39m[22m, 9 of 12 total
-[1mTests:       [22m[1m[32m25 passed[39m[22m, 25 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        8 s, estimated 64 s
-[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/scraper/[22m[1mscraper.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msite.handler.spec.ts[22m
-
-[1mTest Suites: [22m[1m[32m10 passed[39m[22m, 10 of 12 total
-[1mTests:       [22m[1m[32m27 passed[39m[22m, 27 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        8 s, estimated 64 s
-[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[0m[7m[1m[32m PASS [39m[22m[27m[0m [2msrc/api/internal/handlers/[22m[1msite.handler.spec.ts[22m ([0m[1m[41m8.437 s[49m[22m[0m)
-
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/scraper/[22m[1mscraper.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msite.handler.spec.ts[22m
-
-[1mTest Suites: [22m[1m[32m10 passed[39m[22m, 10 of 12 total
-[1mTests:       [22m[1m[32m27 passed[39m[22m, 27 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        8 s, estimated 64 s
-[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A  [1m● [22mConsole
-
-    [2mconsole.log[22m
-      [API request] [name: getSites] [args: [{"count":20}]]
-[2m[22m
-[2m      [2mat [22m[2msrc/api/internal/helpers.ts[2m:24:13[22m[2m[22m
-
-    [2mconsole.log[22m
-      [API request] [name: getSite] [args: [1]]
-[2m[22m
-[2m      [2mat [22m[2msrc/api/internal/helpers.ts[2m:24:13[22m[2m[22m
-
-    [2mconsole.log[22m
-      [API request] [name: createSite] [args: [{"url":"https://mocked-site.com","language":"en","siteTags":[]}]]
-[2m[22m
-[2m      [2mat [22m[2msrc/api/internal/helpers.ts[2m:24:13[22m[2m[22m
-
-    [2mconsole.log[22m
-      [API request] [name: deleteSite] [args: [1]]
-[2m[22m
-[2m      [2mat [22m[2msrc/api/internal/helpers.ts[2m:24:13[22m[2m[22m
-
-    [2mconsole.log[22m
-      [API request] [name: updateSite] [args: [1,{"url":"https://mocked-site.com","language":"en","siteTags":[]}]]
-[2m[22m
-[2m      [2mat [22m[2msrc/api/internal/helpers.ts[2m:24:13[22m[2m[22m
-
-
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/scraper/[22m[1mscraper.spec.ts[22m
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/api/internal/handlers/[22m[1msite.handler.spec.ts[22m
-
-[1mTest Suites: [22m[1m[32m10 passed[39m[22m, 10 of 12 total
-[1mTests:       [22m[1m[32m27 passed[39m[22m, 27 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        8 s, estimated 64 s
-[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/scraper/[22m[1mscraper.spec.ts[22m
-
-[1mTest Suites: [22m[1m[32m11 passed[39m[22m, 11 of 12 total
-[1mTests:       [22m[1m[32m28 passed[39m[22m, 28 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        8 s, estimated 64 s
-[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/scraper/[22m[1mscraper.spec.ts[22m
-
-[1mTest Suites: [22m[1m[32m11 passed[39m[22m, 11 of 12 total
-[1mTests:       [22m[1m[32m28 passed[39m[22m, 28 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        9 s, estimated 64 s
-[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/scraper/[22m[1mscraper.spec.ts[22m
-
-[1mTest Suites: [22m[1m[32m11 passed[39m[22m, 11 of 12 total
-[1mTests:       [22m[1m[32m29 passed[39m[22m, 29 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        9 s, estimated 64 s
-[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/scraper/[22m[1mscraper.spec.ts[22m
-
-[1mTest Suites: [22m[1m[32m11 passed[39m[22m, 11 of 12 total
-[1mTests:       [22m[1m[32m29 passed[39m[22m, 29 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        10 s, estimated 64 s
-[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/scraper/[22m[1mscraper.spec.ts[22m
-
-[1mTest Suites: [22m[1m[32m11 passed[39m[22m, 11 of 12 total
-[1mTests:       [22m[1m[32m29 passed[39m[22m, 29 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        11 s, estimated 64 s
-[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/scraper/[22m[1mscraper.spec.ts[22m
-
-[1mTest Suites: [22m[1m[32m11 passed[39m[22m, 11 of 12 total
-[1mTests:       [22m[1m[32m30 passed[39m[22m, 30 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        11 s, estimated 64 s
-[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/scraper/[22m[1mscraper.spec.ts[22m
-
-[1mTest Suites: [22m[1m[32m11 passed[39m[22m, 11 of 12 total
-[1mTests:       [22m[1m[32m31 passed[39m[22m, 31 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        11 s, estimated 64 s
-[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/scraper/[22m[1mscraper.spec.ts[22m
-
-[1mTest Suites: [22m[1m[32m11 passed[39m[22m, 11 of 12 total
-[1mTests:       [22m[1m[32m31 passed[39m[22m, 31 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        12 s, estimated 64 s
-[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/scraper/[22m[1mscraper.spec.ts[22m
-
-[1mTest Suites: [22m[1m[32m11 passed[39m[22m, 11 of 12 total
-[1mTests:       [22m[1m[32m31 passed[39m[22m, 31 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        13 s, estimated 64 s
-[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/scraper/[22m[1mscraper.spec.ts[22m
-
-[1mTest Suites: [22m[1m[32m11 passed[39m[22m, 11 of 12 total
-[1mTests:       [22m[1m[32m31 passed[39m[22m, 31 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        14 s, estimated 64 s
-[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/scraper/[22m[1mscraper.spec.ts[22m
-
-[1mTest Suites: [22m[1m[32m11 passed[39m[22m, 11 of 12 total
-[1mTests:       [22m[1m[32m31 passed[39m[22m, 31 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        15 s, estimated 64 s
-[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/scraper/[22m[1mscraper.spec.ts[22m
-
-[1mTest Suites: [22m[1m[32m11 passed[39m[22m, 11 of 12 total
-[1mTests:       [22m[1m[32m31 passed[39m[22m, 31 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        16 s, estimated 64 s
-[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
-  [1m● [22m [31m[1mCannot log after tests are done.[22m Did you forget to wait for something async in your test?[39m
-    Attempted to log "[Scraper (mode: TESTING) (id: k9tsgkap)] Error: Timeout
-        at waitFor (/home/aktyn/Programming/web-scraper/packages/common/src/async.ts:16:13)
-        at ScraperBrowser.descriptor.value (/home/aktyn/Programming/web-scraper/apps/desktop-app/src/scraper/scraperBrowser.ts:177:9)
-        at Scraper.initTestingMode (/home/aktyn/Programming/web-scraper/apps/desktop-app/src/scraper/scraper.ts:138:9)
-        at Scraper.init (/home/aktyn/Programming/web-scraper/apps/desktop-app/src/scraper/scraper.ts:105:17)".
-
-    [0m [90m 14 |[39m     }
-     [90m 15 |[39m     [36mif[39m ([33mDate[39m[33m.[39mnow() [33m-[39m start [33m>[39m timeout) {
-    [31m[1m>[22m[39m[90m 16 |[39m       [36mthrow[39m [36mnew[39m [33mError[39m([32m'Timeout'[39m)
-     [90m    |[39m             [31m[1m^[22m[39m
-     [90m 17 |[39m     }
-     [90m 18 |[39m   }
-     [90m 19 |[39m }[0m
-
-      [2mat waitFor ([22m../../packages/common/src/async.ts[2m:16:13)[22m
-      [2mat ScraperBrowser.descriptor.value ([22msrc/scraper/scraperBrowser.ts[2m:177:9)[22m
-      [2mat Scraper.initTestingMode ([22msrc/scraper/scraper.ts[2m:138:9)[22m
-      [2mat Scraper.init ([22msrc/scraper/scraper.ts[2m:105:17)".[22m
-      [2mat console.error ([22m../../node_modules/@jest/console/build/BufferedConsole.js[2m:127:10)[22m
-      [2mat Logger.error ([22m../../packages/common/src/logger.ts[2m:15:13)[22m
-      [2mat [22msrc/scraper/scraper.ts[2m:145:46[22m
-
-
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/scraper/[22m[1mscraper.spec.ts[22m
-
-[1mTest Suites: [22m[1m[32m11 passed[39m[22m, 11 of 12 total
-[1mTests:       [22m[1m[32m31 passed[39m[22m, 31 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        16 s, estimated 64 s
-[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/scraper/[22m[1mscraper.spec.ts[22m
-
-[1mTest Suites: [22m[1m[32m11 passed[39m[22m, 11 of 12 total
-[1mTests:       [22m[1m[32m31 passed[39m[22m, 31 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        17 s, estimated 64 s
-[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/scraper/[22m[1mscraper.spec.ts[22m
-
-[1mTest Suites: [22m[1m[32m11 passed[39m[22m, 11 of 12 total
-[1mTests:       [22m[1m[32m31 passed[39m[22m, 31 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        18 s, estimated 64 s
-[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/scraper/[22m[1mscraper.spec.ts[22m
-
-[1mTest Suites: [22m[1m[32m11 passed[39m[22m, 11 of 12 total
-[1mTests:       [22m[1m[32m31 passed[39m[22m, 31 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        19 s, estimated 64 s
-[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/scraper/[22m[1mscraper.spec.ts[22m
-
-[1mTest Suites: [22m[1m[32m11 passed[39m[22m, 11 of 12 total
-[1mTests:       [22m[1m[32m32 passed[39m[22m, 32 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        19 s, estimated 64 s
-[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/scraper/[22m[1mscraper.spec.ts[22m
-
-[1mTest Suites: [22m[1m[32m11 passed[39m[22m, 11 of 12 total
-[1mTests:       [22m[1m[32m32 passed[39m[22m, 32 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        20 s, estimated 64 s
-[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/scraper/[22m[1mscraper.spec.ts[22m
-
-[1mTest Suites: [22m[1m[32m11 passed[39m[22m, 11 of 12 total
-[1mTests:       [22m[1m[32m32 passed[39m[22m, 32 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        21 s, estimated 64 s
-[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/scraper/[22m[1mscraper.spec.ts[22m
-
-[1mTest Suites: [22m[1m[32m11 passed[39m[22m, 11 of 12 total
-[1mTests:       [22m[1m[32m32 passed[39m[22m, 32 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        22 s, estimated 64 s
-[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/scraper/[22m[1mscraper.spec.ts[22m
-
-[1mTest Suites: [22m[1m[32m11 passed[39m[22m, 11 of 12 total
-[1mTests:       [22m[1m[32m33 passed[39m[22m, 33 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        22 s, estimated 64 s
-[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/scraper/[22m[1mscraper.spec.ts[22m
-
-[1mTest Suites: [22m[1m[32m11 passed[39m[22m, 11 of 12 total
-[1mTests:       [22m[1m[32m33 passed[39m[22m, 33 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        23 s, estimated 64 s
-[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/scraper/[22m[1mscraper.spec.ts[22m
-
-[1mTest Suites: [22m[1m[32m11 passed[39m[22m, 11 of 12 total
-[1mTests:       [22m[1m[32m33 passed[39m[22m, 33 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        24 s, estimated 64 s
-[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/scraper/[22m[1mscraper.spec.ts[22m
-
-[1mTest Suites: [22m[1m[32m11 passed[39m[22m, 11 of 12 total
-[1mTests:       [22m[1m[32m33 passed[39m[22m, 33 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        25 s, estimated 64 s
-[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/scraper/[22m[1mscraper.spec.ts[22m
-
-[1mTest Suites: [22m[1m[32m11 passed[39m[22m, 11 of 12 total
-[1mTests:       [22m[1m[32m33 passed[39m[22m, 33 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        26 s, estimated 64 s
-[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/scraper/[22m[1mscraper.spec.ts[22m
-
-[1mTest Suites: [22m[1m[32m11 passed[39m[22m, 11 of 12 total
-[1mTests:       [22m[1m[32m33 passed[39m[22m, 33 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        27 s, estimated 64 s
-[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/scraper/[22m[1mscraper.spec.ts[22m
-
-[1mTest Suites: [22m[1m[32m11 passed[39m[22m, 11 of 12 total
-[1mTests:       [22m[1m[32m34 passed[39m[22m, 34 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        27 s, estimated 64 s
-[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/scraper/[22m[1mscraper.spec.ts[22m
-
-[1mTest Suites: [22m[1m[32m11 passed[39m[22m, 11 of 12 total
-[1mTests:       [22m[1m[32m35 passed[39m[22m, 35 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        27 s, estimated 64 s
-[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/scraper/[22m[1mscraper.spec.ts[22m
-
-[1mTest Suites: [22m[1m[32m11 passed[39m[22m, 11 of 12 total
-[1mTests:       [22m[1m[32m35 passed[39m[22m, 35 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        28 s, estimated 64 s
-[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/scraper/[22m[1mscraper.spec.ts[22m
-
-[1mTest Suites: [22m[1m[32m11 passed[39m[22m, 11 of 12 total
-[1mTests:       [22m[1m[32m35 passed[39m[22m, 35 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        29 s, estimated 64 s
-[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/scraper/[22m[1mscraper.spec.ts[22m
-
-[1mTest Suites: [22m[1m[32m11 passed[39m[22m, 11 of 12 total
-[1mTests:       [22m[1m[32m35 passed[39m[22m, 35 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        30 s, estimated 64 s
-[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/scraper/[22m[1mscraper.spec.ts[22m
-
-[1mTest Suites: [22m[1m[32m11 passed[39m[22m, 11 of 12 total
-[1mTests:       [22m[1m[32m35 passed[39m[22m, 35 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        31 s, estimated 64 s
-[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/scraper/[22m[1mscraper.spec.ts[22m
-
-[1mTest Suites: [22m[1m[32m11 passed[39m[22m, 11 of 12 total
-[1mTests:       [22m[1m[32m35 passed[39m[22m, 35 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        32 s, estimated 64 s
-[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/scraper/[22m[1mscraper.spec.ts[22m
-
-[1mTest Suites: [22m[1m[32m11 passed[39m[22m, 11 of 12 total
-[1mTests:       [22m[1m[32m36 passed[39m[22m, 36 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        32 s, estimated 64 s
-[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/scraper/[22m[1mscraper.spec.ts[22m
-
-[1mTest Suites: [22m[1m[32m11 passed[39m[22m, 11 of 12 total
-[1mTests:       [22m[1m[32m36 passed[39m[22m, 36 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        33 s, estimated 64 s
-[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/scraper/[22m[1mscraper.spec.ts[22m
-
-[1mTest Suites: [22m[1m[32m11 passed[39m[22m, 11 of 12 total
-[1mTests:       [22m[1m[32m36 passed[39m[22m, 36 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        34 s, estimated 64 s
-[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/scraper/[22m[1mscraper.spec.ts[22m
-
-[1mTest Suites: [22m[1m[32m11 passed[39m[22m, 11 of 12 total
-[1mTests:       [22m[1m[32m36 passed[39m[22m, 36 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        35 s, estimated 64 s
-[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/scraper/[22m[1mscraper.spec.ts[22m
-
-[1mTest Suites: [22m[1m[32m11 passed[39m[22m, 11 of 12 total
-[1mTests:       [22m[1m[32m36 passed[39m[22m, 36 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        36 s, estimated 64 s
-[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/scraper/[22m[1mscraper.spec.ts[22m
-
-[1mTest Suites: [22m[1m[32m11 passed[39m[22m, 11 of 12 total
-[1mTests:       [22m[1m[32m37 passed[39m[22m, 37 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        37 s, estimated 64 s
-[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/scraper/[22m[1mscraper.spec.ts[22m
-
-[1mTest Suites: [22m[1m[32m11 passed[39m[22m, 11 of 12 total
-[1mTests:       [22m[1m[32m37 passed[39m[22m, 37 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        38 s, estimated 64 s
-[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/scraper/[22m[1mscraper.spec.ts[22m
-
-[1mTest Suites: [22m[1m[32m11 passed[39m[22m, 11 of 12 total
-[1mTests:       [22m[1m[32m37 passed[39m[22m, 37 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        39 s, estimated 64 s
-[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/scraper/[22m[1mscraper.spec.ts[22m
-
-[1mTest Suites: [22m[1m[32m11 passed[39m[22m, 11 of 12 total
-[1mTests:       [22m[1m[32m37 passed[39m[22m, 37 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        40 s, estimated 64 s
-[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/scraper/[22m[1mscraper.spec.ts[22m
-
-[1mTest Suites: [22m[1m[32m11 passed[39m[22m, 11 of 12 total
-[1mTests:       [22m[1m[32m37 passed[39m[22m, 37 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        41 s, estimated 64 s
-[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/scraper/[22m[1mscraper.spec.ts[22m
-
-[1mTest Suites: [22m[1m[32m11 passed[39m[22m, 11 of 12 total
-[1mTests:       [22m[1m[32m37 passed[39m[22m, 37 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        42 s, estimated 64 s
-[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/scraper/[22m[1mscraper.spec.ts[22m
-
-[1mTest Suites: [22m[1m[32m11 passed[39m[22m, 11 of 12 total
-[1mTests:       [22m[1m[32m38 passed[39m[22m, 38 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        42 s, estimated 64 s
-[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/scraper/[22m[1mscraper.spec.ts[22m
-
-[1mTest Suites: [22m[1m[32m11 passed[39m[22m, 11 of 12 total
-[1mTests:       [22m[1m[32m38 passed[39m[22m, 38 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        43 s, estimated 64 s
-[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/scraper/[22m[1mscraper.spec.ts[22m
-
-[1mTest Suites: [22m[1m[32m11 passed[39m[22m, 11 of 12 total
-[1mTests:       [22m[1m[32m38 passed[39m[22m, 38 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        44 s, estimated 64 s
-[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/scraper/[22m[1mscraper.spec.ts[22m
-
-[1mTest Suites: [22m[1m[32m11 passed[39m[22m, 11 of 12 total
-[1mTests:       [22m[1m[32m38 passed[39m[22m, 38 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        45 s, estimated 64 s
-[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/scraper/[22m[1mscraper.spec.ts[22m
-
-[1mTest Suites: [22m[1m[32m11 passed[39m[22m, 11 of 12 total
-[1mTests:       [22m[1m[32m38 passed[39m[22m, 38 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        46 s, estimated 64 s
-[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/scraper/[22m[1mscraper.spec.ts[22m
-
-[1mTest Suites: [22m[1m[32m11 passed[39m[22m, 11 of 12 total
-[1mTests:       [22m[1m[32m38 passed[39m[22m, 38 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        47 s, estimated 64 s
-[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/scraper/[22m[1mscraper.spec.ts[22m
-
-[1mTest Suites: [22m[1m[32m11 passed[39m[22m, 11 of 12 total
-[1mTests:       [22m[1m[32m39 passed[39m[22m, 39 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        47 s, estimated 64 s
-[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/scraper/[22m[1mscraper.spec.ts[22m
-
-[1mTest Suites: [22m[1m[32m11 passed[39m[22m, 11 of 12 total
-[1mTests:       [22m[1m[32m39 passed[39m[22m, 39 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        48 s, estimated 64 s
-[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/scraper/[22m[1mscraper.spec.ts[22m
-
-[1mTest Suites: [22m[1m[32m11 passed[39m[22m, 11 of 12 total
-[1mTests:       [22m[1m[32m39 passed[39m[22m, 39 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        49 s, estimated 64 s
-[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/scraper/[22m[1mscraper.spec.ts[22m
-
-[1mTest Suites: [22m[1m[32m11 passed[39m[22m, 11 of 12 total
-[1mTests:       [22m[1m[32m39 passed[39m[22m, 39 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        50 s, estimated 64 s
-[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/scraper/[22m[1mscraper.spec.ts[22m
-
-[1mTest Suites: [22m[1m[32m11 passed[39m[22m, 11 of 12 total
-[1mTests:       [22m[1m[32m40 passed[39m[22m, 40 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        51 s, estimated 64 s
-[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/scraper/[22m[1mscraper.spec.ts[22m
-
-[1mTest Suites: [22m[1m[32m11 passed[39m[22m, 11 of 12 total
-[1mTests:       [22m[1m[32m40 passed[39m[22m, 40 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        52 s, estimated 64 s
-[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/scraper/[22m[1mscraper.spec.ts[22m
-
-[1mTest Suites: [22m[1m[32m11 passed[39m[22m, 11 of 12 total
-[1mTests:       [22m[1m[32m40 passed[39m[22m, 40 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        53 s, estimated 64 s
-[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/scraper/[22m[1mscraper.spec.ts[22m
-
-[1mTest Suites: [22m[1m[32m11 passed[39m[22m, 11 of 12 total
-[1mTests:       [22m[1m[32m40 passed[39m[22m, 40 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        54 s, estimated 64 s
-[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/scraper/[22m[1mscraper.spec.ts[22m
-
-[1mTest Suites: [22m[1m[32m11 passed[39m[22m, 11 of 12 total
-[1mTests:       [22m[1m[32m41 passed[39m[22m, 41 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        54 s, estimated 64 s
-[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/scraper/[22m[1mscraper.spec.ts[22m
-
-[1mTest Suites: [22m[1m[32m11 passed[39m[22m, 11 of 12 total
-[1mTests:       [22m[1m[32m41 passed[39m[22m, 41 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        55 s, estimated 64 s
-[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/scraper/[22m[1mscraper.spec.ts[22m
-
-[1mTest Suites: [22m[1m[32m11 passed[39m[22m, 11 of 12 total
-[1mTests:       [22m[1m[32m41 passed[39m[22m, 41 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        56 s, estimated 64 s
-[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/scraper/[22m[1mscraper.spec.ts[22m
-
-[1mTest Suites: [22m[1m[32m11 passed[39m[22m, 11 of 12 total
-[1mTests:       [22m[1m[32m41 passed[39m[22m, 41 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        57 s, estimated 64 s
-[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/scraper/[22m[1mscraper.spec.ts[22m
-
-[1mTest Suites: [22m[1m[32m11 passed[39m[22m, 11 of 12 total
-[1mTests:       [22m[1m[32m41 passed[39m[22m, 41 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        58 s, estimated 64 s
-[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/scraper/[22m[1mscraper.spec.ts[22m
-
-[1mTest Suites: [22m[1m[32m11 passed[39m[22m, 11 of 12 total
-[1mTests:       [22m[1m[32m42 passed[39m[22m, 42 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        58 s, estimated 64 s
-[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/scraper/[22m[1mscraper.spec.ts[22m
-
-[1mTest Suites: [22m[1m[32m11 passed[39m[22m, 11 of 12 total
-[1mTests:       [22m[1m[32m42 passed[39m[22m, 42 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        59 s, estimated 64 s
-[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/scraper/[22m[1mscraper.spec.ts[22m
-
-[1mTest Suites: [22m[1m[32m11 passed[39m[22m, 11 of 12 total
-[1mTests:       [22m[1m[32m42 passed[39m[22m, 42 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        60 s, estimated 64 s
-[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/scraper/[22m[1mscraper.spec.ts[22m
-
-[1mTest Suites: [22m[1m[32m11 passed[39m[22m, 11 of 12 total
-[1mTests:       [22m[1m[32m42 passed[39m[22m, 42 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        61 s, estimated 64 s
-[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/scraper/[22m[1mscraper.spec.ts[22m
-
-[1mTest Suites: [22m[1m[32m11 passed[39m[22m, 11 of 12 total
-[1mTests:       [22m[1m[32m42 passed[39m[22m, 42 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        62 s, estimated 64 s
-[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/scraper/[22m[1mscraper.spec.ts[22m
-
-[1mTest Suites: [22m[1m[32m11 passed[39m[22m, 11 of 12 total
-[1mTests:       [22m[1m[32m43 passed[39m[22m, 43 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        62 s, estimated 64 s
-[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/scraper/[22m[1mscraper.spec.ts[22m
-
-[1mTest Suites: [22m[1m[32m11 passed[39m[22m, 11 of 12 total
-[1mTests:       [22m[1m[32m43 passed[39m[22m, 43 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        63 s, estimated 64 s
-[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[32m█[39m[37m█[39m[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/scraper/[22m[1mscraper.spec.ts[22m
-
-[1mTest Suites: [22m[1m[32m11 passed[39m[22m, 11 of 12 total
-[1mTests:       [22m[1m[32m43 passed[39m[22m, 43 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        64 s[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A[0m[7m[1m[32m PASS [39m[22m[27m[0m [2msrc/scraper/[22m[1mscraper.spec.ts[22m ([0m[1m[41m64.244 s[49m[22m[0m)
-
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/scraper/[22m[1mscraper.spec.ts[22m
-
-[1mTest Suites: [22m[1m[32m11 passed[39m[22m, 11 of 12 total
-[1mTests:       [22m[1m[32m43 passed[39m[22m, 43 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        64 s[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A  [1m● [22mConsole
-
-    [2mconsole.info[22m
-      [Scraper (mode: PREVIEW) (id: 1t0aeqeq)] Instance created
-[2m[22m
-[2m      [2mat Logger.info ([22m[2m../../packages/common/src/logger.ts[2m:12:13)[22m[2m[22m
-
-    [2mconsole.info[22m
-      Browser initialized with user agent: Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.36 (KHTML like Gecko) Chrome/28.0.1469.0 Safari/537.36; slot: 0
-[2m[22m
-[2m      [2mat [22m[2msrc/scraper/scraperBrowser.ts[2m:118:17[22m[2m[22m
-
-    [2mconsole.info[22m
-      [Scraper (mode: TESTING) (id: 4m1ntvo3)] Instance created
-[2m[22m
-[2m      [2mat Logger.info ([22m[2m../../packages/common/src/logger.ts[2m:12:13)[22m[2m[22m
-
-    [2mconsole.info[22m
-      Browser initialized with user agent: Mozilla/5.0 (MSIE 9.0; Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.79 Safari/537.36 Edge/14.14931; slot: 0
-[2m[22m
-[2m      [2mat [22m[2msrc/scraper/scraperBrowser.ts[2m:118:17[22m[2m[22m
-
-    [2mconsole.info[22m
-      [Scraper (mode: TESTING) (id: 4m1ntvo3)] Performing action step: wait
-[2m[22m
-[2m      [2mat Logger.info ([22m[2m../../packages/common/src/logger.ts[2m:12:13)[22m[2m[22m
-
-    [2mconsole.info[22m
-      [Scraper (mode: TESTING) (id: 05auibbi)] Instance created
-[2m[22m
-[2m      [2mat Logger.info ([22m[2m../../packages/common/src/logger.ts[2m:12:13)[22m[2m[22m
-
-    [2mconsole.info[22m
-      Browser initialized with user agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.84 Safari/537.36; slot: 0
-[2m[22m
-[2m      [2mat [22m[2msrc/scraper/scraperBrowser.ts[2m:118:17[22m[2m[22m
-
-    [2mconsole.info[22m
-      [Scraper (mode: TESTING) (id: 05auibbi)] Performing action step: waitForElement
-[2m[22m
-[2m      [2mat Logger.info ([22m[2m../../packages/common/src/logger.ts[2m:12:13)[22m[2m[22m
-
-    [2mconsole.info[22m
-      [Scraper (mode: TESTING) (id: 6gu7vntc)] Instance created
-[2m[22m
-[2m      [2mat Logger.info ([22m[2m../../packages/common/src/logger.ts[2m:12:13)[22m[2m[22m
-
-    [2mconsole.info[22m
-      Browser initialized with user agent: Mozilla/5.0 (X11; U; Linux i686; en-US) AppleWebKit/532.8 (KHTML, like Gecko) Chrome/4.0.277.0 Safari/532.8; slot: 0
-[2m[22m
-[2m      [2mat [22m[2msrc/scraper/scraperBrowser.ts[2m:118:17[22m[2m[22m
-
-    [2mconsole.info[22m
-      [Scraper (mode: TESTING) (id: 6gu7vntc)] Performing action step: waitForElement
-[2m[22m
-[2m      [2mat Logger.info ([22m[2m../../packages/common/src/logger.ts[2m:12:13)[22m[2m[22m
-
-    [2mconsole.info[22m
-      [Scraper (mode: TESTING) (id: fro24iu0)] Instance created
-[2m[22m
-[2m      [2mat Logger.info ([22m[2m../../packages/common/src/logger.ts[2m:12:13)[22m[2m[22m
-
-    [2mconsole.info[22m
-      Browser initialized with user agent: Mozilla/5.0 (X11; CrOS i686 2268.111.0) AppleWebKit/536.11 (KHTML, like Gecko) Chrome/20.0.1132.57 Safari/536.11; slot: 0
-[2m[22m
-[2m      [2mat [22m[2msrc/scraper/scraperBrowser.ts[2m:118:17[22m[2m[22m
-
-    [2mconsole.info[22m
-      [Scraper (mode: TESTING) (id: fro24iu0)] Performing action step: pressButton
-[2m[22m
-[2m      [2mat Logger.info ([22m[2m../../packages/common/src/logger.ts[2m:12:13)[22m[2m[22m
-
-    [2mconsole.info[22m
-      [Scraper (mode: TESTING) (id: 1n9ddvm5)] Instance created
-[2m[22m
-[2m      [2mat Logger.info ([22m[2m../../packages/common/src/logger.ts[2m:12:13)[22m[2m[22m
-
-    [2mconsole.info[22m
-      Browser initialized with user agent: Mozilla/5.0 (X11; U; Linux x86_64; en-US) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/30.0.1599.114 Safari/537.36 Puffin/4.5.0IT; slot: 0
-[2m[22m
-[2m      [2mat [22m[2msrc/scraper/scraperBrowser.ts[2m:118:17[22m[2m[22m
-
-    [2mconsole.info[22m
-      [Scraper (mode: TESTING) (id: 1n9ddvm5)] Performing action step: pressButton
-[2m[22m
-[2m      [2mat Logger.info ([22m[2m../../packages/common/src/logger.ts[2m:12:13)[22m[2m[22m
-
-    [2mconsole.info[22m
-      [Scraper (mode: TESTING) (id: f2hckbha)] Instance created
-[2m[22m
-[2m      [2mat Logger.info ([22m[2m../../packages/common/src/logger.ts[2m:12:13)[22m[2m[22m
-
-    [2mconsole.info[22m
-      Browser initialized with user agent: Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/535.8 (KHTML, like Gecko) Beamrise/17.2.0.9 Chrome/17.0.939.0 Safari/535.8; slot: 0
-[2m[22m
-[2m      [2mat [22m[2msrc/scraper/scraperBrowser.ts[2m:118:17[22m[2m[22m
-
-    [2mconsole.info[22m
-      [Scraper (mode: TESTING) (id: f2hckbha)] Performing action step: checkError
-[2m[22m
-[2m      [2mat Logger.info ([22m[2m../../packages/common/src/logger.ts[2m:12:13)[22m[2m[22m
-
-    [2mconsole.info[22m
-      [Scraper (mode: TESTING) (id: f2hckbha)] Performing action step: checkSuccess
-[2m[22m
-[2m      [2mat Logger.info ([22m[2m../../packages/common/src/logger.ts[2m:12:13)[22m[2m[22m
-
-    [2mconsole.info[22m
-      [Scraper (mode: TESTING) (id: cnc2sh8a)] Instance created
-[2m[22m
-[2m      [2mat Logger.info ([22m[2m../../packages/common/src/logger.ts[2m:12:13)[22m[2m[22m
-
-    [2mconsole.info[22m
-      Browser initialized with user agent: Mozilla/5.0 (X11; FreeBSD amd64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/35.0.1916.153 Safari/537.36; slot: 0
-[2m[22m
-[2m      [2mat [22m[2msrc/scraper/scraperBrowser.ts[2m:118:17[22m[2m[22m
-
-    [2mconsole.info[22m
-      [Scraper (mode: TESTING) (id: cnc2sh8a)] Performing action step: checkError
-[2m[22m
-[2m      [2mat Logger.info ([22m[2m../../packages/common/src/logger.ts[2m:12:13)[22m[2m[22m
-
-    [2mconsole.info[22m
-      [Scraper (mode: TESTING) (id: pth35d4j)] Instance created
-[2m[22m
-[2m      [2mat Logger.info ([22m[2m../../packages/common/src/logger.ts[2m:12:13)[22m[2m[22m
-
-    [2mconsole.info[22m
-      Browser initialized with user agent: Mozilla/5.0 (Windows NT 10.0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36 Edge/12.10240; slot: 0
-[2m[22m
-[2m      [2mat [22m[2msrc/scraper/scraperBrowser.ts[2m:118:17[22m[2m[22m
-
-    [2mconsole.info[22m
-      [Scraper (mode: TESTING) (id: pth35d4j)] Performing action step: checkSuccess
-[2m[22m
-[2m      [2mat Logger.info ([22m[2m../../packages/common/src/logger.ts[2m:12:13)[22m[2m[22m
-
-    [2mconsole.info[22m
-      [Scraper (mode: TESTING) (id: gl0murla)] Instance created
-[2m[22m
-[2m      [2mat Logger.info ([22m[2m../../packages/common/src/logger.ts[2m:12:13)[22m[2m[22m
-
-    [2mconsole.info[22m
-      Browser initialized with user agent: Mozilla/5.0 (X11; FreeBSD amd64) AppleWebKit/537.4 (KHTML like Gecko) Chrome/22.0.1229.79 Safari/537.4; slot: 0
-[2m[22m
-[2m      [2mat [22m[2msrc/scraper/scraperBrowser.ts[2m:118:17[22m[2m[22m
-
-    [2mconsole.info[22m
-      [Scraper (mode: TESTING) (id: gl0murla)] Performing action step: fillInput
-[2m[22m
-[2m      [2mat Logger.info ([22m[2m../../packages/common/src/logger.ts[2m:12:13)[22m[2m[22m
-
-    [2mconsole.info[22m
-      [Scraper (mode: TESTING) (id: 8gpjntqt)] Instance created
-[2m[22m
-[2m      [2mat Logger.info ([22m[2m../../packages/common/src/logger.ts[2m:12:13)[22m[2m[22m
-
-    [2mconsole.info[22m
-      Browser initialized with user agent: Mozilla/5.0 (Windows NT 6.0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/45.0.2454.93 Safari/537.36; slot: 0
-[2m[22m
-[2m      [2mat [22m[2msrc/scraper/scraperBrowser.ts[2m:118:17[22m[2m[22m
-
-    [2mconsole.info[22m
-      [Scraper (mode: TESTING) (id: 8gpjntqt)] Performing action step: fillInput
-[2m[22m
-[2m      [2mat Logger.info ([22m[2m../../packages/common/src/logger.ts[2m:12:13)[22m[2m[22m
-
-    [2mconsole.info[22m
-      [Scraper (mode: TESTING) (id: i62j58r8)] Instance created
-[2m[22m
-[2m      [2mat Logger.info ([22m[2m../../packages/common/src/logger.ts[2m:12:13)[22m[2m[22m
-
-    [2mconsole.info[22m
-      Browser initialized with user agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.90 Safari/537.36; slot: 0
-[2m[22m
-[2m      [2mat [22m[2msrc/scraper/scraperBrowser.ts[2m:118:17[22m[2m[22m
-
-    [2mconsole.info[22m
-      [Scraper (mode: TESTING) (id: i62j58r8)] Performing action step: selectOption
-[2m[22m
-[2m      [2mat Logger.info ([22m[2m../../packages/common/src/logger.ts[2m:12:13)[22m[2m[22m
-
-    [2mconsole.info[22m
-      [Scraper (mode: TESTING) (id: 732s9uul)] Instance created
-[2m[22m
-[2m      [2mat Logger.info ([22m[2m../../packages/common/src/logger.ts[2m:12:13)[22m[2m[22m
-
-    [2mconsole.info[22m
-      Browser initialized with user agent: Mozilla/5.0 (X11; Linux i686) AppleWebKit/537.22 (KHTML like Gecko) Ubuntu Chromium/25.0.1364.160 Chrome/25.0.1364.160 Safari/537.22; slot: 0
-[2m[22m
-[2m      [2mat [22m[2msrc/scraper/scraperBrowser.ts[2m:118:17[22m[2m[22m
-
-    [2mconsole.info[22m
-      [Scraper (mode: TESTING) (id: 732s9uul)] Performing action step: selectOption
-[2m[22m
-[2m      [2mat Logger.info ([22m[2m../../packages/common/src/logger.ts[2m:12:13)[22m[2m[22m
-
-    [2mconsole.info[22m
-      [Scraper (mode: TESTING) (id: tolvmgql)] Instance created
-[2m[22m
-[2m      [2mat Logger.info ([22m[2m../../packages/common/src/logger.ts[2m:12:13)[22m[2m[22m
-
-    [2mconsole.info[22m
-      Browser initialized with user agent: Mozilla/5.0 (X11; Linux i686) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2166.2 Safari/537.36; slot: 0
-[2m[22m
-[2m      [2mat [22m[2msrc/scraper/scraperBrowser.ts[2m:118:17[22m[2m[22m
-
-    [2mconsole.info[22m
-      [Scraper (mode: TESTING) (id: tolvmgql)] Performing action: mock action
-[2m[22m
-[2m      [2mat Logger.info ([22m[2m../../packages/common/src/logger.ts[2m:12:13)[22m[2m[22m
-
-    [2mconsole.info[22m
-      [Scraper (mode: TESTING) (id: tolvmgql)] Performing action step: wait
-[2m[22m
-[2m      [2mat Logger.info ([22m[2m../../packages/common/src/logger.ts[2m:12:13)[22m[2m[22m
-
-    [2mconsole.info[22m
-      [Scraper (mode: TESTING) (id: tolvmgql)] Performing action step: waitForElement
-[2m[22m
-[2m      [2mat Logger.info ([22m[2m../../packages/common/src/logger.ts[2m:12:13)[22m[2m[22m
-
-    [2mconsole.info[22m
-      [Scraper (mode: TESTING) (id: tolvmgql)] Performing action step: pressButton
-[2m[22m
-[2m      [2mat Logger.info ([22m[2m../../packages/common/src/logger.ts[2m:12:13)[22m[2m[22m
-
-    [2mconsole.info[22m
-      [Scraper (mode: TESTING) (id: tolvmgql)] Performing action step: checkError
-[2m[22m
-[2m      [2mat Logger.info ([22m[2m../../packages/common/src/logger.ts[2m:12:13)[22m[2m[22m
-
-    [2mconsole.info[22m
-      [Scraper (mode: TESTING) (id: tolvmgql)] Performing action step: checkSuccess
-[2m[22m
-[2m      [2mat Logger.info ([22m[2m../../packages/common/src/logger.ts[2m:12:13)[22m[2m[22m
-
-    [2mconsole.info[22m
-      [Scraper (mode: TESTING) (id: mbj7nfqd)] Instance created
-[2m[22m
-[2m      [2mat Logger.info ([22m[2m../../packages/common/src/logger.ts[2m:12:13)[22m[2m[22m
-
-    [2mconsole.info[22m
-      Browser initialized with user agent: Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.78 Safari/537.36 OPR/47.0.2631.55; slot: 0
-[2m[22m
-[2m      [2mat [22m[2msrc/scraper/scraperBrowser.ts[2m:118:17[22m[2m[22m
-
-    [2mconsole.info[22m
-      [Scraper (mode: TESTING) (id: mbj7nfqd)] Performing procedure: accountCheck
-[2m[22m
-[2m      [2mat Logger.info ([22m[2m../../packages/common/src/logger.ts[2m:12:13)[22m[2m[22m
-
-    [2mconsole.info[22m
-      [Scraper (mode: TESTING) (id: mbj7nfqd)] Performing flow starting with action: action.mock action
-[2m[22m
-[2m      [2mat Logger.info ([22m[2m../../packages/common/src/logger.ts[2m:12:13)[22m[2m[22m
-
-    [2mconsole.info[22m
-      [Scraper (mode: TESTING) (id: mbj7nfqd)] Performing action: mock action
-[2m[22m
-[2m      [2mat Logger.info ([22m[2m../../packages/common/src/logger.ts[2m:12:13)[22m[2m[22m
-
-    [2mconsole.info[22m
-      [Scraper (mode: TESTING) (id: mbj7nfqd)] Performing action step: wait
-[2m[22m
-[2m      [2mat Logger.info ([22m[2m../../packages/common/src/logger.ts[2m:12:13)[22m[2m[22m
-
-    [2mconsole.info[22m
-      [Scraper (mode: TESTING) (id: mbj7nfqd)] Performing action step: waitForElement
-[2m[22m
-[2m      [2mat Logger.info ([22m[2m../../packages/common/src/logger.ts[2m:12:13)[22m[2m[22m
-
-    [2mconsole.info[22m
-      [Scraper (mode: TESTING) (id: mbj7nfqd)] Performing action step: pressButton
-[2m[22m
-[2m      [2mat Logger.info ([22m[2m../../packages/common/src/logger.ts[2m:12:13)[22m[2m[22m
-
-    [2mconsole.info[22m
-      [Scraper (mode: TESTING) (id: mbj7nfqd)] Performing action step: checkError
-[2m[22m
-[2m      [2mat Logger.info ([22m[2m../../packages/common/src/logger.ts[2m:12:13)[22m[2m[22m
-
-    [2mconsole.info[22m
-      [Scraper (mode: TESTING) (id: mbj7nfqd)] Performing action step: checkSuccess
-[2m[22m
-[2m      [2mat Logger.info ([22m[2m../../packages/common/src/logger.ts[2m:12:13)[22m[2m[22m
-
-    [2mconsole.info[22m
-      [Scraper (mode: TESTING) (id: mbj7nfqd)] Performing flow starting with action: global.finishProcedure
-[2m[22m
-[2m      [2mat Logger.info ([22m[2m../../packages/common/src/logger.ts[2m:12:13)[22m[2m[22m
-
-    [2mconsole.info[22m
-      [Scraper (mode: TESTING) (id: u08gs4hb)] Instance created
-[2m[22m
-[2m      [2mat Logger.info ([22m[2m../../packages/common/src/logger.ts[2m:12:13)[22m[2m[22m
-
-    [2mconsole.info[22m
-      [Scraper (mode: TESTING) (id: 6464bbrd)] Instance created
-[2m[22m
-[2m      [2mat Logger.info ([22m[2m../../packages/common/src/logger.ts[2m:12:13)[22m[2m[22m
-
-    [2mconsole.info[22m
-      Browser initialized with user agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/47.0.2526.80 Safari/537.36 Vivaldi/1.0.344.37; slot: 0
-[2m[22m
-[2m      [2mat [22m[2msrc/scraper/scraperBrowser.ts[2m:118:17[22m[2m[22m
-
-    [2mconsole.info[22m
-      Browser initialized with user agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2227.0 Safari/537.36; slot: 1
-[2m[22m
-[2m      [2mat [22m[2msrc/scraper/scraperBrowser.ts[2m:118:17[22m[2m[22m
-
-    [2mconsole.info[22m
-      [Scraper (mode: TESTING) (id: u08gs4hb)] Performing action step: wait
-[2m[22m
-[2m      [2mat Logger.info ([22m[2m../../packages/common/src/logger.ts[2m:12:13)[22m[2m[22m
-[2m          at async Promise.all (index 0)[22m
-
-    [2mconsole.info[22m
-      [Scraper (mode: TESTING) (id: 6464bbrd)] Performing action step: wait
-[2m[22m
-[2m      [2mat Logger.info ([22m[2m../../packages/common/src/logger.ts[2m:12:13)[22m[2m[22m
-[2m          at async Promise.all (index 1)[22m
-
-
-[0m[7m[33m[1m RUNS [22m[39m[27m[0m [2msrc/scraper/[22m[1mscraper.spec.ts[22m
-
-[1mTest Suites: [22m[1m[32m11 passed[39m[22m, 11 of 12 total
-[1mTests:       [22m[1m[32m43 passed[39m[22m, 43 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        64 s[K[1A[K[1A[K[1A[K[1A[K[1A[K[1A
-
-[1mTest Suites: [22m[1m[32m12 passed[39m[22m, 12 total
-[1mTests:       [22m[1m[32m44 passed[39m[22m, 44 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        64 s[K[1A[K[1A[K[1A[K[1A[K[1A[999D[K
-[1mTest Suites: [22m[1m[32m12 passed[39m[22m, 12 total
-[1mTests:       [22m[1m[32m44 passed[39m[22m, 44 total
-[1mSnapshots:   [22m0 total
-[1mTime:[22m        64.472 s
-[2mRan all test suites[22m[2m.[22m

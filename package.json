@@ -1,8 +1,10 @@
 {
   "name": "web-scraper",
-  "version": "2.0.0",
+  "version": "3.0.0",
   "private": true,
   "author": "Radosław Krajewski (Aktyn) <aktyn3@gmail.com>",
+  "description": "A highly configurable web scraping tool",
+  "license": "GPL-3.0-only",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Aktyn/web-scraper.git"
@@ -11,34 +13,28 @@
     "url": "https://github.com/Aktyn/web-scraper/issues"
   },
   "homepage": "https://github.com/Aktyn/web-scrapers#readme",
-  "workspaces": {
-    "packages": [
-      "packages/*",
-      "apps/*"
-    ]
-  },
   "scripts": {
-    "dist:all": "yarn workspaces foreach --all --parallel --topological run env && yarn workspaces foreach --all --parallel --topological run build && shx mkdir -p ./apps/desktop-app/user-panel-build && shx cp -R ./apps/user-panel/build/* ./apps/desktop-app/user-panel-build && yarn workspace @web-scraper/desktop-app run db:generate:reset && yarn workspace @web-scraper/desktop-app run dist",
-    "build": "yarn workspaces foreach --all --parallel --topological run build",
-    "dev": "yarn workspaces foreach --all --parallel --interlaced run dev",
-    "db:generate": "yarn workspace @web-scraper/desktop-app run db:generate",
-    "db:generate:reset": "yarn workspace @web-scraper/desktop-app run db:generate:reset",
-    "db:seed": "yarn workspace @web-scraper/desktop-app run db:seed",
-    "db:studio": "yarn workspace @web-scraper/desktop-app run db:studio",
-    "db:reset:seed": "yarn run db:generate:reset && yarn run db:seed",
-    "test": "yarn workspaces foreach --all --parallel --topological run test",
-    "test:ci": "yarn workspaces foreach --all --parallel --topological run test:ci",
-    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
-    "lint": "yarn workspaces foreach --all --parallel --topological run lint",
-    "typecheck": "yarn workspaces foreach --all --parallel --topological run typecheck"
+    "build": "turbo run build",
+    "dev": "turbo run dev",
+    "start": "turbo run start",
+    "test": "turbo run test",
+    "test:coverage": "turbo run test:coverage",
+    "test:watch": "turbo run test:watch",
+    "lint": "turbo run lint",
+    "typecheck": "turbo run typecheck",
+    "format": "prettier --write \"**/*.{js,ts,tsx}\""
   },
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
   "devDependencies": {
-    "prettier": "^3.5.0",
-    "shx": "^0.3.4"
+    "@tsconfig/recommended": "^1.0.8",
+    "@types/node": "^22.15.3",
+    "prettier": "^3.5.3",
+    "ts-node": "^10.9.2",
+    "turbo": "^2.5.2",
+    "typescript": "^5.8.3"
   },
-  "engines": {
-    "npm": ">=7.0.0",
-    "node": ">=16.0.0"
-  },
-  "packageManager": "yarn@4.6.0"
+  "packageManager": "npm@10.9.2"
 }
