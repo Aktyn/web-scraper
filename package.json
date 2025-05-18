@@ -30,10 +30,10 @@
   ],
   "devDependencies": {
     "@tsconfig/recommended": "^1.0.8",
-    "@types/node": "^22.15.3",
+    "@types/node": "^22.15.18",
     "prettier": "^3.5.3",
     "ts-node": "^10.9.2",
-    "turbo": "^2.5.2",
+    "turbo": "^2.5.3",
     "typescript": "^5.8.3"
   },
   "packageManager": "npm@10.9.2"

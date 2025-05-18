@@ -183,7 +183,7 @@
     appearance: textfield !important;
   }
 
-  /* [data-slot="button"], [data-slot="popover-trigger"], [data-slot="accordion-trigger"], [data-slot="dialog-trigger"] {
+  [data-slot="button"], [data-slot="popover-trigger"], [data-slot="accordion-trigger"], [data-slot="dialog-trigger"] {
     @apply not-disabled:cursor-pointer;
   }
 
@@ -191,6 +191,7 @@
     @apply focus-visible:ring-0! not-disabled:focus-visible:border-primary! not-disabled:hover:border-primary/50! transition-colors!;
   }
 
+  /*
   [data-slot="label"] {
     @apply 
       has-[+input]:leading-loose! has-[+input:disabled]:opacity-50 has-[+input:not(:disabled)]:cursor-pointer has-[+input]:text-muted-foreground

@@ -3,7 +3,7 @@ import type { PropsWithChildren } from "react"
 import { useEffect, useRef } from "react"
 
 import json from "highlight.js/lib/languages/json"
-import { ScrollArea } from "../ui/scroll-area"
+import { ScrollArea } from "../shadcn/scroll-area"
 import { cn } from "@/lib/utils"
 hljs.registerLanguage("json", json)
 
