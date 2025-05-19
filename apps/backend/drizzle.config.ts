@@ -9,4 +9,3 @@ export default defineConfig({
     url: process.env.DB_FILE_NAME ?? "file:data.db",
   },
 })
-

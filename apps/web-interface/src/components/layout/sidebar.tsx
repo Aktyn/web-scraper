@@ -17,10 +17,10 @@ export function Sidebar() {
     <aside
       ref={ref}
       className={cn(
-        "border-r flex flex-col items-stretch relative transition-[margin,border-color,box-shadow] duration-400 bg-background-darker",
+        "z-20 border-r flex flex-col items-stretch relative transition-[margin,border-color,box-shadow] duration-400 bg-background-darker animate-in slide-in-from-left fill-mode-both",
         isOpen
           ? "ease-in-out"
-          : "ease-in hover:border-primary shadow-[-1rem_0_1rem] hover:shadow-[0rem_0_1rem] shadow-primary cursor-pointer",
+          : "ease-in hover:border-primary shadow-[-1rem_0_1rem] hover:shadow-[0rem_0_1rem] shadow-primary cursor-pointer animate-none",
       )}
       style={{
         marginLeft: isOpen ? "0px" : `-${width}px`,

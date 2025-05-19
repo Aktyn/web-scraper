@@ -1,5 +1,7 @@
+import fastifyCors from "@fastify/cors"
 import Fastify, { type FastifyServerOptions } from "fastify"
 import fastifyPlugin from "fastify-plugin"
+import { serializerCompiler, validatorCompiler } from "fastify-type-provider-zod"
 import type { DbModule } from "../db/db.module"
 import * as routes from "./routes"
 
@@ -23,6 +25,13 @@ export async function getApiModule(db: DbModule, fastifyOptions: FastifyServerOp
     })
   })
   fastify.register(drizzlePlugin)
+
+  fastify.register(fastifyCors, {
+    origin: "*",
+  })
+
+  fastify.setValidatorCompiler(validatorCompiler)
+  fastify.setSerializerCompiler(serializerCompiler)
 
   for (const route of Object.values(routes)) {
     fastify.register(route)
