@@ -1,7 +1,7 @@
-import Fastify from "fastify"
+import Fastify, { type FastifyServerOptions } from "fastify"
+import fastifyPlugin from "fastify-plugin"
 import type { DbModule } from "../db/db.module"
 import * as routes from "./routes"
-import fastifyPlugin from "fastify-plugin"
 
 declare module "fastify" {
   interface FastifyInstance {
@@ -9,9 +9,10 @@ declare module "fastify" {
   }
 }
 
-export async function getApiModule(db: DbModule) {
+export async function getApiModule(db: DbModule, fastifyOptions: FastifyServerOptions = {}) {
   const fastify = Fastify({
     logger: true,
+    ...fastifyOptions,
   })
 
   const drizzlePlugin = fastifyPlugin((fastify) => {
@@ -27,11 +28,5 @@ export async function getApiModule(db: DbModule) {
     fastify.register(route)
   }
 
-  fastify.listen({ port: 3000 }, (err, address) => {
-    if (err) {
-      fastify.log.error(err)
-      process.exit(1)
-    }
-    console.info(`Server is now listening on ${address}`)
-  })
+  return fastify
 }

@@ -1,1 +1,1 @@
-export * from "./data.routes"
+export * from "./misc.routes"

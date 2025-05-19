@@ -8,10 +8,22 @@ async function main() {
 
   const db = getDbModule(config)
 
-  await getApiModule(db)
+  const api = await getApiModule(db)
+
+  api.listen({ port: 3000 }, (err, address) => {
+    if (err) {
+      api.log.error(err)
+      process.exit(1)
+    }
+    console.info(`Server is now listening on ${address}`)
+  })
 }
 
-main().catch((error) => {
-  console.error(error)
-  process.exit(1)
-})
+main()
+  .then(() => {
+    console.info("Setup complete")
+  })
+  .catch((error) => {
+    console.error(error)
+    process.exit(1)
+  })

@@ -8,14 +8,14 @@
     "start": "node --expose-gc dist/index.js",
     "lint": "eslint \"src/**/*{.ts,.tsx}\" --fix",
     "typecheck": "tsc --noEmit --skipLibCheck -p ./tsconfig.json",
-    "test": "vitest run --passWithNoTests",
+    "test": "vitest run",
     "test:coverage": "vitest run --coverage",
     "test:watch": "vitest",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
     "db:show": "drizzle-kit studio",
     "db:reset": "rm -rf data.db && npm run db:generate && npm run db:migrate",
-    "db:reset:seed": "npm run db:reset && tsx src/db/seed/seed.ts"
+    "db:reset:seed": "npm run db:reset && tsx src/db/seed/auto-seed.ts"
   },
   "dependencies": {
     "@libsql/client": "^0.15.6",
