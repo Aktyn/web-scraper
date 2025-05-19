@@ -1,3 +1,17 @@
-//TODO: implement backend
-// eslint-disable-next-line no-console
-console.log("Hello, world!")
+import "dotenv/config"
+import { getApiModule } from "./api/api.module"
+import { getConfig } from "./config/config"
+import { getDbModule } from "./db/db.module"
+
+async function main() {
+  const config = getConfig()
+
+  const db = getDbModule(config)
+
+  await getApiModule(db)
+}
+
+main().catch((error) => {
+  console.error(error)
+  process.exit(1)
+})

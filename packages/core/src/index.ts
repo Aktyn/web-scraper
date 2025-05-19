@@ -1,3 +1,1 @@
-export const foo2 = {
-  bar: "baz",
-}
+export * from "./browser"

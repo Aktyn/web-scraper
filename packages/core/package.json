@@ -14,7 +14,8 @@
     "test:watch": "vitest"
   },
   "dependencies": {
-    "@web-scraper/common": "*"
+    "@web-scraper/common": "*",
+    "rebrowser-puppeteer": "^24.8.1"
   },
   "devDependencies": {
     "@eslint/js": "^9.27.0",
