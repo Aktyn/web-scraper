@@ -1,5 +1,9 @@
 // istanbul ignore next
 export function wait(ms: number) {
+  if (process.env.CI) {
+    return Promise.resolve()
+  }
+
   return new Promise((resolve) => setTimeout(resolve, ms))
 }
 
