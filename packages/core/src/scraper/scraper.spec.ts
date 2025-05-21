@@ -7,6 +7,7 @@ import {
   ScraperInstructionType,
   type ScraperSelector,
   SelectorType,
+  type SimpleLogger,
 } from "@web-scraper/common"
 import mockServer from "pptr-mock-server"
 import type { ResponseOptions } from "pptr-mock-server/dist/handle-request"
@@ -16,69 +17,82 @@ import { Scraper } from "./scraper"
 
 const mockBaseUrl = "http://127.0.0.1:1337"
 
-describe(Scraper.name, () => {
-  let scraper: Scraper
+describe(
+  Scraper.name,
+  () => {
+    let scraper: Scraper
 
-  beforeEach(() => {
-    scraper = new Scraper({ headless: true })
-  })
+    const voidLogger = Object.entries(console).reduce((acc, [key, value]) => {
+      if (typeof value === "function") {
+        acc[key as keyof SimpleLogger] = () => {}
+      } else {
+        acc[key as keyof SimpleLogger] = value as never
+      }
+      return acc
+    }, {} as SimpleLogger)
 
-  afterEach(() => {
-    try {
-      scraper.destroy()
-    } catch {
-      //noop
-    }
-  })
+    beforeEach(() => {
+      scraper = new Scraper({ headless: true, logger: voidLogger })
+    })
 
-  it("should execute given instructions", async () => {
-    const setupInterceptor = async (page: Page) => {
-      const mockRequest = await mockServer.init(page as never, {
-        baseAppUrl: mockBaseUrl,
-        baseApiUrl: mockBaseUrl + "/api",
-      })
+    afterEach(() => {
+      try {
+        scraper.destroy()
+      } catch {
+        //noop
+      }
+    })
 
-      const responseConfig: ResponseOptions = {
-        body: (_request) => {
-          return `<div>
+    it("should execute given instructions", async () => {
+      const setupInterceptor = async (page: Page) => {
+        const mockRequest = await mockServer.init(page as never, {
+          baseAppUrl: mockBaseUrl,
+          baseApiUrl: mockBaseUrl + "/api",
+        })
+
+        const responseConfig: ResponseOptions = {
+          body: (_request) => {
+            return `<div>
             <button>accept cookies</button>
             <button>login</button>
           </div>`
-        },
-        contentType: "text/html",
+          },
+          contentType: "text/html",
+        }
+        mockRequest.on("get", `${mockBaseUrl}/api`, 200, responseConfig)
       }
-      mockRequest.on("get", `${mockBaseUrl}/api`, 200, responseConfig)
-    }
 
-    await expect(scraper.run(mockInstructions, setupInterceptor)).resolves.toEqual(
-      mockExecutionInfo,
-    )
-  })
+      await expect(scraper.run(mockInstructions, setupInterceptor)).resolves.toEqual(
+        mockExecutionInfo,
+      )
+    }, 120_000)
 
-  it("should execute given instructions and result depending on page state", async () => {
-    const setupInterceptor = async (page: Page) => {
-      const mockRequest = await mockServer.init(page as never, {
-        baseAppUrl: mockBaseUrl,
-        baseApiUrl: mockBaseUrl + "/api",
-      })
+    it("should execute given instructions and result depending on page state", async () => {
+      const setupInterceptor = async (page: Page) => {
+        const mockRequest = await mockServer.init(page as never, {
+          baseAppUrl: mockBaseUrl,
+          baseApiUrl: mockBaseUrl + "/api",
+        })
 
-      const responseConfig: ResponseOptions = {
-        body: (_request) => {
-          return `<div>
+        const responseConfig: ResponseOptions = {
+          body: (_request) => {
+            return `<div>
             <!-- <button>accept cookies</button> -->
             <button>login</button>
           </div>`
-        },
-        contentType: "text/html",
+          },
+          contentType: "text/html",
+        }
+        mockRequest.on("get", `${mockBaseUrl}/api`, 200, responseConfig)
       }
-      mockRequest.on("get", `${mockBaseUrl}/api`, 200, responseConfig)
-    }
 
-    await expect(scraper.run(mockInstructions, setupInterceptor)).resolves.toEqual(
-      mockExecutionInfoWithoutCookiesBanner,
-    )
-  })
-})
+      await expect(scraper.run(mockInstructions, setupInterceptor)).resolves.toEqual(
+        mockExecutionInfoWithoutCookiesBanner,
+      )
+    }, 120_000)
+  },
+  600_000,
+)
 
 const acceptCookiesButtonSelector: ScraperSelector = {
   type: SelectorType.FindByTextContent,

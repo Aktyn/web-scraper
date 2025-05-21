@@ -59,6 +59,7 @@ export class Scraper {
     this.browser = await puppeteer.launch(
       deepMerge(
         {
+          downloadBehavior: { policy: "default" },
           headless: false,
           defaultViewport: { width: 1280, height: 720 },
           args: [
