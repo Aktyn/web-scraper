@@ -80,7 +80,8 @@ export class Scraper {
                 "--window-size=1284,848",
                 "--lang=en-US",
                 "--accept-language=en-US",
-              ],
+                process.env.CI ? "--no-sandbox" : (undefined as never),
+              ].filter(Boolean),
               env: {
                 ...process.env,
                 LANGUAGE: "en-US",
