@@ -39,7 +39,7 @@ jobs:
     - name: Install Google Chrome
       uses: browser-actions/setup-chrome@v1
       with:
-        chrome-version: stable
+        chrome-version: '136.0.7103.49'
       id: setup-chrome
 
     - name: Run tests
