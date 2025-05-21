@@ -7,6 +7,8 @@ import {
   randomInt,
   type ScraperCondition,
   type ScraperInstructions,
+  type ScraperInstructionsExecutionInfo,
+  ScraperInstructionsExecutionInfoType,
   ScraperInstructionType,
   type SimpleLogger,
   uuid,
@@ -40,7 +42,10 @@ export class Scraper {
 
   constructor({ id, logger, ...options }: ScraperOptions = {}) {
     this.id = id ?? uuid()
-    this.logger = logger ?? console
+    this.logger = logger ?? {
+      ...console,
+      fatal: console.error,
+    }
 
     Scraper.instances.set(this.id, this)
 
@@ -115,38 +120,77 @@ export class Scraper {
   async run(
     instructions: ScraperInstructions,
     pageMiddleware?: (page: Page) => void | Promise<void>,
-  ) {
+  ): Promise<ScraperInstructionsExecutionInfo> {
+    const startTime = performance.now()
+
     await waitFor(() => this.browser !== null, 5_000)
     const page = await this.getPage()
     if (pageMiddleware) {
       await pageMiddleware(page)
     }
-    await this.executeInstructions(page, instructions)
 
-    // await page.close() //TODO: close page after job is done
+    const executionInfo: ScraperInstructionsExecutionInfo = []
+    try {
+      await this.executeInstructions(page, instructions, 0, executionInfo)
+      executionInfo.push({
+        type: ScraperInstructionsExecutionInfoType.Success,
+        summary: {
+          duration: performance.now() - startTime,
+        },
+      })
+    } catch (error) {
+      this.logger.error(error)
+      executionInfo.push({
+        type: ScraperInstructionsExecutionInfoType.Error,
+        errorMessage: error instanceof Error ? error.message : String(error),
+      })
+    }
+
+    await page.close()
+    return executionInfo
   }
 
   private async executeInstructions(
     page: Page,
     instructions: ScraperInstructions,
-    level = 0,
+    level: number,
+    executionInfo: ScraperInstructionsExecutionInfo,
   ): Promise<ScraperInstructions[number] | null> {
     for (let i = 0; i < instructions.length; i++) {
       let instruction = instructions[i]
 
       switch (instruction.type) {
         case ScraperInstructionType.PageAction:
+          executionInfo.push({
+            type: ScraperInstructionsExecutionInfoType.Instruction,
+            instructionInfo: {
+              type: instruction.type,
+              action: instruction.action,
+            },
+          })
           await this.performPageAction(page, instruction.action)
           break
         case ScraperInstructionType.Condition:
           {
             this.logger.info({ msg: "Checking condition", condition: instruction.if })
 
-            const conditionalInstructionsResult = (await this.checkCondition(page, instruction.if))
-              ? await this.executeInstructions(page, instruction.then, level + 1)
+            const isMet = await this.checkCondition(page, instruction.if)
+
+            executionInfo.push({
+              type: ScraperInstructionsExecutionInfoType.Instruction,
+              instructionInfo: {
+                type: instruction.type,
+                condition: instruction.if,
+                isMet,
+              },
+            })
+
+            const conditionalInstructionsResult = isMet
+              ? await this.executeInstructions(page, instruction.then, level + 1, executionInfo)
               : instruction.else
-                ? await this.executeInstructions(page, instruction.else, level + 1)
+                ? await this.executeInstructions(page, instruction.else, level + 1, executionInfo)
                 : null
+
             if (conditionalInstructionsResult?.type === ScraperInstructionType.Jump) {
               instruction = conditionalInstructionsResult
               break
@@ -154,8 +198,22 @@ export class Scraper {
           }
           break
         case ScraperInstructionType.Marker:
+          executionInfo.push({
+            type: ScraperInstructionsExecutionInfoType.Instruction,
+            instructionInfo: {
+              type: instruction.type,
+              name: instruction.name,
+            },
+          })
           continue
         case ScraperInstructionType.Jump:
+          executionInfo.push({
+            type: ScraperInstructionsExecutionInfoType.Instruction,
+            instructionInfo: {
+              type: instruction.type,
+              markerName: instruction.markerName,
+            },
+          })
           break
       }
 
@@ -207,11 +265,16 @@ export class Scraper {
   }
 
   private async checkCondition(page: Page, condition: ScraperCondition) {
-    switch (condition.type) {
-      case ConditionType.IsVisible: {
-        const handle = await getElementHandle(page, condition.selector)
-        return !!(await handle?.isVisible())
+    try {
+      switch (condition.type) {
+        case ConditionType.IsVisible: {
+          const handle = await getElementHandle(page, condition.selector)
+          return !!(await handle?.isVisible())
+        }
       }
+    } catch (error) {
+      this.logger.fatal(error)
+      return false
     }
   }
 }

@@ -24,11 +24,7 @@ async function main() {
 
   const db = getDbModule(config)
 
-  const api = await getApiModule(db, {
-    logger: logger.child({
-      api: true,
-    }),
-  })
+  const api = await getApiModule(db)
 
   api.listen({ port: config.apiPort }, (err, address) => {
     if (err) {

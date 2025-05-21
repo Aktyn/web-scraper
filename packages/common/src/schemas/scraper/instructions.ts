@@ -27,7 +27,7 @@ export enum PageActionType {
   Type = "type",
 }
 
-const pageActionSchema = z.discriminatedUnion("type", [
+export const pageActionSchema = z.discriminatedUnion("type", [
   z.object({
     type: z.literal(PageActionType.Wait),
     duration: z.number(),
@@ -54,7 +54,7 @@ export enum ConditionType {
   IsVisible = "isVisible",
 }
 
-const scraperConditionSchema = z.discriminatedUnion("type", [
+export const scraperConditionSchema = z.discriminatedUnion("type", [
   z.object({
     type: z.literal(ConditionType.IsVisible),
     selector: scraperSelectorSchema,
@@ -89,7 +89,7 @@ type ScraperInstructionRecursive =
   | { type: ScraperInstructionType.Marker; name: string }
   | { type: ScraperInstructionType.Jump; markerName: string }
 
-type ScraperInstructionsRecursive = ScraperInstructionRecursive[]
+type ScraperInstructionsRecursive = Array<ScraperInstructionRecursive>
 
 export const scraperInstructionsSchema: z.ZodType<ScraperInstructionsRecursive> = z.lazy(() =>
   z.array(

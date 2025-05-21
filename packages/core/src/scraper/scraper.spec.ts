@@ -2,6 +2,8 @@ import {
   ConditionType,
   PageActionType,
   type ScraperInstructions,
+  type ScraperInstructionsExecutionInfo,
+  ScraperInstructionsExecutionInfoType,
   ScraperInstructionType,
   type ScraperSelector,
   SelectorType,
@@ -29,28 +31,52 @@ describe(Scraper.name, () => {
     }
   })
 
-  const setupInterceptor = async (page: Page) => {
-    const mockRequest = await mockServer.init(page as never, {
-      baseAppUrl: mockBaseUrl,
-      baseApiUrl: mockBaseUrl + "/api",
-    })
-
-    const responseConfig: ResponseOptions = {
-      body: (_request) => {
-        return `<div>
-          <button>accept cookies</button>
-          <button>login</button>
-        </div>`
-      },
-      contentType: "text/html",
-    }
-    mockRequest.on("get", `${mockBaseUrl}/api`, 200, responseConfig)
-  }
-
   it("should execute given instructions", async () => {
-    await expect(scraper.run(mockInstructions, setupInterceptor)).resolves.not.toThrow()
+    const setupInterceptor = async (page: Page) => {
+      const mockRequest = await mockServer.init(page as never, {
+        baseAppUrl: mockBaseUrl,
+        baseApiUrl: mockBaseUrl + "/api",
+      })
 
-    //TODO: get report from scraper run and expect it to be correct
+      const responseConfig: ResponseOptions = {
+        body: (_request) => {
+          return `<div>
+            <button>accept cookies</button>
+            <button>login</button>
+          </div>`
+        },
+        contentType: "text/html",
+      }
+      mockRequest.on("get", `${mockBaseUrl}/api`, 200, responseConfig)
+    }
+
+    await expect(scraper.run(mockInstructions, setupInterceptor)).resolves.toEqual(
+      mockExecutionInfo,
+    )
+  })
+
+  it("should execute given instructions and result depending on page state", async () => {
+    const setupInterceptor = async (page: Page) => {
+      const mockRequest = await mockServer.init(page as never, {
+        baseAppUrl: mockBaseUrl,
+        baseApiUrl: mockBaseUrl + "/api",
+      })
+
+      const responseConfig: ResponseOptions = {
+        body: (_request) => {
+          return `<div>
+            <!-- <button>accept cookies</button> -->
+            <button>login</button>
+          </div>`
+        },
+        contentType: "text/html",
+      }
+      mockRequest.on("get", `${mockBaseUrl}/api`, 200, responseConfig)
+    }
+
+    await expect(scraper.run(mockInstructions, setupInterceptor)).resolves.toEqual(
+      mockExecutionInfoWithoutCookiesBanner,
+    )
   })
 })
 
@@ -118,5 +144,173 @@ const mockInstructions: ScraperInstructions = [
       },
       //TODO: fill login form and finish login process
     ],
+  },
+]
+
+const mockExecutionInfo: ScraperInstructionsExecutionInfo = [
+  {
+    type: ScraperInstructionsExecutionInfoType.Instruction,
+    instructionInfo: {
+      action: {
+        type: PageActionType.Navigate,
+        url: "http://127.0.0.1:1337/api",
+      },
+      type: ScraperInstructionType.PageAction,
+    },
+  },
+  {
+    type: ScraperInstructionsExecutionInfoType.Instruction,
+    instructionInfo: {
+      condition: {
+        selector: {
+          tagName: "button",
+          text: /accept cookies/i,
+          type: SelectorType.FindByTextContent,
+        },
+        type: ConditionType.IsVisible,
+      },
+      isMet: true,
+      type: ScraperInstructionType.Condition,
+    },
+  },
+  {
+    instructionInfo: {
+      action: {
+        selector: {
+          tagName: "button",
+          text: /accept cookies/i,
+          type: SelectorType.FindByTextContent,
+        },
+        type: PageActionType.Click,
+      },
+      type: ScraperInstructionType.PageAction,
+    },
+    type: ScraperInstructionsExecutionInfoType.Instruction,
+  },
+  {
+    instructionInfo: {
+      action: {
+        selector: {
+          tagName: "button",
+          text: /login/i,
+          type: SelectorType.FindByTextContent,
+        },
+        type: PageActionType.Click,
+      },
+      type: ScraperInstructionType.PageAction,
+    },
+    type: ScraperInstructionsExecutionInfoType.Instruction,
+  },
+  {
+    instructionInfo: {
+      condition: {
+        selector: {
+          tagName: "button",
+          text: /login/i,
+          type: SelectorType.FindByTextContent,
+        },
+        type: ConditionType.IsVisible,
+      },
+      isMet: true,
+      type: ScraperInstructionType.Condition,
+    },
+    type: ScraperInstructionsExecutionInfoType.Instruction,
+  },
+  {
+    type: ScraperInstructionsExecutionInfoType.Instruction,
+    instructionInfo: {
+      action: {
+        selector: {
+          tagName: "button",
+          text: /login/i,
+          type: SelectorType.FindByTextContent,
+        },
+        type: PageActionType.Click,
+      },
+      type: ScraperInstructionType.PageAction,
+    },
+  },
+  {
+    type: ScraperInstructionsExecutionInfoType.Success,
+    summary: {
+      duration: expect.any(Number),
+    },
+  },
+]
+
+const mockExecutionInfoWithoutCookiesBanner: ScraperInstructionsExecutionInfo = [
+  {
+    type: ScraperInstructionsExecutionInfoType.Instruction,
+    instructionInfo: {
+      action: {
+        type: PageActionType.Navigate,
+        url: "http://127.0.0.1:1337/api",
+      },
+      type: ScraperInstructionType.PageAction,
+    },
+  },
+  {
+    type: ScraperInstructionsExecutionInfoType.Instruction,
+    instructionInfo: {
+      condition: {
+        selector: {
+          tagName: "button",
+          text: /accept cookies/i,
+          type: SelectorType.FindByTextContent,
+        },
+        type: ConditionType.IsVisible,
+      },
+      isMet: false,
+      type: ScraperInstructionType.Condition,
+    },
+  },
+  {
+    instructionInfo: {
+      action: {
+        selector: {
+          tagName: "button",
+          text: /login/i,
+          type: SelectorType.FindByTextContent,
+        },
+        type: PageActionType.Click,
+      },
+      type: ScraperInstructionType.PageAction,
+    },
+    type: ScraperInstructionsExecutionInfoType.Instruction,
+  },
+  {
+    instructionInfo: {
+      condition: {
+        selector: {
+          tagName: "button",
+          text: /login/i,
+          type: SelectorType.FindByTextContent,
+        },
+        type: ConditionType.IsVisible,
+      },
+      isMet: true,
+      type: ScraperInstructionType.Condition,
+    },
+    type: ScraperInstructionsExecutionInfoType.Instruction,
+  },
+  {
+    type: ScraperInstructionsExecutionInfoType.Instruction,
+    instructionInfo: {
+      action: {
+        selector: {
+          tagName: "button",
+          text: /login/i,
+          type: SelectorType.FindByTextContent,
+        },
+        type: PageActionType.Click,
+      },
+      type: ScraperInstructionType.PageAction,
+    },
+  },
+  {
+    type: ScraperInstructionsExecutionInfoType.Success,
+    summary: {
+      duration: expect.any(Number),
+    },
   },
 ]
