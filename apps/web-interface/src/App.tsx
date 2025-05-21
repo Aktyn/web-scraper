@@ -5,6 +5,7 @@ import { TooltipProvider } from "./components/shadcn/tooltip"
 import { Dashboard } from "./components/view/dashboard"
 import { Preferences } from "./components/view/preferences"
 import { useView, ViewProvider } from "./providers/view-provider"
+import { cn } from "./lib/utils"
 
 export default function App() {
   return (
@@ -48,7 +49,10 @@ function Main() {
           <main
             key={view}
             data-view-open={view === currentView}
-            className="absolute inset-0 flex flex-col items-center justify-center"
+            className={cn(
+              "absolute inset-0 flex flex-col items-center justify-center",
+              view !== currentView && "pointer-events-none overflow-hidden",
+            )}
           >
             <View />
           </main>

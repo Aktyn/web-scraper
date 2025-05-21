@@ -6,6 +6,7 @@ export function getConfig() {
 
   return {
     dbUrl,
+    apiPort: process.env.API_PORT ? parseInt(process.env.API_PORT) : 3000,
   }
 }
 

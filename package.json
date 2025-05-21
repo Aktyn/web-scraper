@@ -22,7 +22,7 @@
     "test:watch": "turbo run test:watch",
     "lint": "turbo run lint",
     "typecheck": "turbo run typecheck",
-    "format": "prettier --write \"**/*.{js,ts,tsx}\""
+    "format": "prettier --write \"**/*.{ts,tsx}\""
   },
   "workspaces": [
     "packages/*",

@@ -1,1 +1,1 @@
-export * from "./browser"
+export { Scraper } from "./scraper/scraper"

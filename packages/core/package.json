@@ -9,9 +9,11 @@
     "dev": "tsc --watch --project ./tsconfig.build.json",
     "lint": "eslint . --ext .ts,.tsx --fix",
     "typecheck": "tsc --noEmit --skipLibCheck -p ./tsconfig.json",
-    "test": "vitest run --passWithNoTests",
+    "test": "vitest run",
     "test:coverage": "vitest run --coverage",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "install:chrome": "npx rebrowser-puppeteer browsers install chrome",
+    "install:firefox": "npx rebrowser-puppeteer browsers install firefox"
   },
   "dependencies": {
     "@web-scraper/common": "*",
@@ -25,6 +27,7 @@
     "eslint-config-prettier": "^10.1.5",
     "eslint-plugin-import": "^2.31.0",
     "eslint-plugin-prettier": "^5.4.0",
+    "pptr-mock-server": "^1.4.0",
     "prettier": "^3.5.3",
     "typescript": "^5.8.3",
     "typescript-eslint": "^8.32.1",

@@ -6,6 +6,7 @@ import { seed } from "../db/seed/seed"
 
 const mockConfig: Config = {
   dbUrl: ":memory:",
+  apiPort: 3001,
 }
 
 export async function setup() {
