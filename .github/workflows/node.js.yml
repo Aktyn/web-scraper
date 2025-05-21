@@ -36,5 +36,11 @@ jobs:
     - name: Build project
       run: npm run build
 
+    - name: Install Google Chrome
+      uses: browser-actions/setup-chrome@v1
+      with:
+        chrome-version: stable
+      id: setup-chrome
+
     - name: Run tests
       run: npm run test 
