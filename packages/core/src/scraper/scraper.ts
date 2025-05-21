@@ -13,7 +13,6 @@ import {
   type SimpleLogger,
   uuid,
   wait,
-  waitFor,
 } from "@web-scraper/common"
 import puppeteer, { type Browser, type LaunchOptions, type Page } from "rebrowser-puppeteer"
 import { getElementHandle } from "./selectors"
@@ -36,11 +35,15 @@ export class Scraper {
   private readonly id: string
   private readonly logger: SimpleLogger
 
+  private initPromise: Promise<Browser> | null = null
+
   private destroyed = false
   private browser: Browser | null = null
   private abortController = new AbortController()
 
-  constructor({ id, logger, ...options }: ScraperOptions = {}) {
+  constructor(private readonly options: ScraperOptions = {}) {
+    const { id, logger, ...browserOptions } = options
+
     this.id = id ?? uuid()
     this.logger = logger ?? {
       ...console,
@@ -49,37 +52,60 @@ export class Scraper {
 
     Scraper.instances.set(this.id, this)
 
-    this.init(options).catch((error) => {
+    this.init(browserOptions).catch((error) => {
       this.logger.error(error)
       this.destroy()
     })
   }
 
-  private async init(options?: Partial<LaunchOptions>) {
-    this.browser = await puppeteer.launch(
-      deepMerge(
-        {
-          downloadBehavior: { policy: "default" },
-          headless: false,
-          defaultViewport: { width: 1280, height: 720 },
-          args: [
-            "--disable-infobars",
-            "--window-size=1284,848",
-            "--lang=en-US",
-            "--accept-language=en-US",
-          ],
-          env: {
-            ...process.env,
-            LANGUAGE: "en-US",
-          },
-        },
-        options ?? {},
-      ),
-    )
-
-    if (this.destroyed) {
-      await this.browser.close()
+  private init(options: Partial<LaunchOptions>) {
+    if (this.browser) {
+      return Promise.resolve(this.browser)
     }
+
+    if (this.initPromise) {
+      return this.initPromise
+    }
+
+    this.initPromise = new Promise<Browser>((resolve, reject) => {
+      puppeteer
+        .launch(
+          deepMerge(
+            {
+              downloadBehavior: { policy: "default" },
+              headless: false,
+              defaultViewport: { width: 1280, height: 720 },
+              args: [
+                "--disable-infobars",
+                "--window-size=1284,848",
+                "--lang=en-US",
+                "--accept-language=en-US",
+              ],
+              env: {
+                ...process.env,
+                LANGUAGE: "en-US",
+              },
+            },
+            options ?? {},
+          ),
+        )
+        .then((browser) => {
+          resolve(browser)
+          if (this.destroyed) {
+            void browser.close()
+          }
+        })
+        .catch(reject)
+    })
+
+    this.initPromise
+      .then((browser) => (this.browser = browser))
+      .catch(this.logger.error)
+      .finally(() => {
+        this.initPromise = null
+      })
+
+    return this.initPromise
   }
 
   destroy() {
@@ -122,9 +148,11 @@ export class Scraper {
     instructions: ScraperInstructions,
     pageMiddleware?: (page: Page) => void | Promise<void>,
   ): Promise<ScraperInstructionsExecutionInfo> {
-    const startTime = performance.now()
+    if (!this.browser) {
+      this.browser = await this.init(this.options)
+    }
 
-    await waitFor(() => this.browser !== null, 5_000)
+    const startTime = performance.now()
     const page = await this.getPage()
     if (pageMiddleware) {
       await pageMiddleware(page)
