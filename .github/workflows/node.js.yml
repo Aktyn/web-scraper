@@ -37,10 +37,8 @@ jobs:
       run: npm run build
 
     - name: Install Google Chrome
-      uses: browser-actions/setup-chrome@v1
-      with:
-        chrome-version: '136.0.7103.49'
-      id: setup-chrome
+      working-directory: ./packages/core
+      run: npm run install:chrome
 
     - name: Run tests
       run: npm run test 
