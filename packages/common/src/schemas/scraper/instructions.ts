@@ -1,57 +1,10 @@
 import { z } from "zod"
-import { tagNameSchema } from "./helpers"
-
-export enum SelectorType {
-  Query = "query",
-  FindByTextContent = "findByTextContent",
-}
-
-const scraperSelectorSchema = z.discriminatedUnion("type", [
-  z.object({
-    type: z.literal(SelectorType.Query),
-    query: z.string(),
-  }),
-  z.object({
-    type: z.literal(SelectorType.FindByTextContent),
-    text: z.union([z.string(), z.instanceof(RegExp)]),
-    tagName: tagNameSchema.optional(),
-  }),
-])
-
-export type ScraperSelector = z.infer<typeof scraperSelectorSchema>
-
-export enum PageActionType {
-  Wait = "wait",
-  Navigate = "navigate",
-  Click = "click",
-  Type = "type",
-}
-
-export const pageActionSchema = z.discriminatedUnion("type", [
-  z.object({
-    type: z.literal(PageActionType.Wait),
-    duration: z.number(),
-  }),
-  z.object({
-    type: z.literal(PageActionType.Navigate),
-    url: z.string(),
-  }),
-  z.object({
-    type: z.literal(PageActionType.Click),
-    selector: scraperSelectorSchema,
-  }),
-  z.object({
-    type: z.literal(PageActionType.Type),
-    selector: scraperSelectorSchema,
-    text: z.string(),
-    clearBeforeType: z.boolean().optional(),
-  }),
-])
-
-export type PageAction = z.infer<typeof pageActionSchema>
+import { type PageAction, pageActionSchema } from "./page-action"
+import { scraperSelectorSchema } from "./selector"
 
 export enum ConditionType {
   IsVisible = "isVisible",
+  //TODO: data based conditions
 }
 
 export const scraperConditionSchema = z.discriminatedUnion("type", [

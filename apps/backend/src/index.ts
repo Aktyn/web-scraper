@@ -2,16 +2,17 @@ import "dotenv/config"
 
 import {
   ConditionType,
-  ScraperInstructionType,
-  SelectorType,
   PageActionType,
   type ScraperInstructions,
+  ScraperInstructionType,
   type ScraperSelector,
+  SelectorType,
   uuid,
 } from "@web-scraper/common"
 import { Scraper } from "@web-scraper/core"
 import { getApiModule } from "./api/api.module"
 import { getConfig } from "./config/config"
+import { DataBridge } from "./db/data-bridge"
 import { getDbModule } from "./db/db.module"
 import { getLogger } from "./logger"
 
@@ -50,6 +51,8 @@ process.addListener("SIGQUIT", cleanup)
 
 main()
   .then(async (modules) => {
+    const dataBridge = new DataBridge(modules.db)
+
     const id = uuid()
     const scraper = new Scraper({
       id,
@@ -59,7 +62,7 @@ main()
     })
 
     try {
-      await scraper.run(exampleInstructions) //TODO: remove after testing
+      await scraper.run(exampleInstructions, dataBridge) //TODO: remove after testing
     } catch (error) {
       modules.logger.error(error)
     } finally {

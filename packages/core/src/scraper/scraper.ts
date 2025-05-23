@@ -6,6 +6,7 @@ import {
   PageActionType,
   randomInt,
   type ScraperCondition,
+  type ScraperInstructionInfo,
   type ScraperInstructions,
   type ScraperInstructionsExecutionInfo,
   ScraperInstructionsExecutionInfoType,
@@ -15,6 +16,7 @@ import {
   wait,
 } from "@web-scraper/common"
 import puppeteer, { type Browser, type LaunchOptions, type Page } from "rebrowser-puppeteer"
+import { type DataBridge, getScraperValue } from "./data-helper"
 import { getElementHandle } from "./selectors"
 
 type ScraperOptions = {
@@ -80,8 +82,8 @@ export class Scraper {
                 "--window-size=1284,848",
                 "--lang=en-US",
                 "--accept-language=en-US",
-                process.env.CI ? "--no-sandbox" : (undefined as never),
-              ].filter(Boolean),
+                process.env.CI ? "--no-sandbox" : undefined,
+              ].filter((arg) => typeof arg === "string"),
               env: {
                 ...process.env,
                 LANGUAGE: "en-US",
@@ -147,6 +149,7 @@ export class Scraper {
 
   async run(
     instructions: ScraperInstructions,
+    dataBridge: DataBridge,
     pageMiddleware?: (page: Page) => void | Promise<void>,
   ): Promise<ScraperInstructionsExecutionInfo> {
     if (!this.browser) {
@@ -161,7 +164,8 @@ export class Scraper {
 
     const executionInfo: ScraperInstructionsExecutionInfo = []
     try {
-      await this.executeInstructions(page, instructions, 0, executionInfo)
+      await this.executeInstructions(page, dataBridge, instructions, undefined, executionInfo)
+
       executionInfo.push({
         type: ScraperInstructionsExecutionInfoType.Success,
         summary: {
@@ -182,23 +186,44 @@ export class Scraper {
 
   private async executeInstructions(
     page: Page,
+    dataBridge: DataBridge,
     instructions: ScraperInstructions,
-    level: number,
+    level = 0,
     executionInfo: ScraperInstructionsExecutionInfo,
   ): Promise<ScraperInstructions[number] | null> {
+    assert(instructions.length > 0, "Instructions are empty")
+    assert(
+      level > 0 ||
+        (instructions[0].type === ScraperInstructionType.PageAction &&
+          instructions[0].action.type === PageActionType.Navigate),
+      "First instruction must be a navigation action",
+    )
+
+    const pushInstructionInfo = (instructionInfo: ScraperInstructionInfo) => {
+      const info: ScraperInstructionsExecutionInfo[number] = {
+        type: ScraperInstructionsExecutionInfoType.Instruction,
+        instructionInfo,
+        url: page.url(),
+        duration: 0,
+      }
+      executionInfo.push(info)
+      return info
+    }
+
     for (let i = 0; i < instructions.length; i++) {
       let instruction = instructions[i]
 
+      const instructionStartUrl = page.url()
+      const instructionStartTime = performance.now()
+      let lastInstructionInfo: ScraperInstructionsExecutionInfo[number] | null = null
+
       switch (instruction.type) {
         case ScraperInstructionType.PageAction:
-          executionInfo.push({
-            type: ScraperInstructionsExecutionInfoType.Instruction,
-            instructionInfo: {
-              type: instruction.type,
-              action: instruction.action,
-            },
+          lastInstructionInfo = pushInstructionInfo({
+            type: instruction.type,
+            action: instruction.action,
           })
-          await this.performPageAction(page, instruction.action)
+          await this.performPageAction(page, dataBridge, instruction.action, executionInfo)
           break
         case ScraperInstructionType.Condition:
           {
@@ -206,19 +231,28 @@ export class Scraper {
 
             const isMet = await this.checkCondition(page, instruction.if)
 
-            executionInfo.push({
-              type: ScraperInstructionsExecutionInfoType.Instruction,
-              instructionInfo: {
-                type: instruction.type,
-                condition: instruction.if,
-                isMet,
-              },
+            lastInstructionInfo = pushInstructionInfo({
+              type: instruction.type,
+              condition: instruction.if,
+              isMet,
             })
 
             const conditionalInstructionsResult = isMet
-              ? await this.executeInstructions(page, instruction.then, level + 1, executionInfo)
+              ? await this.executeInstructions(
+                  page,
+                  dataBridge,
+                  instruction.then,
+                  level + 1,
+                  executionInfo,
+                )
               : instruction.else
-                ? await this.executeInstructions(page, instruction.else, level + 1, executionInfo)
+                ? await this.executeInstructions(
+                    page,
+                    dataBridge,
+                    instruction.else,
+                    level + 1,
+                    executionInfo,
+                  )
                 : null
 
             if (conditionalInstructionsResult?.type === ScraperInstructionType.Jump) {
@@ -228,23 +262,24 @@ export class Scraper {
           }
           break
         case ScraperInstructionType.Marker:
-          executionInfo.push({
-            type: ScraperInstructionsExecutionInfoType.Instruction,
-            instructionInfo: {
-              type: instruction.type,
-              name: instruction.name,
-            },
+          lastInstructionInfo = pushInstructionInfo({
+            type: instruction.type,
+            name: instruction.name,
           })
           continue
         case ScraperInstructionType.Jump:
-          executionInfo.push({
-            type: ScraperInstructionsExecutionInfoType.Instruction,
-            instructionInfo: {
-              type: instruction.type,
-              markerName: instruction.markerName,
-            },
+          lastInstructionInfo = pushInstructionInfo({
+            type: instruction.type,
+            markerName: instruction.markerName,
           })
           break
+      }
+
+      await page.waitForNetworkIdle({ timeout: 60_000, signal: this.abortController.signal })
+
+      lastInstructionInfo.duration = performance.now() - instructionStartTime
+      if (lastInstructionInfo.url !== page.url()) {
+        lastInstructionInfo.url = { from: instructionStartUrl, to: page.url() }
       }
 
       if (instruction.type === ScraperInstructionType.Jump) {
@@ -263,7 +298,12 @@ export class Scraper {
     return null
   }
 
-  private async performPageAction(page: Page, action: PageAction) {
+  private async performPageAction(
+    page: Page,
+    dataBridge: DataBridge,
+    action: PageAction,
+    executionInfo: ScraperInstructionsExecutionInfo,
+  ) {
     this.logger.info({ msg: "Performing action", action })
     switch (action.type) {
       case PageActionType.Wait:
@@ -288,7 +328,10 @@ export class Scraper {
             }
           })
         }
-        await handle.type(action.text, { delay: randomInt(1, 4) })
+
+        await handle.type(await getScraperValue(action.value, dataBridge, executionInfo), {
+          delay: randomInt(1, 4),
+        })
         break
       }
     }
