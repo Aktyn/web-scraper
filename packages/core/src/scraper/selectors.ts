@@ -1,34 +1,38 @@
-import { type ScraperSelector, SelectorType } from "@web-scraper/common"
+import { type ScraperElementSelector, ElementSelectorType } from "@web-scraper/common"
 import type { ElementHandle, Page } from "rebrowser-puppeteer"
 
 export async function getElementHandle(
   page: Page,
-  selector: ScraperSelector,
+  selector: ScraperElementSelector,
 ): Promise<ElementHandle<Element> | null>
 export async function getElementHandle(
   page: Page,
-  selector: ScraperSelector,
+  selector: ScraperElementSelector,
   required: false,
 ): Promise<ElementHandle<Element> | null>
 export async function getElementHandle(
   page: Page,
-  selector: ScraperSelector,
+  selector: ScraperElementSelector,
   required: true,
 ): Promise<ElementHandle<Element>>
 
 /** Expects a single element to be selected. */
-export async function getElementHandle(page: Page, selector: ScraperSelector, required = false) {
+export async function getElementHandle(
+  page: Page,
+  selector: ScraperElementSelector,
+  required = false,
+) {
   let elementHandle: ElementHandle<Element> | null = null
 
   switch (selector.type) {
-    case SelectorType.Query: {
+    case ElementSelectorType.Query: {
       const handle = await page.$(selector.query)
       if (handle) {
         elementHandle = handle.asElement() as ElementHandle<Element>
       }
       break
     }
-    case SelectorType.FindByTextContent: {
+    case ElementSelectorType.FindByTextContent: {
       const handle = await page.evaluateHandle(
         (tagName, text) => {
           const matcher = typeof text === "string" ? text : new RegExp(text.source, text.flags)

@@ -1,32 +1,30 @@
 import { z } from "zod"
+import { type ScraperCondition, scraperConditionSchema } from "./condition"
 import { type PageAction, pageActionSchema } from "./page-action"
-import { scraperSelectorSchema } from "./selector"
-
-export enum ConditionType {
-  IsVisible = "isVisible",
-  //TODO: data based conditions
-}
-
-export const scraperConditionSchema = z.discriminatedUnion("type", [
-  z.object({
-    type: z.literal(ConditionType.IsVisible),
-    selector: scraperSelectorSchema,
-  }),
-])
-
-export type ScraperCondition = z.infer<typeof scraperConditionSchema>
+import type { ScraperValue } from "./value"
 
 export enum ScraperInstructionType {
   /** Used to interact with the page */
   PageAction = "pageAction",
 
-  /** Used to decide whether to perform a page action based on a condition */
+  /** Used to decide whether to perform scraper instructions based on a condition */
   Condition = "condition",
 
-  /** Used to mark a point in the scraper for controlling instructions execution flow */
+  /** Used to save data to the data bridge */
+  SaveData = "saveData",
+
+  /** Used to delete data from the data bridge */
+  DeleteData = "deleteData",
+
+  /** Used to mark a point in the scraper execution for controlling its flow */
   Marker = "marker",
 
-  /** Used to jump to a specific marker in the instructions execution flow */
+  /**
+   * Used to jump to a specific marker in the scraper execution flow\
+   * If jump is performed in the backward direction to the same level* of executing instructions, it will create a loop that must be eventually escaped to avoid infinite recursion
+   *
+   * \* list of instructions in `then` and `else` branches of a condition instruction runs in next (level + 1) level of execution
+   */
   Jump = "jump",
 }
 
@@ -39,6 +37,8 @@ type ScraperInstructionRecursive =
       then: ScraperInstructionsRecursive
       else?: ScraperInstructionsRecursive
     }
+  | { type: ScraperInstructionType.SaveData; dataKey: string; value: ScraperValue }
+  | { type: ScraperInstructionType.DeleteData; dataKey: string }
   | { type: ScraperInstructionType.Marker; name: string }
   | { type: ScraperInstructionType.Jump; markerName: string }
 

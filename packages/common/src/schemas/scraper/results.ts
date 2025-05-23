@@ -1,14 +1,28 @@
 import { z } from "zod"
-import { scraperConditionSchema, ScraperInstructionType } from "./instructions"
+import { scraperConditionSchema } from "./condition"
+import { ScraperInstructionType } from "./instructions"
 import { pageActionSchema } from "./page-action"
+import { scraperValueSchema } from "./value"
 
 const instructionInfoSchema = z.discriminatedUnion("type", [
   z.object({ type: z.literal(ScraperInstructionType.PageAction), action: pageActionSchema }),
+
   z.object({
     type: z.literal(ScraperInstructionType.Condition),
     condition: scraperConditionSchema,
     isMet: z.boolean(),
   }),
+
+  z.object({
+    type: z.literal(ScraperInstructionType.SaveData),
+    dataKey: z.string(),
+    value: scraperValueSchema,
+  }),
+  z.object({
+    type: z.literal(ScraperInstructionType.DeleteData),
+    dataKey: z.string(),
+  }),
+
   z.object({ type: z.literal(ScraperInstructionType.Marker), name: z.string() }),
   z.object({ type: z.literal(ScraperInstructionType.Jump), markerName: z.string() }),
 ])
@@ -41,6 +55,7 @@ export const scraperInstructionsExecutionInfoSchema = z.array(
         z.object({
           type: z.literal("set"),
           key: z.string(),
+          value: z.string().nullable(),
         }),
         z.object({
           type: z.literal("delete"),

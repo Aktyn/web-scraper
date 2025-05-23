@@ -1,8 +1,14 @@
 import z from "zod"
+import { scraperElementSelectorSchema } from "./selector"
 
 export enum ScraperValueType {
   Literal = "literal",
+  CurrentTimestamp = "currentTimestamp",
+
   ExternalData = "externalData",
+
+  ElementTextContent = "elementTextContent",
+  ElementAttribute = "elementAttribute",
 }
 
 export const scraperValueSchema = z.discriminatedUnion("type", [
@@ -11,11 +17,24 @@ export const scraperValueSchema = z.discriminatedUnion("type", [
     value: z.string(),
   }),
 
-  // Should throw error if there is no default value and the value is not returned
+  z.object({
+    type: z.literal(ScraperValueType.CurrentTimestamp),
+  }),
+
   z.object({
     type: z.literal(ScraperValueType.ExternalData),
-    key: z.string(),
+    dataKey: z.string(),
     defaultValue: z.string().optional(),
+  }),
+
+  z.object({
+    type: z.literal(ScraperValueType.ElementTextContent),
+    selector: scraperElementSelectorSchema,
+  }),
+  z.object({
+    type: z.literal(ScraperValueType.ElementAttribute),
+    selector: scraperElementSelectorSchema,
+    attributeName: z.string(),
   }),
 ])
 

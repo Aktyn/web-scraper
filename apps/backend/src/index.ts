@@ -1,12 +1,12 @@
 import "dotenv/config"
 
 import {
-  ConditionType,
+  ScraperConditionType,
   PageActionType,
   type ScraperInstructions,
   ScraperInstructionType,
-  type ScraperSelector,
-  SelectorType,
+  type ScraperElementSelector,
+  ElementSelectorType,
   uuid,
 } from "@web-scraper/common"
 import { Scraper } from "@web-scraper/core"
@@ -76,14 +76,14 @@ main()
     process.exit(1)
   })
 
-const acceptCookiesButtonSelector: ScraperSelector = {
-  type: SelectorType.FindByTextContent,
+const acceptCookiesButtonSelector: ScraperElementSelector = {
+  type: ElementSelectorType.FindByTextContent,
   text: /akceptuj wszystkie/i,
   tagName: "button",
 }
 
-const loginButtonSelector: ScraperSelector = {
-  type: SelectorType.FindByTextContent,
+const loginButtonSelector: ScraperElementSelector = {
+  type: ElementSelectorType.FindByTextContent,
   text: /zaloguj się/i,
   tagName: "button",
 }
@@ -108,7 +108,7 @@ const exampleInstructions: ScraperInstructions = [
   {
     type: ScraperInstructionType.Condition,
     if: {
-      type: ConditionType.IsVisible,
+      type: ScraperConditionType.IsVisible,
       selector: acceptCookiesButtonSelector,
     },
     then: [
@@ -134,7 +134,7 @@ const exampleInstructions: ScraperInstructions = [
   {
     type: ScraperInstructionType.Condition,
     if: {
-      type: ConditionType.IsVisible,
+      type: ScraperConditionType.IsVisible,
       selector: loginButtonSelector,
     },
     then: [

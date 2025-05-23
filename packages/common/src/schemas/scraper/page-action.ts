@@ -1,5 +1,5 @@
 import z from "zod"
-import { scraperSelectorSchema } from "./selector"
+import { scraperElementSelectorSchema } from "./selector"
 import { scraperValueSchema } from "./value"
 
 export enum PageActionType {
@@ -20,11 +20,11 @@ export const pageActionSchema = z.discriminatedUnion("type", [
   }),
   z.object({
     type: z.literal(PageActionType.Click),
-    selector: scraperSelectorSchema,
+    selector: scraperElementSelectorSchema,
   }),
   z.object({
     type: z.literal(PageActionType.Type),
-    selector: scraperSelectorSchema,
+    selector: scraperElementSelectorSchema,
     clearBeforeType: z.boolean().optional(),
     value: scraperValueSchema,
   }),

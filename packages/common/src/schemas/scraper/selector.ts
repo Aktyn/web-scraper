@@ -1,21 +1,21 @@
 import { z } from "zod"
 import { tagNameSchema } from "./helpers"
 
-export enum SelectorType {
+export enum ElementSelectorType {
   Query = "query",
   FindByTextContent = "findByTextContent",
 }
 
-export const scraperSelectorSchema = z.discriminatedUnion("type", [
+export const scraperElementSelectorSchema = z.discriminatedUnion("type", [
   z.object({
-    type: z.literal(SelectorType.Query),
+    type: z.literal(ElementSelectorType.Query),
     query: z.string(),
   }),
   z.object({
-    type: z.literal(SelectorType.FindByTextContent),
+    type: z.literal(ElementSelectorType.FindByTextContent),
     text: z.union([z.string(), z.instanceof(RegExp)]),
     tagName: tagNameSchema.optional(),
   }),
 ])
 
-export type ScraperSelector = z.infer<typeof scraperSelectorSchema>
+export type ScraperElementSelector = z.infer<typeof scraperElementSelectorSchema>
