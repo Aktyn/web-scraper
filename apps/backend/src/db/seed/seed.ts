@@ -22,7 +22,8 @@ export async function seed(db = getDbModule(getConfig())) {
     CREATE TABLE IF NOT EXISTS ${sql.identifier(tableName)} (
       id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
       origin TEXT NOT NULL,
-      username_or_email TEXT NOT NULL,
+      username TEXT,
+      email TEXT NOT NULL,
       password TEXT NOT NULL
     )
   `,
@@ -32,7 +33,8 @@ export async function seed(db = getDbModule(getConfig())) {
   const personalCredentialsTable = sqliteTable(tableName, {
     id: primaryKey(),
     origin: text("origin").notNull(),
-    usernameOrEmail: text("username_or_email").notNull(),
+    username: text("username"),
+    email: text("email").notNull(),
     password: text("password").notNull(),
   })
   personalCredentialsTable.id.getSQL()
@@ -40,13 +42,15 @@ export async function seed(db = getDbModule(getConfig())) {
   await db.insert(personalCredentialsTable).values([
     {
       origin: "https://example.com/",
-      usernameOrEmail: "noop@gmail.com",
+      username: "noop",
+      email: "noop@gmail.com",
       password: "Noop123!",
     },
     {
       origin: "https://www.pepper.pl",
-      usernameOrEmail: "test@gmail.com",
-      password: "Test123!",
+      username: "pultetista",
+      email: "pultetista@gufum.com",
+      password: "pultetista@gufum.com",
     },
   ])
 

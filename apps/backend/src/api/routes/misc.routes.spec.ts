@@ -72,7 +72,13 @@ describe("Misc Routes", () => {
               defaultValue: null,
             },
             {
-              name: "username_or_email",
+              name: "username",
+              type: "TEXT",
+              notNull: false,
+              defaultValue: null,
+            },
+            {
+              name: "email",
               type: "TEXT",
               notNull: true,
               defaultValue: null,

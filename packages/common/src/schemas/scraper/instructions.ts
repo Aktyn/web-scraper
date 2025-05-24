@@ -41,6 +41,7 @@ type ScraperInstructionRecursive =
   | { type: ScraperInstructionType.DeleteData; dataKey: ScraperDataKey }
   | { type: ScraperInstructionType.Marker; name: string }
   | { type: ScraperInstructionType.Jump; markerName: string }
+//TODO: add "show notification" instruction
 
 type ScraperInstructionsRecursive = Array<ScraperInstructionRecursive>
 

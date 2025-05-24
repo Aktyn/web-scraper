@@ -309,10 +309,14 @@ export class Scraper {
           break
       }
 
-      await context.page.waitForNetworkIdle({
-        timeout: 60_000,
-        signal: this.abortController.signal,
-      })
+      try {
+        await context.page.waitForNetworkIdle({
+          timeout: 60_000,
+          signal: this.abortController.signal,
+        })
+      } catch (error) {
+        this.logger.warn({ msg: "Network idle timeout", error })
+      }
 
       lastInstructionInfo.duration = performance.now() - instructionStartTime
       if (lastInstructionInfo.url !== context.page.url()) {

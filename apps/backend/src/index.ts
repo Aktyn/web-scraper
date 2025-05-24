@@ -18,6 +18,7 @@ import { DataBridge, DataBridgeSourceType } from "./db/data-bridge"
 import { getDbModule } from "./db/db.module"
 import { createTemporaryView, removeTemporaryView, whereSchemaToSql } from "./db/view-helpers"
 import { getLogger } from "./logger"
+import path from "path"
 
 async function main() {
   const logger = getLogger()
@@ -53,14 +54,14 @@ process.addListener("SIGTERM", cleanup)
 process.addListener("SIGQUIT", cleanup)
 
 main()
-  .then(async (modules) => {
+  .then(async ({ db, logger }) => {
     //TODO: if scraper will run iteratively (for example for each row in some subset of data) then DataBridge should keep track of the current row index
 
-    const dataBridge = new DataBridge(modules.db, {
+    const dataBridge = new DataBridge(db, {
       user: {
         type: DataBridgeSourceType.TemporaryView,
         name: await createTemporaryView(
-          modules.db,
+          db,
           "personal_credentials_random_string",
           whereSchemaToSql({
             column: "origin",
@@ -74,9 +75,10 @@ main()
     const id = uuid()
     const scraper = new Scraper({
       id,
-      logger: modules.logger.child({
+      logger: logger.child({
         scraper: id,
       }),
+      userDataDir: path.join(__dirname, "..", "userData"),
     })
 
     try {
@@ -84,14 +86,15 @@ main()
       await scraper.run(exampleInstructions, dataBridge, {
         leavePageOpen: true,
       })
+      logger.info("Scraper run finished")
     } catch (error) {
-      modules.logger.error(error)
+      logger.error(error)
     } finally {
       // await scraper.destroy()
 
       for (const source of Object.values(dataBridge.dataSources)) {
         if (source.type === DataBridgeSourceType.TemporaryView) {
-          await removeTemporaryView(modules.db, source.name)
+          await removeTemporaryView(db, source.name)
         }
       }
     }
@@ -182,7 +185,7 @@ const exampleInstructions: ScraperInstructions = [
           },
           value: {
             type: ScraperValueType.ExternalData,
-            dataKey: "user.username_or_email",
+            dataKey: "user.email",
           },
         },
       },
@@ -246,6 +249,38 @@ const exampleInstructions: ScraperInstructions = [
           },
         },
       },
+      {
+        type: ScraperInstructionType.PageAction,
+        action: {
+          type: PageActionType.Wait,
+          duration: 500,
+        },
+      },
+
+      //Click login button
+      {
+        type: ScraperInstructionType.PageAction,
+        action: {
+          type: PageActionType.Click,
+          selector: {
+            type: ElementSelectorType.FindByTextContent,
+            text: /Zaloguj się/i,
+            tagName: "button",
+            args: {
+              type: "submit",
+            },
+          },
+        },
+      },
     ],
+  },
+
+  //Navigate to alerts list
+  {
+    type: ScraperInstructionType.PageAction,
+    action: {
+      type: PageActionType.Navigate,
+      url: "https://www.pepper.pl/alerts",
+    },
   },
 ]
