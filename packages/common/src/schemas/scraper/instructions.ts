@@ -1,7 +1,7 @@
 import { z } from "zod"
 import { type ScraperCondition, scraperConditionSchema } from "./condition"
 import { type PageAction, pageActionSchema } from "./page-action"
-import type { ScraperValue } from "./value"
+import type { ScraperDataKey, ScraperValue } from "./value"
 
 export enum ScraperInstructionType {
   /** Used to interact with the page */
@@ -37,8 +37,8 @@ type ScraperInstructionRecursive =
       then: ScraperInstructionsRecursive
       else?: ScraperInstructionsRecursive
     }
-  | { type: ScraperInstructionType.SaveData; dataKey: string; value: ScraperValue }
-  | { type: ScraperInstructionType.DeleteData; dataKey: string }
+  | { type: ScraperInstructionType.SaveData; dataKey: ScraperDataKey; value: ScraperValue }
+  | { type: ScraperInstructionType.DeleteData; dataKey: ScraperDataKey }
   | { type: ScraperInstructionType.Marker; name: string }
   | { type: ScraperInstructionType.Jump; markerName: string }
 

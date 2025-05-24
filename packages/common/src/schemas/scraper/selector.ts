@@ -15,6 +15,7 @@ export const scraperElementSelectorSchema = z.discriminatedUnion("type", [
     type: z.literal(ElementSelectorType.FindByTextContent),
     text: z.union([z.string(), z.instanceof(RegExp)]),
     tagName: tagNameSchema.optional(),
+    args: z.record(z.string(), z.union([z.string(), z.instanceof(RegExp)])).optional(),
   }),
 ])
 

@@ -151,7 +151,10 @@ export class Scraper {
   async run(
     instructions: ScraperInstructions,
     dataBridge: DataBridge,
-    pageMiddleware?: (page: Page) => void | Promise<void>,
+    options?: {
+      pageMiddleware?: (page: Page) => void | Promise<void>
+      leavePageOpen?: boolean
+    },
   ): Promise<ScraperInstructionsExecutionInfo> {
     if (!this.browser) {
       this.browser = await this.init(this.options)
@@ -159,8 +162,8 @@ export class Scraper {
 
     const startTime = performance.now()
     const page = await this.getPage()
-    if (pageMiddleware) {
-      await pageMiddleware(page)
+    if (options?.pageMiddleware) {
+      await options.pageMiddleware(page)
     }
 
     const executionInfo: ScraperInstructionsExecutionInfo = []
@@ -185,7 +188,10 @@ export class Scraper {
       })
     }
 
-    await page.close()
+    if (!options?.leavePageOpen) {
+      await page.close()
+    }
+
     return executionInfo
   }
 

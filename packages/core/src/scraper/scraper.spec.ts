@@ -1,13 +1,13 @@
 import {
-  ScraperConditionType,
+  ElementSelectorType,
   PageActionType,
+  ScraperConditionType,
+  type ScraperElementSelector,
   type ScraperInstructions,
   type ScraperInstructionsExecutionInfo,
   ScraperInstructionsExecutionInfoType,
   ScraperInstructionType,
-  type ScraperElementSelector,
   ScraperValueType,
-  ElementSelectorType,
   type SimpleLogger,
 } from "@web-scraper/common"
 import mockServer from "pptr-mock-server"
@@ -352,7 +352,7 @@ describe(
 
       it("should execute given instructions", async () => {
         await expect(
-          scraper.run(mockInstructions, mockDataBridge, setupInterceptor),
+          scraper.run(mockInstructions, mockDataBridge, { pageMiddleware: setupInterceptor }),
         ).resolves.toEqual(mockExecutionInfo)
       }, 60_000)
 
@@ -376,7 +376,7 @@ describe(
         }
 
         await expect(
-          scraper.run(mockInstructions, mockDataBridge, setupInterceptor),
+          scraper.run(mockInstructions, mockDataBridge, { pageMiddleware: setupInterceptor }),
         ).resolves.toEqual(mockExecutionInfoWithoutCookiesBanner)
       }, 60_000)
 
@@ -522,7 +522,7 @@ describe(
 
       it("should fill form fields with external data", async () => {
         await expect(
-          scraper.run(mockInstructions, mockDataBridge, setupInterceptor),
+          scraper.run(mockInstructions, mockDataBridge, { pageMiddleware: setupInterceptor }),
         ).resolves.toEqual(mockExecutionInfo)
       }, 120_000)
     })
@@ -639,7 +639,7 @@ describe(
 
       it("should decide which button to click based on external data", async () => {
         await expect(
-          scraper.run(mockInstructions, mockDataBridge, setupInterceptor),
+          scraper.run(mockInstructions, mockDataBridge, { pageMiddleware: setupInterceptor }),
         ).resolves.toEqual(mockExecutionInfo)
       }, 120_000)
     })
@@ -679,7 +679,9 @@ describe(
           },
         ]
 
-        const result = await scraper.run(mockInstructions, mockDataBridge, setupInterceptor)
+        const result = await scraper.run(mockInstructions, mockDataBridge, {
+          pageMiddleware: setupInterceptor,
+        })
 
         expect(result).toEqual([
           {
@@ -739,7 +741,9 @@ describe(
           },
         ]
 
-        const result = await scraper.run(mockInstructions, mockDataBridge, setupInterceptor)
+        const result = await scraper.run(mockInstructions, mockDataBridge, {
+          pageMiddleware: setupInterceptor,
+        })
 
         expect(result).toEqual([
           {
@@ -808,7 +812,9 @@ describe(
           },
         ]
 
-        const result = await scraper.run(mockInstructions, mockDataBridge, setupInterceptor)
+        const result = await scraper.run(mockInstructions, mockDataBridge, {
+          pageMiddleware: setupInterceptor,
+        })
 
         const timestampAfter = Date.now()
 
@@ -873,7 +879,9 @@ describe(
           },
         ]
 
-        const result = await scraper.run(mockInstructions, mockDataBridge, setupInterceptor)
+        const result = await scraper.run(mockInstructions, mockDataBridge, {
+          pageMiddleware: setupInterceptor,
+        })
 
         expect(result).toEqual([
           {
@@ -939,7 +947,9 @@ describe(
           },
         ]
 
-        const result = await scraper.run(mockInstructions, mockDataBridge, setupInterceptor)
+        const result = await scraper.run(mockInstructions, mockDataBridge, {
+          pageMiddleware: setupInterceptor,
+        })
 
         expect(result).toEqual([
           {
@@ -1004,7 +1014,9 @@ describe(
           },
         ]
 
-        const result = await scraper.run(mockInstructions, mockDataBridge, setupInterceptor)
+        const result = await scraper.run(mockInstructions, mockDataBridge, {
+          pageMiddleware: setupInterceptor,
+        })
 
         expect(result).toEqual([
           {
@@ -1058,7 +1070,9 @@ describe(
           },
         ]
 
-        const result = await scraper.run(mockInstructions, mockDataBridge, setupInterceptor)
+        const result = await scraper.run(mockInstructions, mockDataBridge, {
+          pageMiddleware: setupInterceptor,
+        })
 
         expect(result).toEqual([
           {
@@ -1118,7 +1132,9 @@ describe(
           },
         ]
 
-        const result = await scraper.run(mockInstructions, mockDataBridge, setupInterceptor)
+        const result = await scraper.run(mockInstructions, mockDataBridge, {
+          pageMiddleware: setupInterceptor,
+        })
 
         expect(result).toEqual([
           {

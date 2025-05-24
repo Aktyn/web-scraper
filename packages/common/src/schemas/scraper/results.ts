@@ -2,7 +2,7 @@ import { z } from "zod"
 import { scraperConditionSchema } from "./condition"
 import { ScraperInstructionType } from "./instructions"
 import { pageActionSchema } from "./page-action"
-import { scraperValueSchema } from "./value"
+import { type ScraperDataKey, scraperValueSchema } from "./value"
 
 const instructionInfoSchema = z.discriminatedUnion("type", [
   z.object({ type: z.literal(ScraperInstructionType.PageAction), action: pageActionSchema }),
@@ -15,12 +15,12 @@ const instructionInfoSchema = z.discriminatedUnion("type", [
 
   z.object({
     type: z.literal(ScraperInstructionType.SaveData),
-    dataKey: z.string(),
+    dataKey: z.custom<ScraperDataKey>(),
     value: scraperValueSchema,
   }),
   z.object({
     type: z.literal(ScraperInstructionType.DeleteData),
-    dataKey: z.string(),
+    dataKey: z.custom<ScraperDataKey>(),
   }),
 
   z.object({ type: z.literal(ScraperInstructionType.Marker), name: z.string() }),

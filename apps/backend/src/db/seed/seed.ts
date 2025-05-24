@@ -1,12 +1,47 @@
 import "dotenv/config"
 
+import { sql } from "drizzle-orm"
+import { sqliteTable, text } from "drizzle-orm/sqlite-core"
 import { getConfig } from "../../config/config"
 import { getDbModule } from "../db.module"
-import { preferencesTable } from "../schema"
+import { preferencesTable, userDataStoresTable } from "../schema"
+import { primaryKey, sanitizeTableName } from "../schema/helpers"
 
 export async function seed(db = getDbModule(getConfig())) {
   await db.insert(preferencesTable).values({
     key: "foo",
     value: "bar",
+  })
+
+  const name = "Personal credentials"
+  const tableName = sanitizeTableName(name + "_" + "random_string") //TODO: use randomString(8) when creating user store table from user's request
+
+  await db.run(sql`
+    CREATE TABLE IF NOT EXISTS ${sql.identifier(tableName)} (
+      id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+      origin TEXT NOT NULL,
+      username_or_email TEXT NOT NULL,
+      password TEXT NOT NULL
+    )
+  `)
+
+  const personalCredentialsTable = sqliteTable(tableName, {
+    id: primaryKey(),
+    origin: text("origin").notNull(),
+    usernameOrEmail: text("username_or_email").notNull(),
+    password: text("password").notNull(),
+  })
+  personalCredentialsTable.id.getSQL()
+
+  await db.insert(personalCredentialsTable).values({
+    origin: "https://www.pepper.pl",
+    usernameOrEmail: "test@gmail.com",
+    password: "Test123!",
+  })
+
+  await db.insert(userDataStoresTable).values({
+    tableName,
+    name,
+    description: "Personal credentials for various websites",
   })
 }

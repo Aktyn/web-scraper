@@ -34,23 +34,44 @@ export async function getElementHandle(
     }
     case ElementSelectorType.FindByTextContent: {
       const handle = await page.evaluateHandle(
-        (tagName, text) => {
-          const matcher = typeof text === "string" ? text : new RegExp(text.source, text.flags)
+        (tagName, text, args) => {
+          type SerializedRegExp = { source: string; flags: string }
 
-          function matchTextContent(element: Element, matcher: string | RegExp) {
-            if (matcher instanceof RegExp) {
-              return matcher.test(element.textContent ?? "")
+          function compareText(text: string | null, matcher: string | SerializedRegExp) {
+            if (typeof matcher === "string") {
+              return text === matcher
             }
-            return element.textContent === matcher
+            const regex = new RegExp(matcher.source, matcher.flags)
+            return regex.test(text ?? "")
+          }
+
+          function matchTextContent(element: Element, matcher: string | SerializedRegExp) {
+            return compareText(element.textContent, matcher)
+          }
+
+          function matchArguments(
+            element: Element,
+            args?: Record<string, string | SerializedRegExp>,
+          ) {
+            if (!args || Object.keys(args).length === 0) {
+              return true
+            }
+            return Object.entries(args).every(([key, matcher]) => {
+              const attributeValue = element.getAttribute(key)
+              return compareText(attributeValue, matcher)
+            })
           }
 
           const elements = Array.from(document.querySelectorAll(tagName)).filter(
-            (element) => element.checkVisibility() && matchTextContent(element, matcher),
+            (element) =>
+              element.checkVisibility() &&
+              matchTextContent(element, text) &&
+              matchArguments(element, args),
           ) as HTMLElement[]
 
           if (elements.length > 1) {
             throw new Error(
-              "Expected a single element to be selected. Found multiple elements matching the condition",
+              "Expected a single element to be found. Found multiple elements matching the condition",
             )
           }
           return elements.at(0) ?? null
@@ -59,6 +80,14 @@ export async function getElementHandle(
         selector.text instanceof RegExp
           ? { source: selector.text.source, flags: selector.text.flags }
           : selector.text,
+        selector.args
+          ? Object.fromEntries(
+              Object.entries(selector.args).map(([key, value]) => [
+                key,
+                value instanceof RegExp ? { source: value.source, flags: value.flags } : value,
+              ]),
+            )
+          : undefined,
       )
       elementHandle = handle?.asElement() as ElementHandle<Element>
       break
@@ -67,7 +96,7 @@ export async function getElementHandle(
 
   if (required && !elementHandle) {
     throw new Error(
-      "Expected a single element to be selected. Found no elements matching the condition",
+      "Expected a single element to be found. Found no element matching the condition",
     )
   }
 

@@ -1,4 +1,4 @@
-import type { Preferences } from "@web-scraper/common"
+import type { Preferences, UserDataStore } from "@web-scraper/common"
 
 const baseUrl = import.meta.env.VITE_API_URL_BASE.replace(/\/$/, "")
 
@@ -20,6 +20,11 @@ export type Routes = {
   preferences: {
     get: {
       response: Preferences
+    }
+  }
+  userDataStores: {
+    get: {
+      response: UserDataStore[]
     }
   }
 }

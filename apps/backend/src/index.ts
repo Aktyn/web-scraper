@@ -1,13 +1,14 @@
 import "dotenv/config"
 
 import {
-  ScraperConditionType,
-  PageActionType,
-  type ScraperInstructions,
-  ScraperInstructionType,
-  type ScraperElementSelector,
   ElementSelectorType,
+  PageActionType,
+  ScraperConditionType,
+  ScraperInstructionType,
+  ScraperValueType,
   uuid,
+  type ScraperElementSelector,
+  type ScraperInstructions,
 } from "@web-scraper/common"
 import { Scraper } from "@web-scraper/core"
 import { getApiModule } from "./api/api.module"
@@ -51,7 +52,10 @@ process.addListener("SIGQUIT", cleanup)
 
 main()
   .then(async (modules) => {
-    const dataBridge = new DataBridge(modules.db)
+    //TODO: if scraper will run iteratively (for example for each row in some subset of data) then DataBridge should keep track of the current row index
+    const dataBridge = new DataBridge(modules.db, {
+      user: "personal_credentials_random_string",
+    })
 
     const id = uuid()
     const scraper = new Scraper({
@@ -62,7 +66,10 @@ main()
     })
 
     try {
-      await scraper.run(exampleInstructions, dataBridge) //TODO: remove after testing
+      //TODO: remove after testing
+      await scraper.run(exampleInstructions, dataBridge, {
+        leavePageOpen: true,
+      })
     } catch (error) {
       modules.logger.error(error)
     } finally {
@@ -145,7 +152,80 @@ const exampleInstructions: ScraperInstructions = [
           selector: loginButtonSelector,
         },
       },
-      //TODO: fill login form and finish login process
+      {
+        type: ScraperInstructionType.PageAction,
+        action: {
+          type: PageActionType.Type,
+          selector: {
+            type: ElementSelectorType.Query,
+            query: "input[type='email'][name='identity']",
+          },
+          value: {
+            type: ScraperValueType.ExternalData,
+            dataKey: "user.username_or_email",
+          },
+        },
+      },
+      {
+        type: ScraperInstructionType.PageAction,
+        action: {
+          type: PageActionType.Wait,
+          duration: 500,
+        },
+      },
+      {
+        type: ScraperInstructionType.PageAction,
+        action: {
+          type: PageActionType.Click,
+          selector: {
+            type: ElementSelectorType.FindByTextContent,
+            text: /Kontynuuj/i,
+            tagName: "button",
+            args: {
+              type: "submit",
+            },
+          },
+        },
+      },
+      {
+        type: ScraperInstructionType.PageAction,
+        action: {
+          type: PageActionType.Wait,
+          duration: 500,
+        },
+      },
+      {
+        type: ScraperInstructionType.PageAction,
+        action: {
+          type: PageActionType.Type,
+          selector: {
+            type: ElementSelectorType.Query,
+            query: "input[type='password'][name='password']",
+          },
+          value: {
+            type: ScraperValueType.ExternalData,
+            dataKey: "user.password",
+          },
+        },
+      },
+      {
+        type: ScraperInstructionType.PageAction,
+        action: {
+          type: PageActionType.Wait,
+          duration: 500,
+        },
+      },
+      //Click show password button
+      {
+        type: ScraperInstructionType.PageAction,
+        action: {
+          type: PageActionType.Click,
+          selector: {
+            type: ElementSelectorType.Query,
+            query: "input[type='password'][name='password'] + span>button",
+          },
+        },
+      },
     ],
   },
 ]

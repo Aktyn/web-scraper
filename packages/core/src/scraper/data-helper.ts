@@ -1,5 +1,6 @@
 import {
   assert,
+  type ScraperDataKey,
   ScraperInstructionsExecutionInfoType,
   type ScraperValue,
   ScraperValueType,
@@ -8,9 +9,9 @@ import { type ScraperExecutionContext } from "./helpers"
 import { getElementHandle } from "./selectors"
 
 export interface DataBridge {
-  get(key: string): Promise<string | null>
-  set(key: string, value: string | null): Promise<void>
-  delete(key: string): Promise<void>
+  get(key: ScraperDataKey): Promise<string | null>
+  set(key: ScraperDataKey, value: string | null): Promise<void>
+  delete(key: ScraperDataKey): Promise<void>
 }
 
 export async function getScraperValue(context: ScraperExecutionContext, value: ScraperValue) {

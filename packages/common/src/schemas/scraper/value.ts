@@ -1,6 +1,9 @@
 import z from "zod"
 import { scraperElementSelectorSchema } from "./selector"
 
+/** DataSourceName.ColumnName where data source name refers to table or view name */
+export type ScraperDataKey = `${string}.${string}`
+
 export enum ScraperValueType {
   Literal = "literal",
   CurrentTimestamp = "currentTimestamp",
@@ -23,7 +26,7 @@ export const scraperValueSchema = z.discriminatedUnion("type", [
 
   z.object({
     type: z.literal(ScraperValueType.ExternalData),
-    dataKey: z.string(),
+    dataKey: z.custom<ScraperDataKey>(),
     defaultValue: z.string().optional(),
   }),
 

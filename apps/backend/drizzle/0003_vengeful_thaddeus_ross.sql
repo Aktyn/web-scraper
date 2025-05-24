@@ -1,0 +1,1 @@
+CREATE UNIQUE INDEX `unique_table_name` ON `user_data_stores_table` (`table_name`);
