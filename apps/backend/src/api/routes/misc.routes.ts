@@ -1,6 +1,8 @@
-import { preferencesSchema, userDataStoresSchema } from "@web-scraper/common"
+import { preferencesSchema, type SqliteColumnType, userDataStoreSchema } from "@web-scraper/common"
+import { sql } from "drizzle-orm"
 import type { FastifyInstance } from "fastify"
 import type { ZodTypeProvider } from "fastify-type-provider-zod"
+import { z } from "zod"
 import { preferencesTable, userDataStoresTable } from "../../db/schema"
 
 export async function miscRoutes(fastify: FastifyInstance) {
@@ -24,12 +26,34 @@ export async function miscRoutes(fastify: FastifyInstance) {
     {
       schema: {
         response: {
-          200: userDataStoresSchema,
+          200: z.array(userDataStoreSchema),
         },
       },
     },
     async (_request, reply) => {
-      const userDataStores = await fastify.db.select().from(userDataStoresTable)
+      const stores = await fastify.db.select().from(userDataStoresTable)
+
+      const userDataStores = await Promise.all(
+        stores.map(async (store) => {
+          const count = await fastify.db
+            .run(sql`SELECT COUNT(*) as count FROM ${sql.identifier(store.tableName)}`)
+            .execute()
+          const tableInfo = await fastify.db
+            .run(sql`PRAGMA table_info(${sql.identifier(store.tableName)})`)
+            .execute()
+          return {
+            ...store,
+            recordsCount: Number(count.rows.at(0)?.count ?? 0),
+            columns: tableInfo.rows.map((row) => ({
+              name: row.name as string,
+              type: row.type as SqliteColumnType,
+              notNull: row.notnull === 1,
+              defaultValue: row.dflt_value as string | null,
+            })),
+          }
+        }),
+      )
+
       return reply.status(200).send(userDataStores)
     },
   )

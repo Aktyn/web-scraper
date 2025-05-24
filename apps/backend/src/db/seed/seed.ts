@@ -16,14 +16,18 @@ export async function seed(db = getDbModule(getConfig())) {
   const name = "Personal credentials"
   const tableName = sanitizeTableName(name + "_" + "random_string") //TODO: use randomString(8) when creating user store table from user's request
 
-  await db.run(sql`
+  await db
+    .run(
+      sql`
     CREATE TABLE IF NOT EXISTS ${sql.identifier(tableName)} (
       id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
       origin TEXT NOT NULL,
       username_or_email TEXT NOT NULL,
       password TEXT NOT NULL
     )
-  `)
+  `,
+    )
+    .execute()
 
   const personalCredentialsTable = sqliteTable(tableName, {
     id: primaryKey(),
@@ -33,11 +37,18 @@ export async function seed(db = getDbModule(getConfig())) {
   })
   personalCredentialsTable.id.getSQL()
 
-  await db.insert(personalCredentialsTable).values({
-    origin: "https://www.pepper.pl",
-    usernameOrEmail: "test@gmail.com",
-    password: "Test123!",
-  })
+  await db.insert(personalCredentialsTable).values([
+    {
+      origin: "https://example.com/",
+      usernameOrEmail: "noop@gmail.com",
+      password: "Noop123!",
+    },
+    {
+      origin: "https://www.pepper.pl",
+      usernameOrEmail: "test@gmail.com",
+      password: "Test123!",
+    },
+  ])
 
   await db.insert(userDataStoresTable).values({
     tableName,

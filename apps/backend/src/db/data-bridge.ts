@@ -2,26 +2,35 @@ import type { DataBridge as DataBridgeInterface } from "@web-scraper/core"
 import { sql } from "drizzle-orm"
 import type { DbModule } from "./db.module"
 
-type SourceTypeKey<SourcesType> =
-  SourcesType extends Record<infer Key, string> ? `${Key & string}.${string}` : never
+export enum DataBridgeSourceType {
+  Table = "table",
+  TemporaryView = "temporaryView",
+}
 
-export class DataBridge<SourcesType extends Record<string, string>> implements DataBridgeInterface {
+type DataBridgeSource = {
+  type: DataBridgeSourceType
+  name: string
+}
+
+type SourceTypeKey<SourcesType> =
+  SourcesType extends Record<infer Key, DataBridgeSource> ? `${Key & string}.${string}` : never
+
+export class DataBridge<SourcesType extends Record<string, DataBridgeSource>>
+  implements DataBridgeInterface
+{
   constructor(
     private readonly db: DbModule,
-    private readonly dataSources: SourcesType,
+    public readonly dataSources: SourcesType,
   ) {}
 
   async get(key: SourceTypeKey<SourcesType>) {
-    // const result = await this.db.get(key)
+    const [sourceName, column] = key.split(".") as [string & keyof SourcesType, string]
+    const source = this.dataSources[sourceName]
 
-    const [source, column] = key.split(".") as [string & keyof SourcesType, string]
-    const tableName = this.dataSources[source]
-
-    //TODO: all use store tables are supposed to have a numeric id column; use it to get specific row
-    const result = await this.db.run(
-      sql.raw(`
-      SELECT ${column} FROM ${tableName} LIMIT 1`),
-    )
+    //TODO: all user-store-tables are supposed to have a numeric id column; use it to get specific row when scraper runs iteratively
+    const result = await this.db
+      .run(sql.raw(`SELECT ${column} FROM ${source.name} LIMIT 1`))
+      .execute()
     return result.rows.at(0)?.[column]?.toString() ?? null
   }
 

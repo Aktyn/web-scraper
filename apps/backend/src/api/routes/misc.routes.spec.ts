@@ -53,7 +53,38 @@ describe("Misc Routes", () => {
 
       expect(response.statusCode).toBe(200)
       expect(JSON.parse(response.payload)).toEqual([
-        { name: "Personal credentials", description: "Personal credentials for various websites" },
+        {
+          tableName: "personal_credentials_random_string",
+          name: "Personal credentials",
+          description: "Personal credentials for various websites",
+          recordsCount: 2,
+          columns: [
+            {
+              name: "id",
+              type: "INTEGER",
+              notNull: true,
+              defaultValue: null,
+            },
+            {
+              name: "origin",
+              type: "TEXT",
+              notNull: true,
+              defaultValue: null,
+            },
+            {
+              name: "username_or_email",
+              type: "TEXT",
+              notNull: true,
+              defaultValue: null,
+            },
+            {
+              name: "password",
+              type: "TEXT",
+              notNull: true,
+              defaultValue: null,
+            },
+          ],
+        },
       ])
     })
 

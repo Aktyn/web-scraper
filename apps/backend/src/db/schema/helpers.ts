@@ -5,5 +5,5 @@ export function primaryKey() {
 }
 
 export function sanitizeTableName(name: string) {
-  return name.toLowerCase().replace(/\s+/g, "_")
+  return name.toLowerCase().replace(/(\s+|[^a-zA-Z0-9])/g, "_")
 }

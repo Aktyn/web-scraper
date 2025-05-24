@@ -24,7 +24,7 @@ export type Routes = {
   }
   userDataStores: {
     get: {
-      response: UserDataStore[]
+      response: Array<UserDataStore>
     }
   }
 }

@@ -6,6 +6,7 @@ import {
   ScraperConditionType,
   ScraperInstructionType,
   ScraperValueType,
+  SqliteConditionType,
   uuid,
   type ScraperElementSelector,
   type ScraperInstructions,
@@ -13,8 +14,9 @@ import {
 import { Scraper } from "@web-scraper/core"
 import { getApiModule } from "./api/api.module"
 import { getConfig } from "./config/config"
-import { DataBridge } from "./db/data-bridge"
+import { DataBridge, DataBridgeSourceType } from "./db/data-bridge"
 import { getDbModule } from "./db/db.module"
+import { createTemporaryView, removeTemporaryView, whereSchemaToSql } from "./db/view-helpers"
 import { getLogger } from "./logger"
 
 async function main() {
@@ -53,8 +55,20 @@ process.addListener("SIGQUIT", cleanup)
 main()
   .then(async (modules) => {
     //TODO: if scraper will run iteratively (for example for each row in some subset of data) then DataBridge should keep track of the current row index
+
     const dataBridge = new DataBridge(modules.db, {
-      user: "personal_credentials_random_string",
+      user: {
+        type: DataBridgeSourceType.TemporaryView,
+        name: await createTemporaryView(
+          modules.db,
+          "personal_credentials_random_string",
+          whereSchemaToSql({
+            column: "origin",
+            condition: SqliteConditionType.ILike,
+            value: "%pepper.pl%",
+          }),
+        ),
+      },
     })
 
     const id = uuid()
@@ -74,6 +88,12 @@ main()
       modules.logger.error(error)
     } finally {
       // await scraper.destroy()
+
+      for (const source of Object.values(dataBridge.dataSources)) {
+        if (source.type === DataBridgeSourceType.TemporaryView) {
+          await removeTemporaryView(modules.db, source.name)
+        }
+      }
     }
   })
   .catch((error) => {

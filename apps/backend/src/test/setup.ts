@@ -1,3 +1,4 @@
+import type { SimpleLogger } from "@web-scraper/common"
 import { migrate } from "drizzle-orm/libsql/migrator"
 import { getApiModule } from "../api/api.module"
 import type { Config } from "../config/config"
@@ -18,7 +19,12 @@ export async function setup() {
     logger: false,
   })
 
-  return { api, db }
+  const logger: SimpleLogger = {
+    ...console,
+    fatal: console.error,
+  }
+
+  return { api, db, logger }
 }
 
 export type TestModules = Awaited<ReturnType<typeof setup>>
