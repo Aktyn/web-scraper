@@ -17,7 +17,9 @@ describe("Misc Routes", () => {
       })
 
       expect(response.statusCode).toBe(200)
-      expect(JSON.parse(response.payload)).toEqual([{ key: "foo", value: "bar" }])
+      expect(JSON.parse(response.payload)).toEqual({
+        data: [{ key: "foo", value: "bar" }],
+      })
     })
 
     it("should return status 200 and an empty array if no preferences exist", async () => {
@@ -29,7 +31,9 @@ describe("Misc Routes", () => {
       })
 
       expect(response.statusCode).toBe(200)
-      expect(JSON.parse(response.payload)).toEqual([])
+      expect(JSON.parse(response.payload)).toEqual({
+        data: [],
+      })
     })
 
     it("should return 500 if there is a database error", async () => {
@@ -48,50 +52,55 @@ describe("Misc Routes", () => {
     it("should return status 200 and user data stores from the database", async () => {
       const response = await modules.api.inject({
         method: "GET",
-        url: "/user-data-stores",
+        url: "/user-data-stores?pageSize=32",
       })
 
       expect(response.statusCode).toBe(200)
-      expect(JSON.parse(response.payload)).toEqual([
-        {
-          tableName: "personal_credentials_random_string",
-          name: "Personal credentials",
-          description: "Personal credentials for various websites",
-          recordsCount: 2,
-          columns: [
-            {
-              name: "id",
-              type: "INTEGER",
-              notNull: true,
-              defaultValue: null,
-            },
-            {
-              name: "origin",
-              type: "TEXT",
-              notNull: true,
-              defaultValue: null,
-            },
-            {
-              name: "username",
-              type: "TEXT",
-              notNull: false,
-              defaultValue: null,
-            },
-            {
-              name: "email",
-              type: "TEXT",
-              notNull: true,
-              defaultValue: null,
-            },
-            {
-              name: "password",
-              type: "TEXT",
-              notNull: true,
-              defaultValue: null,
-            },
-          ],
-        },
-      ])
+      expect(JSON.parse(response.payload)).toEqual({
+        data: [
+          {
+            tableName: "personal_credentials_random_string",
+            name: "Personal credentials",
+            description: "Personal credentials for various websites",
+            recordsCount: 2,
+            columns: [
+              {
+                name: "id",
+                type: "INTEGER",
+                notNull: true,
+                defaultValue: null,
+              },
+              {
+                name: "origin",
+                type: "TEXT",
+                notNull: true,
+                defaultValue: null,
+              },
+              {
+                name: "username",
+                type: "TEXT",
+                notNull: false,
+                defaultValue: null,
+              },
+              {
+                name: "email",
+                type: "TEXT",
+                notNull: true,
+                defaultValue: null,
+              },
+              {
+                name: "password",
+                type: "TEXT",
+                notNull: true,
+                defaultValue: null,
+              },
+            ],
+          },
+        ],
+        page: 0,
+        pageSize: 32,
+        hasMore: false,
+      })
     })
 
     it("should return status 200 and an empty array if no user data stores exist", async () => {
@@ -103,7 +112,12 @@ describe("Misc Routes", () => {
       })
 
       expect(response.statusCode).toBe(200)
-      expect(JSON.parse(response.payload)).toEqual([])
+      expect(JSON.parse(response.payload)).toEqual({
+        data: [],
+        page: 0,
+        pageSize: 64,
+        hasMore: false,
+      })
     })
 
     it("should return 500 if there is a database error", async () => {

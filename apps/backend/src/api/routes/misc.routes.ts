@@ -1,8 +1,15 @@
-import { preferencesSchema, type SqliteColumnType, userDataStoreSchema } from "@web-scraper/common"
+import {
+  apiErrorPayload,
+  apiPaginationQuerySchema,
+  getApiPaginatedResponseSchema,
+  getApiResponseSchema,
+  preferencesSchema,
+  type SqliteColumnType,
+  userDataStoreSchema,
+} from "@web-scraper/common"
 import { sql } from "drizzle-orm"
 import type { FastifyInstance } from "fastify"
 import type { ZodTypeProvider } from "fastify-type-provider-zod"
-import { z } from "zod"
 import { preferencesTable, userDataStoresTable } from "../../db/schema"
 
 export async function miscRoutes(fastify: FastifyInstance) {
@@ -11,13 +18,15 @@ export async function miscRoutes(fastify: FastifyInstance) {
     {
       schema: {
         response: {
-          200: preferencesSchema,
+          200: getApiResponseSchema(preferencesSchema),
         },
       },
     },
     async (_request, reply) => {
       const preferences = await fastify.db.select().from(preferencesTable)
-      return reply.status(200).send(preferences)
+      return reply.status(200).send({
+        data: preferences,
+      })
     },
   )
 
@@ -25,17 +34,25 @@ export async function miscRoutes(fastify: FastifyInstance) {
     "/user-data-stores",
     {
       schema: {
+        querystring: apiPaginationQuerySchema,
         response: {
-          200: z.array(userDataStoreSchema),
+          200: getApiPaginatedResponseSchema(userDataStoreSchema),
+          400: apiErrorPayload,
         },
       },
     },
-    async (_request, reply) => {
-      const stores = await fastify.db.select().from(userDataStoresTable)
+    async (request, reply) => {
+      const { page, pageSize } = request.query
+
+      const stores = await fastify.db
+        .select()
+        .from(userDataStoresTable)
+        .limit(pageSize + 1)
+        .offset(page * pageSize)
 
       const userDataStores = await Promise.all(
         stores.map(async (store) => {
-          const count = await fastify.db
+          const countResult = await fastify.db
             .run(sql`SELECT COUNT(*) as count FROM ${sql.identifier(store.tableName)}`)
             .execute()
           const tableInfo = await fastify.db
@@ -43,7 +60,7 @@ export async function miscRoutes(fastify: FastifyInstance) {
             .execute()
           return {
             ...store,
-            recordsCount: Number(count.rows.at(0)?.count ?? 0),
+            recordsCount: Number(countResult.rows.at(0)?.count ?? 0),
             columns: tableInfo.rows.map((row) => ({
               name: row.name as string,
               type: row.type as SqliteColumnType,
@@ -54,7 +71,12 @@ export async function miscRoutes(fastify: FastifyInstance) {
         }),
       )
 
-      return reply.status(200).send(userDataStores)
+      return reply.status(200).send({
+        data: userDataStores.slice(0, pageSize),
+        page,
+        pageSize,
+        hasMore: userDataStores.length > pageSize,
+      })
     },
   )
 }

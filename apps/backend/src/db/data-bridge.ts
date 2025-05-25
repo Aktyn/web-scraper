@@ -35,7 +35,7 @@ export class DataBridge<SourcesType extends Record<string, DataBridgeSource>>
   }
 
   async set(_key: SourceTypeKey<SourcesType>, _value: string): Promise<void> {
-    //TODO: implement
+    //TODO: implement, consider renaming the method to "upsert"
   }
 
   async delete(_key: SourceTypeKey<SourcesType>): Promise<void> {

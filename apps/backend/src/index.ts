@@ -4,21 +4,22 @@ import {
   ElementSelectorType,
   PageActionType,
   ScraperConditionType,
+  type ScraperElementSelector,
+  type ScraperInstructions,
   ScraperInstructionType,
   ScraperValueType,
   SqliteConditionType,
   uuid,
-  type ScraperElementSelector,
-  type ScraperInstructions,
 } from "@web-scraper/common"
 import { Scraper } from "@web-scraper/core"
+import path from "path"
+import { type Logger } from "pino"
 import { getApiModule } from "./api/api.module"
 import { getConfig } from "./config/config"
 import { DataBridge, DataBridgeSourceType } from "./db/data-bridge"
-import { getDbModule } from "./db/db.module"
+import { type DbModule, getDbModule } from "./db/db.module"
 import { createTemporaryView, removeTemporaryView, whereSchemaToSql } from "./db/view-helpers"
 import { getLogger } from "./logger"
-import path from "path"
 
 async function main() {
   const logger = getLogger()
@@ -54,50 +55,8 @@ process.addListener("SIGTERM", cleanup)
 process.addListener("SIGQUIT", cleanup)
 
 main()
-  .then(async ({ db, logger }) => {
-    //TODO: if scraper will run iteratively (for example for each row in some subset of data) then DataBridge should keep track of the current row index
-
-    const dataBridge = new DataBridge(db, {
-      user: {
-        type: DataBridgeSourceType.TemporaryView,
-        name: await createTemporaryView(
-          db,
-          "personal_credentials_random_string",
-          whereSchemaToSql({
-            column: "origin",
-            condition: SqliteConditionType.ILike,
-            value: "%pepper.pl%",
-          }),
-        ),
-      },
-    })
-
-    const id = uuid()
-    const scraper = new Scraper({
-      id,
-      logger: logger.child({
-        scraper: id,
-      }),
-      userDataDir: path.join(__dirname, "..", "userData"),
-    })
-
-    try {
-      //TODO: remove after testing
-      await scraper.run(exampleInstructions, dataBridge, {
-        leavePageOpen: true,
-      })
-      logger.info("Scraper run finished")
-    } catch (error) {
-      logger.error(error)
-    } finally {
-      // await scraper.destroy()
-
-      for (const source of Object.values(dataBridge.dataSources)) {
-        if (source.type === DataBridgeSourceType.TemporaryView) {
-          await removeTemporaryView(db, source.name)
-        }
-      }
-    }
+  .then(async (_modules) => {
+    // await testRun(_modules.db, _modules.logger)
   })
   .catch((error) => {
     void cleanup()
@@ -105,6 +64,55 @@ main()
     console.error(error)
     process.exit(1)
   })
+
+//TODO: remove after testing
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+async function testRun(db: DbModule, logger: Logger) {
+  //TODO: if scraper will run iteratively (for example for each row in some subset of data) then DataBridge should keep track of the current row index
+
+  //TODO: save last N run configurations (instructions + data sources) so it can be reused by user later
+
+  const dataBridge = new DataBridge(db, {
+    user: {
+      type: DataBridgeSourceType.TemporaryView,
+      name: await createTemporaryView(
+        db,
+        "personal_credentials_random_string",
+        whereSchemaToSql({
+          column: "origin",
+          condition: SqliteConditionType.ILike,
+          value: "%pepper.pl%",
+        }),
+      ),
+    },
+  })
+
+  const id = uuid()
+  const scraper = new Scraper({
+    id,
+    logger: logger.child({
+      scraper: id,
+    }),
+    userDataDir: path.join(__dirname, "..", "userData"),
+  })
+
+  try {
+    await scraper.run(exampleInstructions, dataBridge, {
+      leavePageOpen: true,
+    })
+    logger.info("Scraper run finished")
+  } catch (error) {
+    logger.error(error)
+  } finally {
+    // await scraper.destroy()
+
+    for (const source of Object.values(dataBridge.dataSources)) {
+      if (source.type === DataBridgeSourceType.TemporaryView) {
+        await removeTemporaryView(db, source.name)
+      }
+    }
+  }
+}
 
 const acceptCookiesButtonSelector: ScraperElementSelector = {
   type: ElementSelectorType.FindByTextContent,

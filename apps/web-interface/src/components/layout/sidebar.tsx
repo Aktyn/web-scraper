@@ -1,34 +1,25 @@
-import { ExternalLink, PanelLeftClose, PanelRightClose } from "lucide-react"
+import { useSizer } from "@/hooks/useSizer"
+import { cn } from "@/lib/utils"
+import { ExternalLink, PanelRightClose } from "lucide-react"
+import { useState } from "react"
 import { Button } from "../shadcn/button"
 import { ScrollArea } from "../shadcn/scroll-area"
 import { Separator } from "../shadcn/separator"
 import { Tooltip, TooltipContent, TooltipTrigger } from "../shadcn/tooltip"
-import { useState } from "react"
-import { cn } from "@/lib/utils"
-import { useSizer } from "@/hooks/useSizer"
 import { NavigationMenu } from "./navigation-menu"
 
 export function Sidebar() {
   const { ref, width } = useSizer()
 
+  //TODO: store in local storage
   const [isOpen, setIsOpen] = useState(true)
 
   return (
     <aside
       ref={ref}
-      className={cn(
-        "z-20 border-r flex flex-col items-stretch relative transition-[margin,border-color,box-shadow] duration-400 bg-background-darker animate-in slide-in-from-left fill-mode-both",
-        isOpen
-          ? "ease-in-out"
-          : "ease-in hover:border-primary shadow-[-1rem_0_1rem] hover:shadow-[0rem_0_1rem] shadow-primary cursor-pointer animate-none",
-      )}
+      className="z-20 border-r flex flex-col items-stretch relative transition-[margin,border-color,box-shadow] duration-400 ease-in-out bg-background-darker animate-in slide-in-from-left fill-mode-both"
       style={{
-        marginLeft: isOpen ? "0px" : `-${width}px`,
-      }}
-      onClick={() => {
-        if (!isOpen) {
-          setIsOpen(true)
-        }
+        marginLeft: isOpen ? "0px" : `calc(-${width}px + var(--spacing)*16)`,
       }}
     >
       <header
@@ -44,13 +35,15 @@ export function Sidebar() {
             <Button
               variant="ghost"
               size="icon"
-              className={cn(
-                "ml-auto absolute z-50 w-9 right-4 transition-[translate,background-color,color]",
-                isOpen ? "translate-x-0" : "translate-x-15",
-              )}
+              className="ml-auto absolute z-50 w-9 right-4 transition-[translate,background-color,color]"
               onClick={() => setIsOpen(!isOpen)}
             >
-              {isOpen ? <PanelLeftClose /> : <PanelRightClose />}
+              <PanelRightClose
+                className={cn(
+                  "transition-transform duration-bounce ease-bounce",
+                  isOpen ? "rotate-180" : "rotate-0",
+                )}
+              />
             </Button>
           </TooltipTrigger>
           <TooltipContent>Toggle sidebar</TooltipContent>
@@ -58,11 +51,22 @@ export function Sidebar() {
       </header>
       <Separator />
       <ScrollArea className="grow">
-        <NavigationMenu />
+        <NavigationMenu compact={!isOpen} />
       </ScrollArea>
       <Separator />
-      <footer className="p-2 text-sm text-muted-foreground flex flex-row flex-wrap items-center justify-start gap-2">
-        <img src="/aktyn-icon.png" className="h-8" />
+      <footer
+        className={cn(
+          "p-2 text-sm text-muted-foreground flex flex-row flex-nowrap items-center justify-start gap-2 *:not-first:transition-opacity overflow-hidden whitespace-nowrap",
+          isOpen ? "*:not-first:opacity-100" : "*:not-first:opacity-0",
+        )}
+      >
+        <img
+          src="/aktyn-icon.png"
+          className={cn(
+            "h-8 transition-[margin] duration-400 ease-in-out",
+            isOpen ? "ml-[0%]" : "ml-[calc(100%-var(--spacing)*10)]",
+          )}
+        />
         <span className="font-semibold">Aktyn</span>
         <Button asChild variant="link" size="sm" className="px-0! h-auto text-muted-foreground">
           <a href="https://github.com/Aktyn" target="_blank">

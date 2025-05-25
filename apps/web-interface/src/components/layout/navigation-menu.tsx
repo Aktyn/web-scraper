@@ -5,10 +5,11 @@ import { cn } from "@/lib/utils"
 
 type View = (typeof useView.View)[keyof typeof useView.View]
 
-export function NavigationMenu() {
+export function NavigationMenu({ compact }: { compact: boolean }) {
   return (
-    <nav className="flex flex-col items-stretch gap-2 p-2">
+    <nav data-compact={compact} className="flex flex-col items-stretch gap-2 p-2">
       <Item view={useView.View.Dashboard} icon="layout-dashboard" label="Dashboard" />
+      <Item view={useView.View.DataStores} icon="database" label="Data Stores" />
       <Item view={useView.View.Preferences} icon="settings-2" label="Preferences" />
     </nav>
   )
@@ -28,15 +29,17 @@ export function Item({ view, icon, label }: ItemProps) {
       variant="outline"
       size="lg"
       className={cn(
-        "text-md *:[svg]:size-6! transition-colors",
+        "gap-x-0 text-md *:[svg]:size-6! transition-colors [[data-compact=true]>*]:*:[span]:grid-cols-[0fr] [[data-compact=true]>*]:*:[span]:opacity-0 [[data-compact=true]>*]:*:[svg]:ml-[calc(100%-var(--spacing)*4)]",
         currentView === view
           ? "pointer-events-none border-primary! text-primary bg-primary/20!"
           : "",
       )}
       onClick={() => setView(view)}
     >
-      <DynamicIcon name={icon} />
-      <span>{label}</span>
+      <DynamicIcon name={icon} className="ml-[0%] transition-[margin] duration-400" />
+      <span className="whitespace-nowrap grid grid-cols-[1fr] justify-end transition-[grid-template-columns,opacity] duration-400">
+        <span className="overflow-hidden px-2">{label}</span>
+      </span>
     </Button>
   )
 }

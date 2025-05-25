@@ -2,7 +2,10 @@ import { api, type Routes } from "@/lib/api"
 import { useEffect, useState } from "react"
 import { toast } from "sonner"
 
-export function useGet<RoutePath extends keyof Routes>(route: `/${RoutePath}`) {
+export function useGet<RoutePath extends keyof Routes>(
+  route: `/${RoutePath}`,
+  queryParams?: Routes[RoutePath]["get"] extends { querystring: infer Query } ? Query : undefined,
+) {
   type ResponseType = Routes[RoutePath]["get"]["response"]
 
   const [data, setData] = useState<ResponseType | null>(null)
@@ -12,7 +15,7 @@ export function useGet<RoutePath extends keyof Routes>(route: `/${RoutePath}`) {
     let mounted = true
 
     api
-      .get<RoutePath>(route)
+      .get<RoutePath>(route, queryParams)
       .then((data) => setData(data))
       .catch((error) => {
         console.error(error)
@@ -29,7 +32,7 @@ export function useGet<RoutePath extends keyof Routes>(route: `/${RoutePath}`) {
     return () => {
       mounted = false
     }
-  }, [route])
+  }, [route, queryParams])
 
   return { data, isLoading }
 }

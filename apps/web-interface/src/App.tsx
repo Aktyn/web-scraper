@@ -3,9 +3,10 @@ import { Sidebar } from "./components/layout/sidebar"
 import { Toaster } from "./components/shadcn/sonner"
 import { TooltipProvider } from "./components/shadcn/tooltip"
 import { Dashboard } from "./components/view/dashboard"
+import { DataStores } from "./components/view/data-stores"
 import { Preferences } from "./components/view/preferences"
-import { useView, ViewProvider } from "./providers/view-provider"
 import { cn } from "./lib/utils"
+import { useView, ViewProvider } from "./providers/view-provider"
 
 export default function App() {
   return (
@@ -64,5 +65,6 @@ function Main() {
 
 const viewsMap = {
   [useView.View.Dashboard]: Dashboard,
+  [useView.View.DataStores]: DataStores,
   [useView.View.Preferences]: Preferences,
 }

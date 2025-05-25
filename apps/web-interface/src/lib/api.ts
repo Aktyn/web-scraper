@@ -1,12 +1,21 @@
-import type { Preferences, UserDataStore } from "@web-scraper/common"
+import type {
+  ApiPaginatedResponse,
+  ApiPaginationQuery,
+  ApiResponse,
+  Preferences,
+  UserDataStore,
+} from "@web-scraper/common"
 
 const baseUrl = import.meta.env.VITE_API_URL_BASE.replace(/\/$/, "")
 
 export const api = {
   get: async <RoutePath extends keyof Routes>(
     route: `/${RoutePath}`,
+    queryParams?: Routes[RoutePath]["get"] extends { querystring: infer Query } ? Query : undefined,
   ): Promise<Routes[RoutePath]["get"]["response"]> => {
-    const response = await fetch(`${baseUrl}${route}`, {
+    const queryString = queryParams ? `?${new URLSearchParams(queryParams).toString()}` : ""
+
+    const response = await fetch(`${baseUrl}${route}${queryString}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -19,12 +28,13 @@ export const api = {
 export type Routes = {
   preferences: {
     get: {
-      response: Preferences
+      response: ApiResponse<Preferences>
     }
   }
-  userDataStores: {
+  "user-data-stores": {
     get: {
-      response: Array<UserDataStore>
+      querystring: Partial<ApiPaginationQuery>
+      response: ApiPaginatedResponse<UserDataStore>
     }
   }
 }

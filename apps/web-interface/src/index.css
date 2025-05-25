@@ -213,6 +213,10 @@
   [data-slot="skeleton"] {
     @apply bg-muted-foreground/30!;
   }
+
+  [data-slot="table-head"] {
+    @apply text-muted-foreground! font-semibold!;
+  }
 }
 
 /* @custom-variant current-view {
