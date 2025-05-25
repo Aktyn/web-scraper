@@ -33,9 +33,11 @@ export const apiPaginationQuerySchema = z.object({
 
 export type ApiPaginationQuery = z.infer<typeof apiPaginationQuerySchema>
 
-export const apiErrorPayload = z.object({
+export const apiErrorResponseSchema = z.object({
   statusCode: z.number().optional(),
   code: z.string().optional(),
   error: z.string(),
   message: z.string().optional(),
 })
+
+export type ApiErrorResponse = z.infer<typeof apiErrorResponseSchema>

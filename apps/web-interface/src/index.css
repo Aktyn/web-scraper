@@ -33,9 +33,12 @@
 
   --font: "Inter Variable", Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
 
+  --color-background-lighter: hsl(var(--background-lighter));
   --color-background: hsl(var(--background));
   --color-background-darker: hsl(var(--background-darker));
+
   --color-foreground: hsl(var(--foreground));
+  --color-foreground-lighter: hsl(var(--foreground-lighter));
 
   --color-card: hsl(var(--card));
   --color-card-foreground: hsl(var(--card-foreground));
@@ -126,9 +129,13 @@
 @layer base {
   :root {
     /* Colors are from https://catppuccin.com/palette/ (Mocha) */
+    /* --background-lighter: 240 21% 15%; */
+    --background-lighter: 237 16% 23%;
     --background: 240 21% 12%;
     --background-darker: 240 23% 9%;
+    
     --foreground: 226 64% 88%;
+    --foreground-lighter: 226 64% 95%;
 
     --muted: 237 16% 23%;
     --muted-foreground: 237 16% 64%;
@@ -152,7 +159,7 @@
     --accent-foreground: 267 84% 95%;
 
     --destructive: 343 81% 75%;
-    --destructive-foreground: 240 21% 15%;
+    --destructive-foreground: 343 81% 25%;
 
     --ring: 199 76% 69%;
 
@@ -168,7 +175,7 @@
   }
 
   #root {
-    @apply h-screen w-screen flex flex-row items-stretch overflow-hidden;
+    @apply h-screen w-screen grid grid-cols-[auto_1fr] grid-rows-1 items-stretch overflow-hidden;
   }
 
   input[type="number"]::-webkit-inner-spin-button,
@@ -210,8 +217,16 @@
     @apply max-h-full;
   }
 
+  [data-slot="tooltip-content"] {
+    @apply bg-background-lighter! text-foreground-lighter! *:*:[svg]:fill-background-lighter! *:*:[svg]:bg-background-lighter! border *:*:[svg]:border-b *:*:[svg]:border-r;
+  }
+
   [data-slot="skeleton"] {
     @apply bg-muted-foreground/30!;
+  }
+
+  [data-slot="scroll-area-thumb"] {
+    @apply hover:bg-primary/50! active:bg-primary!;
   }
 
   [data-slot="table-head"] {

@@ -1,11 +1,11 @@
 import "dotenv/config"
 
-import { sql } from "drizzle-orm"
-import { sqliteTable, text } from "drizzle-orm/sqlite-core"
 import { getConfig } from "../../config/config"
 import { getDbModule } from "../db.module"
-import { preferencesTable, userDataStoresTable } from "../schema"
-import { primaryKey, sanitizeTableName } from "../schema/helpers"
+import { preferencesTable } from "../schema"
+import { sanitizeTableName } from "../schema/helpers"
+import { createUserDataStore } from "../user-data-store-helpers"
+import { SqliteColumnType } from "@web-scraper/common"
 
 export async function seed(db = getDbModule(getConfig())) {
   await db.insert(preferencesTable).values({
@@ -13,31 +13,31 @@ export async function seed(db = getDbModule(getConfig())) {
     value: "bar",
   })
 
-  const name = "Personal credentials"
-  const tableName = sanitizeTableName(name + "_" + "random_string") //TODO: use randomString(8) when creating user store table from user's request
-
-  await db
-    .run(
-      sql`
-    CREATE TABLE IF NOT EXISTS ${sql.identifier(tableName)} (
-      id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-      origin TEXT NOT NULL,
-      username TEXT,
-      email TEXT NOT NULL,
-      password TEXT NOT NULL
-    )
-  `,
-    )
-    .execute()
-
-  const personalCredentialsTable = sqliteTable(tableName, {
-    id: primaryKey(),
-    origin: text("origin").notNull(),
-    username: text("username"),
-    email: text("email").notNull(),
-    password: text("password").notNull(),
+  const { table: personalCredentialsTable } = await createUserDataStore(db, {
+    tableName: sanitizeTableName("Personal credentials random string"),
+    name: "Personal credentials",
+    description: "Personal credentials for various websites",
+    columns: [
+      {
+        name: "origin",
+        type: SqliteColumnType.TEXT,
+        notNull: true,
+      },
+      {
+        name: "username",
+        type: SqliteColumnType.TEXT,
+      },
+      {
+        name: "email",
+        type: SqliteColumnType.TEXT,
+      },
+      {
+        name: "password",
+        type: SqliteColumnType.TEXT,
+        notNull: true,
+      },
+    ],
   })
-  personalCredentialsTable.id.getSQL()
 
   await db.insert(personalCredentialsTable).values([
     {
@@ -53,10 +53,4 @@ export async function seed(db = getDbModule(getConfig())) {
       password: "pultetista@gufum.com",
     },
   ])
-
-  await db.insert(userDataStoresTable).values({
-    tableName,
-    name,
-    description: "Personal credentials for various websites",
-  })
 }

@@ -1,18 +1,19 @@
-import { api, type Routes } from "@/lib/api"
+import { api, type RouteParameters, type Routes, type RoutesWithMethod } from "@/lib/api"
 import { useCallback, useEffect, useState } from "react"
 import { toast } from "sonner"
 
-export function useInfiniteGet<RoutePath extends keyof Routes>(
+export function useInfiniteGet<RoutePath extends RoutesWithMethod<"get">>(
   route: `/${RoutePath}`,
+  params?: RouteParameters<RoutePath>,
   baseQueryParams?: Omit<
-    Routes[RoutePath]["get"] extends { querystring: infer Query } ? Query : undefined,
+    Routes[RoutePath] extends { get: { querystring: infer Query } } ? Query : undefined,
     "page"
   >,
 ) {
   type ResponseType = Routes[RoutePath]["get"]["response"]
   type DataType = ResponseType extends { data: infer Data } ? Data : never
   type ItemType = DataType extends (infer Item)[] ? Item : never
-  type QueryParams = Routes[RoutePath]["get"] extends { querystring: infer Query }
+  type QueryParams = Routes[RoutePath] extends { get: { querystring: infer Query } }
     ? Query
     : undefined
 
@@ -29,7 +30,7 @@ export function useInfiniteGet<RoutePath extends keyof Routes>(
 
       try {
         const queryParams = { ...baseQueryParams, page } as QueryParams
-        const response = await api.get<RoutePath>(route, queryParams)
+        const response = await api.get<RoutePath>(route, params, queryParams)
 
         if ("data" in response && Array.isArray(response.data)) {
           const newData = response.data as ItemType[]
@@ -60,7 +61,7 @@ export function useInfiniteGet<RoutePath extends keyof Routes>(
         setLoadingState(false)
       }
     },
-    [route, baseQueryParams],
+    [route, params, baseQueryParams],
   )
 
   const loadMore = useCallback(() => {

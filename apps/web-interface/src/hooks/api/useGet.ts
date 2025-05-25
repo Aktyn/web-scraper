@@ -1,10 +1,11 @@
-import { api, type Routes } from "@/lib/api"
+import { api, type RouteParameters, type Routes, type RoutesWithMethod } from "@/lib/api"
 import { useEffect, useState } from "react"
 import { toast } from "sonner"
 
-export function useGet<RoutePath extends keyof Routes>(
+export function useGet<RoutePath extends RoutesWithMethod<"get">>(
   route: `/${RoutePath}`,
-  queryParams?: Routes[RoutePath]["get"] extends { querystring: infer Query } ? Query : undefined,
+  params?: RouteParameters<RoutePath>,
+  queryParams?: Routes[RoutePath] extends { get: { querystring: infer Query } } ? Query : undefined,
 ) {
   type ResponseType = Routes[RoutePath]["get"]["response"]
 
@@ -15,12 +16,12 @@ export function useGet<RoutePath extends keyof Routes>(
     let mounted = true
 
     api
-      .get<RoutePath>(route, queryParams)
+      .get<RoutePath>(route, params, queryParams)
       .then((data) => setData(data))
       .catch((error) => {
         console.error(error)
         toast.error("Failed to fetch data", {
-          description: error.message,
+          description: error instanceof Error ? error.message : "Unknown error",
         })
       })
       .finally(() => {
@@ -32,7 +33,7 @@ export function useGet<RoutePath extends keyof Routes>(
     return () => {
       mounted = false
     }
-  }, [route, queryParams])
+  }, [route, params, queryParams])
 
   return { data, isLoading }
 }

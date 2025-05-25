@@ -1,23 +1,27 @@
+import { useCachedState } from "@/hooks/useCachedState"
 import { useSizer } from "@/hooks/useSizer"
 import { cn } from "@/lib/utils"
 import { ExternalLink, PanelRightClose } from "lucide-react"
-import { useState } from "react"
 import { Button } from "../shadcn/button"
 import { ScrollArea } from "../shadcn/scroll-area"
 import { Separator } from "../shadcn/separator"
 import { Tooltip, TooltipContent, TooltipTrigger } from "../shadcn/tooltip"
 import { NavigationMenu } from "./navigation-menu"
+import { useState } from "react"
 
 export function Sidebar() {
   const { ref, width } = useSizer()
 
-  //TODO: store in local storage
-  const [isOpen, setIsOpen] = useState(true)
+  const [isOpen, setIsOpen] = useCachedState("sidebar-open", true, localStorage)
+  const [isInitiallyOpen] = useState(isOpen)
 
   return (
     <aside
       ref={ref}
-      className="z-20 border-r flex flex-col items-stretch relative transition-[margin,border-color,box-shadow] duration-400 ease-in-out bg-background-darker animate-in slide-in-from-left fill-mode-both"
+      className={cn(
+        "z-20 border-r flex flex-col items-stretch relative transition-[margin,border-color,box-shadow] duration-400 ease-in-out bg-background-darker",
+        isInitiallyOpen && "animate-in delay-100 slide-in-from-left fill-mode-both",
+      )}
       style={{
         marginLeft: isOpen ? "0px" : `calc(-${width}px + var(--spacing)*16)`,
       }}

@@ -28,6 +28,7 @@ export async function getApiModule(db: DbModule, fastifyOptions: FastifyServerOp
 
   fastify.register(fastifyCors, {
     origin: "*",
+    methods: ["GET", "POST", "PUT", "DELETE"],
   })
 
   fastify.setValidatorCompiler(validatorCompiler)

@@ -11,7 +11,7 @@ import { useView, ViewProvider } from "./providers/view-provider"
 export default function App() {
   return (
     <ViewProvider>
-      <TooltipProvider>
+      <TooltipProvider delayDuration={0} skipDelayDuration={0}>
         <Sidebar />
         <Main />
         <Toaster theme="dark" invert expand richColors />

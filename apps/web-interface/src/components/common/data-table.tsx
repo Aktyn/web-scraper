@@ -13,6 +13,7 @@ import {
 } from "@/components/shadcn/table"
 import { ChevronUp } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { ScrollArea, ScrollBar } from "../shadcn/scroll-area"
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
@@ -75,7 +76,7 @@ export function DataTable<TData, TValue>({
 
   return (
     <div className={cn("relative w-full h-full", className)}>
-      <div ref={containerRef} className="h-full overflow-auto">
+      <ScrollArea ref={containerRef} className="max-h-full">
         <Table ref={tableRef}>
           <TableHeader className="sticky top-0 z-10 bg-background">
             {table.getHeaderGroups().map((headerGroup) => (
@@ -103,8 +104,11 @@ export function DataTable<TData, TValue>({
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={columns.length} className="h-24 text-center">
-                  {isLoading ? "Loading..." : "No results."}
+                <TableCell
+                  colSpan={columns.length}
+                  className="p-4 text-center font-bold text-muted-foreground pointer-events-none"
+                >
+                  {isLoading ? "Loading..." : "No results"}
                 </TableCell>
               </TableRow>
             )}
@@ -117,7 +121,8 @@ export function DataTable<TData, TValue>({
             )}
           </TableBody>
         </Table>
-      </div>
+        <ScrollBar orientation="horizontal" />
+      </ScrollArea>
 
       {showBackToTop && (
         <Button
