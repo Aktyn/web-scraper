@@ -8,7 +8,7 @@ export function Preferences() {
   const { data: preferences, isLoading } = useGet("/preferences")
 
   return (
-    <div data-transition-direction="top" className="view-transition size-full">
+    <div data-transition-direction="left" className="view-transition size-full">
       <Table className="w-96 max-w-full">
         <TableHeader>
           <TableRow>

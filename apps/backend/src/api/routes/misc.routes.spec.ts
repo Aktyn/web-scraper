@@ -67,31 +67,31 @@ describe("Misc Routes", () => {
             columns: [
               {
                 name: "id",
-                type: "INTEGER",
+                type: SqliteColumnType.INTEGER,
                 notNull: true,
                 defaultValue: null,
               },
               {
                 name: "origin",
-                type: "TEXT",
+                type: SqliteColumnType.TEXT,
                 notNull: true,
                 defaultValue: null,
               },
               {
                 name: "username",
-                type: "TEXT",
+                type: SqliteColumnType.TEXT,
                 notNull: false,
                 defaultValue: null,
               },
               {
                 name: "email",
-                type: "TEXT",
+                type: SqliteColumnType.TEXT,
                 notNull: false,
                 defaultValue: null,
               },
               {
                 name: "password",
-                type: "TEXT",
+                type: SqliteColumnType.TEXT,
                 notNull: true,
                 defaultValue: null,
               },
@@ -244,6 +244,12 @@ describe("Misc Routes", () => {
       const updateData = {
         name: "Updated Personal Credentials",
         description: "Updated description",
+        columns: [
+          {
+            name: "noop",
+            type: SqliteColumnType.NUMERIC,
+          },
+        ],
       }
 
       const response = await modules.api.inject({
@@ -255,16 +261,22 @@ describe("Misc Routes", () => {
       expect(response.statusCode).toBe(200)
       const responseData = JSON.parse(response.payload)
       expect(responseData.data).toMatchObject({
-        tableName: "personal_credentials_random_string",
+        tableName: expect.stringMatching(/^updated_personal_credentials_[a-z0-9]+$/),
         name: "Updated Personal Credentials",
         description: "Updated description",
-        recordsCount: 2,
+        recordsCount: 0, //Due to columns change, the data is lost
       })
     })
 
-    it("should update only the name when description is not provided", async () => {
+    it("should return empty description if not provided", async () => {
       const updateData = {
         name: "Only Name Updated",
+        columns: [
+          {
+            name: "noop",
+            type: SqliteColumnType.NUMERIC,
+          },
+        ],
       }
 
       const response = await modules.api.inject({
@@ -276,12 +288,18 @@ describe("Misc Routes", () => {
       expect(response.statusCode).toBe(200)
       const responseData = JSON.parse(response.payload)
       expect(responseData.data.name).toBe("Only Name Updated")
-      expect(responseData.data.description).toBe("Personal credentials for various websites")
+      expect(responseData.data.description).toBe(null)
     })
 
     it("should return status 404 if the data store does not exist", async () => {
       const updateData = {
         name: "Non-existent Store",
+        columns: [
+          {
+            name: "noop",
+            type: SqliteColumnType.NUMERIC,
+          },
+        ],
       }
 
       const response = await modules.api.inject({
@@ -314,6 +332,13 @@ describe("Misc Routes", () => {
 
       const updateData = {
         name: "Another Store",
+        description: "Another test store",
+        columns: [
+          {
+            name: "noop",
+            type: SqliteColumnType.NUMERIC,
+          },
+        ],
       }
 
       const response = await modules.api.inject({

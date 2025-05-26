@@ -5,13 +5,18 @@ import { useDelete } from "@/hooks/api/useDelete"
 import { useInfiniteGet } from "@/hooks/api/useInfiniteGet"
 import type { ColumnDef } from "@tanstack/react-table"
 import type { UserDataStore } from "@web-scraper/common"
-import { Trash } from "lucide-react"
+import { Edit, Plus, RefreshCcw, Trash } from "lucide-react"
 import { useMemo, useState } from "react"
+import { NullBadge } from "../common/null-badge"
 import { Tooltip, TooltipContent, TooltipTrigger } from "../shadcn/tooltip"
+import { DataStoreDialog } from "./data-store-dialog"
 
 export function DataStores() {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
   const [storeToDelete, setStoreToDelete] = useState<UserDataStore | null>(null)
+  const [createDialogOpen, setCreateDialogOpen] = useState(false)
+  const [editDialogOpen, setEditDialogOpen] = useState(false)
+  const [storeToEdit, setStoreToEdit] = useState<UserDataStore | null>(null)
 
   const {
     data: dataStores,
@@ -27,6 +32,11 @@ export function DataStores() {
   const handleDeleteClick = (store: UserDataStore) => {
     setStoreToDelete(store)
     setDeleteDialogOpen(true)
+  }
+
+  const handleEditClick = (store: UserDataStore) => {
+    setStoreToEdit(store)
+    setEditDialogOpen(true)
   }
 
   const handleDeleteConfirm = async () => {
@@ -57,7 +67,7 @@ export function DataStores() {
         header: "Description",
         cell: ({ row }) => {
           const description = row.getValue("description") as string | null
-          return description ?? "---"
+          return description ?? <NullBadge />
         },
       },
       {
@@ -74,19 +84,24 @@ export function DataStores() {
         cell: ({ row }) => {
           const store = row.original
           return (
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => handleDeleteClick(store)}
-                  className="text-destructive hover:text-destructive"
-                >
-                  <Trash />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>Delete data store</TooltipContent>
-            </Tooltip>
+            <div className="flex items-center gap-1 max-w-24">
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button variant="ghost" size="icon" onClick={() => handleEditClick(store)}>
+                    <Edit />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>Edit data store</TooltipContent>
+              </Tooltip>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button variant="ghost" size="icon" onClick={() => handleDeleteClick(store)}>
+                    <Trash />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>Delete data store</TooltipContent>
+              </Tooltip>
+            </div>
           )
         },
       },
@@ -95,14 +110,33 @@ export function DataStores() {
   )
 
   return (
-    <div data-transition-direction="top" className="view-transition size-full">
+    <div className="size-full *:w-256 *:max-w-full">
+      <div
+        data-transition-direction="top"
+        className="view-transition p-2 flex flex-row items-center"
+      >
+        <Button variant="outline" onClick={() => setCreateDialogOpen(true)}>
+          <Plus />
+          Add data store
+        </Button>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button size="icon" variant="ghost" onClick={refresh} className="ml-auto">
+              <RefreshCcw />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>Refresh table</TooltipContent>
+        </Tooltip>
+      </div>
       <DataTable
-        className="w-256 max-w-full"
+        data-transition-direction="left"
+        className="view-transition delay-100"
         columns={columns}
         data={dataStores}
         isLoading={isLoading || isLoadingMore}
         hasMore={hasMore}
         onLoadMore={loadMore}
+        // onRowClick={handleRowClick} //TODO: open view with data store table; allow edit and delete; add option to pin to sidebar for easier access
       />
 
       <ConfirmationDialog
@@ -119,6 +153,19 @@ export function DataStores() {
         cancelText="Cancel"
         onConfirm={handleDeleteConfirm}
         variant="destructive"
+      />
+
+      <DataStoreDialog
+        open={createDialogOpen}
+        onOpenChange={setCreateDialogOpen}
+        onSuccess={refresh}
+      />
+
+      <DataStoreDialog
+        open={editDialogOpen}
+        onOpenChange={setEditDialogOpen}
+        onSuccess={refresh}
+        editStore={storeToEdit}
       />
     </div>
   )

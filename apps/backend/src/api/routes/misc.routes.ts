@@ -1,6 +1,7 @@
 import {
   apiErrorResponseSchema,
   apiPaginationQuerySchema,
+  assert,
   createUserDataStoreSchema,
   getApiPaginatedResponseSchema,
   getApiResponseSchema,
@@ -18,6 +19,26 @@ import { preferencesTable, userDataStoresTable } from "../../db/schema"
 import { createUserDataStore } from "../../db/user-data-store-helpers"
 
 export async function miscRoutes(fastify: FastifyInstance) {
+  async function getColumnsInfo(tableName: string) {
+    const pragmaInfo = await fastify.db
+      .run(sql`PRAGMA table_info(${sql.identifier(tableName)})`)
+      .execute()
+
+    return pragmaInfo.rows.map((row) => {
+      assert(
+        typeof row.type === "string",
+        `Type was not found in the response of PRAGMA table_info query or it is not a string: ${row.type}`,
+      )
+
+      return {
+        name: row.name as string,
+        type: row.type.toUpperCase() as SqliteColumnType,
+        notNull: row.notnull === 1,
+        defaultValue: (row.dflt_value ?? null) as string | number | boolean | null,
+      }
+    })
+  }
+
   fastify.withTypeProvider<ZodTypeProvider>().get(
     "/preferences",
     {
@@ -60,18 +81,10 @@ export async function miscRoutes(fastify: FastifyInstance) {
           const countResult = await fastify.db
             .run(sql`SELECT COUNT(*) as count FROM ${sql.identifier(store.tableName)}`)
             .execute()
-          const tableInfo = await fastify.db
-            .run(sql`PRAGMA table_info(${sql.identifier(store.tableName)})`)
-            .execute()
           return {
             ...store,
             recordsCount: Number(countResult.rows.at(0)?.count ?? 0),
-            columns: tableInfo.rows.map((row) => ({
-              name: row.name as string,
-              type: row.type as SqliteColumnType,
-              notNull: row.notnull === 1,
-              defaultValue: row.dflt_value as string | null,
-            })),
+            columns: await getColumnsInfo(store.tableName),
           }
         }),
       )
@@ -117,19 +130,10 @@ export async function miscRoutes(fastify: FastifyInstance) {
         columns,
       })
 
-      const tableInfo = await fastify.db
-        .run(sql`PRAGMA table_info(${sql.identifier(tableName)})`)
-        .execute()
-
       const userDataStore = {
         ...newStore,
         recordsCount: 0,
-        columns: tableInfo.rows.map((row) => ({
-          name: row.name as string,
-          type: row.type as SqliteColumnType,
-          notNull: row.notnull === 1,
-          defaultValue: row.dflt_value as string | null,
-        })),
+        columns: await getColumnsInfo(tableName),
       }
 
       return reply.status(201).send({
@@ -153,7 +157,7 @@ export async function miscRoutes(fastify: FastifyInstance) {
     },
     async (request, reply) => {
       const { tableName } = request.params
-      const { name, description } = request.body
+      const { name, description, columns } = request.body
 
       const existingStore = await fastify.db
         .select()
@@ -183,38 +187,53 @@ export async function miscRoutes(fastify: FastifyInstance) {
         }
       }
 
-      const updateData: Partial<typeof existingStore> = {}
-      if (name !== undefined) updateData.name = name
-      if (description !== undefined) updateData.description = description
-      //TODO: update columns (this require dynamic table to be deleted and recreated with new columns)
+      const columnsInfo = await getColumnsInfo(tableName)
 
-      const [updatedStore] = await fastify.db
-        .update(userDataStoresTable)
-        .set(updateData)
-        .where(eq(userDataStoresTable.tableName, tableName))
-        .returning()
+      if (JSON.stringify(columns) !== JSON.stringify(columnsInfo)) {
+        //Recreate the table with new columns
+        await fastify.db.run(sql`DROP TABLE IF EXISTS ${sql.identifier(tableName)}`).execute()
 
-      const countResult = await fastify.db
-        .run(sql`SELECT COUNT(*) as count FROM ${sql.identifier(tableName)}`)
-        .execute()
-      const tableInfo = await fastify.db
-        .run(sql`PRAGMA table_info(${sql.identifier(tableName)})`)
-        .execute()
+        await fastify.db
+          .delete(userDataStoresTable)
+          .where(eq(userDataStoresTable.tableName, tableName))
 
-      const userDataStore = {
-        ...updatedStore,
-        recordsCount: Number(countResult.rows.at(0)?.count ?? 0),
-        columns: tableInfo.rows.map((row) => ({
-          name: row.name as string,
-          type: row.type as SqliteColumnType,
-          notNull: row.notnull === 1,
-          defaultValue: row.dflt_value as string | null,
-        })),
+        const { newStore, tableName: newTableName } = await createUserDataStore(fastify.db, {
+          name,
+          description,
+          columns,
+        })
+
+        return reply.status(200).send({
+          data: {
+            ...newStore,
+            recordsCount: 0,
+            columns: await getColumnsInfo(newTableName),
+          },
+        })
+      } else {
+        const [updatedStore] = await fastify.db
+          .update(userDataStoresTable)
+          .set({
+            name: name,
+            description: description ?? null,
+          })
+          .where(eq(userDataStoresTable.tableName, tableName))
+          .returning()
+
+        const countResult = await fastify.db
+          .run(sql`SELECT COUNT(*) as count FROM ${sql.identifier(tableName)}`)
+          .execute()
+
+        const userDataStore = {
+          ...updatedStore,
+          recordsCount: Number(countResult.rows.at(0)?.count ?? 0),
+          columns: columnsInfo,
+        }
+
+        return reply.status(200).send({
+          data: userDataStore,
+        })
       }
-
-      return reply.status(200).send({
-        data: userDataStore,
-      })
     },
   )
 
@@ -244,7 +263,7 @@ export async function miscRoutes(fastify: FastifyInstance) {
         })
       }
 
-      await fastify.db.run(sql`DROP TABLE IF EXISTS ${sql.identifier(tableName)}`)
+      await fastify.db.run(sql`DROP TABLE IF EXISTS ${sql.identifier(tableName)}`).execute()
 
       await fastify.db
         .delete(userDataStoresTable)

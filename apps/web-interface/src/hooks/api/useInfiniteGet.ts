@@ -71,7 +71,6 @@ export function useInfiniteGet<RoutePath extends RoutesWithMethod<"get">>(
   }, [currentPage, hasMore, isLoadingMore, loadPage])
 
   const refresh = useCallback(() => {
-    setAllData([])
     setCurrentPage(0)
     setHasMore(true)
     void loadPage(0, true)

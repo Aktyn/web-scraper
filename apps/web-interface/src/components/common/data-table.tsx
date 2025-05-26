@@ -1,7 +1,7 @@
 "use client"
 
 import { type ColumnDef, flexRender, getCoreRowModel, useReactTable } from "@tanstack/react-table"
-import { useCallback, useEffect, useRef, useState } from "react"
+import { type ComponentProps, useCallback, useEffect, useRef, useState } from "react"
 import { Button } from "@/components/shadcn/button"
 import {
   Table,
@@ -15,14 +15,13 @@ import { ChevronUp } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { ScrollArea, ScrollBar } from "../shadcn/scroll-area"
 
-interface DataTableProps<TData, TValue> {
+type DataTableProps<TData, TValue> = {
   columns: ColumnDef<TData, TValue>[]
   data: TData[]
   isLoading?: boolean
   hasMore?: boolean
   onLoadMore?: () => void
-  className?: string
-}
+} & ComponentProps<"div">
 
 export function DataTable<TData, TValue>({
   columns,
@@ -30,7 +29,7 @@ export function DataTable<TData, TValue>({
   isLoading = false,
   hasMore = false,
   onLoadMore,
-  className,
+  ...containerProps
 }: DataTableProps<TData, TValue>) {
   const [showBackToTop, setShowBackToTop] = useState(false)
   const containerRef = useRef<HTMLDivElement>(null)
@@ -75,7 +74,7 @@ export function DataTable<TData, TValue>({
   }, [handleScroll])
 
   return (
-    <div className={cn("relative w-full h-full", className)}>
+    <div {...containerProps} className={cn("relative w-full h-full", containerProps.className)}>
       <ScrollArea ref={containerRef} className="max-h-full">
         <Table ref={tableRef}>
           <TableHeader className="sticky top-0 z-10 bg-background">
@@ -113,7 +112,7 @@ export function DataTable<TData, TValue>({
               </TableRow>
             )}
             {isLoading && data.length > 0 && (
-              <TableRow>
+              <TableRow className="animate-in fade-in">
                 <TableCell colSpan={columns.length} className="h-16 text-center">
                   Loading more...
                 </TableCell>
