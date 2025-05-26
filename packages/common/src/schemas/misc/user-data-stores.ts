@@ -17,6 +17,8 @@ const columnSchema = z.object({
   defaultValue: z.union([z.string(), z.number(), z.boolean(), z.null()]).optional(),
 })
 
+export type UserDataStoreColumn = z.infer<typeof columnSchema>
+
 export const userDataStoreSchema = z.object({
   tableName: z.string(),
   name: z.string().min(1, "Table name is required"),
@@ -39,10 +41,14 @@ export const updateUserDataStoreSchema = createUserDataStoreSchema
 
 export type UpdateUserDataStore = z.infer<typeof updateUserDataStoreSchema>
 
-export const updateOrDeleteUserDataStoreParamsSchema = z.object({
+export const paramsWithTableNameSchema = z.object({
   tableName: z.string(),
 })
 
-export type UpdateOrDeleteUserDataStoreParams = z.infer<
-  typeof updateOrDeleteUserDataStoreParamsSchema
->
+export const createUserDataStoreRecordSchema = z.record(z.string(), z.unknown())
+
+export type CreateUserDataStoreRecord = z.infer<typeof createUserDataStoreRecordSchema>
+
+export const updateUserDataStoreRecordSchema = createUserDataStoreRecordSchema
+
+export type UpdateUserDataStoreRecord = z.infer<typeof updateUserDataStoreRecordSchema>

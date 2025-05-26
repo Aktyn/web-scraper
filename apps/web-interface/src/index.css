@@ -95,6 +95,16 @@
       height: 0;
     }
   }
+
+  --animate-spin-ccw: spin-ccw 1s linear infinite;
+  @keyframes spin-ccw {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(-360deg);
+    }
+  }
 }
 
 @layer utilities {
@@ -159,7 +169,16 @@
     --accent-foreground: 267 84% 95%;
 
     --destructive: 343 81% 75%;
-    --destructive-foreground: 343 81% 25%;
+    --destructive-foreground: 343 81% 90%;
+
+    --warning: 23 92% 75%;
+    --warning-foreground: 23 92% 90%;
+
+    --info: 217 92% 76%;
+    --info-foreground: 217 92% 90%;
+
+    --success: 115 54% 76%;
+    --success-foreground: 115 54% 90%;
 
     --ring: 199 76% 69%;
 

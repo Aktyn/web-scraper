@@ -3,12 +3,14 @@ import {
   apiPaginationQuerySchema,
   assert,
   createUserDataStoreSchema,
+  createUserDataStoreRecordSchema,
   getApiPaginatedResponseSchema,
   getApiResponseSchema,
   preferencesSchema,
   type SqliteColumnType,
-  updateOrDeleteUserDataStoreParamsSchema,
+  paramsWithTableNameSchema,
   updateUserDataStoreSchema,
+  updateUserDataStoreRecordSchema,
   userDataStoreSchema,
 } from "@web-scraper/common"
 import { and, eq, ne, sql } from "drizzle-orm"
@@ -19,6 +21,11 @@ import { preferencesTable, userDataStoresTable } from "../../db/schema"
 import { createUserDataStore } from "../../db/user-data-store-helpers"
 
 export async function miscRoutes(fastify: FastifyInstance) {
+  const paramsWithTableNameAndIdSchema = z.object({
+    tableName: z.string(),
+    id: z.string(),
+  })
+
   async function getColumnsInfo(tableName: string) {
     const pragmaInfo = await fastify.db
       .run(sql`PRAGMA table_info(${sql.identifier(tableName)})`)
@@ -98,6 +105,37 @@ export async function miscRoutes(fastify: FastifyInstance) {
     },
   )
 
+  fastify.withTypeProvider<ZodTypeProvider>().get(
+    "/user-data-stores/:tableName/records",
+    {
+      schema: {
+        params: paramsWithTableNameSchema,
+        querystring: apiPaginationQuerySchema,
+        response: {
+          200: getApiPaginatedResponseSchema(z.record(z.string(), z.unknown())),
+          400: apiErrorResponseSchema,
+        },
+      },
+    },
+    async (request, reply) => {
+      const { tableName } = request.params
+      const { page, pageSize } = request.query
+
+      const storeDataResponse = await fastify.db
+        .run(
+          sql`SELECT * FROM ${sql.identifier(tableName)} LIMIT ${pageSize} OFFSET ${page * pageSize}`,
+        )
+        .execute()
+
+      return reply.status(200).send({
+        data: storeDataResponse.rows.slice(0, pageSize),
+        page,
+        pageSize,
+        hasMore: storeDataResponse.rows.length > pageSize,
+      })
+    },
+  )
+
   fastify.withTypeProvider<ZodTypeProvider>().post(
     "/user-data-stores",
     {
@@ -146,7 +184,7 @@ export async function miscRoutes(fastify: FastifyInstance) {
     "/user-data-stores/:tableName",
     {
       schema: {
-        params: updateOrDeleteUserDataStoreParamsSchema,
+        params: paramsWithTableNameSchema,
         body: updateUserDataStoreSchema,
         response: {
           200: getApiResponseSchema(userDataStoreSchema),
@@ -241,7 +279,7 @@ export async function miscRoutes(fastify: FastifyInstance) {
     "/user-data-stores/:tableName",
     {
       schema: {
-        params: updateOrDeleteUserDataStoreParamsSchema,
+        params: paramsWithTableNameSchema,
         response: {
           204: z.void(),
           404: apiErrorResponseSchema,
@@ -268,6 +306,157 @@ export async function miscRoutes(fastify: FastifyInstance) {
       await fastify.db
         .delete(userDataStoresTable)
         .where(eq(userDataStoresTable.tableName, tableName))
+
+      return reply.status(204).send()
+    },
+  )
+
+  fastify.withTypeProvider<ZodTypeProvider>().post(
+    "/user-data-stores/:tableName/records",
+    {
+      schema: {
+        params: paramsWithTableNameSchema,
+        body: createUserDataStoreRecordSchema,
+        response: {
+          201: getApiResponseSchema(z.record(z.string(), z.unknown())),
+          404: apiErrorResponseSchema,
+        },
+      },
+    },
+    async (request, reply) => {
+      const { tableName } = request.params
+      const recordData = request.body
+
+      const existingStore = await fastify.db
+        .select()
+        .from(userDataStoresTable)
+        .where(eq(userDataStoresTable.tableName, tableName))
+        .get()
+
+      if (!existingStore) {
+        return reply.status(404).send({
+          error: "Data store not found",
+        })
+      }
+
+      const columns = Object.keys(recordData).filter((key) => key !== "id")
+      const values = columns.map((col) => recordData[col])
+
+      const columnNames = columns.map((col) => sql.identifier(col))
+      const valuePlaceholders = values.map((value) => sql`${value}`)
+
+      const insertResult = await fastify.db
+        .run(
+          sql`INSERT INTO ${sql.identifier(tableName)} (${sql.join(columnNames, sql`, `)}) VALUES (${sql.join(valuePlaceholders, sql`, `)})`,
+        )
+        .execute()
+
+      const selectResult = await fastify.db
+        .run(
+          sql`SELECT * FROM ${sql.identifier(tableName)} WHERE id = ${insertResult.lastInsertRowid}`,
+        )
+        .execute()
+
+      return reply.status(201).send({
+        data: selectResult.rows[0],
+      })
+    },
+  )
+
+  fastify.withTypeProvider<ZodTypeProvider>().put(
+    "/user-data-stores/:tableName/records/:id",
+    {
+      schema: {
+        params: paramsWithTableNameAndIdSchema,
+        body: updateUserDataStoreRecordSchema,
+        response: {
+          200: getApiResponseSchema(z.record(z.string(), z.unknown())),
+          404: apiErrorResponseSchema,
+        },
+      },
+    },
+    async (request, reply) => {
+      const { tableName, id } = request.params
+      const recordData = request.body
+
+      const existingStore = await fastify.db
+        .select()
+        .from(userDataStoresTable)
+        .where(eq(userDataStoresTable.tableName, tableName))
+        .get()
+
+      if (!existingStore) {
+        return reply.status(404).send({
+          error: "Data store not found",
+        })
+      }
+
+      const existingRecord = await fastify.db
+        .run(sql`SELECT * FROM ${sql.identifier(tableName)} WHERE id = ${id}`)
+        .execute()
+
+      if (existingRecord.rows.length === 0) {
+        return reply.status(404).send({
+          error: "Record not found",
+        })
+      }
+
+      const columns = Object.keys(recordData).filter((key) => key !== "id")
+      const setClause = columns.map((col) => sql`${sql.identifier(col)} = ${recordData[col]}`)
+
+      await fastify.db
+        .run(
+          sql`UPDATE ${sql.identifier(tableName)} SET ${sql.join(setClause, sql`, `)} WHERE id = ${id}`,
+        )
+        .execute()
+
+      const selectResult = await fastify.db
+        .run(sql`SELECT * FROM ${sql.identifier(tableName)} WHERE id = ${id}`)
+        .execute()
+
+      return reply.status(200).send({
+        data: selectResult.rows[0],
+      })
+    },
+  )
+
+  fastify.withTypeProvider<ZodTypeProvider>().delete(
+    "/user-data-stores/:tableName/records/:id",
+    {
+      schema: {
+        params: paramsWithTableNameAndIdSchema,
+        response: {
+          204: z.void(),
+          404: apiErrorResponseSchema,
+        },
+      },
+    },
+    async (request, reply) => {
+      const { tableName, id } = request.params
+
+      const existingStore = await fastify.db
+        .select()
+        .from(userDataStoresTable)
+        .where(eq(userDataStoresTable.tableName, tableName))
+        .get()
+
+      if (!existingStore) {
+        return reply.status(404).send({
+          error: "Data store not found",
+        })
+      }
+
+      const existingRecord = await fastify.db
+        .run(sql`SELECT * FROM ${sql.identifier(tableName)} WHERE id = ${id}`)
+        .execute()
+
+      if (existingRecord.rows.length === 0) {
+        return reply.status(404).send({
+          error: "Record not found",
+        })
+      }
+
+      await fastify.db.run(sql`DELETE FROM ${sql.identifier(tableName)} WHERE id = ${id}`).execute()
 
       return reply.status(204).send()
     },

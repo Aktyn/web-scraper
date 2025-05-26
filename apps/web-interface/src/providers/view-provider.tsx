@@ -2,6 +2,7 @@ import { createContext, useContext, useState } from "react"
 
 enum View {
   Dashboard = "dashboard",
+  Scrapers = "scrapers",
   DataStores = "data-stores",
   Preferences = "preferences",
 }

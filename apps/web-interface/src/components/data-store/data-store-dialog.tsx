@@ -27,11 +27,12 @@ import {
   type CreateUserDataStore,
   type UserDataStore,
 } from "@web-scraper/common"
-import { Plus, Trash2 } from "lucide-react"
+import { AlertTriangle, Plus, Trash2 } from "lucide-react"
 import { useEffect } from "react"
 import { useFieldArray, useForm } from "react-hook-form"
 import { FormInput } from "../common/form/form-input"
 import { FormSelect } from "../common/form/form-select"
+import { cn } from "@/lib/utils"
 
 const columnTypeOptions = [
   { value: SqliteColumnType.TEXT, label: "Text" },
@@ -46,7 +47,7 @@ const columnTypeOptions = [
 interface DataStoreDialogProps {
   open: boolean
   onOpenChange: (open: boolean) => void
-  onSuccess?: () => void
+  onSuccess?: (store: UserDataStore) => void
   editStore?: UserDataStore | null
 }
 
@@ -60,6 +61,7 @@ export function DataStoreDialog({
   const { putItem, isPutting } = usePut("/user-data-stores/:tableName")
 
   const isEditing = !!editStore
+  const showColumnsEditWarning = isEditing && editStore.recordsCount > 0
 
   const form = useForm<CreateUserDataStore>({
     resolver: zodResolver(createUserDataStoreSchema),
@@ -133,7 +135,7 @@ export function DataStoreDialog({
     if (result) {
       form.reset()
       onOpenChange(false)
-      onSuccess?.()
+      onSuccess?.(result.data)
     }
   }
 
@@ -154,7 +156,10 @@ export function DataStoreDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto grid grid-rows-[auto_1fr]">
+      <DialogContent
+        aria-describedby={undefined}
+        className="max-w-2xl max-h-[90vh] overflow-y-auto grid grid-rows-[auto_1fr]"
+      >
         <DialogHeader>
           <DialogTitle>{isEditing ? "Edit Data Store" : "Create Data Store"}</DialogTitle>
           <DialogDescription>
@@ -196,6 +201,14 @@ export function DataStoreDialog({
                     Add Column
                   </Button>
                 </div>
+                {showColumnsEditWarning && (
+                  <div className="flex items-center gap-2 bg-warning/20 text-warning-foreground border border-warning p-2 rounded-lg">
+                    <AlertTriangle className="size-8" />
+                    <p className="text-pretty">
+                      Changing the column structure will remove all existing data.
+                    </p>
+                  </div>
+                )}
 
                 <div className="space-y-4">
                   {fields.map((field, index) => (
@@ -286,7 +299,12 @@ export function DataStoreDialog({
                 >
                   Cancel
                 </Button>
-                <Button type="submit" disabled={isPosting || isPutting}>
+                <Button
+                  type="submit"
+                  disabled={isPosting || isPutting}
+                  className={cn(showColumnsEditWarning && "bg-warning hover:bg-warning-foreground")}
+                >
+                  {showColumnsEditWarning && <AlertTriangle />}
                   {isEditing
                     ? isPutting
                       ? "Updating..."

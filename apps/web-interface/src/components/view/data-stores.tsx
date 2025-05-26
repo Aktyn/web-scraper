@@ -1,22 +1,29 @@
 import { ConfirmationDialog } from "@/components/common/confirmation-dialog"
-import { DataTable } from "@/components/common/data-table"
+import { DataTable } from "@/components/common/table/data-table"
 import { Button } from "@/components/shadcn/button"
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/shadcn/dialog"
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/shadcn/tooltip"
 import { useDelete } from "@/hooks/api/useDelete"
 import { useInfiniteGet } from "@/hooks/api/useInfiniteGet"
+import { DialogDescription } from "@radix-ui/react-dialog"
 import type { ColumnDef } from "@tanstack/react-table"
 import type { UserDataStore } from "@web-scraper/common"
-import { Edit, Plus, RefreshCcw, Trash } from "lucide-react"
+import { Edit, Plus, Trash } from "lucide-react"
 import { useMemo, useState } from "react"
 import { NullBadge } from "../common/null-badge"
-import { Tooltip, TooltipContent, TooltipTrigger } from "../shadcn/tooltip"
-import { DataStoreDialog } from "./data-store-dialog"
+import { RefreshButton } from "../common/table/refresh-button"
+import { DataStoreDialog } from "../data-store/data-store-dialog"
+import { DataStoreTable } from "../data-store/data-store-table"
 
 export function DataStores() {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
   const [storeToDelete, setStoreToDelete] = useState<UserDataStore | null>(null)
-  const [createDialogOpen, setCreateDialogOpen] = useState(false)
-  const [editDialogOpen, setEditDialogOpen] = useState(false)
+
+  const [upsertDialogOpen, setUpsertDialogOpen] = useState(false)
   const [storeToEdit, setStoreToEdit] = useState<UserDataStore | null>(null)
+
+  const [dataStoreTableOpen, setDataStoreTableOpen] = useState(false)
+  const [storeToView, setStoreToView] = useState<UserDataStore | null>(null)
 
   const {
     data: dataStores,
@@ -36,7 +43,7 @@ export function DataStores() {
 
   const handleEditClick = (store: UserDataStore) => {
     setStoreToEdit(store)
-    setEditDialogOpen(true)
+    setUpsertDialogOpen(true)
   }
 
   const handleDeleteConfirm = async () => {
@@ -57,53 +64,55 @@ export function DataStores() {
       {
         accessorKey: "name",
         header: "Name",
-        cell: ({ row }) => {
-          const name = row.getValue("name") as string
-          return <div className="font-medium">{name}</div>
-        },
+        cell: ({ row }) => <div className="font-medium">{row.original.name}</div>,
       },
       {
         accessorKey: "description",
         header: "Description",
-        cell: ({ row }) => {
-          const description = row.getValue("description") as string | null
-          return description ?? <NullBadge />
-        },
+        cell: ({ row }) => row.original.description ?? <NullBadge />,
       },
       {
         accessorKey: "recordsCount",
         header: () => "Records count",
-        cell: ({ row }) => {
-          const count = row.getValue("recordsCount") as number
-          return count
-        },
+        cell: ({ row }) => row.original.recordsCount,
       },
       {
         id: "actions",
         header: "Actions",
-        cell: ({ row }) => {
-          const store = row.original
-          return (
-            <div className="flex items-center gap-1 max-w-24">
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button variant="ghost" size="icon" onClick={() => handleEditClick(store)}>
-                    <Edit />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>Edit data store</TooltipContent>
-              </Tooltip>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button variant="ghost" size="icon" onClick={() => handleDeleteClick(store)}>
-                    <Trash />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>Delete data store</TooltipContent>
-              </Tooltip>
-            </div>
-          )
-        },
+        cell: ({ row }) => (
+          <div className="flex items-center gap-1 max-w-24">
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={(event) => {
+                    event.stopPropagation()
+                    handleEditClick(row.original)
+                  }}
+                >
+                  <Edit />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>Edit data store</TooltipContent>
+            </Tooltip>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={(event) => {
+                    event.stopPropagation()
+                    handleDeleteClick(row.original)
+                  }}
+                >
+                  <Trash />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>Delete data store</TooltipContent>
+            </Tooltip>
+          </div>
+        ),
       },
     ],
     [],
@@ -115,18 +124,17 @@ export function DataStores() {
         data-transition-direction="top"
         className="view-transition p-2 flex flex-row items-center"
       >
-        <Button variant="outline" onClick={() => setCreateDialogOpen(true)}>
+        <Button
+          variant="outline"
+          onClick={() => {
+            setStoreToEdit(null)
+            setUpsertDialogOpen(true)
+          }}
+        >
           <Plus />
           Add data store
         </Button>
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Button size="icon" variant="ghost" onClick={refresh} className="ml-auto">
-              <RefreshCcw />
-            </Button>
-          </TooltipTrigger>
-          <TooltipContent>Refresh table</TooltipContent>
-        </Tooltip>
+        <RefreshButton onClick={refresh} refreshing={isLoading || isLoadingMore} />
       </div>
       <DataTable
         data-transition-direction="left"
@@ -136,7 +144,10 @@ export function DataStores() {
         isLoading={isLoading || isLoadingMore}
         hasMore={hasMore}
         onLoadMore={loadMore}
-        // onRowClick={handleRowClick} //TODO: open view with data store table; allow edit and delete; add option to pin to sidebar for easier access
+        onRowClick={(row) => {
+          setStoreToView(row.original)
+          setDataStoreTableOpen(true)
+        }}
       />
 
       <ConfirmationDialog
@@ -156,17 +167,33 @@ export function DataStores() {
       />
 
       <DataStoreDialog
-        open={createDialogOpen}
-        onOpenChange={setCreateDialogOpen}
-        onSuccess={refresh}
-      />
-
-      <DataStoreDialog
-        open={editDialogOpen}
-        onOpenChange={setEditDialogOpen}
+        open={upsertDialogOpen}
+        onOpenChange={setUpsertDialogOpen}
         onSuccess={refresh}
         editStore={storeToEdit}
       />
+
+      {storeToView && (
+        <Dialog
+          open={dataStoreTableOpen}
+          onOpenChange={(openState) => {
+            setDataStoreTableOpen(openState)
+            if (!openState) {
+              refresh()
+            }
+          }}
+        >
+          <DialogContent aria-describedby={undefined}>
+            <DialogHeader>
+              <DialogTitle>{storeToView.name}</DialogTitle>
+              {storeToView.description && (
+                <DialogDescription>{storeToView.description}</DialogDescription>
+              )}
+            </DialogHeader>
+            <DataStoreTable store={storeToView} className="-m-6 mt-0" />
+          </DialogContent>
+        </Dialog>
+      )}
     </div>
   )
 }

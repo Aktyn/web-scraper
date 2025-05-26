@@ -5,8 +5,10 @@ import {
   type ApiPaginationQuery,
   type ApiResponse,
   type CreateUserDataStore,
+  type CreateUserDataStoreRecord,
   type Preferences,
   type UpdateUserDataStore,
+  type UpdateUserDataStoreRecord,
   type UserDataStore,
 } from "@web-scraper/common"
 
@@ -18,13 +20,17 @@ export type RoutesWithMethod<MethodType extends Method> = {
   [key in keyof Routes]: Routes[key] extends { [method in MethodType]: object } ? key : never
 }[keyof Routes]
 
-//TODO: support for paths with multiple parameters (e.g. /user-data-stores/:tableName/:id)
 export type RouteParameters<RoutePath extends keyof Routes> =
-  RoutePath extends `${string}/:${infer Param}`
+  RoutePath extends `${string}/:${infer Param}/${infer Rest}`
     ? {
         [key in Param]: string | number
-      }
-    : undefined
+        //@ts-expect-error Hacky type enforcement
+      } & (RouteParameters<Rest> extends object ? RouteParameters<Rest> : unknown)
+    : RoutePath extends `${string}/:${infer Param}`
+      ? {
+          [key in Param]: string | number
+        }
+      : undefined
 
 function parametrizeRoute<ParamsType extends Record<string, string | number>>(
   route: string,
@@ -101,6 +107,7 @@ export type Routes = {
       response: ApiResponse<Preferences>
     }
   }
+
   "user-data-stores": {
     get: {
       querystring: Partial<ApiPaginationQuery>
@@ -115,6 +122,26 @@ export type Routes = {
     put: {
       body: UpdateUserDataStore
       response: ApiResponse<UserDataStore>
+    }
+    delete: {
+      response: void
+    }
+  }
+
+  "user-data-stores/:tableName/records": {
+    get: {
+      querystring: Partial<ApiPaginationQuery>
+      response: ApiPaginatedResponse<Record<string, unknown>>
+    }
+    post: {
+      body: CreateUserDataStoreRecord
+      response: ApiResponse<Record<string, unknown>>
+    }
+  }
+  "user-data-stores/:tableName/records/:id": {
+    put: {
+      body: UpdateUserDataStoreRecord
+      response: ApiResponse<Record<string, unknown>>
     }
     delete: {
       response: void

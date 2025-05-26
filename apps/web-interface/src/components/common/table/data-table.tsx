@@ -1,7 +1,5 @@
 "use client"
 
-import { type ColumnDef, flexRender, getCoreRowModel, useReactTable } from "@tanstack/react-table"
-import { type ComponentProps, useCallback, useEffect, useRef, useState } from "react"
 import { Button } from "@/components/shadcn/button"
 import {
   Table,
@@ -11,9 +9,17 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/shadcn/table"
-import { ChevronUp } from "lucide-react"
 import { cn } from "@/lib/utils"
-import { ScrollArea, ScrollBar } from "../shadcn/scroll-area"
+import {
+  type ColumnDef,
+  flexRender,
+  getCoreRowModel,
+  type Row,
+  useReactTable,
+} from "@tanstack/react-table"
+import { ChevronUp } from "lucide-react"
+import { type ComponentProps, useCallback, useEffect, useRef, useState } from "react"
+import { ScrollArea, ScrollBar } from "../../shadcn/scroll-area"
 
 type DataTableProps<TData, TValue> = {
   columns: ColumnDef<TData, TValue>[]
@@ -21,6 +27,7 @@ type DataTableProps<TData, TValue> = {
   isLoading?: boolean
   hasMore?: boolean
   onLoadMore?: () => void
+  onRowClick?: (row: Row<TData>) => void
 } & ComponentProps<"div">
 
 export function DataTable<TData, TValue>({
@@ -29,6 +36,7 @@ export function DataTable<TData, TValue>({
   isLoading = false,
   hasMore = false,
   onLoadMore,
+  onRowClick,
   ...containerProps
 }: DataTableProps<TData, TValue>) {
   const [showBackToTop, setShowBackToTop] = useState(false)
@@ -93,7 +101,12 @@ export function DataTable<TData, TValue>({
           <TableBody>
             {table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
-                <TableRow key={row.id} data-state={row.getIsSelected() && "selected"}>
+                <TableRow
+                  key={row.id}
+                  data-state={row.getIsSelected() && "selected"}
+                  onClick={() => onRowClick?.(row)}
+                  className={cn(onRowClick && "not-disabled:cursor-pointer")}
+                >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
                       {flexRender(cell.column.columnDef.cell, cell.getContext())}

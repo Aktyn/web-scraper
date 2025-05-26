@@ -7,6 +7,7 @@ import {
   FormMessage,
 } from "@/components/shadcn/form"
 import { Input } from "@/components/shadcn/input"
+import type { ReactNode } from "react"
 import type { Control, FieldPath, FieldValues } from "react-hook-form"
 
 interface FormInputProps<
@@ -15,7 +16,7 @@ interface FormInputProps<
 > {
   control: Control<TFieldValues>
   name: TName
-  label: string
+  label: ReactNode
   placeholder?: string
   description?: string
   type?: string

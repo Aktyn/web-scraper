@@ -31,7 +31,7 @@ export function ConfirmationDialog({
 }: ConfirmationDialogProps) {
   return (
     <Dialog {...dialogProps}>
-      <DialogContent className={className}>
+      <DialogContent aria-describedby={undefined} className={className}>
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
           <DialogDescription>{description}</DialogDescription>

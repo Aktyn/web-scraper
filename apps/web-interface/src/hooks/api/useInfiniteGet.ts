@@ -23,6 +23,7 @@ export function useInfiniteGet<RoutePath extends RoutesWithMethod<"get">>(
   const [hasMore, setHasMore] = useState(true)
   const [currentPage, setCurrentPage] = useState(0)
 
+  const stringifiedParams = params ? JSON.stringify(params) : undefined
   const loadPage = useCallback(
     async (page: number, isInitial = false) => {
       const setLoadingState = isInitial ? setIsLoading : setIsLoadingMore
@@ -30,7 +31,11 @@ export function useInfiniteGet<RoutePath extends RoutesWithMethod<"get">>(
 
       try {
         const queryParams = { ...baseQueryParams, page } as QueryParams
-        const response = await api.get<RoutePath>(route, params, queryParams)
+        const response = await api.get<RoutePath>(
+          route,
+          stringifiedParams && JSON.parse(stringifiedParams),
+          queryParams,
+        )
 
         if ("data" in response && Array.isArray(response.data)) {
           const newData = response.data as ItemType[]
@@ -61,7 +66,7 @@ export function useInfiniteGet<RoutePath extends RoutesWithMethod<"get">>(
         setLoadingState(false)
       }
     },
-    [route, params, baseQueryParams],
+    [route, stringifiedParams, baseQueryParams],
   )
 
   const loadMore = useCallback(() => {

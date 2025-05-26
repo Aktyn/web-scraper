@@ -133,6 +133,38 @@ describe("Misc Routes", () => {
     })
   })
 
+  describe("GET /user-data-stores/:tableName/records", () => {
+    it("should return status 200 and store data from the database", async () => {
+      const response = await modules.api.inject({
+        method: "GET",
+        url: "/user-data-stores/personal_credentials_random_string/records",
+      })
+
+      expect(response.statusCode).toBe(200)
+      expect(JSON.parse(response.payload)).toEqual({
+        data: [
+          {
+            id: 1,
+            origin: "https://example.com/",
+            username: "noop",
+            email: "noop@gmail.com",
+            password: "Noop123!",
+          },
+          {
+            id: 2,
+            origin: "https://www.pepper.pl",
+            username: "pultetista",
+            email: "pultetista@gufum.com",
+            password: "pultetista@gufum.com",
+          },
+        ],
+        page: 0,
+        pageSize: 64,
+        hasMore: false,
+      })
+    })
+  })
+
   describe("POST /user-data-stores", () => {
     it("should create a new user data store and return status 201", async () => {
       const newStore: CreateUserDataStore = {
@@ -394,6 +426,159 @@ describe("Misc Routes", () => {
       expect(response.statusCode).toBe(404)
       expect(JSON.parse(response.payload)).toEqual({
         error: "Data store not found",
+      })
+    })
+  })
+
+  describe("POST /user-data-stores/:tableName/records", () => {
+    it("should create a new record and return status 201", async () => {
+      const newRecord = {
+        origin: "https://test.com",
+        username: "test_user",
+        email: "test@example.com",
+        password: "test_pass123",
+      }
+
+      const response = await modules.api.inject({
+        method: "POST",
+        url: "/user-data-stores/personal_credentials_random_string/records",
+        payload: newRecord,
+      })
+
+      expect(response.statusCode).toBe(201)
+      const responseData = JSON.parse(response.payload)
+      expect(responseData.data).toMatchObject({
+        id: expect.any(Number),
+        origin: "https://test.com",
+        username: "test_user",
+        email: "test@example.com",
+        password: "test_pass123",
+      })
+    })
+
+    it("should return status 404 if the data store does not exist", async () => {
+      const newRecord = {
+        origin: "https://test.com",
+        username: "test_user",
+      }
+
+      const response = await modules.api.inject({
+        method: "POST",
+        url: "/user-data-stores/non_existent_table/records",
+        payload: newRecord,
+      })
+
+      expect(response.statusCode).toBe(404)
+      expect(JSON.parse(response.payload)).toEqual({
+        error: "Data store not found",
+      })
+    })
+  })
+
+  describe("PUT /user-data-stores/:tableName/records/:id", () => {
+    it("should update an existing record and return status 200", async () => {
+      const updateData = {
+        origin: "https://updated.com",
+        username: "updated_user",
+        email: "updated@example.com",
+        password: "updated_pass123",
+      }
+
+      const response = await modules.api.inject({
+        method: "PUT",
+        url: "/user-data-stores/personal_credentials_random_string/records/1",
+        payload: updateData,
+      })
+
+      expect(response.statusCode).toBe(200)
+      const responseData = JSON.parse(response.payload)
+      expect(responseData.data).toMatchObject({
+        id: 1,
+        origin: "https://updated.com",
+        username: "updated_user",
+        email: "updated@example.com",
+        password: "updated_pass123",
+      })
+    })
+
+    it("should return status 404 if the data store does not exist", async () => {
+      const updateData = {
+        origin: "https://test.com",
+        username: "test_user",
+      }
+
+      const response = await modules.api.inject({
+        method: "PUT",
+        url: "/user-data-stores/non_existent_table/records/1",
+        payload: updateData,
+      })
+
+      expect(response.statusCode).toBe(404)
+      expect(JSON.parse(response.payload)).toEqual({
+        error: "Data store not found",
+      })
+    })
+
+    it("should return status 404 if the record does not exist", async () => {
+      const updateData = {
+        origin: "https://test.com",
+        username: "test_user",
+      }
+
+      const response = await modules.api.inject({
+        method: "PUT",
+        url: "/user-data-stores/personal_credentials_random_string/records/999",
+        payload: updateData,
+      })
+
+      expect(response.statusCode).toBe(404)
+      expect(JSON.parse(response.payload)).toEqual({
+        error: "Record not found",
+      })
+    })
+  })
+
+  describe("DELETE /user-data-stores/:tableName/records/:id", () => {
+    it("should delete an existing record and return status 204", async () => {
+      const response = await modules.api.inject({
+        method: "DELETE",
+        url: "/user-data-stores/personal_credentials_random_string/records/2",
+      })
+
+      expect(response.statusCode).toBe(204)
+      expect(response.payload).toBe("")
+
+      const getResponse = await modules.api.inject({
+        method: "GET",
+        url: "/user-data-stores/personal_credentials_random_string/records",
+      })
+
+      const getData = JSON.parse(getResponse.payload)
+      expect(getData.data).toHaveLength(1)
+      expect(getData.data[0].id).toBe(1)
+    })
+
+    it("should return status 404 if the data store does not exist", async () => {
+      const response = await modules.api.inject({
+        method: "DELETE",
+        url: "/user-data-stores/non_existent_table/records/1",
+      })
+
+      expect(response.statusCode).toBe(404)
+      expect(JSON.parse(response.payload)).toEqual({
+        error: "Data store not found",
+      })
+    })
+
+    it("should return status 404 if the record does not exist", async () => {
+      const response = await modules.api.inject({
+        method: "DELETE",
+        url: "/user-data-stores/personal_credentials_random_string/records/999",
+      })
+
+      expect(response.statusCode).toBe(404)
+      expect(JSON.parse(response.payload)).toEqual({
+        error: "Record not found",
       })
     })
   })
