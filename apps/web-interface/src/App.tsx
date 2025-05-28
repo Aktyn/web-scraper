@@ -8,34 +8,37 @@ import { Preferences } from "./components/view/preferences"
 import { Scrapers } from "./components/view/scrapers"
 import { cn } from "./lib/utils"
 import { useView, ViewProvider } from "./providers/view-provider"
+import { PinnedDataStoresProvider } from "./providers/pinned-data-stores-provider"
 
 export default function App() {
   return (
     <ViewProvider>
-      <TooltipProvider delayDuration={0} skipDelayDuration={0}>
-        <Sidebar />
-        <Main />
-        <Toaster
-          position="top-center"
-          duration={10_000}
-          visibleToasts={16}
-          expand
-          richColors
-          style={{}}
-          swipeDirections={["top", "bottom"]}
-          toastOptions={{
-            className: "backdrop-blur-sm shadow-md!",
-            classNames: {
-              title: "font-semibold! text-sm!",
-              description: "font-normal text-sm",
-              success: "border-success! text-success-foreground! bg-success/40!",
-              error: "border-destructive! text-destructive-foreground! bg-destructive/40!",
-              warning: "border-warning! text-warning-foreground! bg-warning/40!",
-              info: "border-info! text-info-foreground! bg-info/40!",
-            },
-          }}
-        />
-      </TooltipProvider>
+      <PinnedDataStoresProvider>
+        <TooltipProvider delayDuration={0} skipDelayDuration={0}>
+          <Sidebar />
+          <Main />
+          <Toaster
+            position="top-center"
+            duration={10_000}
+            visibleToasts={16}
+            expand
+            richColors
+            style={{}}
+            swipeDirections={["top", "bottom"]}
+            toastOptions={{
+              className: "backdrop-blur-sm shadow-md!",
+              classNames: {
+                title: "font-semibold! text-sm!",
+                description: "font-normal text-sm",
+                success: "border-success! text-success-foreground! bg-success/40!",
+                error: "border-destructive! text-destructive-foreground! bg-destructive/40!",
+                warning: "border-warning! text-warning-foreground! bg-warning/40!",
+                info: "border-info! text-info-foreground! bg-info/40!",
+              },
+            }}
+          />
+        </TooltipProvider>
+      </PinnedDataStoresProvider>
     </ViewProvider>
   )
 }

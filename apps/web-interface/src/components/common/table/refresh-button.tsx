@@ -13,6 +13,7 @@ export function RefreshButton({ refreshing, ...buttonProps }: RefreshButtonProps
         <Button
           size="icon"
           variant="ghost"
+          tabIndex={-1}
           {...buttonProps}
           className={cn("ml-auto", buttonProps.className)}
         >

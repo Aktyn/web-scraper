@@ -1,13 +1,18 @@
 import { useCachedState } from "@/hooks/useCachedState"
 import { useSizer } from "@/hooks/useSizer"
 import { cn } from "@/lib/utils"
-import { ExternalLink, PanelRightClose } from "lucide-react"
+import { usePinnedDataStores } from "@/providers/pinned-data-stores-provider"
+import { type UserDataStore } from "@web-scraper/common"
+import { PanelRightClose, PinOff } from "lucide-react"
+import { useState } from "react"
+import { DataStoreDialog } from "../data-store/data-store-dialog"
+import { Badge } from "../shadcn/badge"
 import { Button } from "../shadcn/button"
 import { ScrollArea } from "../shadcn/scroll-area"
 import { Separator } from "../shadcn/separator"
 import { Tooltip, TooltipContent, TooltipTrigger } from "../shadcn/tooltip"
+import { Footer } from "./footer"
 import { NavigationMenu } from "./navigation-menu"
-import { useState } from "react"
 
 export function Sidebar() {
   const { ref, width } = useSizer()
@@ -56,40 +61,70 @@ export function Sidebar() {
       <Separator />
       <ScrollArea className="grow">
         <NavigationMenu compact={!isOpen} />
+        <PinnedDataStores />
       </ScrollArea>
       <Separator />
-      <footer
-        className={cn(
-          "p-2 text-sm text-muted-foreground flex flex-row flex-nowrap items-center justify-start gap-2 *:not-first:transition-opacity overflow-hidden whitespace-nowrap",
-          isOpen ? "*:not-first:opacity-100" : "*:not-first:opacity-0",
-        )}
-      >
-        <img
-          src="/aktyn-icon.png"
-          className={cn(
-            "h-8 transition-[margin] duration-400 ease-in-out",
-            isOpen ? "ml-[0%]" : "ml-[calc(100%-var(--spacing)*10)]",
-          )}
-        />
-        <span className="font-semibold">Aktyn</span>
-        <Button asChild variant="link" size="sm" className="px-0! h-auto text-muted-foreground">
-          <a href="https://github.com/Aktyn" target="_blank">
-            GitHub
-            <ExternalLink />
-          </a>
-        </Button>
-        <Separator orientation="vertical" className="ml-auto" />
-        <span className="font-light">v{getAppVersion()}</span>
-      </footer>
+      <Footer isOpen={isOpen} />
     </aside>
   )
 }
 
-declare const __APP_VERSION__: string
-function getAppVersion() {
-  try {
-    return __APP_VERSION__
-  } catch {
-    return "unknown"
-  }
+function PinnedDataStores() {
+  const { pinnedDataStores, unpinDataStore } = usePinnedDataStores()
+
+  const [dataStoreTableOpen, setDataStoreTableOpen] = useState(false)
+  const [storeToView, setStoreToView] = useState<UserDataStore | null>(null)
+
+  return (
+    <>
+      {pinnedDataStores.length > 0 && <Separator className="my-2 opacity-50 animate-in zoom-in" />}
+
+      <div className="grow flex flex-col gap-2 p-2 contain-inline-size">
+        {pinnedDataStores.map((store) => (
+          <Button
+            key={store.tableName}
+            variant="outline"
+            size="sm"
+            className="animate-in fade-in max-w-full overflow-hidden"
+            onClick={() => {
+              setStoreToView(store)
+              setDataStoreTableOpen(true)
+            }}
+          >
+            <strong className="truncate">{store.name}</strong>
+            <Badge className="text-muted-foreground bg-muted">{store.recordsCount}</Badge>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  asChild
+                  variant="ghost"
+                  size="icon"
+                  tabIndex={-1}
+                  onClick={(event) => {
+                    event.stopPropagation()
+                    unpinDataStore(store)
+                  }}
+                >
+                  <div>
+                    <PinOff />
+                  </div>
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>Unpin</TooltipContent>
+            </Tooltip>
+          </Button>
+        ))}
+      </div>
+
+      {storeToView && (
+        <DataStoreDialog
+          store={storeToView}
+          open={dataStoreTableOpen}
+          onOpenChange={(openState) => {
+            setDataStoreTableOpen(openState)
+          }}
+        />
+      )}
+    </>
+  )
 }

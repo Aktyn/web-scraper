@@ -1,21 +1,23 @@
 import { ConfirmationDialog } from "@/components/common/confirmation-dialog"
 import { DataTable } from "@/components/common/table/data-table"
 import { Button } from "@/components/shadcn/button"
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/shadcn/dialog"
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/shadcn/tooltip"
 import { useDelete } from "@/hooks/api/useDelete"
 import { useInfiniteGet } from "@/hooks/api/useInfiniteGet"
-import { DialogDescription } from "@radix-ui/react-dialog"
+import { usePinnedDataStores } from "@/providers/pinned-data-stores-provider"
 import type { ColumnDef } from "@tanstack/react-table"
 import type { UserDataStore } from "@web-scraper/common"
 import { Edit, Plus, Trash } from "lucide-react"
 import { useMemo, useState } from "react"
+import { PinStoreButton } from "../common/button/pin-store-button"
 import { NullBadge } from "../common/null-badge"
 import { RefreshButton } from "../common/table/refresh-button"
 import { DataStoreDialog } from "../data-store/data-store-dialog"
-import { DataStoreTable } from "../data-store/data-store-table"
+import { DataStoreFormDialog } from "../data-store/data-store-form-dialog"
 
 export function DataStores() {
+  const { unpinDataStore } = usePinnedDataStores()
+
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
   const [storeToDelete, setStoreToDelete] = useState<UserDataStore | null>(null)
 
@@ -79,7 +81,8 @@ export function DataStores() {
       {
         id: "actions",
         cell: ({ row }) => (
-          <div className="flex items-center gap-1 max-w-24">
+          <div className="flex items-center gap-1 max-w-32">
+            <PinStoreButton store={row.original} />
             <Tooltip>
               <TooltipTrigger asChild>
                 <Button
@@ -165,15 +168,19 @@ export function DataStores() {
         variant="destructive"
       />
 
-      <DataStoreDialog
+      <DataStoreFormDialog
         open={upsertDialogOpen}
         onOpenChange={setUpsertDialogOpen}
-        onSuccess={refresh}
+        onSuccess={(store) => {
+          unpinDataStore(store)
+          refresh()
+        }}
         editStore={storeToEdit}
       />
 
       {storeToView && (
-        <Dialog
+        <DataStoreDialog
+          store={storeToView}
           open={dataStoreTableOpen}
           onOpenChange={(openState) => {
             setDataStoreTableOpen(openState)
@@ -181,20 +188,7 @@ export function DataStores() {
               refresh()
             }
           }}
-        >
-          <DialogContent
-            aria-describedby={undefined}
-            className="sm:max-w-[calc(100%-2rem)] sm:w-4xl max-h-full overflow-hidden grid grid-rows-[auto_1fr]"
-          >
-            <DialogHeader>
-              <DialogTitle>{storeToView.name}</DialogTitle>
-              {storeToView.description && (
-                <DialogDescription>{storeToView.description}</DialogDescription>
-              )}
-            </DialogHeader>
-            <DataStoreTable store={storeToView} className="-m-6 mt-0" />
-          </DialogContent>
-        </Dialog>
+        />
       )}
     </div>
   )

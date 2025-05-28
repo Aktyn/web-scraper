@@ -13,7 +13,7 @@ import { RefreshButton } from "../common/table/refresh-button"
 import { Badge } from "../shadcn/badge"
 import { Button } from "../shadcn/button"
 import { Tooltip, TooltipContent, TooltipTrigger } from "../shadcn/tooltip"
-import { DataStoreDialog } from "./data-store-dialog"
+import { DataStoreFormDialog } from "./data-store-form-dialog"
 import { DataStoreRecordDialog } from "./data-store-record-dialog"
 
 type DataStoreTableProps = {
@@ -23,8 +23,6 @@ type DataStoreTableProps = {
 }
 
 export function DataStoreTable({ store: initialStore, className }: DataStoreTableProps) {
-  //TODO: add option to pin to sidebar for easier access
-
   const [store, setStore] = useState(initialStore)
 
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
@@ -173,7 +171,7 @@ export function DataStoreTable({ store: initialStore, className }: DataStoreTabl
         variant="destructive"
       />
 
-      <DataStoreDialog
+      <DataStoreFormDialog
         open={editDialogOpen}
         onOpenChange={setEditDialogOpen}
         onSuccess={handleEditSuccess}
