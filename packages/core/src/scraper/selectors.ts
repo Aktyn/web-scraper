@@ -1,4 +1,8 @@
-import { type ScraperElementSelector, ElementSelectorType } from "@web-scraper/common"
+import {
+  type ScraperElementSelector,
+  ElementSelectorType,
+  type SerializableRegex,
+} from "@web-scraper/common"
 import type { ElementHandle, Page } from "rebrowser-puppeteer"
 
 export async function getElementHandle(
@@ -35,9 +39,7 @@ export async function getElementHandle(
     case ElementSelectorType.FindByTextContent: {
       const handle = await page.evaluateHandle(
         (tagName, text, args) => {
-          type SerializedRegExp = { source: string; flags: string }
-
-          function compareText(text: string | null, matcher: string | SerializedRegExp) {
+          function compareText(text: string | null, matcher: string | SerializableRegex) {
             if (typeof matcher === "string") {
               return text === matcher
             }
@@ -45,13 +47,13 @@ export async function getElementHandle(
             return regex.test(text ?? "")
           }
 
-          function matchTextContent(element: Element, matcher: string | SerializedRegExp) {
+          function matchTextContent(element: Element, matcher: string | SerializableRegex) {
             return compareText(element.textContent, matcher)
           }
 
           function matchArguments(
             element: Element,
-            args?: Record<string, string | SerializedRegExp>,
+            args?: Record<string, string | SerializableRegex>,
           ) {
             if (!args || Object.keys(args).length === 0) {
               return true
@@ -77,17 +79,8 @@ export async function getElementHandle(
           return elements.at(0) ?? null
         },
         selector.tagName ?? "*",
-        selector.text instanceof RegExp
-          ? { source: selector.text.source, flags: selector.text.flags }
-          : selector.text,
-        selector.args
-          ? Object.fromEntries(
-              Object.entries(selector.args).map(([key, value]) => [
-                key,
-                value instanceof RegExp ? { source: value.source, flags: value.flags } : value,
-              ]),
-            )
-          : undefined,
+        selector.text,
+        selector.args,
       )
       elementHandle = handle?.asElement() as ElementHandle<Element>
       break

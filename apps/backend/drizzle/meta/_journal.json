@@ -57,6 +57,27 @@
       "when": 1748453971867,
       "tag": "0007_jittery_grandmaster",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "6",
+      "when": 1748459797434,
+      "tag": "0008_boring_thaddeus_ross",
+      "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "6",
+      "when": 1748464843529,
+      "tag": "0009_lovely_absorbing_man",
+      "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "6",
+      "when": 1748464872952,
+      "tag": "0010_material_mister_sinister",
+      "breakpoints": true
     }
   ]
 }

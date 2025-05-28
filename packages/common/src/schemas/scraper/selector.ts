@@ -1,5 +1,5 @@
 import { z } from "zod"
-import { tagNameSchema } from "./helpers"
+import { serializableRegex, tagNameSchema } from "./helpers"
 
 export enum ElementSelectorType {
   Query = "query",
@@ -13,9 +13,9 @@ export const scraperElementSelectorSchema = z.discriminatedUnion("type", [
   }),
   z.object({
     type: z.literal(ElementSelectorType.FindByTextContent),
-    text: z.union([z.string(), z.instanceof(RegExp)]),
+    text: z.union([z.string(), serializableRegex]),
     tagName: tagNameSchema.optional(),
-    args: z.record(z.string(), z.union([z.string(), z.instanceof(RegExp)])).optional(),
+    args: z.record(z.string(), z.union([z.string(), serializableRegex])).optional(),
   }),
 ])
 

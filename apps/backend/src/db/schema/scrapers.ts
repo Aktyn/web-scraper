@@ -2,7 +2,7 @@ import type { ScraperInstructions } from "@web-scraper/common"
 import { sqliteTable, text } from "drizzle-orm/sqlite-core"
 import { primaryKey } from "./helpers"
 
-export const scrapersTable = sqliteTable("scrapers_table", {
+export const scrapersTable = sqliteTable("scrapers", {
   id: primaryKey(),
   name: text("name").notNull().unique(),
   description: text("description"),

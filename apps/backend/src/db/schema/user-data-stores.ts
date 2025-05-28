@@ -1,7 +1,7 @@
 import type { UserDataStoreColumn } from "@web-scraper/common"
 import { sqliteTable, text } from "drizzle-orm/sqlite-core"
 
-export const userDataStoresTable = sqliteTable("user_data_stores_table", {
+export const userDataStoresTable = sqliteTable("user_data_stores", {
   /** Sanitized table name derived from the name of the user data store */
   tableName: text("table_name").primaryKey().notNull(),
   name: text("name").notNull().unique(),

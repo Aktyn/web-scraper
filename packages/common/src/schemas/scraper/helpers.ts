@@ -126,3 +126,10 @@ export const tagNameSchema = z.enum([
   "var",
   "video",
 ])
+
+export const serializableRegex = z.object({
+  source: z.string(),
+  flags: z.string().regex(/^[dgimsuvy]*$/, "Invalid flags"),
+})
+
+export type SerializableRegex = z.infer<typeof serializableRegex>

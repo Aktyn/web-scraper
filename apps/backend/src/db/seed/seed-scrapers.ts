@@ -1,10 +1,10 @@
 import {
-  type ScraperElementSelector,
   ElementSelectorType,
-  type ScraperInstructions,
-  ScraperInstructionType,
   PageActionType,
   ScraperConditionType,
+  type ScraperElementSelector,
+  type ScraperInstructions,
+  ScraperInstructionType,
   ScraperValueType,
   SqliteConditionType,
 } from "@web-scraper/common"
@@ -16,9 +16,21 @@ export async function seedScrapersStores(db: DbModule) {
   const personalCredentialsTableName = sanitizeTableName("Personal credentials random string")
 
   await db.transaction(async (tx) => {
-    const [scraper] = await tx
+    const [smallScraper, bigScraper] = await tx
       .insert(scrapersTable)
       .values([
+        {
+          name: "Small example scraper",
+          instructions: [
+            {
+              type: ScraperInstructionType.PageAction,
+              action: {
+                type: PageActionType.Navigate,
+                url: "https://example.com",
+              },
+            },
+          ],
+        },
         {
           name: "New pepper alerts",
           description: "See if there are new pepper alerts and notify user if so",
@@ -29,7 +41,26 @@ export async function seedScrapersStores(db: DbModule) {
 
     await tx.insert(scraperDataSourcesTable).values([
       {
-        scraperId: scraper.id,
+        scraperId: smallScraper.id,
+        sourceAlias: "foo",
+        dataStoreTableName: personalCredentialsTableName, //Note: it has to be already seeded
+        whereSchema: {
+          and: [
+            {
+              column: "username",
+              condition: SqliteConditionType.NotEquals,
+              value: "any value that is not noop",
+            },
+            {
+              column: "email",
+              condition: SqliteConditionType.Equals,
+              value: "noop@gmail.com",
+            },
+          ],
+        },
+      },
+      {
+        scraperId: bigScraper.id,
         sourceAlias: "user",
         dataStoreTableName: personalCredentialsTableName, //Note: it has to be already seeded
         whereSchema: {
@@ -44,13 +75,13 @@ export async function seedScrapersStores(db: DbModule) {
 
 const acceptCookiesButtonSelector: ScraperElementSelector = {
   type: ElementSelectorType.FindByTextContent,
-  text: /akceptuj wszystkie/i,
+  text: { source: "akceptuj wszystkie", flags: "i" },
   tagName: "button",
 }
 
 const loginButtonSelector: ScraperElementSelector = {
   type: ElementSelectorType.FindByTextContent,
-  text: /zaloguj się/i,
+  text: { source: "zaloguj się", flags: "i" },
   tagName: "button",
 }
 
@@ -138,7 +169,7 @@ const checkNewPepperAlertsInstructions: ScraperInstructions = [
           type: PageActionType.Click,
           selector: {
             type: ElementSelectorType.FindByTextContent,
-            text: /Kontynuuj/i,
+            text: { source: "Kontynuuj", flags: "i" },
             tagName: "button",
             args: {
               type: "submit",
@@ -200,7 +231,7 @@ const checkNewPepperAlertsInstructions: ScraperInstructions = [
           type: PageActionType.Click,
           selector: {
             type: ElementSelectorType.FindByTextContent,
-            text: /Zaloguj się/i,
+            text: { source: "Zaloguj się", flags: "i" },
             tagName: "button",
             args: {
               type: "submit",

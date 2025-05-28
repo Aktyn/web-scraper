@@ -13,6 +13,5 @@ export async function seed(db = getDbModule(getConfig())) {
   })
 
   await seedUserDataStores(db)
-
   await seedScrapersStores(db)
 }

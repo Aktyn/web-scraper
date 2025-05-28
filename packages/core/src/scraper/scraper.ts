@@ -391,7 +391,7 @@ export class Scraper {
           if (typeof condition.text === "string") {
             return value === condition.text
           }
-          return condition.text.test(value)
+          return new RegExp(condition.text.source, condition.text.flags).test(value)
         }
       }
     } catch (error) {

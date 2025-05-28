@@ -45,23 +45,21 @@ type ScraperInstructionRecursive =
 
 type ScraperInstructionsRecursive = Array<ScraperInstructionRecursive>
 
-export const scraperInstructionsSchema: z.ZodType<ScraperInstructionsRecursive> = z.lazy(() =>
-  z.array(
-    z.discriminatedUnion("type", [
-      z.object({ type: z.literal(ScraperInstructionType.PageAction), action: pageActionSchema }),
+export const scraperInstructionsSchema: z.ZodType<ScraperInstructionsRecursive> = z.array(
+  z.discriminatedUnion("type", [
+    z.object({ type: z.literal(ScraperInstructionType.PageAction), action: pageActionSchema }),
 
-      z.object({
-        type: z.literal(ScraperInstructionType.Condition),
-        if: scraperConditionSchema,
-        then: scraperInstructionsSchema,
-        else: scraperInstructionsSchema.optional(),
-      }),
+    z.object({
+      type: z.literal(ScraperInstructionType.Condition),
+      if: scraperConditionSchema,
+      then: z.lazy(() => scraperInstructionsSchema),
+      else: z.lazy(() => scraperInstructionsSchema).optional(),
+    }),
 
-      z.object({ type: z.literal(ScraperInstructionType.Marker), name: z.string() }),
+    z.object({ type: z.literal(ScraperInstructionType.Marker), name: z.string() }),
 
-      z.object({ type: z.literal(ScraperInstructionType.Jump), markerName: z.string() }),
-    ]),
-  ),
+    z.object({ type: z.literal(ScraperInstructionType.Jump), markerName: z.string() }),
+  ]),
 )
 
 export type ScraperInstructions = z.infer<typeof scraperInstructionsSchema>

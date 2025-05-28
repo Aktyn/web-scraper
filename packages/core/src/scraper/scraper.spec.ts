@@ -95,13 +95,13 @@ describe(
 
       const acceptCookiesButtonSelector: ScraperElementSelector = {
         type: ElementSelectorType.FindByTextContent,
-        text: /accept cookies/i,
+        text: { source: "accept cookies", flags: "i" },
         tagName: "button",
       }
 
       const loginButtonSelector: ScraperElementSelector = {
         type: ElementSelectorType.FindByTextContent,
-        text: /login/i,
+        text: { source: "login", flags: "i" },
         tagName: "button",
       }
 
@@ -182,7 +182,7 @@ describe(
               selector: {
                 type: ElementSelectorType.FindByTextContent,
                 tagName: "button",
-                text: /accept cookies/i,
+                text: { source: "accept cookies", flags: "i" },
               },
             },
             isMet: true,
@@ -198,7 +198,7 @@ describe(
               type: PageActionType.Click,
               selector: {
                 tagName: "button",
-                text: /accept cookies/i,
+                text: { source: "accept cookies", flags: "i" },
                 type: ElementSelectorType.FindByTextContent,
               },
             },
@@ -213,7 +213,7 @@ describe(
               type: PageActionType.Click,
               selector: {
                 tagName: "button",
-                text: /login/i,
+                text: { source: "login", flags: "i" },
                 type: ElementSelectorType.FindByTextContent,
               },
             },
@@ -230,7 +230,7 @@ describe(
               type: ScraperConditionType.IsVisible,
               selector: {
                 tagName: "button",
-                text: /login/i,
+                text: { source: "login", flags: "i" },
                 type: ElementSelectorType.FindByTextContent,
               },
             },
@@ -247,7 +247,7 @@ describe(
               type: PageActionType.Click,
               selector: {
                 tagName: "button",
-                text: /login/i,
+                text: { source: "login", flags: "i" },
                 type: ElementSelectorType.FindByTextContent,
               },
             },
@@ -282,7 +282,7 @@ describe(
             condition: {
               selector: {
                 tagName: "button",
-                text: /accept cookies/i,
+                text: { source: "accept cookies", flags: "i" },
                 type: ElementSelectorType.FindByTextContent,
               },
               type: ScraperConditionType.IsVisible,
@@ -299,7 +299,7 @@ describe(
             action: {
               selector: {
                 tagName: "button",
-                text: /login/i,
+                text: { source: "login", flags: "i" },
                 type: ElementSelectorType.FindByTextContent,
               },
               type: PageActionType.Click,
@@ -315,7 +315,7 @@ describe(
             condition: {
               selector: {
                 tagName: "button",
-                text: /login/i,
+                text: { source: "login", flags: "i" },
                 type: ElementSelectorType.FindByTextContent,
               },
               type: ScraperConditionType.IsVisible,
@@ -332,7 +332,7 @@ describe(
             action: {
               selector: {
                 tagName: "button",
-                text: /login/i,
+                text: { source: "login", flags: "i" },
                 type: ElementSelectorType.FindByTextContent,
               },
               type: PageActionType.Click,

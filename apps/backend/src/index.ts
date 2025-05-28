@@ -116,13 +116,13 @@ async function testRun(db: DbModule, logger: Logger) {
 
 const acceptCookiesButtonSelector: ScraperElementSelector = {
   type: ElementSelectorType.FindByTextContent,
-  text: /akceptuj wszystkie/i,
+  text: { source: "akceptuj wszystkie", flags: "i" },
   tagName: "button",
 }
 
 const loginButtonSelector: ScraperElementSelector = {
   type: ElementSelectorType.FindByTextContent,
-  text: /zaloguj się/i,
+  text: { source: "zaloguj się", flags: "i" },
   tagName: "button",
 }
 
@@ -210,7 +210,7 @@ const exampleInstructions: ScraperInstructions = [
           type: PageActionType.Click,
           selector: {
             type: ElementSelectorType.FindByTextContent,
-            text: /Kontynuuj/i,
+            text: { source: "Kontynuuj", flags: "i" },
             tagName: "button",
             args: {
               type: "submit",
@@ -272,7 +272,7 @@ const exampleInstructions: ScraperInstructions = [
           type: PageActionType.Click,
           selector: {
             type: ElementSelectorType.FindByTextContent,
-            text: /Zaloguj się/i,
+            text: { source: "Zaloguj się", flags: "i" },
             tagName: "button",
             args: {
               type: "submit",
