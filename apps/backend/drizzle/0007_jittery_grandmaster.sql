@@ -1,0 +1,1 @@
+ALTER TABLE `scrapers_table` ADD `user_data_directory` text;

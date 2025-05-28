@@ -7,6 +7,8 @@ export enum DataBridgeSourceType {
   TemporaryView = "temporaryView",
 }
 
+type SourceAlias = string
+
 type DataBridgeSource = {
   type: DataBridgeSourceType
   name: string
@@ -15,7 +17,7 @@ type DataBridgeSource = {
 type SourceTypeKey<SourcesType> =
   SourcesType extends Record<infer Key, DataBridgeSource> ? `${Key & string}.${string}` : never
 
-export class DataBridge<SourcesType extends Record<string, DataBridgeSource>>
+export class DataBridge<SourcesType extends Record<SourceAlias, DataBridgeSource>>
   implements DataBridgeInterface
 {
   constructor(
@@ -24,8 +26,8 @@ export class DataBridge<SourcesType extends Record<string, DataBridgeSource>>
   ) {}
 
   async get(key: SourceTypeKey<SourcesType>) {
-    const [sourceName, column] = key.split(".") as [string & keyof SourcesType, string]
-    const source = this.dataSources[sourceName]
+    const [sourceAlias, column] = key.split(".") as [SourceAlias, string]
+    const source = this.dataSources[sourceAlias]
 
     //TODO: all user-store-tables are supposed to have a numeric id column; use it to get specific row when scraper runs iteratively
     const result = await this.db

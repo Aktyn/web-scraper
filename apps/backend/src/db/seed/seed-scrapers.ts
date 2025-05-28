@@ -1,117 +1,45 @@
-import "dotenv/config"
-
 import {
-  ElementSelectorType,
-  PageActionType,
-  ScraperConditionType,
   type ScraperElementSelector,
+  ElementSelectorType,
   type ScraperInstructions,
   ScraperInstructionType,
+  PageActionType,
+  ScraperConditionType,
   ScraperValueType,
   SqliteConditionType,
-  uuid,
 } from "@web-scraper/common"
-import { Scraper } from "@web-scraper/core"
-import path from "path"
-import { type Logger } from "pino"
-import { getApiModule } from "./api/api.module"
-import { getConfig } from "./config/config"
-import { DataBridge, DataBridgeSourceType } from "./db/data-bridge"
-import { type DbModule, getDbModule } from "./db/db.module"
-import { createTemporaryView, removeTemporaryView, whereSchemaToSql } from "./db/view-helpers"
-import { getLogger } from "./logger"
+import type { DbModule } from "../db.module"
+import { scraperDataSourcesTable, scrapersTable } from "../schema"
+import { sanitizeTableName } from "../schema/helpers"
 
-async function main() {
-  const logger = getLogger()
+export async function seedScrapersStores(db: DbModule) {
+  const personalCredentialsTableName = sanitizeTableName("Personal credentials random string")
 
-  logger.info(`Starting application at ${new Date().toUTCString()}`)
+  await db.transaction(async (tx) => {
+    const [scraper] = await tx
+      .insert(scrapersTable)
+      .values([
+        {
+          name: "New pepper alerts",
+          description: "See if there are new pepper alerts and notify user if so",
+          instructions: checkNewPepperAlertsInstructions,
+        },
+      ])
+      .returning()
 
-  const config = getConfig()
-
-  const db = getDbModule(config)
-
-  const api = await getApiModule(db)
-
-  api.listen({ port: config.apiPort }, (err, address) => {
-    if (err) {
-      api.log.error(err)
-      process.exit(1)
-    }
-    logger.info(`Server is now listening on ${address}`)
-  })
-
-  logger.info("Setup complete")
-
-  return { config, db, api, logger }
-}
-
-const cleanup = async () => {
-  Scraper.destroyAll()
-  process.exit(0)
-}
-
-process.addListener("SIGINT", cleanup)
-process.addListener("SIGTERM", cleanup)
-process.addListener("SIGQUIT", cleanup)
-
-main()
-  .then(async (_modules) => {
-    // await testRun(_modules.db, _modules.logger)
-  })
-  .catch((error) => {
-    void cleanup()
-
-    console.error(error)
-    process.exit(1)
-  })
-
-//TODO: remove after testing
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-async function testRun(db: DbModule, logger: Logger) {
-  //TODO: if scraper will run iteratively (for example for each row in some subset of data) then DataBridge should keep track of the current row index
-
-  //TODO: save last N run configurations (instructions + data sources) so it can be reused by user later
-
-  const dataBridge = new DataBridge(db, {
-    user: {
-      type: DataBridgeSourceType.TemporaryView,
-      name: await createTemporaryView(
-        db,
-        "personal_credentials_random_string",
-        whereSchemaToSql({
+    await tx.insert(scraperDataSourcesTable).values([
+      {
+        scraperId: scraper.id,
+        sourceAlias: "user",
+        dataStoreTableName: personalCredentialsTableName, //Note: it has to be already seeded
+        whereSchema: {
           column: "origin",
           condition: SqliteConditionType.ILike,
           value: "%pepper.pl%",
-        }),
-      ),
-    },
+        },
+      },
+    ])
   })
-
-  const id = uuid()
-  const scraper = new Scraper({
-    id,
-    logger: logger.child({
-      scraper: id,
-    }),
-    userDataDir: path.join(__dirname, "..", "userData"),
-  })
-
-  try {
-    await scraper.run(exampleInstructions, dataBridge, {
-      leavePageOpen: true,
-    })
-    logger.info("Scraper run finished")
-  } catch (error) {
-    logger.error(error)
-  } finally {
-    for (const source of Object.values(dataBridge.dataSources)) {
-      if (source.type === DataBridgeSourceType.TemporaryView) {
-        await removeTemporaryView(db, source.name)
-      }
-    }
-
-    scraper.destroy()
-  }
 }
 
 const acceptCookiesButtonSelector: ScraperElementSelector = {
@@ -126,7 +54,7 @@ const loginButtonSelector: ScraperElementSelector = {
   tagName: "button",
 }
 
-const exampleInstructions: ScraperInstructions = [
+const checkNewPepperAlertsInstructions: ScraperInstructions = [
   {
     type: ScraperInstructionType.PageAction,
     action: {

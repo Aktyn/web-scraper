@@ -13,9 +13,10 @@
     "test:watch": "vitest",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
-    "db:show": "drizzle-kit studio",
-    "db:reset": "rm -rf data.db && npm run db:generate && npm run db:migrate",
-    "db:reset:seed": "npm run db:reset && tsx src/db/seed/auto-seed.ts"
+    "db:generate-erd": "drizzle-erd --in ./src/db/schema/index.ts --out ERD.svg",
+    "db:reset": "rm -rf data.db && npm run db:generate && npm run db:migrate && npm run db:generate-erd",
+    "db:reset:seed": "npm run db:reset && tsx src/db/seed/auto-seed.ts",
+    "db:show": "drizzle-kit studio"
   },
   "dependencies": {
     "@fastify/cors": "^11.0.1",
@@ -25,9 +26,9 @@
     "dotenv": "^16.5.0",
     "drizzle-kit": "^0.31.1",
     "drizzle-orm": "^0.43.1",
+    "fastify": "^5.3.3",
     "fastify-plugin": "^5.0.1",
     "fastify-type-provider-zod": "^4.0.2",
-    "fastify": "^5.3.3",
     "pino": "^9.7.0",
     "zod": "^3.25.31"
   },
@@ -35,6 +36,7 @@
     "@eslint/js": "^9.27.0",
     "@types/node": "^22.15.23",
     "@vitest/coverage-istanbul": "^3.1.4",
+    "drizzle-erd": "^0.0.1-alpha.11",
     "eslint": "^9.27.0",
     "eslint-config-prettier": "^10.1.5",
     "eslint-plugin-import": "^2.31.0",

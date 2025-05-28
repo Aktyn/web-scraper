@@ -3,7 +3,7 @@ import { seed } from "./seed"
 console.info("Seeding database...")
 seed()
   .then(() => {
-    console.info("... seeding done")
+    console.info("\t... seeding done")
   })
   .catch((err) => {
     console.error(err)
