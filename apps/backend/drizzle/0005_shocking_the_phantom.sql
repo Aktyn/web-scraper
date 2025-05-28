@@ -1,0 +1,1 @@
+ALTER TABLE `user_data_stores_table` ADD `column_definitions` text NOT NULL;

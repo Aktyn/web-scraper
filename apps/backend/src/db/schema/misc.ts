@@ -1,3 +1,4 @@
+import type { UserDataStoreColumn } from "@web-scraper/common"
 import { sqliteTable, text, uniqueIndex } from "drizzle-orm/sqlite-core"
 
 export const preferencesTable = sqliteTable("preferences_table", {
@@ -13,6 +14,10 @@ export const userDataStoresTable = sqliteTable(
     tableName: text("table_name").primaryKey().notNull(),
     name: text("name").notNull(),
     description: text("description"),
+    /** Should include the id column */
+    columnDefinitions: text("column_definitions", { mode: "json" })
+      .notNull()
+      .$type<Array<UserDataStoreColumn>>(),
   },
   (table) => [uniqueIndex("unique_name").on(table.name)],
 )

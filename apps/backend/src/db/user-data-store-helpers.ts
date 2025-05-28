@@ -90,6 +90,14 @@ export async function createUserDataStore(
       tableName,
       name: data.name,
       description: data.description ?? null,
+      columnDefinitions: [
+        {
+          name: "id",
+          type: SqliteColumnType.INTEGER,
+          notNull: true,
+        },
+        ...data.columns.filter((column) => column.name !== "id"),
+      ],
     })
     .returning()
 

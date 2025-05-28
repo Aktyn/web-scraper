@@ -1,16 +1,12 @@
 import {
   apiErrorResponseSchema,
   apiPaginationQuerySchema,
-  assert,
   createUserDataStoreSchema,
-  createUserDataStoreRecordSchema,
   getApiPaginatedResponseSchema,
   getApiResponseSchema,
-  preferencesSchema,
-  type SqliteColumnType,
   paramsWithTableNameSchema,
+  preferencesSchema,
   updateUserDataStoreSchema,
-  updateUserDataStoreRecordSchema,
   userDataStoreSchema,
 } from "@web-scraper/common"
 import { and, eq, ne, sql } from "drizzle-orm"
@@ -25,26 +21,6 @@ export async function miscRoutes(fastify: FastifyInstance) {
     tableName: z.string(),
     id: z.string(),
   })
-
-  async function getColumnsInfo(tableName: string) {
-    const pragmaInfo = await fastify.db
-      .run(sql`PRAGMA table_info(${sql.identifier(tableName)})`)
-      .execute()
-
-    return pragmaInfo.rows.map((row) => {
-      assert(
-        typeof row.type === "string",
-        `Type was not found in the response of PRAGMA table_info query or it is not a string: ${row.type}`,
-      )
-
-      return {
-        name: row.name as string,
-        type: row.type.toUpperCase() as SqliteColumnType,
-        notNull: row.notnull === 1,
-        defaultValue: (row.dflt_value ?? null) as string | number | boolean | null,
-      }
-    })
-  }
 
   fastify.withTypeProvider<ZodTypeProvider>().get(
     "/preferences",
@@ -91,7 +67,7 @@ export async function miscRoutes(fastify: FastifyInstance) {
           return {
             ...store,
             recordsCount: Number(countResult.rows.at(0)?.count ?? 0),
-            columns: await getColumnsInfo(store.tableName),
+            columns: store.columnDefinitions,
           }
         }),
       )
@@ -101,37 +77,6 @@ export async function miscRoutes(fastify: FastifyInstance) {
         page,
         pageSize,
         hasMore: userDataStores.length > pageSize,
-      })
-    },
-  )
-
-  fastify.withTypeProvider<ZodTypeProvider>().get(
-    "/user-data-stores/:tableName/records",
-    {
-      schema: {
-        params: paramsWithTableNameSchema,
-        querystring: apiPaginationQuerySchema,
-        response: {
-          200: getApiPaginatedResponseSchema(z.record(z.string(), z.unknown())),
-          400: apiErrorResponseSchema,
-        },
-      },
-    },
-    async (request, reply) => {
-      const { tableName } = request.params
-      const { page, pageSize } = request.query
-
-      const storeDataResponse = await fastify.db
-        .run(
-          sql`SELECT * FROM ${sql.identifier(tableName)} LIMIT ${pageSize} OFFSET ${page * pageSize}`,
-        )
-        .execute()
-
-      return reply.status(200).send({
-        data: storeDataResponse.rows.slice(0, pageSize),
-        page,
-        pageSize,
-        hasMore: storeDataResponse.rows.length > pageSize,
       })
     },
   )
@@ -162,7 +107,7 @@ export async function miscRoutes(fastify: FastifyInstance) {
         })
       }
 
-      const { newStore, tableName } = await createUserDataStore(fastify.db, {
+      const { newStore } = await createUserDataStore(fastify.db, {
         name,
         description,
         columns,
@@ -171,7 +116,7 @@ export async function miscRoutes(fastify: FastifyInstance) {
       const userDataStore = {
         ...newStore,
         recordsCount: 0,
-        columns: await getColumnsInfo(tableName),
+        columns: newStore.columnDefinitions,
       }
 
       return reply.status(201).send({
@@ -225,7 +170,7 @@ export async function miscRoutes(fastify: FastifyInstance) {
         }
       }
 
-      const columnsInfo = await getColumnsInfo(tableName)
+      const columnsInfo = existingStore.columnDefinitions
 
       if (JSON.stringify(columns) !== JSON.stringify(columnsInfo)) {
         //Recreate the table with new columns
@@ -235,7 +180,7 @@ export async function miscRoutes(fastify: FastifyInstance) {
           .delete(userDataStoresTable)
           .where(eq(userDataStoresTable.tableName, tableName))
 
-        const { newStore, tableName: newTableName } = await createUserDataStore(fastify.db, {
+        const { newStore } = await createUserDataStore(fastify.db, {
           name,
           description,
           columns,
@@ -245,7 +190,7 @@ export async function miscRoutes(fastify: FastifyInstance) {
           data: {
             ...newStore,
             recordsCount: 0,
-            columns: await getColumnsInfo(newTableName),
+            columns: newStore.columnDefinitions,
           },
         })
       } else {
@@ -311,12 +256,43 @@ export async function miscRoutes(fastify: FastifyInstance) {
     },
   )
 
+  fastify.withTypeProvider<ZodTypeProvider>().get(
+    "/user-data-stores/:tableName/records",
+    {
+      schema: {
+        params: paramsWithTableNameSchema,
+        querystring: apiPaginationQuerySchema,
+        response: {
+          200: getApiPaginatedResponseSchema(z.record(z.string(), z.unknown())),
+          400: apiErrorResponseSchema,
+        },
+      },
+    },
+    async (request, reply) => {
+      const { tableName } = request.params
+      const { page, pageSize } = request.query
+
+      const storeDataResponse = await fastify.db
+        .run(
+          sql`SELECT * FROM ${sql.identifier(tableName)} LIMIT ${pageSize} OFFSET ${page * pageSize}`,
+        )
+        .execute()
+
+      return reply.status(200).send({
+        data: storeDataResponse.rows.slice(0, pageSize),
+        page,
+        pageSize,
+        hasMore: storeDataResponse.rows.length > pageSize,
+      })
+    },
+  )
+
   fastify.withTypeProvider<ZodTypeProvider>().post(
     "/user-data-stores/:tableName/records",
     {
       schema: {
         params: paramsWithTableNameSchema,
-        body: createUserDataStoreRecordSchema,
+        body: z.record(z.string(), z.unknown()),
         response: {
           201: getApiResponseSchema(z.record(z.string(), z.unknown())),
           404: apiErrorResponseSchema,
@@ -368,7 +344,7 @@ export async function miscRoutes(fastify: FastifyInstance) {
     {
       schema: {
         params: paramsWithTableNameAndIdSchema,
-        body: updateUserDataStoreRecordSchema,
+        body: z.record(z.string(), z.unknown()),
         response: {
           200: getApiResponseSchema(z.record(z.string(), z.unknown())),
           404: apiErrorResponseSchema,

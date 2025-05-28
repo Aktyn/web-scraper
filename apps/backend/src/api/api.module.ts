@@ -14,6 +14,7 @@ declare module "fastify" {
 export async function getApiModule(db: DbModule, fastifyOptions: FastifyServerOptions = {}) {
   const fastify = Fastify({
     logger: true,
+    bodyLimit: 1024 * 1024 * 128, // 128MB
     ...fastifyOptions,
   })
 

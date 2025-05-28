@@ -78,7 +78,6 @@ export function DataStores() {
       },
       {
         id: "actions",
-        header: "Actions",
         cell: ({ row }) => (
           <div className="flex items-center gap-1 max-w-24">
             <Tooltip>
@@ -183,7 +182,10 @@ export function DataStores() {
             }
           }}
         >
-          <DialogContent aria-describedby={undefined}>
+          <DialogContent
+            aria-describedby={undefined}
+            className="sm:max-w-[calc(100%-2rem)] sm:w-4xl max-h-full overflow-hidden grid grid-rows-[auto_1fr]"
+          >
             <DialogHeader>
               <DialogTitle>{storeToView.name}</DialogTitle>
               {storeToView.description && (

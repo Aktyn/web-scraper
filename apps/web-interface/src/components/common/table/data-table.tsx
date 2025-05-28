@@ -83,7 +83,7 @@ export function DataTable<TData, TValue>({
 
   return (
     <div {...containerProps} className={cn("relative w-full h-full", containerProps.className)}>
-      <ScrollArea ref={containerRef} className="max-h-full">
+      <ScrollArea ref={containerRef} className="max-h-full grid grid-rows-1">
         <Table ref={tableRef}>
           <TableHeader className="sticky top-0 z-10 bg-background">
             {table.getHeaderGroups().map((headerGroup) => (

@@ -22,6 +22,7 @@ export default function App() {
           expand
           richColors
           style={{}}
+          swipeDirections={["top", "bottom"]}
           toastOptions={{
             className: "backdrop-blur-sm shadow-md!",
             classNames: {

@@ -221,6 +221,10 @@
     @apply focus-visible:ring-0! not-disabled:focus-visible:border-primary! not-disabled:hover:border-primary/50! transition-colors!;
   }
 
+  [data-slot="form-item"] {
+    @apply gap-y-1!;
+  }
+
   /*
   [data-slot="label"] {
     @apply 
@@ -254,7 +258,7 @@
   }
 
   [data-slot="scroll-area-thumb"] {
-    @apply hover:bg-primary/50! active:bg-primary!;
+    @apply hover:bg-primary/50! active:bg-primary! z-50;
   }
 
   [data-slot="table-head"] {

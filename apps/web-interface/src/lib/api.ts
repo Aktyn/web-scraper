@@ -5,10 +5,9 @@ import {
   type ApiPaginationQuery,
   type ApiResponse,
   type CreateUserDataStore,
-  type CreateUserDataStoreRecord,
   type Preferences,
   type UpdateUserDataStore,
-  type UpdateUserDataStoreRecord,
+  type UpsertUserDataStoreRecord,
   type UserDataStore,
 } from "@web-scraper/common"
 
@@ -134,13 +133,13 @@ export type Routes = {
       response: ApiPaginatedResponse<Record<string, unknown>>
     }
     post: {
-      body: CreateUserDataStoreRecord
+      body: UpsertUserDataStoreRecord
       response: ApiResponse<Record<string, unknown>>
     }
   }
   "user-data-stores/:tableName/records/:id": {
     put: {
-      body: UpdateUserDataStoreRecord
+      body: UpsertUserDataStoreRecord
       response: ApiResponse<Record<string, unknown>>
     }
     delete: {

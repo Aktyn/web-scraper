@@ -7,7 +7,7 @@ import {
   FormMessage,
 } from "@/components/shadcn/form"
 import { Input } from "@/components/shadcn/input"
-import type { ReactNode } from "react"
+import type { ComponentProps, ReactNode } from "react"
 import type { Control, FieldPath, FieldValues } from "react-hook-form"
 
 interface FormInputProps<
@@ -22,6 +22,8 @@ interface FormInputProps<
   type?: string
   disabled?: boolean
   className?: string
+  endAdornment?: ReactNode
+  inputProps?: Partial<ComponentProps<typeof Input>>
 }
 
 export function FormInput<
@@ -36,6 +38,8 @@ export function FormInput<
   type = "text",
   disabled,
   className,
+  endAdornment,
+  inputProps,
 }: FormInputProps<TFieldValues, TName>) {
   return (
     <FormField
@@ -45,13 +49,27 @@ export function FormInput<
         <FormItem className={className}>
           <FormLabel>{label}</FormLabel>
           <FormControl>
-            <Input
-              type={type}
-              placeholder={placeholder}
-              disabled={disabled}
-              {...field}
-              value={field.value || ""}
-            />
+            <div className="relative">
+              <Input
+                type={type}
+                placeholder={placeholder}
+                disabled={disabled}
+                {...field}
+                value={field.value?.toString() ?? ""}
+                {...inputProps}
+                onChange={(event) => {
+                  if (inputProps?.onChange) {
+                    inputProps.onChange(event)
+                  }
+                  field.onChange(event)
+                }}
+              />
+              {endAdornment && (
+                <div className="absolute right-0 top-0 bottom-0 flex items-center justify-center">
+                  {endAdornment}
+                </div>
+              )}
+            </div>
           </FormControl>
           {description && <FormDescription>{description}</FormDescription>}
           <FormMessage />

@@ -2,17 +2,19 @@ import { usePost } from "@/hooks/api/usePost"
 import { usePut } from "@/hooks/api/usePut"
 import { zodResolver } from "@hookform/resolvers/zod"
 import {
-  createUserDataStoreRecordSchema,
   SqliteColumnType,
-  type CreateUserDataStoreRecord,
+  upsertUserDataStoreRecordSchemaFactory,
+  type UpsertUserDataStoreRecord,
   type UserDataStore,
   type UserDataStoreColumn,
 } from "@web-scraper/common"
-import { useForm, type Control, type FieldValues } from "react-hook-form"
+import { Calendar, Delete, Download } from "lucide-react"
+import { useEffect, useState } from "react"
+import { useForm, useFormContext, type Control, type FieldValues } from "react-hook-form"
+import { DateTimePicker } from "../common/form/datetime-picker"
 import { FormInput } from "../common/form/form-input"
 import { Badge } from "../shadcn/badge"
 import { Button } from "../shadcn/button"
-import { Checkbox } from "../shadcn/checkbox"
 import {
   Dialog,
   DialogContent,
@@ -21,7 +23,11 @@ import {
   DialogTitle,
 } from "../shadcn/dialog"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../shadcn/form"
+import { Input } from "../shadcn/input"
+import { Popover, PopoverContent, PopoverTrigger } from "../shadcn/popover"
 import { ScrollArea } from "../shadcn/scroll-area"
+import { Switch } from "../shadcn/switch"
+import { Tooltip, TooltipContent, TooltipTrigger } from "../shadcn/tooltip"
 
 type DataStoreRecordDialogProps = {
   store: UserDataStore
@@ -43,16 +49,36 @@ export function DataStoreRecordDialog({
 
   const isEditing = !!editRecord
 
-  const form = useForm<CreateUserDataStoreRecord>({
-    resolver: zodResolver(createUserDataStoreRecordSchema),
-    defaultValues: editRecord
-      ? {
-          ...editRecord,
-        }
-      : {},
+  const schema = upsertUserDataStoreRecordSchemaFactory(store.columns)
+
+  const form = useForm<typeof schema._type>({
+    resolver: zodResolver(schema),
+    defaultValues: editRecord ? { ...editRecord } : {},
   })
 
-  const onSubmit = async (data: CreateUserDataStoreRecord) => {
+  useEffect(() => {
+    if (open) {
+      if (editRecord) {
+        form.reset(editRecord)
+      } else {
+        form.reset(
+          store.columns.reduce(
+            (acc, column) => {
+              if (!column.notNull) {
+                acc[column.name] = null
+              } else {
+                acc[column.name] = column.defaultValue
+              }
+              return acc
+            },
+            {} as Record<string, unknown>,
+          ),
+        )
+      }
+    }
+  }, [editRecord, form, open, store.columns])
+
+  const onSubmit = async (data: UpsertUserDataStoreRecord) => {
     const cleanedData = store.columns.reduce(
       (acc, column) => {
         if (column.name === "id") {
@@ -66,7 +92,8 @@ export function DataStoreRecordDialog({
         if (column.notNull) {
           acc[column.name] = data[column.name]
         } else {
-          acc[column.name] = data[column.name] === "" ? null : data[column.name]
+          acc[column.name] =
+            (data[column.name] === "" ? null : data[column.name]) ?? column.defaultValue
         }
         return acc
       },
@@ -107,7 +134,7 @@ export function DataStoreRecordDialog({
 
         <ScrollArea className="-m-6 **:[form]:p-6 overflow-hidden mask-t-from-[calc(100%-var(--spacing)*8)] mask-b-from-[calc(100%-var(--spacing)*8)]">
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            <form onSubmit={form.handleSubmit(onSubmit, console.error)} className="space-y-4">
               <div className="flex flex-col gap-4">
                 {store.columns.map((column) => (
                   <ValueField key={column.name} column={column} control={form.control} />
@@ -180,6 +207,12 @@ function ValueField({ column, control }: ValueFieldProps<Record<string, unknown>
           label={labelWithNullable}
           type="number"
           placeholder={placeholder}
+          inputProps={{
+            onChange: (event) => {
+              const value = event.target.value
+              event.target.value = value === "" ? value : parseInt(value, 10).toString()
+            },
+          }}
         />
       )
 
@@ -195,6 +228,18 @@ function ValueField({ column, control }: ValueFieldProps<Record<string, unknown>
         />
       )
 
+    case SqliteColumnType.TIMESTAMP:
+      return (
+        <FormInput
+          control={control}
+          name={column.name}
+          label={labelWithNullable}
+          type="number"
+          placeholder={placeholder}
+          endAdornment={<DateTimePickerButton name={column.name} />}
+        />
+      )
+
     case SqliteColumnType.BOOLEAN:
       return (
         <FormField
@@ -203,7 +248,7 @@ function ValueField({ column, control }: ValueFieldProps<Record<string, unknown>
           render={({ field }) => (
             <FormItem className="flex flex-row items-start space-x-3 space-y-0">
               <FormControl>
-                <Checkbox checked={!!field.value} onCheckedChange={field.onChange} />
+                <Switch checked={!!field.value} onCheckedChange={field.onChange} />
               </FormControl>
               <div className="space-y-1 leading-none">
                 <FormLabel>{labelWithNullable}</FormLabel>
@@ -214,25 +259,83 @@ function ValueField({ column, control }: ValueFieldProps<Record<string, unknown>
         />
       )
 
-    case SqliteColumnType.TIMESTAMP:
-      return (
-        <FormInput
-          control={control}
-          name={column.name}
-          label={labelWithNullable}
-          type="datetime-local"
-          placeholder={placeholder}
-        />
-      )
-
     case SqliteColumnType.BLOB:
       return (
-        <FormInput
+        <FormField
           control={control}
           name={column.name}
-          label={labelWithNullable}
-          type="file"
-          placeholder="Select a file"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>{labelWithNullable}</FormLabel>
+              <FormControl>
+                <div className="relative">
+                  <Input
+                    type="file"
+                    multiple={false}
+                    className="pr-32"
+                    onChange={(event) => {
+                      const file = event.target.files?.[0]
+                      if (file) {
+                        const reader = new FileReader()
+                        reader.onload = () => {
+                          if (typeof reader.result !== "string") {
+                            throw new Error("FileReader result is not a string")
+                          }
+                          field.onChange(reader.result)
+                        }
+                        reader.readAsDataURL(file)
+                      }
+                    }}
+                    placeholder="Select a file"
+                  />
+                  {field.value ? (
+                    <div className="absolute right-0 top-0 bottom-0 flex items-center justify-center px-2 gap-2 border-l">
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button
+                            variant="outline"
+                            size="icon"
+                            className="size-6"
+                            onClick={(event) => {
+                              event.preventDefault()
+                              event.stopPropagation()
+
+                              fetch(field.value as string)
+                                .then((response) => response.blob())
+                                .then((blob) => {
+                                  const url = URL.createObjectURL(blob)
+                                  window.open(url, "_blank")
+                                })
+                                .catch(console.error)
+                            }}
+                          >
+                            <Download />
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>Download file</TooltipContent>
+                      </Tooltip>
+                      {!column.notNull && (
+                        <Button
+                          variant="destructive"
+                          size="sm"
+                          className="h-6"
+                          onClick={(event) => {
+                            event.preventDefault()
+                            event.stopPropagation()
+                            field.onChange(null)
+                          }}
+                        >
+                          <Delete />
+                          Clear
+                        </Button>
+                      )}
+                    </div>
+                  ) : null}
+                </div>
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
         />
       )
 
@@ -246,4 +349,38 @@ function ValueField({ column, control }: ValueFieldProps<Record<string, unknown>
         />
       )
   }
+}
+
+function DateTimePickerButton({ name }: { name: string }) {
+  const form = useFormContext<Record<string, unknown>>()
+
+  const [popoverOpen, setPopoverOpen] = useState(false)
+
+  return (
+    <Popover open={popoverOpen} onOpenChange={setPopoverOpen} modal>
+      <PopoverTrigger asChild>
+        <Button
+          variant="ghost"
+          size="icon"
+          disabled={popoverOpen}
+          onClick={(event) => event.stopPropagation()}
+          tabIndex={-1}
+        >
+          <Calendar />
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent className="w-auto p-0 z-90!">
+        <DateTimePicker
+          value={form.getValues(name) as Date | null}
+          onSelect={(date) => {
+            form.setValue(name, date.getTime(), { shouldValidate: true })
+            setPopoverOpen(false)
+          }}
+          onCancel={() => {
+            setPopoverOpen(false)
+          }}
+        />
+      </PopoverContent>
+    </Popover>
+  )
 }

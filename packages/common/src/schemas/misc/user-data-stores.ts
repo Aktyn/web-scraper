@@ -5,9 +5,9 @@ export enum SqliteColumnType {
   NUMERIC = "NUMERIC",
   INTEGER = "INTEGER",
   REAL = "REAL",
-  BLOB = "BLOB",
   BOOLEAN = "BOOLEAN",
   TIMESTAMP = "TIMESTAMP",
+  BLOB = "BLOB",
 }
 
 const columnSchema = z.object({
@@ -45,10 +45,51 @@ export const paramsWithTableNameSchema = z.object({
   tableName: z.string(),
 })
 
-export const createUserDataStoreRecordSchema = z.record(z.string(), z.unknown())
+export function upsertUserDataStoreRecordSchemaFactory(columns: UserDataStoreColumn[]) {
+  return z.object(
+    columns.reduce(
+      (acc, column) => {
+        if (column.name === "id") {
+          return acc
+        }
 
-export type CreateUserDataStoreRecord = z.infer<typeof createUserDataStoreRecordSchema>
+        switch (column.type) {
+          case SqliteColumnType.TEXT:
+          case SqliteColumnType.NUMERIC:
+            acc[column.name] = z.coerce.string()
+            break
+          case SqliteColumnType.INTEGER:
+          case SqliteColumnType.REAL:
+          case SqliteColumnType.TIMESTAMP:
+            acc[column.name] = z.union([z.number(), z.string()]).transform((val) => {
+              if (typeof val === "string") {
+                if (val === "") {
+                  return column.notNull ? 0 : null
+                }
+                const num = Number(val)
+                return isNaN(num) ? null : num
+              }
+              return val
+            })
+            break
+          case SqliteColumnType.BOOLEAN:
+            acc[column.name] = z.coerce.boolean()
+            break
+          case SqliteColumnType.BLOB:
+            // Data URL encoded blob
+            acc[column.name] = z.string()
+            break
+        }
+        if (!column.notNull) {
+          acc[column.name] = acc[column.name].nullable()
+        }
+        return acc
+      },
+      {} as Record<string, z.ZodType<unknown>>,
+    ),
+  )
+}
 
-export const updateUserDataStoreRecordSchema = createUserDataStoreRecordSchema
-
-export type UpdateUserDataStoreRecord = z.infer<typeof updateUserDataStoreRecordSchema>
+export type UpsertUserDataStoreRecord = z.infer<
+  ReturnType<typeof upsertUserDataStoreRecordSchemaFactory>
+>

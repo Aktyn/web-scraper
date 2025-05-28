@@ -1,4 +1,4 @@
-import { createContext, useContext, useState } from "react"
+import { createContext, useContext, useEffect, useState } from "react"
 
 enum View {
   Dashboard = "dashboard",
@@ -13,7 +13,29 @@ const ViewContext = createContext({
 })
 
 export function ViewProvider({ children }: { children: React.ReactNode }) {
-  const [view, setView] = useState(View.Dashboard)
+  const [view, setView] = useState(getViewFromQueryParams())
+
+  useEffect(() => {
+    const searchParams = new URLSearchParams(window.location.search)
+    searchParams.set("view", view)
+    window.history.pushState(null, "", `?${searchParams.toString()}`)
+
+    const onPopState = () => {
+      setView(getViewFromQueryParams())
+    }
+
+    const onPushState = () => {
+      setView(getViewFromQueryParams())
+    }
+
+    window.addEventListener("popstate", onPopState)
+    window.addEventListener("pushstate", onPushState)
+
+    return () => {
+      window.removeEventListener("popstate", onPopState)
+      window.removeEventListener("pushstate", onPushState)
+    }
+  }, [view])
 
   return <ViewContext value={{ view, setView }}>{children}</ViewContext>
 }
@@ -23,3 +45,12 @@ export function useView() {
 }
 
 useView.View = View
+
+function getViewFromQueryParams() {
+  const searchParams = new URLSearchParams(window.location.search)
+  const view = searchParams.get("view")
+  if (view) {
+    return view as View
+  }
+  return View.Dashboard
+}

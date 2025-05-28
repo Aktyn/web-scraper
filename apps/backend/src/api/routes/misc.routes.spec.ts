@@ -69,31 +69,24 @@ describe("Misc Routes", () => {
                 name: "id",
                 type: SqliteColumnType.INTEGER,
                 notNull: true,
-                defaultValue: null,
               },
               {
                 name: "origin",
                 type: SqliteColumnType.TEXT,
                 notNull: true,
-                defaultValue: null,
               },
               {
                 name: "username",
                 type: SqliteColumnType.TEXT,
-                notNull: false,
-                defaultValue: null,
               },
               {
                 name: "email",
                 type: SqliteColumnType.TEXT,
-                notNull: false,
-                defaultValue: null,
               },
               {
                 name: "password",
                 type: SqliteColumnType.TEXT,
                 notNull: true,
-                defaultValue: null,
               },
             ],
           },
@@ -199,13 +192,12 @@ describe("Misc Routes", () => {
           name: "id",
           type: SqliteColumnType.INTEGER,
           notNull: true,
-          defaultValue: null,
         },
         {
           name: "noop",
           type: SqliteColumnType.REAL,
           notNull: false,
-          defaultValue: "3.14",
+          defaultValue: 3.14,
         },
       ])
     })
