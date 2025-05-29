@@ -18,6 +18,17 @@ import { DataStoreFormDialog } from "../data-store/data-store-form-dialog"
 export function DataStores() {
   const { unpinDataStore } = usePinnedDataStores()
 
+  const {
+    data: dataStores,
+    isLoading,
+    isLoadingMore,
+    hasMore,
+    loadMore,
+    refresh,
+  } = useInfiniteGet("/user-data-stores")
+
+  const { deleteItem, isDeleting } = useDelete("/user-data-stores/:tableName")
+
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
   const [storeToDelete, setStoreToDelete] = useState<UserDataStore | null>(null)
 
@@ -26,17 +37,6 @@ export function DataStores() {
 
   const [dataStoreTableOpen, setDataStoreTableOpen] = useState(false)
   const [storeToView, setStoreToView] = useState<UserDataStore | null>(null)
-
-  const {
-    data: dataStores,
-    isLoading,
-    isLoadingMore,
-    hasMore,
-    loadMore,
-    refresh,
-  } = useInfiniteGet("/user-data-stores", undefined)
-
-  const { deleteItem, isDeleting } = useDelete("/user-data-stores/:tableName")
 
   const handleDeleteClick = (store: UserDataStore) => {
     setStoreToDelete(store)
@@ -96,7 +96,7 @@ export function DataStores() {
                   <Edit />
                 </Button>
               </TooltipTrigger>
-              <TooltipContent>Edit data store</TooltipContent>
+              <TooltipContent>Edit Data Store</TooltipContent>
             </Tooltip>
             <Tooltip>
               <TooltipTrigger asChild>
@@ -111,7 +111,7 @@ export function DataStores() {
                   <Trash />
                 </Button>
               </TooltipTrigger>
-              <TooltipContent>Delete data store</TooltipContent>
+              <TooltipContent>Delete Data Store</TooltipContent>
             </Tooltip>
           </div>
         ),
@@ -134,7 +134,7 @@ export function DataStores() {
           }}
         >
           <Plus />
-          Add data store
+          Add Data Store
         </Button>
         <RefreshButton onClick={refresh} refreshing={isLoading || isLoadingMore} />
       </div>

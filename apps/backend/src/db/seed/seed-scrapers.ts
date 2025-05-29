@@ -30,6 +30,7 @@ export async function seedScrapersStores(db: DbModule) {
               },
             },
           ],
+          userDataDirectory: "/tmp/user-data-dir",
         },
         {
           name: "New pepper alerts",

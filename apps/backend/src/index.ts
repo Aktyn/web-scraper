@@ -10,6 +10,7 @@ import {
   ScraperValueType,
   SqliteConditionType,
   uuid,
+  whereSchemaToSql,
 } from "@web-scraper/common"
 import { Scraper } from "@web-scraper/core"
 import path from "path"
@@ -18,7 +19,7 @@ import { getApiModule } from "./api/api.module"
 import { getConfig } from "./config/config"
 import { DataBridge, DataBridgeSourceType } from "./db/data-bridge"
 import { type DbModule, getDbModule } from "./db/db.module"
-import { createTemporaryView, removeTemporaryView, whereSchemaToSql } from "./db/view-helpers"
+import { createTemporaryView, removeTemporaryView } from "./db/view-helpers"
 import { getLogger } from "./logger"
 
 async function main() {

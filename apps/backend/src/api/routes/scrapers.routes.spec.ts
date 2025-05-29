@@ -41,7 +41,7 @@ describe("Scrapers Routes", () => {
                 },
               },
             ],
-            userDataDirectory: null,
+            userDataDirectory: "/tmp/user-data-dir",
             dataSources: [
               {
                 dataStoreTableName: "personal_credentials_random_string",
@@ -143,7 +143,7 @@ describe("Scrapers Routes", () => {
               },
             },
           ],
-          userDataDirectory: null,
+          userDataDirectory: "/tmp/user-data-dir",
           dataSources: expect.any(Array),
         },
       })

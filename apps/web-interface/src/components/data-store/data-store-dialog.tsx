@@ -1,4 +1,6 @@
 import type { UserDataStore } from "@web-scraper/common"
+import type { ComponentProps } from "react"
+import { PinStoreButton } from "../common/button/pin-store-button"
 import {
   Dialog,
   DialogContent,
@@ -7,17 +9,14 @@ import {
   DialogTitle,
 } from "../shadcn/dialog"
 import { DataStoreTable } from "./data-store-table"
-import { PinStoreButton } from "../common/button/pin-store-button"
 
 type DataStoreDialogProps = {
   store: UserDataStore
-  open: boolean
-  onOpenChange: (open: boolean) => void
-}
+} & ComponentProps<typeof Dialog>
 
-export function DataStoreDialog({ store, open, onOpenChange }: DataStoreDialogProps) {
+export function DataStoreDialog({ store, ...dialogProps }: DataStoreDialogProps) {
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog {...dialogProps}>
       <DialogContent
         aria-describedby={undefined}
         className="sm:max-w-[calc(100%-2rem)] sm:w-4xl max-h-full overflow-hidden grid grid-rows-[auto_1fr]"

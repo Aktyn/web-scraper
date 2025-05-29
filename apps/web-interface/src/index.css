@@ -153,7 +153,7 @@
     --popover: 240 21% 12%;
     --popover-foreground: 226 64% 88%;
 
-    --card: 237 16% 23%;
+    --card: 240 21% 15%;
     --card-foreground: 226 64% 88%;
 
     --border: 234 13% 31%;
@@ -263,6 +263,9 @@
 
   [data-slot="table-head"] {
     @apply text-muted-foreground! font-semibold!;
+  }
+  [data-slot="table-cell"] {
+    @apply truncate max-w-64;
   }
 }
 

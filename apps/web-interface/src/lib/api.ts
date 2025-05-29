@@ -4,8 +4,11 @@ import {
   type ApiPaginatedResponse,
   type ApiPaginationQuery,
   type ApiResponse,
+  type CreateScraper,
   type CreateUserDataStore,
   type Preferences,
+  type ScraperType,
+  type UpdateScraper,
   type UpdateUserDataStore,
   type UpsertUserDataStoreRecord,
   type UserDataStore,
@@ -141,6 +144,29 @@ export type Routes = {
     put: {
       body: UpsertUserDataStoreRecord
       response: ApiResponse<Record<string, unknown>>
+    }
+    delete: {
+      response: void
+    }
+  }
+
+  scrapers: {
+    get: {
+      querystring: Partial<ApiPaginationQuery>
+      response: ApiPaginatedResponse<ScraperType>
+    }
+    post: {
+      body: CreateScraper
+      response: ApiResponse<ScraperType>
+    }
+  }
+  "scrapers/:id": {
+    get: {
+      response: ApiResponse<ScraperType>
+    }
+    put: {
+      body: UpdateScraper
+      response: ApiResponse<ScraperType>
     }
     delete: {
       response: void
