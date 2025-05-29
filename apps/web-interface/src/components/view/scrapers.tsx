@@ -11,6 +11,7 @@ import { useInfiniteGet } from "@/hooks/api/useInfiniteGet"
 import { NullBadge } from "../common/null-badge"
 import { ConfirmationDialog } from "../common/confirmation-dialog"
 import { ScraperPanelDialog } from "../scraper/scraper-panel-dialog"
+import { ScraperFormDialog } from "../scraper/scraper-form-dialog"
 
 export function Scrapers() {
   //TODO: scraper creation form (scraperInstructionsSchema) with selection of user data stores (preferably automatic selection based on the scraper instructions)
@@ -34,6 +35,9 @@ export function Scrapers() {
 
   const [scraperViewOpen, setScraperViewOpen] = useState(false)
   const [scraperToView, setScraperToView] = useState<ScraperType | null>(null)
+
+  const [upsertDialogOpen, setUpsertDialogOpen] = useState(false)
+  const [scraperToEdit, setScraperToEdit] = useState<ScraperType | null>(null)
 
   const handleDeleteClick = (scraper: ScraperType) => {
     setScraperToDelete(scraper)
@@ -74,11 +78,10 @@ export function Scrapers() {
                 <Button
                   variant="ghost"
                   size="icon"
-                  disabled
                   onClick={(event) => {
                     event.stopPropagation()
-                    //TODO
-                    // handleEditClick(row.original)
+                    setScraperToEdit(row.original)
+                    setUpsertDialogOpen(true)
                   }}
                 >
                   <Edit />
@@ -117,8 +120,8 @@ export function Scrapers() {
         <Button
           variant="outline"
           onClick={() => {
-            // setStoreToEdit(null)
-            // setUpsertDialogOpen(true)
+            setScraperToEdit(null)
+            setUpsertDialogOpen(true)
           }}
         >
           <Plus />
@@ -154,6 +157,13 @@ export function Scrapers() {
         cancelText="Cancel"
         onConfirm={handleDeleteConfirm}
         variant="destructive"
+      />
+
+      <ScraperFormDialog
+        open={upsertDialogOpen}
+        onOpenChange={setUpsertDialogOpen}
+        onSuccess={refresh}
+        editScraper={scraperToEdit}
       />
 
       {scraperToView && (

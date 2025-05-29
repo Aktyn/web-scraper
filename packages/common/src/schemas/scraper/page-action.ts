@@ -16,7 +16,7 @@ export const pageActionSchema = z.discriminatedUnion("type", [
   }),
   z.object({
     type: z.literal(PageActionType.Navigate),
-    url: z.string(),
+    url: z.string().url("Invalid URL"),
   }),
   z.object({
     type: z.literal(PageActionType.Click),

@@ -1,6 +1,6 @@
 import { z } from "zod"
 
-export const tagNameSchema = z.enum([
+export const TAG_NAMES = [
   "a",
   "abbr",
   "acronym",
@@ -125,7 +125,8 @@ export const tagNameSchema = z.enum([
   "ul",
   "var",
   "video",
-])
+] as const
+export const tagNameSchema = z.enum(TAG_NAMES)
 
 export const serializableRegex = z.object({
   source: z.string(),

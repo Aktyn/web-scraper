@@ -49,7 +49,7 @@ export function ConditionInstruction({
                 THEN ({pluralize(thenInstructions.length, "instruction")})
               </div>
             </AccordionTrigger>
-            <AccordionContent className="pb-0">
+            <AccordionContent data-then-instructions className="pb-0 bg-primary/5 rounded-lg">
               <ScraperInstructionsTree instructions={thenInstructions} />
             </AccordionContent>
           </AccordionItem>
@@ -64,7 +64,7 @@ export function ConditionInstruction({
                 ELSE ({pluralize(elseInstructions.length, "instruction")})
               </div>
             </AccordionTrigger>
-            <AccordionContent className="pb-0">
+            <AccordionContent data-else-instructions className="pb-0 bg-secondary/5 rounded-lg">
               <ScraperInstructionsTree instructions={elseInstructions} />
             </AccordionContent>
           </AccordionItem>
