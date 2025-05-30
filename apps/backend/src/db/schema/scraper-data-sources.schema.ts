@@ -1,8 +1,8 @@
 import type { WhereSchema } from "@web-scraper/common"
 import { relations } from "drizzle-orm"
 import { integer, primaryKey, sqliteTable, text, uniqueIndex } from "drizzle-orm/sqlite-core"
-import { scrapersTable } from "./scrapers"
-import { userDataStoresTable } from "./user-data-stores"
+import { scrapersTable } from "./scrapers.schema"
+import { userDataStoresTable } from "./user-data-stores.schema"
 
 export const scraperDataSourcesTable = sqliteTable(
   "scraper_data_sources",
