@@ -61,7 +61,14 @@ export function FormInput<
                   if (inputProps?.onChange) {
                     inputProps.onChange(event)
                   }
-                  field.onChange(event)
+                  if (type === "number") {
+                    field.onChange({
+                      ...event,
+                      target: { value: event.target.value && Number(event.target.value) },
+                    })
+                  } else {
+                    field.onChange(event)
+                  }
                 }}
               />
               {endAdornment && (

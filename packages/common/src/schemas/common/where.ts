@@ -19,7 +19,12 @@ export enum SqliteConditionType {
   NotBetween = "notBetween",
 }
 
-const conditionValueSchema = z.union([z.string(), z.number(), z.boolean(), z.instanceof(Date)])
+const conditionValueSchema = z.union([
+  z.string(),
+  z.coerce.number(),
+  z.coerce.boolean(),
+  z.instanceof(Date),
+])
 
 const basicConditionSchema = z.object({
   column: z.string(),
@@ -65,6 +70,7 @@ const conditionSchema = z.discriminatedUnion("condition", [
   nullConditionSchema,
 ])
 
+//TODO: allow conditions between multiple columns of different tables
 type Condition = z.infer<typeof conditionSchema>
 
 type AndConditions = {

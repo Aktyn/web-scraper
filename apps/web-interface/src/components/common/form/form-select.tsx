@@ -13,6 +13,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/shadcn/select"
+import type { ComponentProps } from "react"
 import type { Control, FieldPath, FieldValues } from "react-hook-form"
 
 interface SelectOption {
@@ -20,10 +21,10 @@ interface SelectOption {
   label: string
 }
 
-interface FormSelectProps<
+type FormSelectProps<
   TFieldValues extends FieldValues = FieldValues,
   TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
-> {
+> = {
   control: Control<TFieldValues>
   name: TName
   label: string
@@ -32,6 +33,7 @@ interface FormSelectProps<
   options: SelectOption[]
   disabled?: boolean
   className?: string
+  selectProps?: ComponentProps<typeof Select>
 }
 
 export function FormSelect<
@@ -46,6 +48,7 @@ export function FormSelect<
   options,
   disabled,
   className,
+  selectProps,
 }: FormSelectProps<TFieldValues, TName>) {
   return (
     <FormField
@@ -54,7 +57,17 @@ export function FormSelect<
       render={({ field }) => (
         <FormItem className={className}>
           <FormLabel>{label}</FormLabel>
-          <Select onValueChange={field.onChange} defaultValue={field.value} disabled={disabled}>
+          <Select
+            defaultValue={field.value}
+            disabled={disabled}
+            {...selectProps}
+            onValueChange={(value) => {
+              if (selectProps?.onValueChange) {
+                selectProps.onValueChange(value)
+              }
+              field.onChange(value)
+            }}
+          >
             <FormControl>
               <SelectTrigger>
                 <SelectValue placeholder={placeholder} />

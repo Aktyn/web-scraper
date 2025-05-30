@@ -14,6 +14,7 @@ import { ConditionInstructionForm } from "./instruction-types/condition-instruct
 import { DeleteDataInstructionForm } from "./instruction-types/delete-data-instruction-form"
 import { PageActionForm } from "./instruction-types/page-action-form"
 import { SaveDataInstructionForm } from "./instruction-types/save-data-instruction-form"
+import { cn } from "@/lib/utils"
 
 const instructionTypeLabels: { [key in ScraperInstructionType]: string } = {
   [ScraperInstructionType.PageAction]: "Page action",
@@ -28,11 +29,13 @@ const instructionTypeOptions = mapToSelectOptions(instructionTypeLabels)
 interface ScraperInstructionsFormProps {
   control: Control<CreateScraper>
   name?: string
+  condition?: "then" | "else"
 }
 
 export function ScraperInstructionsForm({
   control,
   name = "instructions",
+  condition,
 }: ScraperInstructionsFormProps) {
   const { fields, append, remove } = useFieldArray<CreateScraper, "instructions">({
     control,
@@ -51,7 +54,7 @@ export function ScraperInstructionsForm({
   }
 
   return (
-    <div className="flex flex-col items-stretch gap-4">
+    <div className="flex flex-col items-stretch gap-2">
       {fields.map((field, index) => {
         const fieldName = `${name}.${index}` as `instructions.${number}`
 
@@ -66,7 +69,7 @@ export function ScraperInstructionsForm({
                 onClick={() => remove(index)}
                 className="text-destructive hover:text-destructive"
               >
-                <Trash2 className="size-4" />
+                <Trash2 />
               </Button>
             </div>
 
@@ -84,9 +87,17 @@ export function ScraperInstructionsForm({
         )
       })}
 
-      <Button type="button" variant="outline" onClick={addInstruction}>
-        <Plus className="size-4" />
-        Add Instruction
+      <Button
+        type="button"
+        variant="outline"
+        className={cn(
+          condition === "then" && "text-primary",
+          condition === "else" && "text-secondary",
+        )}
+        onClick={addInstruction}
+      >
+        <Plus />
+        Add {condition && `${condition} `}instruction
       </Button>
     </div>
   )

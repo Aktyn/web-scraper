@@ -56,7 +56,11 @@ export function ConditionInstructionForm({ control, fieldName }: ConditionInstru
                 Instructions to execute when the condition is true.
               </p>
               <div className="border-l-2 border-primary/70 pl-4">
-                <ScraperInstructionsForm control={control} name={`${fieldName}.then`} />
+                <ScraperInstructionsForm
+                  control={control}
+                  name={`${fieldName}.then`}
+                  condition="then"
+                />
               </div>
             </div>
           </AccordionContent>
@@ -72,7 +76,11 @@ export function ConditionInstructionForm({ control, fieldName }: ConditionInstru
                 Instructions to execute when the condition is false.
               </p>
               <div className="border-l-2 border-secondary/70 pl-4">
-                <ScraperInstructionsForm control={control} name={`${fieldName}.else`} />
+                <ScraperInstructionsForm
+                  control={control}
+                  name={`${fieldName}.else`}
+                  condition="else"
+                />
               </div>
             </div>
           </AccordionContent>

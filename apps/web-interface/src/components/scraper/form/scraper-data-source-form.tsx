@@ -2,6 +2,9 @@ import { FormInput } from "@/components/common/form/form-input"
 import { FormSelect } from "@/components/common/form/form-select"
 import type { CreateScraper, UserDataStore } from "@web-scraper/common"
 import type { Control, FieldValues } from "react-hook-form"
+import { useWatch } from "react-hook-form"
+import { useMemo } from "react"
+import { WhereSchemaForm } from "./where-schema-form"
 
 interface ScraperDataSourceFormProps<TFieldValues extends FieldValues = FieldValues> {
   control: Control<TFieldValues>
@@ -14,34 +17,51 @@ export function ScraperDataSourceForm({
   index,
   dataStores,
 }: ScraperDataSourceFormProps<CreateScraper>) {
+  const selectedTableName = useWatch({
+    control,
+    name: `dataSources.${index}.dataStoreTableName`,
+  })
+
+  const selectedDataStore = useMemo(() => {
+    return dataStores.find((store) => store.tableName === selectedTableName)
+  }, [dataStores, selectedTableName])
+
   const dataStoreOptions = dataStores.map((store) => ({
     value: store.tableName,
     label: store.name,
   }))
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-      {/* TODO: implement auto-complete search with dynamic data fetching */}
-      <FormSelect
-        control={control}
-        className="*:[button]:w-full"
-        name={`dataSources.${index}.dataStoreTableName`}
-        label="Data Store"
-        placeholder="Select data store"
-        options={dataStoreOptions}
-        description="The data store table to read from."
-      />
+    <div className="space-y-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {/* TODO: implement auto-complete search with dynamic data fetching */}
+        <FormSelect
+          control={control}
+          className="*:[button]:w-full"
+          name={`dataSources.${index}.dataStoreTableName`}
+          label="Data Store"
+          placeholder="Select data store"
+          options={dataStoreOptions}
+          description="The data store table to read from."
+        />
 
-      <FormInput
-        control={control}
-        name={`dataSources.${index}.sourceAlias`}
-        label="Source alias"
-        placeholder="e.g., credentials, products"
-        description="Alias to reference this data source in instructions."
-      />
+        <FormInput
+          control={control}
+          name={`dataSources.${index}.sourceAlias`}
+          label="Source alias"
+          placeholder="e.g., credentials, products"
+          description="Alias to reference this data source in instructions."
+        />
+      </div>
 
-      {/* TODO: Add WHERE schema form */}
-      {/* For now, whereSchema is always null */}
+      {selectedDataStore && (
+        <WhereSchemaForm
+          control={control}
+          name={`dataSources.${index}.whereSchema`}
+          columns={selectedDataStore.columns}
+          dataSourceIndex={index}
+        />
+      )}
     </div>
   )
 }

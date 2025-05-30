@@ -25,6 +25,7 @@ import { useFieldArray, useForm } from "react-hook-form"
 import { FormInput } from "../common/form/form-input"
 import { ScraperDataSourceForm } from "./form/scraper-data-source-form"
 import { ScraperInstructionsForm } from "./form/scraper-instructions-form"
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "../shadcn/accordion"
 
 interface ScraperFormDialogProps {
   open: boolean
@@ -187,58 +188,69 @@ export function ScraperFormDialog({
                 />
               </div>
 
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h3 className="text-lg font-medium">Data Sources</h3>
-                    <p className="text-sm text-muted-foreground">
-                      Configure external data sources for this scraper.
-                    </p>
-                  </div>
-                  <Button type="button" variant="outline" size="sm" onClick={addDataSource}>
-                    <Plus className="size-4" />
-                    Add Data Source
-                  </Button>
-                </div>
+              <Accordion type="multiple" defaultValue={["data-sources", "instructions"]}>
+                <AccordionItem value="data-sources">
+                  <AccordionTrigger className="items-center">
+                    <div>
+                      <h3 className="text-lg font-medium">Data Sources</h3>
+                      <p className="text-sm text-muted-foreground">
+                        Configure external data sources for this scraper.
+                      </p>
+                    </div>
+                  </AccordionTrigger>
+                  <AccordionContent className="space-y-2">
+                    {dataSourceFields.length > 0 && (
+                      <div className="flex flex-col gap-2">
+                        {dataSourceFields.map((field, index) => (
+                          <div key={field.id} className="border rounded-lg p-4 space-y-4">
+                            <div className="flex items-center justify-between">
+                              <h4 className="font-medium">Data Source {index + 1}</h4>
+                              <Button
+                                type="button"
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => removeDataSource(index)}
+                                className="text-destructive hover:text-destructive"
+                              >
+                                <Trash2 />
+                              </Button>
+                            </div>
 
-                {dataSourceFields.length > 0 && (
-                  <div className="space-y-4">
-                    {dataSourceFields.map((field, index) => (
-                      <div key={field.id} className="border rounded-lg p-4 space-y-4">
-                        <div className="flex items-center justify-between">
-                          <h4 className="font-medium">Data Source {index + 1}</h4>
-                          <Button
-                            type="button"
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => removeDataSource(index)}
-                            className="text-destructive hover:text-destructive"
-                          >
-                            <Trash2 className="size-4" />
-                          </Button>
-                        </div>
-
-                        <ScraperDataSourceForm
-                          control={form.control}
-                          index={index}
-                          dataStores={dataStores}
-                        />
+                            <ScraperDataSourceForm
+                              control={form.control}
+                              index={index}
+                              dataStores={dataStores}
+                            />
+                          </div>
+                        ))}
                       </div>
-                    ))}
-                  </div>
-                )}
-              </div>
+                    )}
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={addDataSource}
+                      className="w-full"
+                    >
+                      <Plus />
+                      Add Data Source
+                    </Button>
+                  </AccordionContent>
+                </AccordionItem>
 
-              <div className="flex flex-col items-stretch gap-4">
-                <div>
-                  <h3 className="text-lg font-medium">Instructions</h3>
-                  <p className="text-sm text-muted-foreground">
-                    Define the scraper's behavior step by step.
-                  </p>
-                </div>
-
-                <ScraperInstructionsForm control={form.control} />
-              </div>
+                <AccordionItem value="instructions">
+                  <AccordionTrigger className="items-center">
+                    <div>
+                      <h3 className="text-lg font-medium">Instructions</h3>
+                      <p className="text-sm text-muted-foreground">
+                        Define the scraper's behavior step by step.
+                      </p>
+                    </div>
+                  </AccordionTrigger>
+                  <AccordionContent>
+                    <ScraperInstructionsForm control={form.control} />
+                  </AccordionContent>
+                </AccordionItem>
+              </Accordion>
 
               <div className="flex justify-end space-x-2">
                 <Button
