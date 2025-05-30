@@ -183,7 +183,7 @@ export function DataStoreFormDialog({
               <FormInput
                 control={form.control}
                 name="description"
-                label="Description (Optional)"
+                label="Description (optional)"
                 placeholder="Enter description"
                 description="A brief description of what this data store will contain."
               />
@@ -267,7 +267,7 @@ export function DataStoreFormDialog({
                           name={`columns.${index}.defaultValue`}
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel>Default Value (Optional)</FormLabel>
+                              <FormLabel>Default Value (optional)</FormLabel>
                               <FormControl>
                                 <Input
                                   placeholder="Enter default value"

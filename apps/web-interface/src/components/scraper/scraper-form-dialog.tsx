@@ -44,7 +44,7 @@ export function ScraperFormDialog({
   const { putItem, isPutting } = usePut("/scrapers/:id")
   const { data: dataStoresResponse } = useGet("/user-data-stores")
 
-  const isEditing = !!editScraper
+  const isEditing = !!editScraper && editScraper.id !== -1
   const dataStores = dataStoresResponse?.data || []
 
   const form = useForm<CreateScraper>({
@@ -174,7 +174,7 @@ export function ScraperFormDialog({
                 <FormInput
                   control={form.control}
                   name="description"
-                  label="Description (Optional)"
+                  label="Description (optional)"
                   placeholder="Enter description"
                   description="A brief description of what this scraper does."
                 />
@@ -182,7 +182,7 @@ export function ScraperFormDialog({
                 <FormInput
                   control={form.control}
                   name="userDataDirectory"
-                  label="User Data Directory (Optional)"
+                  label="User Data Directory (optional)"
                   placeholder="e.g., /path/to/custom/userData"
                   description="Custom Chrome user data directory path."
                 />

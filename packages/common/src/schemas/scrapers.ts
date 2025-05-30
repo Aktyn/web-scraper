@@ -4,7 +4,7 @@ import { scraperInstructionsSchema } from "./scraper/instructions"
 
 export const scraperDataSourceSchema = z.object({
   dataStoreTableName: z.string(),
-  sourceAlias: z.string(),
+  sourceAlias: z.string().min(1, "Source alias is required"),
   whereSchema: whereSchema.nullable(),
 })
 

@@ -5,7 +5,8 @@ import { ScraperSelector } from "./scraper-selector"
 import { ScraperValue } from "./scraper-value"
 import { LabeledValue } from "@/components/common/labeled-value"
 import { CopyButton } from "@/components/common/button/copy-button"
-import { Check } from "lucide-react"
+import { Check, ExternalLink } from "lucide-react"
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/shadcn/tooltip"
 
 type PageActionInstructionProps = {
   action: PageAction
@@ -39,14 +40,22 @@ function ActionDetails({ action }: { action: PageAction }) {
       return (
         <LabeledValue label="URL">
           <div className="flex flex-row items-center gap-2">
-            <a
-              href={action.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="transition-colors hover:text-primary"
-            >
-              {action.url}
-            </a>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <a
+                  href={action.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="transition-colors hover:text-primary"
+                >
+                  {action.url}
+                </a>
+              </TooltipTrigger>
+              <TooltipContent className="leading-none">
+                Click to open URL in new tab&ensp;
+                <ExternalLink className="size-3.5 inline" />
+              </TooltipContent>
+            </Tooltip>
             <CopyButton value={action.url} className="size-6" />
           </div>
         </LabeledValue>

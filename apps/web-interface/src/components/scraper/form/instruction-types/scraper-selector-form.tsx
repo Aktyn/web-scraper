@@ -74,7 +74,7 @@ function SelectorFormByType({ control, fieldName }: ScraperSelectorFormProps) {
             control={control}
             className="*:[button]:w-full"
             name={`${fieldName}.tagName`}
-            label="Tag Name (Optional)"
+            label="Tag Name (optional)"
             placeholder="Select tag name"
             options={tagNameOptions}
             description="Limit search to specific HTML tag."

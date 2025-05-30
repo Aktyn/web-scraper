@@ -71,7 +71,7 @@ function ValueFormByType({ control, fieldName }: ScraperValueFormProps) {
           <FormInput
             control={control}
             name={`${fieldName}.defaultValue`}
-            label="Default Value (Optional)"
+            label="Default Value (optional)"
             placeholder="Default value if data not found"
             description="Value to use if external data is not available."
           />

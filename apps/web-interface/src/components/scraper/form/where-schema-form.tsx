@@ -4,6 +4,7 @@ import { FormSelect } from "@/components/common/form/form-select"
 import { LabeledValue } from "@/components/common/labeled-value"
 import { Button } from "@/components/shadcn/button"
 import {
+  runUnsafe,
   SqliteColumnType,
   SqliteConditionType,
   whereSchemaToSql,
@@ -15,15 +16,6 @@ import { Fragment, useMemo } from "react"
 import type { Control } from "react-hook-form"
 import { useFieldArray, useFormContext } from "react-hook-form"
 import { mapToSelectOptions } from "./helpers"
-
-function runUnsafe<T>(callback: () => T): T | null {
-  try {
-    return callback()
-  } catch (error) {
-    console.error(`Error: ${error instanceof Error ? error.message : "Invalid schema"}`)
-    return null
-  }
-}
 
 interface WhereSchemaFormProps {
   control: Control<CreateScraper>
@@ -61,7 +53,7 @@ export function WhereSchemaForm({ control, name, columns }: WhereSchemaFormProps
     return (
       <div className="space-y-4">
         <div>
-          <h4 className="font-medium mb-2">WHERE Conditions (Optional)</h4>
+          <h4 className="font-medium mb-2">WHERE Conditions (optional)</h4>
           <p className="text-sm text-muted-foreground mb-4">
             Add conditions to filter the data from this source.
           </p>

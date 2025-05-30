@@ -1,4 +1,4 @@
-import { Edit, Plus, Trash } from "lucide-react"
+import { Copy, Edit, Plus, Trash } from "lucide-react"
 import { RefreshButton } from "../common/table/refresh-button"
 import { Button } from "../shadcn/button"
 import { type ColumnDef } from "@tanstack/react-table"
@@ -14,11 +14,6 @@ import { ScraperPanelDialog } from "../scraper/scraper-panel-dialog"
 import { ScraperFormDialog } from "../scraper/scraper-form-dialog"
 
 export function Scrapers() {
-  //TODO: scraper creation form (scraperInstructionsSchema) with selection of user data stores (preferably automatic selection based on the scraper instructions)
-  //TODO: allow choosing custom userData directory for scraper
-  //TODO: manage running state scraper instances on the server
-  // Scraper will be stored in the database. It can be run by api endpoint, also paused etc. Use SSE to get realtime scraper state.
-
   const {
     data: scrapers,
     isLoading,
@@ -73,6 +68,26 @@ export function Scrapers() {
         id: "actions",
         cell: ({ row }) => (
           <div className="flex items-center gap-1 max-w-32">
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={(event) => {
+                    event.stopPropagation()
+                    setScraperToEdit({
+                      ...JSON.parse(JSON.stringify(row.original)),
+                      name: `${row.original.name} (copy)`,
+                      id: -1, // determines that this is a copy
+                    })
+                    setUpsertDialogOpen(true)
+                  }}
+                >
+                  <Copy />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>Copy Scraper</TooltipContent>
+            </Tooltip>
             <Tooltip>
               <TooltipTrigger asChild>
                 <Button
