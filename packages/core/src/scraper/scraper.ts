@@ -19,13 +19,27 @@ import puppeteer, { type Browser, type LaunchOptions, type Page } from "rebrowse
 import { type DataBridge, getScraperValue } from "./data-helper"
 import { type ScraperExecutionContext } from "./helpers"
 import { getElementHandle } from "./selectors"
+import EventEmitter from "node:events"
+import { ScraperExecutionInfo } from "./scraper-execution-info"
+
+export enum ScraperState {
+  Idle = "idle",
+  Running = "running",
+}
 
 type ScraperOptions = {
   id?: string
   logger?: SimpleLogger
 } & Partial<LaunchOptions>
 
-export class Scraper {
+interface ScraperEvents {
+  stateChange: (state: ScraperState) => void
+  destroy: () => void
+  executionFinished: (executionInfo: ScraperExecutionInfo) => void
+  executionUpdate: (executionInfo: ScraperInstructionsExecutionInfo[number]) => void
+}
+
+export class Scraper extends EventEmitter {
   private static instances = new Map<string, Scraper>()
 
   public static destroyAll() {
@@ -44,7 +58,11 @@ export class Scraper {
   private browser: Browser | null = null
   private abortController = new AbortController()
 
+  private _state = ScraperState.Idle
+
   constructor(private readonly options: ScraperOptions = {}) {
+    super()
+
     const { id, logger, ...browserOptions } = options
 
     this.id = id ?? uuid()
@@ -115,9 +133,10 @@ export class Scraper {
   destroy() {
     Scraper.instances.delete(this.id)
 
-    this.abortController.abort("Scraper instance destroyed")
-
     assert(!this.destroyed, "Scraper already destroyed")
+    this.destroyed = true
+
+    this.abortController.abort("Scraper instance destroyed")
 
     if (this.browser) {
       void this.browser
@@ -125,9 +144,33 @@ export class Scraper {
         .then(() => this.logger.info("Browser closed"))
         .catch(this.logger.error)
     }
-
-    this.destroyed = true
     this.browser = null
+
+    this.emit("destroy")
+  }
+
+  override emit<E extends keyof ScraperEvents>(
+    event: E,
+    ...args: Parameters<ScraperEvents[E]>
+  ): boolean {
+    return super.emit(event, ...args)
+  }
+
+  on<E extends keyof ScraperEvents>(event: E, listener: ScraperEvents[E]) {
+    return super.on(event, listener)
+  }
+
+  off<E extends keyof ScraperEvents>(event: E, listener: ScraperEvents[E]) {
+    return super.off(event, listener)
+  }
+
+  get state() {
+    return this._state
+  }
+
+  set state(state: ScraperState) {
+    this._state = state
+    this.emit("stateChange", state)
   }
 
   private async getPage() {
@@ -148,14 +191,27 @@ export class Scraper {
     return page
   }
 
-  async run(
+  async execute(
     instructions: ScraperInstructions,
     dataBridge: DataBridge,
     options?: {
       pageMiddleware?: (page: Page) => void | Promise<void>
       leavePageOpen?: boolean
     },
-  ): Promise<ScraperInstructionsExecutionInfo> {
+  ): Promise<ScraperExecutionInfo> {
+    const executionInfo = new ScraperExecutionInfo(instructions, dataBridge)
+
+    if (this.state !== ScraperState.Idle) {
+      this.logger.warn("Scraper is not in idle state. Aborting run request.")
+      executionInfo.push({
+        type: ScraperInstructionsExecutionInfoType.Error,
+        errorMessage: "Run cancelled due to scraper not being in idle state",
+      })
+      return executionInfo
+    }
+
+    this.state = ScraperState.Running
+
     if (!this.browser) {
       this.browser = await this.init(this.options)
     }
@@ -166,7 +222,8 @@ export class Scraper {
       await options.pageMiddleware(page)
     }
 
-    const executionInfo: ScraperInstructionsExecutionInfo = []
+    executionInfo.on("update", (info) => this.emit("executionUpdate", info))
+
     try {
       await this.executeInstructions(
         { page, dataBridge, executionInfo, logger: this.logger },
@@ -191,6 +248,9 @@ export class Scraper {
     if (!options?.leavePageOpen) {
       await page.close()
     }
+
+    this.emit("executionFinished", executionInfo)
+    this.state = ScraperState.Idle
 
     return executionInfo
   }

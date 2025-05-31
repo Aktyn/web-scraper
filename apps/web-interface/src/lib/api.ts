@@ -172,6 +172,12 @@ export type Routes = {
       response: void
     }
   }
+  "scrapers/:id/execute": {
+    post: {
+      body: undefined
+      response: ApiResponse<null>
+    }
+  }
 }
 
 async function assertResponseOk(response: Response) {

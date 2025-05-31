@@ -1,6 +1,6 @@
 import { z } from "zod"
 
-export type ApiResponse<T extends object> = {
+export type ApiResponse<T extends object | null> = {
   data: T
 }
 

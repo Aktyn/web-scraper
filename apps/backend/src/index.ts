@@ -98,7 +98,7 @@ async function testRun(db: DbModule, logger: Logger) {
   })
 
   try {
-    await scraper.run(exampleInstructions, dataBridge, {
+    await scraper.execute(exampleInstructions, dataBridge, {
       leavePageOpen: true,
     })
     logger.info("Scraper run finished")

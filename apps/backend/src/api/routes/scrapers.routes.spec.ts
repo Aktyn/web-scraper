@@ -524,4 +524,42 @@ describe("Scrapers Routes", () => {
       })
     })
   })
+
+  describe("POST /scrapers/:id/execute", () => {
+    it("should execute the scraper and return status 200 with empty object", async () => {
+      const listResponse = await modules.api.inject({
+        method: "GET",
+        url: "/scrapers",
+      })
+      const listData = JSON.parse(listResponse.payload)
+      const scraperId = listData.data[0].id
+
+      const response = await modules.api.inject({
+        method: "POST",
+        url: `/scrapers/${scraperId}/execute`,
+      })
+
+      expect(response.statusCode).toBe(200)
+      expect(JSON.parse(response.payload)).toEqual({})
+    })
+
+    it("should return status 404 if the scraper does not exist", async () => {
+      const response = await modules.api.inject({
+        method: "POST",
+        url: "/scrapers/99999/execute",
+      })
+      expect(response.statusCode).toBe(404)
+      expect(JSON.parse(response.payload)).toEqual({
+        error: "Scraper not found",
+      })
+    })
+
+    it("should return status 400 for invalid id param", async () => {
+      const response = await modules.api.inject({
+        method: "POST",
+        url: "/scrapers/invalid/execute",
+      })
+      expect(response.statusCode).toBe(400)
+    })
+  })
 })

@@ -352,7 +352,7 @@ describe(
 
       it("should execute given instructions", async () => {
         await expect(
-          scraper.run(mockInstructions, mockDataBridge, { pageMiddleware: setupInterceptor }),
+          scraper.execute(mockInstructions, mockDataBridge, { pageMiddleware: setupInterceptor }),
         ).resolves.toEqual(mockExecutionInfo)
       }, 60_000)
 
@@ -376,12 +376,12 @@ describe(
         }
 
         await expect(
-          scraper.run(mockInstructions, mockDataBridge, { pageMiddleware: setupInterceptor }),
+          scraper.execute(mockInstructions, mockDataBridge, { pageMiddleware: setupInterceptor }),
         ).resolves.toEqual(mockExecutionInfoWithoutCookiesBanner)
       }, 60_000)
 
       it("should return error result if no instructions are provided", async () => {
-        await expect(scraper.run([], mockDataBridge)).resolves.toEqual([
+        await expect(scraper.execute([], mockDataBridge)).resolves.toEqual([
           {
             type: ScraperInstructionsExecutionInfoType.Error,
             errorMessage: "Instructions are empty",
@@ -394,7 +394,7 @@ describe(
           { type: ScraperInstructionType.Marker, name: "start" },
         ]
 
-        await expect(scraper.run(instructions, mockDataBridge)).resolves.toEqual([
+        await expect(scraper.execute(instructions, mockDataBridge)).resolves.toEqual([
           {
             type: ScraperInstructionsExecutionInfoType.Error,
             errorMessage: "First instruction must be a navigation action",
@@ -522,7 +522,7 @@ describe(
 
       it("should fill form fields with external data", async () => {
         await expect(
-          scraper.run(mockInstructions, mockDataBridge, { pageMiddleware: setupInterceptor }),
+          scraper.execute(mockInstructions, mockDataBridge, { pageMiddleware: setupInterceptor }),
         ).resolves.toEqual(mockExecutionInfo)
       }, 120_000)
     })
@@ -639,7 +639,7 @@ describe(
 
       it("should decide which button to click based on external data", async () => {
         await expect(
-          scraper.run(mockInstructions, mockDataBridge, { pageMiddleware: setupInterceptor }),
+          scraper.execute(mockInstructions, mockDataBridge, { pageMiddleware: setupInterceptor }),
         ).resolves.toEqual(mockExecutionInfo)
       }, 120_000)
     })
@@ -679,7 +679,7 @@ describe(
           },
         ]
 
-        const result = await scraper.run(mockInstructions, mockDataBridge, {
+        const result = await scraper.execute(mockInstructions, mockDataBridge, {
           pageMiddleware: setupInterceptor,
         })
 
@@ -741,7 +741,7 @@ describe(
           },
         ]
 
-        const result = await scraper.run(mockInstructions, mockDataBridge, {
+        const result = await scraper.execute(mockInstructions, mockDataBridge, {
           pageMiddleware: setupInterceptor,
         })
 
@@ -812,7 +812,7 @@ describe(
           },
         ]
 
-        const result = await scraper.run(mockInstructions, mockDataBridge, {
+        const result = await scraper.execute(mockInstructions, mockDataBridge, {
           pageMiddleware: setupInterceptor,
         })
 
@@ -879,7 +879,7 @@ describe(
           },
         ]
 
-        const result = await scraper.run(mockInstructions, mockDataBridge, {
+        const result = await scraper.execute(mockInstructions, mockDataBridge, {
           pageMiddleware: setupInterceptor,
         })
 
@@ -947,7 +947,7 @@ describe(
           },
         ]
 
-        const result = await scraper.run(mockInstructions, mockDataBridge, {
+        const result = await scraper.execute(mockInstructions, mockDataBridge, {
           pageMiddleware: setupInterceptor,
         })
 
@@ -1014,7 +1014,7 @@ describe(
           },
         ]
 
-        const result = await scraper.run(mockInstructions, mockDataBridge, {
+        const result = await scraper.execute(mockInstructions, mockDataBridge, {
           pageMiddleware: setupInterceptor,
         })
 
@@ -1070,7 +1070,7 @@ describe(
           },
         ]
 
-        const result = await scraper.run(mockInstructions, mockDataBridge, {
+        const result = await scraper.execute(mockInstructions, mockDataBridge, {
           pageMiddleware: setupInterceptor,
         })
 
@@ -1132,7 +1132,7 @@ describe(
           },
         ]
 
-        const result = await scraper.run(mockInstructions, mockDataBridge, {
+        const result = await scraper.execute(mockInstructions, mockDataBridge, {
           pageMiddleware: setupInterceptor,
         })
 

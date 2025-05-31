@@ -7,12 +7,19 @@ import { ScraperDataSource } from "./scraper-data-source"
 import { ScraperInstructionsTree } from "./scraper-instructions-tree"
 import { Button } from "../shadcn/button"
 import { Play } from "lucide-react"
+import { usePost } from "@/hooks/api/usePost"
 
 type ScraperPanelProps = {
   scraper: ScraperType
 }
 
 export function ScraperPanel({ scraper }: ScraperPanelProps) {
+  const { postItem, isPosting } = usePost("/scrapers/:id/execute")
+
+  const handleExecute = async () => {
+    await postItem(undefined, { id: scraper.id })
+  }
+
   //TODO: manage running state scraper instances on the server
   // Scraper are stored in the database. It can be run by api endpoint, also paused etc. Use SSE to get realtime scraper state.
 
@@ -20,9 +27,10 @@ export function ScraperPanel({ scraper }: ScraperPanelProps) {
     <div className="flex flex-col gap-4">
       <div className="flex flex-row items-center gap-2">
         {/* TODO: run and watch for scraper updates in real time with SSE */}
-        <Button variant="default">
+        {/* TODO: consider adding small form to configure number of scraper iterations and sequence of row indices to iterate over */}
+        <Button variant="default" onClick={handleExecute} disabled={isPosting}>
           <Play />
-          Execute
+          {isPosting ? "Executing..." : "Execute"}
         </Button>
       </div>
 

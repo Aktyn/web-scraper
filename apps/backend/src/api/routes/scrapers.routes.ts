@@ -272,4 +272,36 @@ export async function scrapersRoutes(fastify: FastifyInstance) {
       return reply.status(204).send()
     },
   )
+
+  fastify.withTypeProvider<ZodTypeProvider>().post(
+    "/scrapers/:id/execute",
+    {
+      schema: {
+        params: paramsWithScraperIdSchema,
+        response: {
+          200: getApiResponseSchema(z.null()),
+          404: apiErrorResponseSchema,
+        },
+      },
+    },
+    async (request, reply) => {
+      const { id } = request.params
+      const scraper = await fastify.db
+        .select()
+        .from(scrapersTable)
+        .where(eq(scrapersTable.id, id))
+        .get()
+
+      if (!scraper) {
+        return reply.status(404).send({
+          error: "Scraper not found",
+        })
+      }
+
+      console.info("Executing scraper:", scraper)
+      return reply.status(200).send({
+        data: null,
+      })
+    },
+  )
 }
