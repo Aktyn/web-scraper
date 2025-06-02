@@ -76,7 +76,9 @@ describe("User Data Stores Routes", () => {
     })
 
     it("should return 500 if there is a database error", async () => {
-      vi.spyOn(modules.db, "select").mockRejectedValue(new Error("Database error"))
+      vi.spyOn(modules.db, "select").mockRejectedValue(
+        new Error("Database error"),
+      )
 
       const response = await modules.api.inject({
         method: "GET",
@@ -282,7 +284,9 @@ describe("User Data Stores Routes", () => {
       expect(response.statusCode).toBe(200)
       const responseData = JSON.parse(response.payload)
       expect(responseData.data).toMatchObject({
-        tableName: expect.stringMatching(/^updated_personal_credentials_[a-z0-9]+$/),
+        tableName: expect.stringMatching(
+          /^updated_personal_credentials_[a-z0-9]+$/,
+        ),
         name: "Updated Personal Credentials",
         description: "Updated description",
         recordsCount: 0, //Due to columns change, the data is lost

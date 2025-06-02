@@ -25,7 +25,12 @@ import { useFieldArray, useForm } from "react-hook-form"
 import { FormInput } from "../common/form/form-input"
 import { ScraperDataSourceForm } from "./form/scraper-data-source-form"
 import { ScraperInstructionsForm } from "./form/scraper-instructions-form"
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "../shadcn/accordion"
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "../shadcn/accordion"
 
 interface ScraperFormDialogProps {
   open: boolean
@@ -149,7 +154,9 @@ export function ScraperFormDialog({
         className="max-w-4xl max-h-[90vh] overflow-y-auto grid grid-rows-[auto_1fr]"
       >
         <DialogHeader>
-          <DialogTitle>{isEditing ? "Edit Scraper" : "Create Scraper"}</DialogTitle>
+          <DialogTitle>
+            {isEditing ? "Edit Scraper" : "Create Scraper"}
+          </DialogTitle>
           <DialogDescription>
             {isEditing
               ? "Edit the scraper instructions and its data sources"
@@ -188,7 +195,10 @@ export function ScraperFormDialog({
                 />
               </div>
 
-              <Accordion type="multiple" defaultValue={["data-sources", "instructions"]}>
+              <Accordion
+                type="multiple"
+                defaultValue={["data-sources", "instructions"]}
+              >
                 <AccordionItem value="data-sources">
                   <AccordionTrigger className="items-center">
                     <div>
@@ -202,9 +212,14 @@ export function ScraperFormDialog({
                     {dataSourceFields.length > 0 && (
                       <div className="flex flex-col gap-2">
                         {dataSourceFields.map((field, index) => (
-                          <div key={field.id} className="border rounded-lg p-4 space-y-4">
+                          <div
+                            key={field.id}
+                            className="border rounded-lg p-4 space-y-4"
+                          >
                             <div className="flex items-center justify-between">
-                              <h4 className="font-medium">Data Source {index + 1}</h4>
+                              <h4 className="font-medium">
+                                Data Source {index + 1}
+                              </h4>
                               <Button
                                 type="button"
                                 variant="ghost"

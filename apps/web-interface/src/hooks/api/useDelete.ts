@@ -2,7 +2,9 @@ import { api, type RouteParameters, type RoutesWithMethod } from "@/lib/api"
 import { useState } from "react"
 import { toast } from "sonner"
 
-export function useDelete<RoutePath extends RoutesWithMethod<"delete">>(route: `/${RoutePath}`) {
+export function useDelete<RoutePath extends RoutesWithMethod<"delete">>(
+  route: `/${RoutePath}`,
+) {
   const [isDeleting, setIsDeleting] = useState(false)
 
   const deleteItem = async (params?: RouteParameters<RoutePath>) => {

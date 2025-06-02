@@ -22,7 +22,11 @@ type DateTimePickerProps = {
   onCancel: () => void
 }
 
-export function DateTimePicker({ value, onSelect, onCancel }: DateTimePickerProps) {
+export function DateTimePicker({
+  value,
+  onSelect,
+  onCancel,
+}: DateTimePickerProps) {
   const id = useId()
 
   const valueAsDate = useMemo(() => (value ? new Date(value) : null), [value])
@@ -34,8 +38,12 @@ export function DateTimePicker({ value, onSelect, onCancel }: DateTimePickerProp
     valueAsDate ? startOfDay(valueAsDate) : undefined,
   )
   const [hour, setHour] = useState(valueAsDate ? getHours(valueAsDate) : 0)
-  const [minute, setMinute] = useState(valueAsDate ? getMinutes(valueAsDate) : 0)
-  const [second, setSecond] = useState(valueAsDate ? getSeconds(valueAsDate) : 0)
+  const [minute, setMinute] = useState(
+    valueAsDate ? getMinutes(valueAsDate) : 0,
+  )
+  const [second, setSecond] = useState(
+    valueAsDate ? getSeconds(valueAsDate) : 0,
+  )
 
   const combinedDate = useMemo(() => {
     if (!day) {
@@ -83,7 +91,9 @@ export function DateTimePicker({ value, onSelect, onCancel }: DateTimePickerProp
             className="text-right"
             placeholder="Hour"
             value={formatTimeNumber(hour, 23)}
-            onChange={(event) => setHour(Number(formatTimeNumber(event.target.valueAsNumber, 23)))}
+            onChange={(event) =>
+              setHour(Number(formatTimeNumber(event.target.valueAsNumber, 23)))
+            }
           />
           <span>:</span>
           <Input
@@ -96,7 +106,9 @@ export function DateTimePicker({ value, onSelect, onCancel }: DateTimePickerProp
             placeholder="Minute"
             value={formatTimeNumber(minute, 59)}
             onChange={(event) =>
-              setMinute(Number(formatTimeNumber(event.target.valueAsNumber, 59)))
+              setMinute(
+                Number(formatTimeNumber(event.target.valueAsNumber, 59)),
+              )
             }
           />
         </div>
@@ -113,7 +125,9 @@ export function DateTimePicker({ value, onSelect, onCancel }: DateTimePickerProp
             placeholder="Second"
             value={formatTimeNumber(second, 59)}
             onChange={(event) =>
-              setSecond(Number(formatTimeNumber(event.target.valueAsNumber, 59)))
+              setSecond(
+                Number(formatTimeNumber(event.target.valueAsNumber, 59)),
+              )
             }
           />
         </div>

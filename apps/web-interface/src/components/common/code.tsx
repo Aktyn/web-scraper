@@ -14,7 +14,9 @@ type CodeProps = {
 export function Code({ children, className }: CodeProps) {
   return (
     <pre className={cn("bg-transparent!", className)}>
-      <code dangerouslySetInnerHTML={{ __html: hljs.highlightAuto(children).value }} />
+      <code
+        dangerouslySetInnerHTML={{ __html: hljs.highlightAuto(children).value }}
+      />
     </pre>
   )
 }

@@ -36,7 +36,9 @@ export function ConditionInstruction({
       <div className="space-y-1 mt-2">
         <div className="flex items-center gap-2">
           <DynamicIcon name={iconsMap[condition.type]} className="size-4" />
-          <span className="text-sm font-medium capitalize leading-none">{condition.type}</span>
+          <span className="text-sm font-medium capitalize leading-none">
+            {condition.type}
+          </span>
         </div>
         <ConditionDetails condition={condition} />
       </div>
@@ -49,7 +51,10 @@ export function ConditionInstruction({
                 THEN ({pluralize(thenInstructions.length, "instruction")})
               </div>
             </AccordionTrigger>
-            <AccordionContent data-then-instructions className="pb-0 bg-primary/5 rounded-lg">
+            <AccordionContent
+              data-then-instructions
+              className="pb-0 bg-primary/5 rounded-lg"
+            >
               <ScraperInstructionsTree instructions={thenInstructions} />
             </AccordionContent>
           </AccordionItem>
@@ -64,7 +69,10 @@ export function ConditionInstruction({
                 ELSE ({pluralize(elseInstructions.length, "instruction")})
               </div>
             </AccordionTrigger>
-            <AccordionContent data-else-instructions className="pb-0 bg-secondary/5 rounded-lg">
+            <AccordionContent
+              data-else-instructions
+              className="pb-0 bg-secondary/5 rounded-lg"
+            >
               <ScraperInstructionsTree instructions={elseInstructions} />
             </AccordionContent>
           </AccordionItem>
@@ -101,11 +109,15 @@ function ConditionDetails({ condition }: { condition: ScraperCondition }) {
       return (
         <div className="space-y-3">
           <div className="space-y-2">
-            <span className="text-sm text-muted-foreground">Value to check:</span>
+            <span className="text-sm text-muted-foreground">
+              Value to check:
+            </span>
             <ScraperValue value={condition.valueSelector} />
           </div>
           <div className="flex items-center gap-2">
-            <span className="text-sm text-muted-foreground">Expected text:</span>
+            <span className="text-sm text-muted-foreground">
+              Expected text:
+            </span>
             <span className="font-mono text-sm bg-muted px-2 py-1 rounded break-all">
               {textValue}
             </span>

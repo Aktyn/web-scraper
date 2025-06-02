@@ -18,7 +18,13 @@ import {
   useReactTable,
 } from "@tanstack/react-table"
 import { ChevronUp } from "lucide-react"
-import { type ComponentProps, useCallback, useEffect, useRef, useState } from "react"
+import {
+  type ComponentProps,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react"
 import { ScrollArea, ScrollBar } from "../../shadcn/scroll-area"
 
 type DataTableProps<TData, TValue> = {
@@ -60,7 +66,12 @@ export function DataTable<TData, TValue>({
 
     setShowBackToTop(scrollTop > clientHeight * 2)
 
-    if (hasMore && !isLoading && onLoadMore && scrollTop + clientHeight >= scrollHeight - 100) {
+    if (
+      hasMore &&
+      !isLoading &&
+      onLoadMore &&
+      scrollTop + clientHeight >= scrollHeight - 100
+    ) {
       onLoadMore()
     }
 
@@ -82,7 +93,10 @@ export function DataTable<TData, TValue>({
   }, [handleScroll])
 
   return (
-    <div {...containerProps} className={cn("relative w-full h-full", containerProps.className)}>
+    <div
+      {...containerProps}
+      className={cn("relative w-full h-full", containerProps.className)}
+    >
       <ScrollArea ref={containerRef} className="max-h-full grid grid-rows-1">
         <Table ref={tableRef}>
           <TableHeader className="sticky top-0 z-10 bg-background">
@@ -92,7 +106,10 @@ export function DataTable<TData, TValue>({
                   <TableHead key={header.id}>
                     {header.isPlaceholder
                       ? null
-                      : flexRender(header.column.columnDef.header, header.getContext())}
+                      : flexRender(
+                          header.column.columnDef.header,
+                          header.getContext(),
+                        )}
                   </TableHead>
                 ))}
               </TableRow>
@@ -109,7 +126,10 @@ export function DataTable<TData, TValue>({
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
-                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext(),
+                      )}
                     </TableCell>
                   ))}
                 </TableRow>
@@ -126,7 +146,10 @@ export function DataTable<TData, TValue>({
             )}
             {isLoading && data.length > 0 && (
               <TableRow className="animate-in fade-in">
-                <TableCell colSpan={columns.length} className="h-16 text-center">
+                <TableCell
+                  colSpan={columns.length}
+                  className="h-16 text-center"
+                >
                   Loading more...
                 </TableCell>
               </TableRow>

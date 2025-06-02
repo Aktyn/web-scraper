@@ -28,7 +28,10 @@ interface ScraperValueFormProps {
   fieldName: ScraperValueFieldName
 }
 
-export function ScraperValueForm({ control, fieldName }: ScraperValueFormProps) {
+export function ScraperValueForm({
+  control,
+  fieldName,
+}: ScraperValueFormProps) {
   return (
     <div className="space-y-4">
       <FormSelect
@@ -82,7 +85,10 @@ function ValueFormByType({ control, fieldName }: ScraperValueFormProps) {
       return (
         <div>
           <h6 className="font-medium mb-2">Element Selector</h6>
-          <ScraperSelectorForm control={control} fieldName={`${fieldName}.selector`} />
+          <ScraperSelectorForm
+            control={control}
+            fieldName={`${fieldName}.selector`}
+          />
         </div>
       )
 
@@ -91,7 +97,10 @@ function ValueFormByType({ control, fieldName }: ScraperValueFormProps) {
         <div className="space-y-4">
           <div>
             <h6 className="font-medium mb-2">Element Selector</h6>
-            <ScraperSelectorForm control={control} fieldName={`${fieldName}.selector`} />
+            <ScraperSelectorForm
+              control={control}
+              fieldName={`${fieldName}.selector`}
+            />
           </div>
           <FormInput
             control={control}

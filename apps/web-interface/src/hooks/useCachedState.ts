@@ -9,7 +9,9 @@ export function useCachedState<T>(
   store: Storage | typeof localStore = localStore,
 ): [T, Dispatch<SetStateAction<T>>] {
   const [value, setValue] = useState<T>(
-    name && has(store, name) ? (get(store, name) ?? defaultValue) : defaultValue,
+    name && has(store, name)
+      ? (get(store, name) ?? defaultValue)
+      : defaultValue,
   )
   useEffect(() => {
     if (name) {
@@ -21,7 +23,9 @@ export function useCachedState<T>(
 }
 
 function has(store: Storage | typeof localStore, name: string): boolean {
-  return store instanceof Storage ? store.getItem(name) !== null : store.has(name)
+  return store instanceof Storage
+    ? store.getItem(name) !== null
+    : store.has(name)
 }
 
 function set(store: Storage | typeof localStore, name: string, value: unknown) {
@@ -34,7 +38,9 @@ function set(store: Storage | typeof localStore, name: string, value: unknown) {
 
 function get<T>(store: Storage | typeof localStore, name: string): T | null {
   try {
-    return JSON.parse(store instanceof Storage ? store.getItem(name) : store.get(name))
+    return JSON.parse(
+      store instanceof Storage ? store.getItem(name) : store.get(name),
+    )
   } catch {
     return null
   }

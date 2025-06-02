@@ -9,11 +9,26 @@ type View = (typeof useView.View)[keyof typeof useView.View]
 
 export function NavigationMenu({ compact }: { compact: boolean }) {
   return (
-    <nav data-compact={compact} className="flex flex-col items-stretch gap-2 p-2">
-      <Item view={useView.View.Dashboard} icon="layout-dashboard" label="Dashboard" />
+    <nav
+      data-compact={compact}
+      className="flex flex-col items-stretch gap-2 p-2"
+    >
+      <Item
+        view={useView.View.Dashboard}
+        icon="layout-dashboard"
+        label="Dashboard"
+      />
       <Item view={useView.View.Scrapers} icon={ScraperIcon} label="Scrapers" />
-      <Item view={useView.View.DataStores} icon="database" label="Data Stores" />
-      <Item view={useView.View.Preferences} icon="settings-2" label="Preferences" />
+      <Item
+        view={useView.View.DataStores}
+        icon="database"
+        label="Data Stores"
+      />
+      <Item
+        view={useView.View.Preferences}
+        icon="settings-2"
+        label="Preferences"
+      />
     </nav>
   )
 }
@@ -40,7 +55,10 @@ export function Item({ view, icon: Icon, label }: ItemProps) {
       onClick={() => setView(view)}
     >
       {typeof Icon === "string" ? (
-        <DynamicIcon name={Icon} className="ml-[0%] transition-[margin] duration-400" />
+        <DynamicIcon
+          name={Icon}
+          className="ml-[0%] transition-[margin] duration-400"
+        />
       ) : (
         <Icon className="ml-[0%] transition-[margin] duration-400" />
       )}

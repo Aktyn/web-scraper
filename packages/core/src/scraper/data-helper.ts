@@ -14,7 +14,10 @@ export interface DataBridge {
   delete(key: ScraperDataKey): Promise<void>
 }
 
-export async function getScraperValue(context: ScraperExecutionContext, value: ScraperValue) {
+export async function getScraperValue(
+  context: ScraperExecutionContext,
+  value: ScraperValue,
+) {
   switch (value.type) {
     case ScraperValueType.Literal:
       return value.value
@@ -43,7 +46,9 @@ export async function getScraperValue(context: ScraperExecutionContext, value: S
     case ScraperValueType.ElementTextContent: {
       const handle = await getElementHandle(context.page, value.selector)
       if (!handle) {
-        context.logger.warn(`Cannot get text content; element not found: ${value.selector}`)
+        context.logger.warn(
+          `Cannot get text content; element not found: ${value.selector}`,
+        )
         return null
       }
       return await handle?.evaluate((el) => el.textContent)
@@ -51,7 +56,9 @@ export async function getScraperValue(context: ScraperExecutionContext, value: S
     case ScraperValueType.ElementAttribute: {
       const handle = await getElementHandle(context.page, value.selector)
       if (!handle) {
-        context.logger.warn(`Cannot get attribute; element not found: ${value.selector}`)
+        context.logger.warn(
+          `Cannot get attribute; element not found: ${value.selector}`,
+        )
         return null
       }
       return await handle?.evaluate(

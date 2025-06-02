@@ -53,7 +53,10 @@ export function PageActionForm({ control, fieldName }: PageActionFormProps) {
         <div className="space-y-4">
           <div>
             <h5 className="font-medium mb-2">Element Selector</h5>
-            <ScraperSelectorForm control={control} fieldName={`${fieldName}.selector`} />
+            <ScraperSelectorForm
+              control={control}
+              fieldName={`${fieldName}.selector`}
+            />
           </div>
         </div>
       )
@@ -63,12 +66,18 @@ export function PageActionForm({ control, fieldName }: PageActionFormProps) {
         <div className="space-y-4">
           <div>
             <h5 className="font-medium mb-2">Element Selector</h5>
-            <ScraperSelectorForm control={control} fieldName={`${fieldName}.selector`} />
+            <ScraperSelectorForm
+              control={control}
+              fieldName={`${fieldName}.selector`}
+            />
           </div>
 
           <div>
             <h5 className="font-medium mb-2">Value to Type</h5>
-            <ScraperValueForm control={control} fieldName={`${fieldName}.value`} />
+            <ScraperValueForm
+              control={control}
+              fieldName={`${fieldName}.value`}
+            />
           </div>
 
           <FormField
@@ -78,10 +87,15 @@ export function PageActionForm({ control, fieldName }: PageActionFormProps) {
               <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
                 <div className="space-y-0.5">
                   <FormLabel className="text-base">Clear Before Type</FormLabel>
-                  <FormDescription>Whether to clear the input field before typing.</FormDescription>
+                  <FormDescription>
+                    Whether to clear the input field before typing.
+                  </FormDescription>
                 </div>
                 <FormControl>
-                  <Switch checked={field.value} onCheckedChange={field.onChange} />
+                  <Switch
+                    checked={field.value}
+                    onCheckedChange={field.onChange}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>

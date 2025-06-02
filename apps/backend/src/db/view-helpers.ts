@@ -3,7 +3,11 @@ import { sql } from "drizzle-orm"
 import type { DbModule } from "./db.module"
 import { sanitizeTableName } from "./schema/helpers"
 
-export async function createTemporaryView(db: DbModule, sourceTableName: string, whereSQL: string) {
+export async function createTemporaryView(
+  db: DbModule,
+  sourceTableName: string,
+  whereSQL: string,
+) {
   const viewName = sanitizeTableName(`temporary_view_${uuid()}`)
 
   await db

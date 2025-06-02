@@ -1,5 +1,12 @@
 import { useGet } from "@/hooks/api/useGet"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../shadcn/table"
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "../shadcn/table"
 import { Button } from "../shadcn/button"
 import { Pencil } from "lucide-react"
 import { Skeleton } from "../shadcn/skeleton"
@@ -30,7 +37,12 @@ export function Preferences() {
                 <TableCell>
                   <div className="w-full flex flex-row items-center gap-2">
                     <span>{preference.value}</span>
-                    <Button variant="outline" size="icon" className="ml-auto" disabled>
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      className="ml-auto"
+                      disabled
+                    >
                       <Pencil />
                     </Button>
                   </div>

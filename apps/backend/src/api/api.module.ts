@@ -1,7 +1,10 @@
 import fastifyCors from "@fastify/cors"
 import Fastify, { type FastifyServerOptions } from "fastify"
 import fastifyPlugin from "fastify-plugin"
-import { serializerCompiler, validatorCompiler } from "fastify-type-provider-zod"
+import {
+  serializerCompiler,
+  validatorCompiler,
+} from "fastify-type-provider-zod"
 import type { DbModule } from "../db/db.module"
 import * as routes from "./routes"
 import { FastifySSEPlugin } from "fastify-sse-v2"

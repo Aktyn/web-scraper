@@ -6,7 +6,10 @@ type EventsMap = {
 }
 
 class Emitter extends EventEmitter {
-  override emit<K extends keyof EventsMap>(event: K, ...args: Parameters<EventsMap[K]>) {
+  override emit<K extends keyof EventsMap>(
+    event: K,
+    ...args: Parameters<EventsMap[K]>
+  ) {
     return super.emit(event, ...args)
   }
   override on<K extends keyof EventsMap>(event: K, listener: EventsMap[K]) {

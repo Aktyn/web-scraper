@@ -7,7 +7,10 @@ type MarkerInstructionProps = {
 
 //TODO: colorize matching markers and jump-points
 
-export function MarkerInstruction({ name, ...divProps }: MarkerInstructionProps) {
+export function MarkerInstruction({
+  name,
+  ...divProps
+}: MarkerInstructionProps) {
   return (
     <div {...divProps}>
       <div className="flex items-center gap-2">
@@ -24,7 +27,10 @@ type JumpInstructionProps = {
   markerName: string
 } & ComponentProps<"div">
 
-export function JumpInstruction({ markerName, ...divProps }: JumpInstructionProps) {
+export function JumpInstruction({
+  markerName,
+  ...divProps
+}: JumpInstructionProps) {
   return (
     <div {...divProps}>
       <div className="flex items-center gap-2">

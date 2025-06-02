@@ -5,7 +5,11 @@ import {
   type UpdateScraper,
 } from "@web-scraper/common"
 import { beforeEach, describe, expect, it, vi } from "vitest"
-import { scraperDataSourcesTable, scrapersTable, userDataStoresTable } from "../../db/schema"
+import {
+  scraperDataSourcesTable,
+  scrapersTable,
+  userDataStoresTable,
+} from "../../db/schema"
 import { setup, type TestModules } from "../../test/setup"
 import { count } from "drizzle-orm"
 
@@ -75,7 +79,10 @@ describe("Scrapers Routes", () => {
         .select({ count: count() })
         .from(scraperDataSourcesTable)
         .get()
-      let stores = await modules.db.select({ count: count() }).from(userDataStoresTable).get()
+      let stores = await modules.db
+        .select({ count: count() })
+        .from(userDataStoresTable)
+        .get()
       const storesCount = stores?.count ?? 0
 
       expect(junctions?.count).toBeGreaterThan(0)
@@ -83,8 +90,14 @@ describe("Scrapers Routes", () => {
 
       await modules.db.delete(scrapersTable)
 
-      junctions = await modules.db.select({ count: count() }).from(scraperDataSourcesTable).get()
-      stores = await modules.db.select({ count: count() }).from(userDataStoresTable).get()
+      junctions = await modules.db
+        .select({ count: count() })
+        .from(scraperDataSourcesTable)
+        .get()
+      stores = await modules.db
+        .select({ count: count() })
+        .from(userDataStoresTable)
+        .get()
       expect(junctions?.count).toBe(0)
       expect(stores?.count).toBe(storesCount)
 
@@ -103,7 +116,9 @@ describe("Scrapers Routes", () => {
     })
 
     it("should return 500 if there is a database error", async () => {
-      vi.spyOn(modules.db, "select").mockRejectedValue(new Error("Database error"))
+      vi.spyOn(modules.db, "select").mockRejectedValue(
+        new Error("Database error"),
+      )
 
       const response = await modules.api.inject({
         method: "GET",

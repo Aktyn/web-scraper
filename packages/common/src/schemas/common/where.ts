@@ -51,7 +51,10 @@ const arrayConditionSchema = z.object({
 
 const rangeConditionSchema = z.object({
   column: z.string(),
-  condition: z.enum([SqliteConditionType.Between, SqliteConditionType.NotBetween]),
+  condition: z.enum([
+    SqliteConditionType.Between,
+    SqliteConditionType.NotBetween,
+  ]),
   value: z.object({
     from: conditionValueSchema,
     to: conditionValueSchema,
@@ -60,7 +63,10 @@ const rangeConditionSchema = z.object({
 
 const nullConditionSchema = z.object({
   column: z.string(),
-  condition: z.enum([SqliteConditionType.IsNull, SqliteConditionType.IsNotNull]),
+  condition: z.enum([
+    SqliteConditionType.IsNull,
+    SqliteConditionType.IsNotNull,
+  ]),
 })
 
 const conditionSchema = z.discriminatedUnion("condition", [
@@ -147,7 +153,9 @@ export function whereSchemaToSql(where: WhereSchema): string {
         ) {
           return `${column} BETWEEN ${formatValue(where.value.from)} AND ${formatValue(where.value.to)}`
         }
-        throw new Error("BETWEEN condition requires range value with from and to properties")
+        throw new Error(
+          "BETWEEN condition requires range value with from and to properties",
+        )
       case SqliteConditionType.NotBetween:
         if (
           typeof where.value === "object" &&
@@ -157,9 +165,13 @@ export function whereSchemaToSql(where: WhereSchema): string {
         ) {
           return `${column} NOT BETWEEN ${formatValue(where.value.from)} AND ${formatValue(where.value.to)}`
         }
-        throw new Error("NOT BETWEEN condition requires range value with from and to properties")
+        throw new Error(
+          "NOT BETWEEN condition requires range value with from and to properties",
+        )
       default:
-        throw new Error(`Unsupported condition: ${(where as { condition: string }).condition}`)
+        throw new Error(
+          `Unsupported condition: ${(where as { condition: string }).condition}`,
+        )
     }
   }
 

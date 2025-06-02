@@ -24,11 +24,17 @@ interface WhereSchemaFormProps {
   dataSourceIndex: number
 }
 
-export function WhereSchemaForm({ control, name, columns }: WhereSchemaFormProps) {
+export function WhereSchemaForm({
+  control,
+  name,
+  columns,
+}: WhereSchemaFormProps) {
   const { watch, setValue } = useFormContext<CreateScraper>()
   const whereSchema = watch(name)
 
-  const sqlPreview = whereSchema ? runUnsafe(() => whereSchemaToSql(whereSchema)) : null
+  const sqlPreview = whereSchema
+    ? runUnsafe(() => whereSchemaToSql(whereSchema))
+    : null
 
   const addRoot = (type?: "and" | "or") => {
     if (type) {
@@ -91,12 +97,22 @@ export function WhereSchemaForm({ control, name, columns }: WhereSchemaFormProps
           level={0}
         />
       ) : (
-        <ConditionForm control={control} name={name} columns={columns} onRemove={clearSchema} />
+        <ConditionForm
+          control={control}
+          name={name}
+          columns={columns}
+          onRemove={clearSchema}
+        />
       )}
 
       {sqlPreview && (
-        <LabeledValue label="SQL Preview:" className="bg-card border rounded-md p-2">
-          <Code className="max-w-full text-pretty whitespace-pre-wrap">{sqlPreview}</Code>
+        <LabeledValue
+          label="SQL Preview:"
+          className="bg-card border rounded-md p-2"
+        >
+          <Code className="max-w-full text-pretty whitespace-pre-wrap">
+            {sqlPreview}
+          </Code>
         </LabeledValue>
       )}
     </div>
@@ -111,7 +127,13 @@ interface LogicalGroupFormProps {
   level: number
 }
 
-function LogicalGroupForm({ control, name, columns, onRemove, level }: LogicalGroupFormProps) {
+function LogicalGroupForm({
+  control,
+  name,
+  columns,
+  onRemove,
+  level,
+}: LogicalGroupFormProps) {
   const { watch, setValue } = useFormContext<CreateScraper>()
   const group = watch(name)
 
@@ -215,7 +237,8 @@ function LogicalGroupForm({ control, name, columns, onRemove, level }: LogicalGr
 
       {fields.length === 0 && (
         <p className="text-sm text-muted-foreground italic">
-          No conditions added yet. Add a condition or logical group to get started.
+          No conditions added yet. Add a condition or logical group to get
+          started.
         </p>
       )}
 
@@ -285,7 +308,12 @@ interface ConditionFormProps {
   onRemove: () => void
 }
 
-function ConditionForm({ control, name, columns, onRemove }: ConditionFormProps) {
+function ConditionForm({
+  control,
+  name,
+  columns,
+  onRemove,
+}: ConditionFormProps) {
   const { watch, setValue } = useFormContext<CreateScraper>()
   const condition = watch(`${name}.condition`)
   const selectedColumn = watch(`${name}.column`)
@@ -301,11 +329,18 @@ function ConditionForm({ control, name, columns, onRemove }: ConditionFormProps)
   }))
 
   const needsValue =
-    condition && ![SqliteConditionType.IsNull, SqliteConditionType.IsNotNull].includes(condition)
+    condition &&
+    ![SqliteConditionType.IsNull, SqliteConditionType.IsNotNull].includes(
+      condition,
+    )
   const needsArrayValue =
-    condition && [SqliteConditionType.In, SqliteConditionType.NotIn].includes(condition)
+    condition &&
+    [SqliteConditionType.In, SqliteConditionType.NotIn].includes(condition)
   const needsRangeValue =
-    condition && [SqliteConditionType.Between, SqliteConditionType.NotBetween].includes(condition)
+    condition &&
+    [SqliteConditionType.Between, SqliteConditionType.NotBetween].includes(
+      condition,
+    )
 
   const inputType = useMemo(() => {
     if (!columnType) {
@@ -389,7 +424,10 @@ function ConditionForm({ control, name, columns, onRemove }: ConditionFormProps)
                 value === SqliteConditionType.NotBetween
               ) {
                 setValue(`${name}.value`, { from: "", to: "" })
-              } else if (value === SqliteConditionType.In || value === SqliteConditionType.NotIn) {
+              } else if (
+                value === SqliteConditionType.In ||
+                value === SqliteConditionType.NotIn
+              ) {
                 setValue(`${name}.value`, [])
               } else {
                 setValue(`${name}.value`, "")
@@ -480,7 +518,12 @@ interface ArrayValueFormProps {
   isBooleanColumn: boolean
 }
 
-function ArrayValueForm({ control, name, inputType, isBooleanColumn }: ArrayValueFormProps) {
+function ArrayValueForm({
+  control,
+  name,
+  inputType,
+  isBooleanColumn,
+}: ArrayValueFormProps) {
   const { fields, append, remove } = useFieldArray({
     control,
     name: name as never,
@@ -556,15 +599,30 @@ type AddRootButtonProps = {
 function AddRootButton({ addRoot }: AddRootButtonProps) {
   return (
     <div className="grid grid-cols-3 grid-rows-1 items-stretch *:not-first:rounded-l-none *:not-last:rounded-r-none *:not-first:border-l-0 *:not-last:border-r-0">
-      <Button type="button" variant="outline" size="sm" onClick={() => addRoot()}>
+      <Button
+        type="button"
+        variant="outline"
+        size="sm"
+        onClick={() => addRoot()}
+      >
         <Plus className="size-4" />
         Condition
       </Button>
-      <Button type="button" variant="outline" size="sm" onClick={() => addRoot("and")}>
+      <Button
+        type="button"
+        variant="outline"
+        size="sm"
+        onClick={() => addRoot("and")}
+      >
         <Plus className="size-4" />
         AND Group
       </Button>
-      <Button type="button" variant="outline" size="sm" onClick={() => addRoot("or")}>
+      <Button
+        type="button"
+        variant="outline"
+        size="sm"
+        onClick={() => addRoot("or")}
+      >
         <Plus className="size-4" />
         OR Group
       </Button>

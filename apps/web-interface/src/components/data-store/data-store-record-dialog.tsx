@@ -10,7 +10,12 @@ import {
 } from "@web-scraper/common"
 import { Calendar, Delete, Download } from "lucide-react"
 import { useEffect, useState } from "react"
-import { useForm, useFormContext, type Control, type FieldValues } from "react-hook-form"
+import {
+  useForm,
+  useFormContext,
+  type Control,
+  type FieldValues,
+} from "react-hook-form"
 import { DateTimePicker } from "../common/form/datetime-picker"
 import { FormInput } from "../common/form/form-input"
 import { Badge } from "../shadcn/badge"
@@ -22,7 +27,14 @@ import {
   DialogHeader,
   DialogTitle,
 } from "../shadcn/dialog"
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../shadcn/form"
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "../shadcn/form"
 import { Input } from "../shadcn/input"
 import { Popover, PopoverContent, PopoverTrigger } from "../shadcn/popover"
 import { ScrollArea } from "../shadcn/scroll-area"
@@ -44,8 +56,12 @@ export function DataStoreRecordDialog({
   onOpenChange,
   onSuccess,
 }: DataStoreRecordDialogProps) {
-  const { postItem, isPosting } = usePost("/user-data-stores/:tableName/records")
-  const { putItem, isPutting } = usePut("/user-data-stores/:tableName/records/:id")
+  const { postItem, isPosting } = usePost(
+    "/user-data-stores/:tableName/records",
+  )
+  const { putItem, isPutting } = usePut(
+    "/user-data-stores/:tableName/records/:id",
+  )
 
   const isEditing = !!editRecord
 
@@ -93,7 +109,8 @@ export function DataStoreRecordDialog({
           acc[column.name] = data[column.name]
         } else {
           acc[column.name] =
-            (data[column.name] === "" ? null : data[column.name]) ?? column.defaultValue
+            (data[column.name] === "" ? null : data[column.name]) ??
+            column.defaultValue
         }
         return acc
       },
@@ -124,7 +141,9 @@ export function DataStoreRecordDialog({
         className="max-w-2xl max-h-[90vh] overflow-y-auto grid grid-rows-[auto_1fr]"
       >
         <DialogHeader>
-          <DialogTitle>{isEditing ? "Edit Data Store" : "Create Data Store"}</DialogTitle>
+          <DialogTitle>
+            {isEditing ? "Edit Data Store" : "Create Data Store"}
+          </DialogTitle>
           <DialogDescription>
             {isEditing
               ? "Edit the data store configuration. Note: Changing column structure may affect existing data."
@@ -134,10 +153,17 @@ export function DataStoreRecordDialog({
 
         <ScrollArea className="-m-6 **:[form]:p-6 overflow-hidden mask-t-from-[calc(100%-var(--spacing)*8)] mask-b-from-[calc(100%-var(--spacing)*8)]">
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit, console.error)} className="space-y-4">
+            <form
+              onSubmit={form.handleSubmit(onSubmit, console.error)}
+              className="space-y-4"
+            >
               <div className="flex flex-col gap-4">
                 {store.columns.map((column) => (
-                  <ValueField key={column.name} column={column} control={form.control} />
+                  <ValueField
+                    key={column.name}
+                    column={column}
+                    control={form.control}
+                  />
                 ))}
               </div>
               <div className="flex justify-end space-x-2">
@@ -172,7 +198,10 @@ type ValueFieldProps<TFieldValues extends FieldValues = FieldValues> = {
   control: Control<TFieldValues>
 }
 
-function ValueField({ column, control }: ValueFieldProps<Record<string, unknown>>) {
+function ValueField({
+  column,
+  control,
+}: ValueFieldProps<Record<string, unknown>>) {
   if (column.name === "id") {
     return null
   }
@@ -210,7 +239,8 @@ function ValueField({ column, control }: ValueFieldProps<Record<string, unknown>
           inputProps={{
             onChange: (event) => {
               const value = event.target.value
-              event.target.value = value === "" ? value : parseInt(value, 10).toString()
+              event.target.value =
+                value === "" ? value : parseInt(value, 10).toString()
             },
           }}
         />
@@ -248,7 +278,10 @@ function ValueField({ column, control }: ValueFieldProps<Record<string, unknown>
           render={({ field }) => (
             <FormItem className="flex flex-row items-start space-x-3 space-y-0">
               <FormControl>
-                <Switch checked={!!field.value} onCheckedChange={field.onChange} />
+                <Switch
+                  checked={!!field.value}
+                  onCheckedChange={field.onChange}
+                />
               </FormControl>
               <div className="space-y-1 leading-none">
                 <FormLabel>{labelWithNullable}</FormLabel>

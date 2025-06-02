@@ -10,7 +10,10 @@ type DataSourceLabelProps = {
 }
 
 export function DataSourceLabel({ tableName }: DataSourceLabelProps) {
-  const { data: userDataStore, isLoading } = useGet("/user-data-stores/:tableName", { tableName })
+  const { data: userDataStore, isLoading } = useGet(
+    "/user-data-stores/:tableName",
+    { tableName },
+  )
 
   const [dataStoreTableOpen, setDataStoreTableOpen] = useState(false)
 
@@ -23,7 +26,11 @@ export function DataSourceLabel({ tableName }: DataSourceLabelProps) {
           <span>{userDataStore?.data.name}</span>
           <Tooltip>
             <TooltipTrigger asChild>
-              <Button variant="ghost" size="icon" onClick={() => setDataStoreTableOpen(true)}>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setDataStoreTableOpen(true)}
+              >
                 <Table />
               </Button>
             </TooltipTrigger>

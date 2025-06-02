@@ -39,7 +39,10 @@ export async function getElementHandle(
     case ElementSelectorType.FindByTextContent: {
       const handle = await page.evaluateHandle(
         (tagName, text, args) => {
-          function compareText(text: string | null, matcher: string | SerializableRegex) {
+          function compareText(
+            text: string | null,
+            matcher: string | SerializableRegex,
+          ) {
             if (typeof matcher === "string") {
               return text === matcher
             }
@@ -47,7 +50,10 @@ export async function getElementHandle(
             return regex.test(text ?? "")
           }
 
-          function matchTextContent(element: Element, matcher: string | SerializableRegex) {
+          function matchTextContent(
+            element: Element,
+            matcher: string | SerializableRegex,
+          ) {
             return compareText(element.textContent, matcher)
           }
 
@@ -64,7 +70,9 @@ export async function getElementHandle(
             })
           }
 
-          const elements = Array.from(document.querySelectorAll(tagName)).filter(
+          const elements = Array.from(
+            document.querySelectorAll(tagName),
+          ).filter(
             (element) =>
               element.checkVisibility() &&
               matchTextContent(element, text) &&

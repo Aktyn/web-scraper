@@ -1,8 +1,15 @@
-import { api, type RouteParameters, type Routes, type RoutesWithMethod } from "@/lib/api"
+import {
+  api,
+  type RouteParameters,
+  type Routes,
+  type RoutesWithMethod,
+} from "@/lib/api"
 import { useState } from "react"
 import { toast } from "sonner"
 
-export function usePost<RoutePath extends RoutesWithMethod<"post">>(route: `/${RoutePath}`) {
+export function usePost<RoutePath extends RoutesWithMethod<"post">>(
+  route: `/${RoutePath}`,
+) {
   const [isPosting, setIsPosting] = useState(false)
 
   const postItem = async (

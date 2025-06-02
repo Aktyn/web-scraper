@@ -20,7 +20,9 @@ export type ApiPaginatedResponse<T extends object> = {
   data: Array<T>
 } & z.infer<typeof paginationSchema>
 
-export function getApiPaginatedResponseSchema<T extends z.ZodType<object>>(zodSchema: T) {
+export function getApiPaginatedResponseSchema<T extends z.ZodType<object>>(
+  zodSchema: T,
+) {
   return paginationSchema.extend({
     data: z.array(zodSchema),
   })

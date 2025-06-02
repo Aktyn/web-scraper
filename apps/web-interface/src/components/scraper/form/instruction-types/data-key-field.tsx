@@ -2,7 +2,10 @@ import { FormInput } from "@/components/common/form/form-input"
 import type { CreateScraper } from "@web-scraper/common"
 import type { ComponentProps } from "react"
 
-type DataKeyFieldProps = Omit<ComponentProps<typeof FormInput<CreateScraper>>, "label"> & {
+type DataKeyFieldProps = Omit<
+  ComponentProps<typeof FormInput<CreateScraper>>,
+  "label"
+> & {
   label?: string
 }
 

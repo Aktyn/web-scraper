@@ -30,7 +30,8 @@ export function Sidebar() {
       ref={ref}
       className={cn(
         "z-20 border-r flex flex-col items-stretch relative transition-[margin,border-color,box-shadow] duration-400 ease-in-out bg-background-darker",
-        isInitiallyOpen && "animate-in delay-100 slide-in-from-left fill-mode-both",
+        isInitiallyOpen &&
+          "animate-in delay-100 slide-in-from-left fill-mode-both",
       )}
       style={{
         marginLeft: isOpen ? "0px" : `calc(-${width}px + var(--spacing)*16)`,
@@ -66,7 +67,8 @@ export function Sidebar() {
           </TooltipTrigger>
           <TooltipContent>
             Toggle sidebar
-            {status === ConnectionStatus.Connecting && " (establishing server connection)"}
+            {status === ConnectionStatus.Connecting &&
+              " (establishing server connection)"}
             {status === ConnectionStatus.Error && " (sever connection error)"}
           </TooltipContent>
         </Tooltip>
@@ -90,7 +92,9 @@ function PinnedDataStores() {
 
   return (
     <>
-      {pinnedDataStores.length > 0 && <Separator className="my-2 opacity-50 animate-in zoom-in" />}
+      {pinnedDataStores.length > 0 && (
+        <Separator className="my-2 opacity-50 animate-in zoom-in" />
+      )}
 
       <div className="grow flex flex-col gap-2 p-2 contain-inline-size">
         {pinnedDataStores.map((store) => (
@@ -105,7 +109,9 @@ function PinnedDataStores() {
             }}
           >
             <strong className="truncate">{store.name}</strong>
-            <Badge className="text-muted-foreground bg-muted">{store.recordsCount}</Badge>
+            <Badge className="text-muted-foreground bg-muted">
+              {store.recordsCount}
+            </Badge>
             <Tooltip>
               <TooltipTrigger asChild>
                 <Button

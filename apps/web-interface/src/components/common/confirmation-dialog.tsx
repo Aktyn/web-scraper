@@ -37,7 +37,10 @@ export function ConfirmationDialog({
           <DialogDescription>{description}</DialogDescription>
         </DialogHeader>
         <DialogFooter>
-          <Button variant="outline" onClick={() => dialogProps.onOpenChange?.(false)}>
+          <Button
+            variant="outline"
+            onClick={() => dialogProps.onOpenChange?.(false)}
+          >
             {cancelText}
           </Button>
           <Button variant={variant} onClick={onConfirm}>

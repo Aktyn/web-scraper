@@ -1,7 +1,12 @@
 import type { ScraperType } from "@web-scraper/common"
 import { CopyButton } from "../common/button/copy-button"
 import { LabeledValue } from "../common/labeled-value"
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "../shadcn/accordion"
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "../shadcn/accordion"
 import { Separator } from "../shadcn/separator"
 import { ScraperDataSource } from "./scraper-data-source"
 import { ScraperInstructionsTree } from "./scraper-instructions-tree"
@@ -34,11 +39,19 @@ export function ScraperPanel({ scraper, onEditSuccess }: ScraperPanelProps) {
         <div className="flex flex-row items-center gap-2">
           {/* TODO: run and watch for scraper updates in real time with SSE */}
           {/* TODO: consider adding small form to configure number of scraper iterations and sequence of row indices to iterate over */}
-          <Button variant="default" onClick={handleExecute} disabled={isPosting}>
+          <Button
+            variant="default"
+            onClick={handleExecute}
+            disabled={isPosting}
+          >
             <Play />
             {isPosting ? "Executing..." : "Execute"}
           </Button>
-          <Button variant="outline" className="ml-auto" onClick={() => setEditDialogOpen(true)}>
+          <Button
+            variant="outline"
+            className="ml-auto"
+            onClick={() => setEditDialogOpen(true)}
+          >
             <Edit />
             Edit
           </Button>
@@ -70,7 +83,12 @@ export function ScraperPanel({ scraper, onEditSuccess }: ScraperPanelProps) {
 
         {scraper.dataSources.length > 0 && (
           <>
-            <Accordion type="single" collapsible defaultValue="sources" className="w-full">
+            <Accordion
+              type="single"
+              collapsible
+              defaultValue="sources"
+              className="w-full"
+            >
               <AccordionItem value="sources">
                 <AccordionTrigger tabIndex={-1}>Data Sources</AccordionTrigger>
                 <AccordionContent className="pb-0 flex flex-col items-stretch gap-2">
@@ -87,7 +105,12 @@ export function ScraperPanel({ scraper, onEditSuccess }: ScraperPanelProps) {
           </>
         )}
 
-        <Accordion type="single" collapsible defaultValue="instructions" className="w-full">
+        <Accordion
+          type="single"
+          collapsible
+          defaultValue="instructions"
+          className="w-full"
+        >
           <AccordionItem value="instructions">
             <AccordionTrigger tabIndex={-1}>
               <div className="flex flex-row items-baseline gap-2">

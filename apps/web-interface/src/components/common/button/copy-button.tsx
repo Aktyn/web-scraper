@@ -1,5 +1,9 @@
 import { Button } from "@/components/shadcn/button"
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/shadcn/tooltip"
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/shadcn/tooltip"
 import { cn } from "@/lib/utils"
 import { Check, Copy } from "lucide-react"
 import { type ComponentProps, useRef, useState } from "react"

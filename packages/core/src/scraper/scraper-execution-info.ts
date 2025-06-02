@@ -1,4 +1,7 @@
-import type { ScraperInstructions, ScraperInstructionsExecutionInfo } from "@web-scraper/common"
+import type {
+  ScraperInstructions,
+  ScraperInstructionsExecutionInfo,
+} from "@web-scraper/common"
 import { EventEmitter } from "node:stream"
 import type { DataBridge } from "./data-helper"
 

@@ -13,7 +13,9 @@ export function ScraperValue({ value }: ScraperValueProps) {
     <div className="border-2 border-dashed border-primary/30 rounded-sm p-2 flex flex-col gap-2 bg-background-lighter">
       <div className="flex items-center gap-2">
         <DynamicIcon name={iconsMap[value.type]} className="size-4" />
-        <span className="text-sm font-medium capitalize leading-none">{value.type}</span>
+        <span className="text-sm font-medium capitalize leading-none">
+          {value.type}
+        </span>
       </div>
       <ValueDetails value={value} />
     </div>
@@ -51,7 +53,9 @@ function ValueDetails({ value }: { value: ScraperValue }) {
           <LabeledValue label="Data key:">
             {/* Note: first part of dataKey should match one of data source aliases */}
             {/* TODO: use scraper instructions context and check dataKey validity */}
-            <pre className="text-sm break-all whitespace-normal">{value.dataKey}</pre>
+            <pre className="text-sm break-all whitespace-normal">
+              {value.dataKey}
+            </pre>
           </LabeledValue>
           {value.defaultValue && (
             <LabeledValue label="Default value:">
@@ -77,7 +81,9 @@ function ValueDetails({ value }: { value: ScraperValue }) {
             <ScraperSelector selector={value.selector} />
           </LabeledValue>
           <LabeledValue label="Attribute:">
-            <pre className="text-sm break-all whitespace-normal">{value.attributeName}</pre>
+            <pre className="text-sm break-all whitespace-normal">
+              {value.attributeName}
+            </pre>
           </LabeledValue>
         </div>
       )

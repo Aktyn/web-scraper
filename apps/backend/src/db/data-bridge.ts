@@ -15,10 +15,13 @@ type DataBridgeSource = {
 }
 
 type SourceTypeKey<SourcesType> =
-  SourcesType extends Record<infer Key, DataBridgeSource> ? `${Key & string}.${string}` : never
+  SourcesType extends Record<infer Key, DataBridgeSource>
+    ? `${Key & string}.${string}`
+    : never
 
-export class DataBridge<SourcesType extends Record<SourceAlias, DataBridgeSource>>
-  implements DataBridgeInterface
+export class DataBridge<
+  SourcesType extends Record<SourceAlias, DataBridgeSource>,
+> implements DataBridgeInterface
 {
   constructor(
     private readonly db: DbModule,

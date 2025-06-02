@@ -1,6 +1,9 @@
 import { LabeledValue } from "@/components/common/labeled-value"
 import { cn } from "@/lib/utils"
-import { ElementSelectorType, type ScraperElementSelector } from "@web-scraper/common"
+import {
+  ElementSelectorType,
+  type ScraperElementSelector,
+} from "@web-scraper/common"
 import { DynamicIcon, type IconName } from "lucide-react/dynamic"
 import { type ComponentProps } from "react"
 import { Fragment } from "react/jsx-runtime"
@@ -9,7 +12,10 @@ type ScraperSelectorProps = {
   selector: ScraperElementSelector
 } & ComponentProps<"div">
 
-export function ScraperSelector({ selector, ...divProps }: ScraperSelectorProps) {
+export function ScraperSelector({
+  selector,
+  ...divProps
+}: ScraperSelectorProps) {
   return (
     <div
       {...divProps}
@@ -20,7 +26,9 @@ export function ScraperSelector({ selector, ...divProps }: ScraperSelectorProps)
     >
       <div className="flex items-center gap-2">
         <DynamicIcon name={iconsMap[selector.type]} className="size-4" />
-        <span className="text-sm font-medium capitalize leading-none">{selector.type}</span>
+        <span className="text-sm font-medium capitalize leading-none">
+          {selector.type}
+        </span>
       </div>
       <SelectorDetails selector={selector} />
     </div>
@@ -35,7 +43,11 @@ const iconsMap: { [key in ElementSelectorType]: IconName } = {
 function SelectorDetails({ selector }: { selector: ScraperElementSelector }) {
   switch (selector.type) {
     case ElementSelectorType.Query:
-      return <pre className="text-sm break-all whitespace-normal">{selector.query}</pre>
+      return (
+        <pre className="text-sm break-all whitespace-normal">
+          {selector.query}
+        </pre>
+      )
 
     case ElementSelectorType.FindByTextContent: {
       const textValue =
@@ -45,12 +57,16 @@ function SelectorDetails({ selector }: { selector: ScraperElementSelector }) {
 
       return (
         <div className="flex flex-row flex-wrap gap-2 gap-x-4">
-          <LabeledValue label={typeof selector.text === "string" ? "Text:" : "RegExp:"}>
+          <LabeledValue
+            label={typeof selector.text === "string" ? "Text:" : "RegExp:"}
+          >
             {textValue}
           </LabeledValue>
           {selector.tagName && (
             <LabeledValue label="Tag:">
-              <pre className="text-sm break-all whitespace-normal">{selector.tagName}</pre>
+              <pre className="text-sm break-all whitespace-normal">
+                {selector.tagName}
+              </pre>
             </LabeledValue>
           )}
           {selector.args && Object.keys(selector.args).length > 0 && (
@@ -58,11 +74,20 @@ function SelectorDetails({ selector }: { selector: ScraperElementSelector }) {
               <div>
                 {Object.entries(selector.args).map(([key, value], index) => (
                   <Fragment key={key}>
-                    {index > 0 && <span className="text-xs text-muted-foreground">, </span>}
-                    <div key={key} className="inline-flex flex-row items-baseline gap-1">
-                      <span className="text-xs text-muted-foreground">{key}:</span>
+                    {index > 0 && (
+                      <span className="text-xs text-muted-foreground">, </span>
+                    )}
+                    <div
+                      key={key}
+                      className="inline-flex flex-row items-baseline gap-1"
+                    >
+                      <span className="text-xs text-muted-foreground">
+                        {key}:
+                      </span>
                       <pre className="text-sm break-all whitespace-normal">
-                        {typeof value === "string" ? value : `/${value.source}/${value.flags}`}
+                        {typeof value === "string"
+                          ? value
+                          : `/${value.source}/${value.flags}`}
                       </pre>
                     </div>
                   </Fragment>

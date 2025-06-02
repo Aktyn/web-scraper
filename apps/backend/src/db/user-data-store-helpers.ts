@@ -1,4 +1,8 @@
-import { type CreateUserDataStore, randomString, SqliteColumnType } from "@web-scraper/common"
+import {
+  type CreateUserDataStore,
+  randomString,
+  SqliteColumnType,
+} from "@web-scraper/common"
 // import { generateSQLiteDrizzleJson, generateSQLiteMigration } from "drizzle-kit/api"
 import {
   blob,
@@ -26,7 +30,8 @@ export async function createUserDataStore(
   db: DbModule,
   data: CreateUserDataStore & { tableName?: string },
 ) {
-  const tableName = data.tableName ?? sanitizeTableName(`${data.name}_${randomString(8)}`)
+  const tableName =
+    data.tableName ?? sanitizeTableName(`${data.name}_${randomString(8)}`)
 
   const columns = data.columns.reduce(
     (acc, columnSchema) => {
@@ -45,13 +50,19 @@ export async function createUserDataStore(
           acc[columnSchema.name] = real(columnSchema.name)
           break
         case SqliteColumnType.INTEGER:
-          acc[columnSchema.name] = integer(columnSchema.name, { mode: "number" })
+          acc[columnSchema.name] = integer(columnSchema.name, {
+            mode: "number",
+          })
           break
         case SqliteColumnType.BOOLEAN:
-          acc[columnSchema.name] = integer(columnSchema.name, { mode: "boolean" })
+          acc[columnSchema.name] = integer(columnSchema.name, {
+            mode: "boolean",
+          })
           break
         case SqliteColumnType.TIMESTAMP:
-          acc[columnSchema.name] = integer(columnSchema.name, { mode: "timestamp" })
+          acc[columnSchema.name] = integer(columnSchema.name, {
+            mode: "timestamp",
+          })
           break
         case SqliteColumnType.BLOB:
           acc[columnSchema.name] = blob(columnSchema.name)

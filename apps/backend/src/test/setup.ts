@@ -40,7 +40,7 @@ export async function setup() {
     },
   )
 
-  return { api, db, logger }
+  return { api, db, logger, events }
 }
 
 export type TestModules = Awaited<ReturnType<typeof setup>>

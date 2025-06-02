@@ -6,6 +6,8 @@ export const scrapersTable = sqliteTable("scrapers", {
   id: primaryKey(),
   name: text("name").notNull().unique(),
   description: text("description"),
-  instructions: text("instructions", { mode: "json" }).notNull().$type<ScraperInstructions>(),
+  instructions: text("instructions", { mode: "json" })
+    .notNull()
+    .$type<ScraperInstructions>(),
   userDataDirectory: text("user_data_directory"),
 })

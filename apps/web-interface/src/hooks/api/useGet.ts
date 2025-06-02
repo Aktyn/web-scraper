@@ -1,11 +1,18 @@
-import { api, type RouteParameters, type Routes, type RoutesWithMethod } from "@/lib/api"
+import {
+  api,
+  type RouteParameters,
+  type Routes,
+  type RoutesWithMethod,
+} from "@/lib/api"
 import { useEffect, useState } from "react"
 import { toast } from "sonner"
 
 export function useGet<RoutePath extends RoutesWithMethod<"get">>(
   route: `/${RoutePath}`,
   params?: RouteParameters<RoutePath>,
-  queryParams?: Routes[RoutePath] extends { get: { querystring: infer Query } } ? Query : undefined,
+  queryParams?: Routes[RoutePath] extends { get: { querystring: infer Query } }
+    ? Query
+    : undefined,
 ) {
   type ResponseType = Routes[RoutePath]["get"]["response"]
 

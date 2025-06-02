@@ -15,7 +15,11 @@ import {
   uuid,
   wait,
 } from "@web-scraper/common"
-import puppeteer, { type Browser, type LaunchOptions, type Page } from "rebrowser-puppeteer"
+import puppeteer, {
+  type Browser,
+  type LaunchOptions,
+  type Page,
+} from "rebrowser-puppeteer"
 import { type DataBridge, getScraperValue } from "./data-helper"
 import { type ScraperExecutionContext } from "./helpers"
 import { getElementHandle } from "./selectors"
@@ -36,7 +40,9 @@ interface ScraperEvents {
   stateChange: (state: ScraperState) => void
   destroy: () => void
   executionFinished: (executionInfo: ScraperExecutionInfo) => void
-  executionUpdate: (executionInfo: ScraperInstructionsExecutionInfo[number]) => void
+  executionUpdate: (
+    executionInfo: ScraperInstructionsExecutionInfo[number],
+  ) => void
 }
 
 export class Scraper extends EventEmitter {
@@ -46,7 +52,10 @@ export class Scraper extends EventEmitter {
     for (const instance of Scraper.instances.values()) {
       instance.destroy()
     }
-    assert(Scraper.instances.size === 0, "Scraper instances have not been destroyed correctly")
+    assert(
+      Scraper.instances.size === 0,
+      "Scraper instances have not been destroyed correctly",
+    )
   }
 
   private readonly id: string
@@ -179,7 +188,9 @@ export class Scraper extends EventEmitter {
     const firstPage = (await this.browser.pages()).at(0)
 
     const page =
-      firstPage && firstPage.url() === "about:blank" ? firstPage : await this.browser.newPage()
+      firstPage && firstPage.url() === "about:blank"
+        ? firstPage
+        : await this.browser.newPage()
     await page.evaluateOnNewDocument((lang) => {
       Object.defineProperty(navigator, "language", {
         get: function () {
@@ -268,13 +279,17 @@ export class Scraper extends EventEmitter {
       "First instruction must be a navigation action",
     )
 
-    const pushInstructionInfo = <T extends ScraperInstructionInfo>(instructionInfo: T) => {
+    const pushInstructionInfo = <T extends ScraperInstructionInfo>(
+      instructionInfo: T,
+    ) => {
       const info = {
         type: ScraperInstructionsExecutionInfoType.Instruction,
         instructionInfo,
         url: context.page.url(),
         duration: 0,
-      } satisfies ScraperInstructionsExecutionInfo[number] & { instructionInfo: T }
+      } satisfies ScraperInstructionsExecutionInfo[number] & {
+        instructionInfo: T
+      }
       context.executionInfo.push(info)
       return info
     }
@@ -284,7 +299,8 @@ export class Scraper extends EventEmitter {
 
       const instructionStartUrl = context.page.url()
       const instructionStartTime = performance.now()
-      let lastInstructionInfo: ScraperInstructionsExecutionInfo[number] | null = null
+      let lastInstructionInfo: ScraperInstructionsExecutionInfo[number] | null =
+        null
 
       switch (instruction.type) {
         case ScraperInstructionType.PageAction:
@@ -297,7 +313,10 @@ export class Scraper extends EventEmitter {
 
         case ScraperInstructionType.Condition:
           {
-            this.logger.info({ msg: "Checking condition", condition: instruction.if })
+            this.logger.info({
+              msg: "Checking condition",
+              condition: instruction.if,
+            })
 
             const info = pushInstructionInfo({
               type: instruction.type,
@@ -309,12 +328,23 @@ export class Scraper extends EventEmitter {
             lastInstructionInfo = info
 
             const conditionalInstructionsResult = isMet
-              ? await this.executeInstructions(context, instruction.then, level + 1)
+              ? await this.executeInstructions(
+                  context,
+                  instruction.then,
+                  level + 1,
+                )
               : instruction.else
-                ? await this.executeInstructions(context, instruction.else, level + 1)
+                ? await this.executeInstructions(
+                    context,
+                    instruction.else,
+                    level + 1,
+                  )
                 : null
 
-            if (conditionalInstructionsResult?.type === ScraperInstructionType.Jump) {
+            if (
+              conditionalInstructionsResult?.type ===
+              ScraperInstructionType.Jump
+            ) {
               instruction = conditionalInstructionsResult
               break
             }
@@ -328,7 +358,10 @@ export class Scraper extends EventEmitter {
               dataKey: instruction.dataKey,
               value: instruction.value,
             })
-            const scraperValue = await getScraperValue(context, instruction.value)
+            const scraperValue = await getScraperValue(
+              context,
+              instruction.value,
+            )
             await context.dataBridge.set(instruction.dataKey, scraperValue)
             context.executionInfo.push({
               type: ScraperInstructionsExecutionInfoType.ExternalDataOperation,
@@ -380,15 +413,22 @@ export class Scraper extends EventEmitter {
 
       lastInstructionInfo.duration = performance.now() - instructionStartTime
       if (lastInstructionInfo.url !== context.page.url()) {
-        lastInstructionInfo.url = { from: instructionStartUrl, to: context.page.url() }
+        lastInstructionInfo.url = {
+          from: instructionStartUrl,
+          to: context.page.url(),
+        }
       }
 
       if (instruction.type === ScraperInstructionType.Jump) {
         i = instructions.findIndex(
           (marker) =>
-            marker.type === ScraperInstructionType.Marker && marker.name === instruction.markerName,
+            marker.type === ScraperInstructionType.Marker &&
+            marker.name === instruction.markerName,
         )
-        assert(level > 0 || i !== -1, `Marker "${instruction.markerName}" not found`)
+        assert(
+          level > 0 || i !== -1,
+          `Marker "${instruction.markerName}" not found`,
+        )
 
         if (i === -1) {
           this.logger.warn("Marker not found, returning to previous level")
@@ -399,7 +439,10 @@ export class Scraper extends EventEmitter {
     return null
   }
 
-  private async performPageAction(context: ScraperExecutionContext, action: PageAction) {
+  private async performPageAction(
+    context: ScraperExecutionContext,
+    action: PageAction,
+  ) {
     this.logger.info({ msg: "Performing action", action })
     switch (action.type) {
       case PageActionType.Wait:
@@ -409,14 +452,22 @@ export class Scraper extends EventEmitter {
         await context.page.goto(action.url, { timeout: 60_000 })
         break
       case PageActionType.Click: {
-        const handle = await getElementHandle(context.page, action.selector, true)
+        const handle = await getElementHandle(
+          context.page,
+          action.selector,
+          true,
+        )
         await handle.click({
           delay: randomInt(1, 4),
         })
         break
       }
       case PageActionType.Type: {
-        const handle = await getElementHandle(context.page, action.selector, true)
+        const handle = await getElementHandle(
+          context.page,
+          action.selector,
+          true,
+        )
         if (action.clearBeforeType) {
           await handle.evaluate((el) => {
             if (el instanceof HTMLInputElement) {
@@ -436,11 +487,17 @@ export class Scraper extends EventEmitter {
     }
   }
 
-  private async checkCondition(context: ScraperExecutionContext, condition: ScraperCondition) {
+  private async checkCondition(
+    context: ScraperExecutionContext,
+    condition: ScraperCondition,
+  ) {
     try {
       switch (condition.type) {
         case ScraperConditionType.IsVisible: {
-          const handle = await getElementHandle(context.page, condition.selector)
+          const handle = await getElementHandle(
+            context.page,
+            condition.selector,
+          )
           return !!(await handle?.isVisible())
         }
         case ScraperConditionType.TextEquals: {
@@ -451,7 +508,9 @@ export class Scraper extends EventEmitter {
           if (typeof condition.text === "string") {
             return value === condition.text
           }
-          return new RegExp(condition.text.source, condition.text.flags).test(value)
+          return new RegExp(condition.text.source, condition.text.flags).test(
+            value,
+          )
         }
       }
     } catch (error) {

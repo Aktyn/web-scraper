@@ -1,8 +1,15 @@
-import { api, type RouteParameters, type Routes, type RoutesWithMethod } from "@/lib/api"
+import {
+  api,
+  type RouteParameters,
+  type Routes,
+  type RoutesWithMethod,
+} from "@/lib/api"
 import { useState } from "react"
 import { toast } from "sonner"
 
-export function usePut<RoutePath extends RoutesWithMethod<"put">>(route: `/${RoutePath}`) {
+export function usePut<RoutePath extends RoutesWithMethod<"put">>(
+  route: `/${RoutePath}`,
+) {
   const [isPutting, setIsPutting] = useState(false)
 
   const putItem = async (

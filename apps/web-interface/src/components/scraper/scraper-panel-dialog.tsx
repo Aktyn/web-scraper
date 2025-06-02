@@ -32,7 +32,9 @@ export function ScraperPanelDialog({
       >
         <DialogHeader className="p-6 pb-0">
           <DialogTitle>{scraper.name}</DialogTitle>
-          {scraper.description && <DialogDescription>{scraper.description}</DialogDescription>}
+          {scraper.description && (
+            <DialogDescription>{scraper.description}</DialogDescription>
+          )}
         </DialogHeader>
         <ScrollArea className="max-h-full overflow-hidden **:data-[radix-scroll-area-viewport]:px-6">
           <ScraperPanel scraper={scraper} onEditSuccess={setScraper} />

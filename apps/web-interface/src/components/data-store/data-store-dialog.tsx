@@ -14,7 +14,10 @@ type DataStoreDialogProps = {
   store: UserDataStore
 } & ComponentProps<typeof Dialog>
 
-export function DataStoreDialog({ store, ...dialogProps }: DataStoreDialogProps) {
+export function DataStoreDialog({
+  store,
+  ...dialogProps
+}: DataStoreDialogProps) {
   return (
     <Dialog {...dialogProps}>
       <DialogContent
@@ -26,7 +29,9 @@ export function DataStoreDialog({ store, ...dialogProps }: DataStoreDialogProps)
             {store.name}
             <PinStoreButton store={store} />
           </DialogTitle>
-          {store.description && <DialogDescription>{store.description}</DialogDescription>}
+          {store.description && (
+            <DialogDescription>{store.description}</DialogDescription>
+          )}
         </DialogHeader>
         <DataStoreTable store={store} className="-m-6 mt-0" />
       </DialogContent>

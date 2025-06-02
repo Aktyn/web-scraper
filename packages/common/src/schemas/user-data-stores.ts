@@ -14,7 +14,9 @@ const columnSchema = z.object({
   name: z.string().min(1, "Column name is required"),
   type: z.nativeEnum(SqliteColumnType),
   notNull: z.boolean().optional(),
-  defaultValue: z.union([z.string(), z.number(), z.boolean(), z.null()]).optional(),
+  defaultValue: z
+    .union([z.string(), z.number(), z.boolean(), z.null()])
+    .optional(),
 })
 
 export type UserDataStoreColumn = z.infer<typeof columnSchema>
@@ -45,7 +47,9 @@ export const paramsWithTableNameSchema = z.object({
   tableName: z.string(),
 })
 
-export function upsertUserDataStoreRecordSchemaFactory(columns: UserDataStoreColumn[]) {
+export function upsertUserDataStoreRecordSchemaFactory(
+  columns: UserDataStoreColumn[],
+) {
   return z.object(
     columns.reduce(
       (acc, column) => {
@@ -61,16 +65,18 @@ export function upsertUserDataStoreRecordSchemaFactory(columns: UserDataStoreCol
           case SqliteColumnType.INTEGER:
           case SqliteColumnType.REAL:
           case SqliteColumnType.TIMESTAMP:
-            acc[column.name] = z.union([z.number(), z.string()]).transform((val) => {
-              if (typeof val === "string") {
-                if (val === "") {
-                  return column.notNull ? 0 : null
+            acc[column.name] = z
+              .union([z.number(), z.string()])
+              .transform((val) => {
+                if (typeof val === "string") {
+                  if (val === "") {
+                    return column.notNull ? 0 : null
+                  }
+                  const num = Number(val)
+                  return isNaN(num) ? null : num
                 }
-                const num = Number(val)
-                return isNaN(num) ? null : num
-              }
-              return val
-            })
+                return val
+              })
             break
           case SqliteColumnType.BOOLEAN:
             acc[column.name] = z.coerce.boolean()

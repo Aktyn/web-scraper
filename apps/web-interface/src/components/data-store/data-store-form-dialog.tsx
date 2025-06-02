@@ -161,7 +161,9 @@ export function DataStoreFormDialog({
         className="max-w-2xl max-h-[90vh] overflow-y-auto grid grid-rows-[auto_1fr]"
       >
         <DialogHeader>
-          <DialogTitle>{isEditing ? "Edit Data Store" : "Create Data Store"}</DialogTitle>
+          <DialogTitle>
+            {isEditing ? "Edit Data Store" : "Create Data Store"}
+          </DialogTitle>
           <DialogDescription>
             {isEditing
               ? "Edit the data store configuration. Note: Changing column structure may affect existing data."
@@ -196,7 +198,12 @@ export function DataStoreFormDialog({
                       Define the structure of your data store.
                     </p>
                   </div>
-                  <Button type="button" variant="outline" size="sm" onClick={addColumn}>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={addColumn}
+                  >
                     <Plus className="size-4" />
                     Add Column
                   </Button>
@@ -205,14 +212,18 @@ export function DataStoreFormDialog({
                   <div className="flex items-center gap-2 bg-warning/20 text-warning-foreground border border-warning p-2 rounded-lg">
                     <AlertTriangle className="size-8" />
                     <p className="text-pretty">
-                      Changing the column structure will remove all existing data.
+                      Changing the column structure will remove all existing
+                      data.
                     </p>
                   </div>
                 )}
 
                 <div className="space-y-4">
                   {fields.map((field, index) => (
-                    <div key={field.id} className="border rounded-lg p-4 space-y-4">
+                    <div
+                      key={field.id}
+                      className="border rounded-lg p-4 space-y-4"
+                    >
                       <div className="flex items-center justify-between">
                         <h4 className="font-medium">Column {index + 1}</h4>
                         {fields.length > 1 && (
@@ -252,11 +263,18 @@ export function DataStoreFormDialog({
                           render={({ field }) => (
                             <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3">
                               <div className="space-y-0.5">
-                                <FormLabel className="text-base">Required</FormLabel>
-                                <FormDescription>This column cannot be empty</FormDescription>
+                                <FormLabel className="text-base">
+                                  Required
+                                </FormLabel>
+                                <FormDescription>
+                                  This column cannot be empty
+                                </FormDescription>
                               </div>
                               <FormControl>
-                                <Switch checked={field.value} onCheckedChange={field.onChange} />
+                                <Switch
+                                  checked={field.value}
+                                  onCheckedChange={field.onChange}
+                                />
                               </FormControl>
                             </FormItem>
                           )}
@@ -279,7 +297,9 @@ export function DataStoreFormDialog({
                                   }}
                                 />
                               </FormControl>
-                              <FormDescription>Default value for this column</FormDescription>
+                              <FormDescription>
+                                Default value for this column
+                              </FormDescription>
                               <FormMessage />
                             </FormItem>
                           )}
@@ -302,7 +322,10 @@ export function DataStoreFormDialog({
                 <Button
                   type="submit"
                   disabled={isPosting || isPutting}
-                  className={cn(showColumnsEditWarning && "bg-warning hover:bg-warning-foreground")}
+                  className={cn(
+                    showColumnsEditWarning &&
+                      "bg-warning hover:bg-warning-foreground",
+                  )}
                 >
                   {showColumnsEditWarning && <AlertTriangle />}
                   {isEditing

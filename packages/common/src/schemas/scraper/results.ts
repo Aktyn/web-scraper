@@ -5,7 +5,10 @@ import { pageActionSchema } from "./page-action"
 import { type ScraperDataKey, scraperValueSchema } from "./value"
 
 const instructionInfoSchema = z.discriminatedUnion("type", [
-  z.object({ type: z.literal(ScraperInstructionType.PageAction), action: pageActionSchema }),
+  z.object({
+    type: z.literal(ScraperInstructionType.PageAction),
+    action: pageActionSchema,
+  }),
 
   z.object({
     type: z.literal(ScraperInstructionType.Condition),
@@ -23,8 +26,14 @@ const instructionInfoSchema = z.discriminatedUnion("type", [
     dataKey: z.custom<ScraperDataKey>(),
   }),
 
-  z.object({ type: z.literal(ScraperInstructionType.Marker), name: z.string() }),
-  z.object({ type: z.literal(ScraperInstructionType.Jump), markerName: z.string() }),
+  z.object({
+    type: z.literal(ScraperInstructionType.Marker),
+    name: z.string(),
+  }),
+  z.object({
+    type: z.literal(ScraperInstructionType.Jump),
+    markerName: z.string(),
+  }),
 ])
 
 export type ScraperInstructionInfo = z.infer<typeof instructionInfoSchema>
@@ -41,11 +50,16 @@ export const scraperInstructionsExecutionInfoSchema = z.array(
     z.object({
       type: z.literal(ScraperInstructionsExecutionInfoType.Instruction),
       instructionInfo: instructionInfoSchema,
-      url: z.union([z.string(), z.object({ from: z.string(), to: z.string() })]),
+      url: z.union([
+        z.string(),
+        z.object({ from: z.string(), to: z.string() }),
+      ]),
       duration: z.number(),
     }),
     z.object({
-      type: z.literal(ScraperInstructionsExecutionInfoType.ExternalDataOperation),
+      type: z.literal(
+        ScraperInstructionsExecutionInfoType.ExternalDataOperation,
+      ),
       operation: z.discriminatedUnion("type", [
         z.object({
           type: z.literal("get"),

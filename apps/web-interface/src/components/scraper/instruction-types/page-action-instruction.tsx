@@ -6,18 +6,27 @@ import { ScraperValue } from "./scraper-value"
 import { LabeledValue } from "@/components/common/labeled-value"
 import { CopyButton } from "@/components/common/button/copy-button"
 import { Check, ExternalLink } from "lucide-react"
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/shadcn/tooltip"
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/shadcn/tooltip"
 
 type PageActionInstructionProps = {
   action: PageAction
 } & ComponentProps<"div">
 
-export function PageActionInstruction({ action, ...divProps }: PageActionInstructionProps) {
+export function PageActionInstruction({
+  action,
+  ...divProps
+}: PageActionInstructionProps) {
   return (
     <div {...divProps}>
       <div className="flex items-center gap-2">
         <DynamicIcon name={iconsMap[action.type]} className="size-4" />
-        <span className="font-medium capitalize leading-none">{action.type}</span>
+        <span className="font-medium capitalize leading-none">
+          {action.type}
+        </span>
       </div>
       <ActionDetails action={action} />
     </div>

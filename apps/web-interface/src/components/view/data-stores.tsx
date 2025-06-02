@@ -1,7 +1,11 @@
 import { ConfirmationDialog } from "@/components/common/confirmation-dialog"
 import { DataTable } from "@/components/common/table/data-table"
 import { Button } from "@/components/shadcn/button"
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/shadcn/tooltip"
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/shadcn/tooltip"
 import { useDelete } from "@/hooks/api/useDelete"
 import { useInfiniteGet } from "@/hooks/api/useInfiniteGet"
 import { usePinnedDataStores } from "@/providers/pinned-data-stores.provider"
@@ -66,7 +70,9 @@ export function DataStores() {
       {
         accessorKey: "name",
         header: "Name",
-        cell: ({ row }) => <div className="font-medium">{row.original.name}</div>,
+        cell: ({ row }) => (
+          <div className="font-medium">{row.original.name}</div>
+        ),
       },
       {
         accessorKey: "description",
@@ -136,7 +142,10 @@ export function DataStores() {
           <Plus />
           Add Data Store
         </Button>
-        <RefreshButton onClick={refresh} refreshing={isLoading || isLoadingMore} />
+        <RefreshButton
+          onClick={refresh}
+          refreshing={isLoading || isLoadingMore}
+        />
       </div>
       <DataTable
         data-transition-direction="left"

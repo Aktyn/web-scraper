@@ -1,11 +1,20 @@
 import { Slot } from "@radix-ui/react-slot"
-import { type ScraperInstructions, ScraperInstructionType } from "@web-scraper/common"
+import {
+  type ScraperInstructions,
+  ScraperInstructionType,
+} from "@web-scraper/common"
 import { CircleAlert } from "lucide-react"
 import type { PropsWithChildren } from "react"
 import { ConditionInstruction } from "./instruction-types/condition-instruction"
 import { PageActionInstruction } from "./instruction-types/page-action-instruction"
-import { DeleteDataInstruction, SaveDataInstruction } from "./instruction-types/data-instruction"
-import { JumpInstruction, MarkerInstruction } from "./instruction-types/control-flow-instruction"
+import {
+  DeleteDataInstruction,
+  SaveDataInstruction,
+} from "./instruction-types/data-instruction"
+import {
+  JumpInstruction,
+  MarkerInstruction,
+} from "./instruction-types/control-flow-instruction"
 
 function BlockContainer({ children }: PropsWithChildren) {
   return (
@@ -16,7 +25,11 @@ function BlockContainer({ children }: PropsWithChildren) {
   )
 }
 
-export function InstructionBlock({ instruction }: { instruction: ScraperInstructions[number] }) {
+export function InstructionBlock({
+  instruction,
+}: {
+  instruction: ScraperInstructions[number]
+}) {
   switch (instruction.type) {
     case ScraperInstructionType.PageAction:
       return (
@@ -39,7 +52,10 @@ export function InstructionBlock({ instruction }: { instruction: ScraperInstruct
     case ScraperInstructionType.SaveData:
       return (
         <BlockContainer>
-          <SaveDataInstruction dataKey={instruction.dataKey} value={instruction.value} />
+          <SaveDataInstruction
+            dataKey={instruction.dataKey}
+            value={instruction.value}
+          />
         </BlockContainer>
       )
 

@@ -8,7 +8,10 @@ interface SaveDataInstructionFormProps {
   fieldName: `instructions.${number}`
 }
 
-export function SaveDataInstructionForm({ control, fieldName }: SaveDataInstructionFormProps) {
+export function SaveDataInstructionForm({
+  control,
+  fieldName,
+}: SaveDataInstructionFormProps) {
   return (
     <div className="space-y-4">
       <DataKeyField control={control} name={`${fieldName}.dataKey`} />

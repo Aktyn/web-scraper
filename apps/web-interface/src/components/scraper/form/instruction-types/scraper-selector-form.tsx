@@ -1,6 +1,10 @@
 import { FormInput } from "@/components/common/form/form-input"
 import { FormSelect } from "@/components/common/form/form-select"
-import { ElementSelectorType, TAG_NAMES, type CreateScraper } from "@web-scraper/common"
+import {
+  ElementSelectorType,
+  TAG_NAMES,
+  type CreateScraper,
+} from "@web-scraper/common"
 import { useFormContext, type Control } from "react-hook-form"
 import { mapToSelectOptions } from "../helpers"
 import type { ConditionInstructionFieldName } from "./condition-instruction-form"
@@ -26,7 +30,10 @@ interface ScraperSelectorFormProps {
     | `${ConditionInstructionFieldName}.if.selector`
 }
 
-export function ScraperSelectorForm({ control, fieldName }: ScraperSelectorFormProps) {
+export function ScraperSelectorForm({
+  control,
+  fieldName,
+}: ScraperSelectorFormProps) {
   return (
     <div className="space-y-4">
       <FormSelect

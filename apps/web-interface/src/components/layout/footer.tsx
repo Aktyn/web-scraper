@@ -19,7 +19,12 @@ export function Footer({ isOpen }: { isOpen: boolean }) {
         )}
       />
       <span className="font-semibold">Aktyn</span>
-      <Button asChild variant="link" size="sm" className="px-0! h-auto text-muted-foreground">
+      <Button
+        asChild
+        variant="link"
+        size="sm"
+        className="px-0! h-auto text-muted-foreground"
+      >
         <a href="https://github.com/Aktyn" target="_blank">
           GitHub
           <ExternalLink />

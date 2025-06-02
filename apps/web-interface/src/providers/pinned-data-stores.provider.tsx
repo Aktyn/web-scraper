@@ -7,7 +7,11 @@ const PinnedDataStoresContext = createContext({
   unpinDataStore: (_dataStore: UserDataStore) => {},
 })
 
-export function PinnedDataStoresProvider({ children }: { children: React.ReactNode }) {
+export function PinnedDataStoresProvider({
+  children,
+}: {
+  children: React.ReactNode
+}) {
   const [pinnedDataStores, setPinnedDataStores] = useState<UserDataStore[]>([])
 
   const pinDataStore = useCallback((dataStore: UserDataStore) => {
@@ -15,11 +19,15 @@ export function PinnedDataStoresProvider({ children }: { children: React.ReactNo
   }, [])
 
   const unpinDataStore = useCallback((dataStore: UserDataStore) => {
-    setPinnedDataStores((prev) => prev.filter((store) => store.tableName !== dataStore.tableName))
+    setPinnedDataStores((prev) =>
+      prev.filter((store) => store.tableName !== dataStore.tableName),
+    )
   }, [])
 
   return (
-    <PinnedDataStoresContext value={{ pinnedDataStores, pinDataStore, unpinDataStore }}>
+    <PinnedDataStoresContext
+      value={{ pinnedDataStores, pinDataStore, unpinDataStore }}
+    >
       {children}
     </PinnedDataStoresContext>
   )

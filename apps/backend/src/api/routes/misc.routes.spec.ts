@@ -37,7 +37,9 @@ describe("Misc Routes", () => {
     })
 
     it("should return 500 if there is a database error", async () => {
-      vi.spyOn(modules.db, "select").mockRejectedValue(new Error("Database error"))
+      vi.spyOn(modules.db, "select").mockRejectedValue(
+        new Error("Database error"),
+      )
 
       const response = await modules.api.inject({
         method: "GET",

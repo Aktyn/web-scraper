@@ -1,4 +1,9 @@
-import { api, type RouteParameters, type Routes, type RoutesWithMethod } from "@/lib/api"
+import {
+  api,
+  type RouteParameters,
+  type Routes,
+  type RoutesWithMethod,
+} from "@/lib/api"
 import { useCallback, useEffect, useState } from "react"
 import { toast } from "sonner"
 
@@ -6,14 +11,18 @@ export function useInfiniteGet<RoutePath extends RoutesWithMethod<"get">>(
   route: `/${RoutePath}`,
   params?: RouteParameters<RoutePath>,
   baseQueryParams?: Omit<
-    Routes[RoutePath] extends { get: { querystring: infer Query } } ? Query : undefined,
+    Routes[RoutePath] extends { get: { querystring: infer Query } }
+      ? Query
+      : undefined,
     "page"
   >,
 ) {
   type ResponseType = Routes[RoutePath]["get"]["response"]
   type DataType = ResponseType extends { data: infer Data } ? Data : never
   type ItemType = DataType extends (infer Item)[] ? Item : never
-  type QueryParams = Routes[RoutePath] extends { get: { querystring: infer Query } }
+  type QueryParams = Routes[RoutePath] extends {
+    get: { querystring: infer Query }
+  }
     ? Query
     : undefined
 
@@ -51,7 +60,8 @@ export function useInfiniteGet<RoutePath extends RoutesWithMethod<"get">>(
             setHasMore(response.hasMore as boolean)
           } else {
             // Fallback: assume no more data if we got less than expected
-            const pageSize = (queryParams as Record<string, unknown>)?.pageSize || 64
+            const pageSize =
+              (queryParams as Record<string, unknown>)?.pageSize || 64
             setHasMore(newData.length >= (pageSize as number))
           }
 

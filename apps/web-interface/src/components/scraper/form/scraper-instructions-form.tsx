@@ -37,7 +37,10 @@ export function ScraperInstructionsForm({
   name = "instructions",
   condition,
 }: ScraperInstructionsFormProps) {
-  const { fields, append, remove } = useFieldArray<CreateScraper, "instructions">({
+  const { fields, append, remove } = useFieldArray<
+    CreateScraper,
+    "instructions"
+  >({
     control,
     name: name as never,
   })
@@ -59,7 +62,10 @@ export function ScraperInstructionsForm({
         const fieldName = `${name}.${index}` as `instructions.${number}`
 
         return (
-          <div key={field.id} className="border rounded-lg p-4 flex flex-col items-stretch gap-4">
+          <div
+            key={field.id}
+            className="border rounded-lg p-4 flex flex-col items-stretch gap-4"
+          >
             <div className="flex items-center justify-between">
               <h4 className="font-medium">Instruction {index + 1}</h4>
               <Button
@@ -138,13 +144,17 @@ function InstructionForm({ control, fieldName }: InstructionFormProps) {
       )
 
     case ScraperInstructionType.Condition:
-      return <ConditionInstructionForm control={control} fieldName={fieldName} />
+      return (
+        <ConditionInstructionForm control={control} fieldName={fieldName} />
+      )
 
     case ScraperInstructionType.SaveData:
       return <SaveDataInstructionForm control={control} fieldName={fieldName} />
 
     case ScraperInstructionType.DeleteData:
-      return <DeleteDataInstructionForm control={control} fieldName={fieldName} />
+      return (
+        <DeleteDataInstructionForm control={control} fieldName={fieldName} />
+      )
 
     case ScraperInstructionType.Marker:
       return (

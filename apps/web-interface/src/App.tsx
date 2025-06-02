@@ -32,9 +32,12 @@ export default function App() {
                 classNames: {
                   title: "font-semibold! text-sm!",
                   description: "font-normal text-sm",
-                  success: "border-success! text-success-foreground! bg-success/40!",
-                  error: "border-destructive! text-destructive-foreground! bg-destructive/40!",
-                  warning: "border-warning! text-warning-foreground! bg-warning/40!",
+                  success:
+                    "border-success! text-success-foreground! bg-success/40!",
+                  error:
+                    "border-destructive! text-destructive-foreground! bg-destructive/40!",
+                  warning:
+                    "border-warning! text-warning-foreground! bg-warning/40!",
                   info: "border-info! text-info-foreground! bg-info/40!",
                 },
               }}

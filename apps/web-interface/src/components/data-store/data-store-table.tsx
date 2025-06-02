@@ -3,7 +3,11 @@ import { useInfiniteGet } from "@/hooks/api/useInfiniteGet"
 import { useStateToRef } from "@/hooks/useStateToRef"
 import { cn, formatDateTime } from "@/lib/utils"
 import { type ColumnDef } from "@tanstack/react-table"
-import { SqliteColumnType, type UserDataStoreColumn, type UserDataStore } from "@web-scraper/common"
+import {
+  SqliteColumnType,
+  type UserDataStoreColumn,
+  type UserDataStore,
+} from "@web-scraper/common"
 import { Check, Download, Edit, Plus, Trash, X } from "lucide-react"
 import { useMemo, useState } from "react"
 import { ConfirmationDialog } from "../common/confirmation-dialog"
@@ -22,23 +26,34 @@ type DataStoreTableProps = {
   onEdit?: (store: UserDataStore) => void
 }
 
-export function DataStoreTable({ store: initialStore, className }: DataStoreTableProps) {
+export function DataStoreTable({
+  store: initialStore,
+  className,
+}: DataStoreTableProps) {
   const [store, setStore] = useState(initialStore)
 
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
-  const [recordToDelete, setRecordToDelete] = useState<Record<string, unknown> | null>(null)
+  const [recordToDelete, setRecordToDelete] = useState<Record<
+    string,
+    unknown
+  > | null>(null)
 
   const [upsertRecordDialogOpen, setUpsertRecordDialogOpen] = useState(false)
-  const [recordToEdit, setRecordToEdit] = useState<Record<string, unknown> | null>(null)
+  const [recordToEdit, setRecordToEdit] = useState<Record<
+    string,
+    unknown
+  > | null>(null)
 
   const [editDialogOpen, setEditDialogOpen] = useState(false)
 
-  const { data, isLoading, isLoadingMore, hasMore, loadMore, refresh } = useInfiniteGet(
-    "/user-data-stores/:tableName/records",
-    { tableName: store.tableName },
-  )
+  const { data, isLoading, isLoadingMore, hasMore, loadMore, refresh } =
+    useInfiniteGet("/user-data-stores/:tableName/records", {
+      tableName: store.tableName,
+    })
 
-  const { deleteItem, isDeleting } = useDelete("/user-data-stores/:tableName/records/:id")
+  const { deleteItem, isDeleting } = useDelete(
+    "/user-data-stores/:tableName/records/:id",
+  )
 
   const handleDeleteClick = (record: Record<string, unknown>) => {
     setRecordToDelete(record)
@@ -65,7 +80,10 @@ export function DataStoreTable({ store: initialStore, className }: DataStoreTabl
     () => [
       ...store.columns.map<ColumnDef<Record<string, unknown>>>((column) => ({
         accessorKey: column.name,
-        header: column.name === "id" ? "ID" : () => <ColumnNameLabel column={column} />,
+        header:
+          column.name === "id"
+            ? "ID"
+            : () => <ColumnNameLabel column={column} />,
         cell: ({ row }) => {
           const value = row.original[column.name]
           if (value === null) {
@@ -126,7 +144,12 @@ export function DataStoreTable({ store: initialStore, className }: DataStoreTabl
 
   return (
     <>
-      <div className={cn("flex flex-col gap-2 items-stretch overflow-hidden", className)}>
+      <div
+        className={cn(
+          "flex flex-col gap-2 items-stretch overflow-hidden",
+          className,
+        )}
+      >
         <div className="p-2 flex flex-row flex-wrap gap-2 items-center">
           <Button
             variant="outline"
@@ -142,7 +165,10 @@ export function DataStoreTable({ store: initialStore, className }: DataStoreTabl
             <Edit />
             Edit structure
           </Button>
-          <RefreshButton onClick={refresh} refreshing={isLoading || isLoadingMore} />
+          <RefreshButton
+            onClick={refresh}
+            refreshing={isLoading || isLoadingMore}
+          />
         </div>
         <DataTable
           className="h-auto grow overflow-hidden"
@@ -193,12 +219,20 @@ function ColumnNameLabel({ column }: { column: UserDataStoreColumn }) {
   return (
     <div className="flex flex-row items-center gap-1">
       <span>{column.name}</span>
-      <Badge className="text-xxs! bg-muted/50 text-muted-foreground px-1">{column.type}</Badge>
+      <Badge className="text-xxs! bg-muted/50 text-muted-foreground px-1">
+        {column.type}
+      </Badge>
     </div>
   )
 }
 
-function TypedValue({ value, type }: { value: unknown; type: SqliteColumnType }) {
+function TypedValue({
+  value,
+  type,
+}: {
+  value: unknown
+  type: SqliteColumnType
+}) {
   switch (type) {
     case SqliteColumnType.TEXT:
     case SqliteColumnType.NUMERIC:

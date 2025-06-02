@@ -15,8 +15,12 @@ export const scraperElementSelectorSchema = z.discriminatedUnion("type", [
     type: z.literal(ElementSelectorType.FindByTextContent),
     text: z.union([z.string(), serializableRegex]),
     tagName: tagNameSchema.optional(),
-    args: z.record(z.string(), z.union([z.string(), serializableRegex])).optional(),
+    args: z
+      .record(z.string(), z.union([z.string(), serializableRegex]))
+      .optional(),
   }),
 ])
 
-export type ScraperElementSelector = z.infer<typeof scraperElementSelectorSchema>
+export type ScraperElementSelector = z.infer<
+  typeof scraperElementSelectorSchema
+>

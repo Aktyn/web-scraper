@@ -26,7 +26,9 @@ export function Scrapers() {
   const { deleteItem, isDeleting } = useDelete("/scrapers/:id")
 
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
-  const [scraperToDelete, setScraperToDelete] = useState<ScraperType | null>(null)
+  const [scraperToDelete, setScraperToDelete] = useState<ScraperType | null>(
+    null,
+  )
 
   const [scraperViewOpen, setScraperViewOpen] = useState(false)
   const [scraperToView, setScraperToView] = useState<ScraperType | null>(null)
@@ -57,7 +59,9 @@ export function Scrapers() {
       {
         accessorKey: "name",
         header: "Name",
-        cell: ({ row }) => <div className="font-medium">{row.original.name}</div>,
+        cell: ({ row }) => (
+          <div className="font-medium">{row.original.name}</div>
+        ),
       },
       {
         accessorKey: "description",
@@ -142,7 +146,10 @@ export function Scrapers() {
           <Plus />
           Add Scraper
         </Button>
-        <RefreshButton onClick={refresh} refreshing={isLoading || isLoadingMore} />
+        <RefreshButton
+          onClick={refresh}
+          refreshing={isLoading || isLoadingMore}
+        />
       </div>
       <DataTable
         data-transition-direction="left"

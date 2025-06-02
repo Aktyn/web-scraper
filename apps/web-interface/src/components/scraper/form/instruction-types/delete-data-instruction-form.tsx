@@ -7,6 +7,9 @@ interface DeleteDataInstructionFormProps {
   fieldName: `instructions.${number}`
 }
 
-export function DeleteDataInstructionForm({ control, fieldName }: DeleteDataInstructionFormProps) {
+export function DeleteDataInstructionForm({
+  control,
+  fieldName,
+}: DeleteDataInstructionFormProps) {
   return <DataKeyField control={control} name={`${fieldName}.dataKey`} />
 }

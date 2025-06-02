@@ -13,7 +13,9 @@ import { scraperDataSourcesTable, scrapersTable } from "../schema"
 import { sanitizeTableName } from "../schema/helpers"
 
 export async function seedScrapersStores(db: DbModule) {
-  const personalCredentialsTableName = sanitizeTableName("Personal credentials random string")
+  const personalCredentialsTableName = sanitizeTableName(
+    "Personal credentials random string",
+  )
 
   await db.transaction(async (tx) => {
     const [smallScraper, bigScraper] = await tx
@@ -34,7 +36,8 @@ export async function seedScrapersStores(db: DbModule) {
         },
         {
           name: "New pepper alerts",
-          description: "See if there are new pepper alerts and notify user if so",
+          description:
+            "See if there are new pepper alerts and notify user if so",
           instructions: checkNewPepperAlertsInstructions,
         },
       ])

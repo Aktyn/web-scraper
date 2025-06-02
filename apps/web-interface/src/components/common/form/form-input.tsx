@@ -64,7 +64,9 @@ export function FormInput<
                   if (type === "number") {
                     field.onChange({
                       ...event,
-                      target: { value: event.target.value && Number(event.target.value) },
+                      target: {
+                        value: event.target.value && Number(event.target.value),
+                      },
                     })
                   } else {
                     field.onChange(event)

@@ -63,7 +63,9 @@ export function ServerEventsProvider({ children }: PropsWithChildren) {
     }
   }, [handleMessage])
 
-  return <ServerEventsContext value={{ status }}>{children}</ServerEventsContext>
+  return (
+    <ServerEventsContext value={{ status }}>{children}</ServerEventsContext>
+  )
 }
 
 export function useServerEvents() {

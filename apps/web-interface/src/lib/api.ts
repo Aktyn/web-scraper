@@ -19,7 +19,9 @@ const baseUrl = import.meta.env.VITE_API_URL_BASE.replace(/\/$/, "")
 type Method = "get" | "post" | "put" | "delete"
 
 export type RoutesWithMethod<MethodType extends Method> = {
-  [key in keyof Routes]: Routes[key] extends { [method in MethodType]: object } ? key : never
+  [key in keyof Routes]: Routes[key] extends { [method in MethodType]: object }
+    ? key
+    : never
 }[keyof Routes]
 
 export type RouteParameters<RoutePath extends keyof Routes> =
@@ -27,7 +29,9 @@ export type RouteParameters<RoutePath extends keyof Routes> =
     ? {
         [key in Param]: string | number
         //@ts-expect-error Hacky type enforcement
-      } & (RouteParameters<Rest> extends object ? RouteParameters<Rest> : unknown)
+      } & (RouteParameters<Rest> extends object
+        ? RouteParameters<Rest>
+        : unknown)
     : RoutePath extends `${string}/:${infer Param}`
       ? {
           [key in Param]: string | number
@@ -49,18 +53,25 @@ export const api = {
   get: async <RoutePath extends RoutesWithMethod<"get">>(
     route: `/${RoutePath}`,
     params?: RouteParameters<RoutePath>,
-    queryParams?: Routes[RoutePath] extends { get: { querystring: infer Query } }
+    queryParams?: Routes[RoutePath] extends {
+      get: { querystring: infer Query }
+    }
       ? Query
       : undefined,
   ): Promise<Routes[RoutePath]["get"]["response"]> => {
-    const queryString = queryParams ? `?${new URLSearchParams(queryParams).toString()}` : ""
+    const queryString = queryParams
+      ? `?${new URLSearchParams(queryParams).toString()}`
+      : ""
 
-    const response = await fetch(`${baseUrl}${parametrizeRoute(route, params)}${queryString}`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
+    const response = await fetch(
+      `${baseUrl}${parametrizeRoute(route, params)}${queryString}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
       },
-    })
+    )
     return await assertResponseOk(response)
   },
 
@@ -69,13 +80,16 @@ export const api = {
     body: Routes[RoutePath]["post"]["body"],
     params?: RouteParameters<RoutePath>,
   ): Promise<Routes[RoutePath]["post"]["response"]> => {
-    const response = await fetch(`${baseUrl}${parametrizeRoute(route, params)}`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
+    const response = await fetch(
+      `${baseUrl}${parametrizeRoute(route, params)}`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: body ? JSON.stringify(body) : "{}",
       },
-      body: body ? JSON.stringify(body) : "{}",
-    })
+    )
     return await assertResponseOk(response)
   },
 
@@ -84,13 +98,16 @@ export const api = {
     body: Routes[RoutePath]["put"]["body"],
     params?: RouteParameters<RoutePath>,
   ): Promise<Routes[RoutePath]["put"]["response"]> => {
-    const response = await fetch(`${baseUrl}${parametrizeRoute(route, params)}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
+    const response = await fetch(
+      `${baseUrl}${parametrizeRoute(route, params)}`,
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(body),
       },
-      body: JSON.stringify(body),
-    })
+    )
     return await assertResponseOk(response)
   },
 
@@ -98,9 +115,12 @@ export const api = {
     route: `/${RoutePath}`,
     params?: RouteParameters<RoutePath>,
   ) => {
-    const response = await fetch(`${baseUrl}${parametrizeRoute(route, params)}`, {
-      method: "DELETE",
-    })
+    const response = await fetch(
+      `${baseUrl}${parametrizeRoute(route, params)}`,
+      {
+        method: "DELETE",
+      },
+    )
     return response.ok ? null : await assertResponseOk(response)
   },
 }

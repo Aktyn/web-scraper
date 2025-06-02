@@ -27,7 +27,10 @@ interface ConditionInstructionFormProps {
   fieldName: ConditionInstructionFieldName
 }
 
-export function ConditionInstructionForm({ control, fieldName }: ConditionInstructionFormProps) {
+export function ConditionInstructionForm({
+  control,
+  fieldName,
+}: ConditionInstructionFormProps) {
   return (
     <div className="space-y-6">
       <div className="space-y-4">
@@ -90,7 +93,10 @@ export function ConditionInstructionForm({ control, fieldName }: ConditionInstru
   )
 }
 
-function ConditionFormByType({ control, fieldName }: ConditionInstructionFormProps) {
+function ConditionFormByType({
+  control,
+  fieldName,
+}: ConditionInstructionFormProps) {
   const { watch } = useFormContext<CreateScraper>()
   const conditionType = watch(`${fieldName}.if.type`)
 
@@ -99,7 +105,10 @@ function ConditionFormByType({ control, fieldName }: ConditionInstructionFormPro
       return (
         <div>
           <h6 className="font-medium mb-2">Element Selector</h6>
-          <ScraperSelectorForm control={control} fieldName={`${fieldName}.if.selector`} />
+          <ScraperSelectorForm
+            control={control}
+            fieldName={`${fieldName}.if.selector`}
+          />
         </div>
       )
 
@@ -108,7 +117,10 @@ function ConditionFormByType({ control, fieldName }: ConditionInstructionFormPro
         <div className="space-y-4">
           <div>
             <h6 className="font-medium mb-2">Value Selector</h6>
-            <ScraperValueForm control={control} fieldName={`${fieldName}.if.valueSelector`} />
+            <ScraperValueForm
+              control={control}
+              fieldName={`${fieldName}.if.valueSelector`}
+            />
           </div>
 
           <FormInput

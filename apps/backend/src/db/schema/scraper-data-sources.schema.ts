@@ -1,6 +1,12 @@
 import type { WhereSchema } from "@web-scraper/common"
 import { relations } from "drizzle-orm"
-import { integer, primaryKey, sqliteTable, text, uniqueIndex } from "drizzle-orm/sqlite-core"
+import {
+  integer,
+  primaryKey,
+  sqliteTable,
+  text,
+  uniqueIndex,
+} from "drizzle-orm/sqlite-core"
 import { scrapersTable } from "./scrapers.schema"
 import { userDataStoresTable } from "./user-data-stores.schema"
 
@@ -23,21 +29,27 @@ export const scraperDataSourcesTable = sqliteTable(
   ],
 )
 
-export const scraperDataStoresRelations = relations(scraperDataSourcesTable, ({ one }) => ({
-  scraper: one(scrapersTable, {
-    fields: [scraperDataSourcesTable.scraperId],
-    references: [scrapersTable.id],
+export const scraperDataStoresRelations = relations(
+  scraperDataSourcesTable,
+  ({ one }) => ({
+    scraper: one(scrapersTable, {
+      fields: [scraperDataSourcesTable.scraperId],
+      references: [scrapersTable.id],
+    }),
+    dataStore: one(userDataStoresTable, {
+      fields: [scraperDataSourcesTable.dataStoreTableName],
+      references: [userDataStoresTable.tableName],
+    }),
   }),
-  dataStore: one(userDataStoresTable, {
-    fields: [scraperDataSourcesTable.dataStoreTableName],
-    references: [userDataStoresTable.tableName],
-  }),
-}))
+)
 
 export const scrapersRelations = relations(scrapersTable, ({ many }) => ({
   dataStores: many(scraperDataSourcesTable),
 }))
 
-export const userDataStoresRelations = relations(userDataStoresTable, ({ many }) => ({
-  scrapers: many(scraperDataSourcesTable),
-}))
+export const userDataStoresRelations = relations(
+  userDataStoresTable,
+  ({ many }) => ({
+    scrapers: many(scraperDataSourcesTable),
+  }),
+)

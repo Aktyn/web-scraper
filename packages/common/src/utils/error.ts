@@ -4,7 +4,10 @@ export function assert(condition: boolean, message: string): asserts condition {
   }
 }
 
-export function runUnsafe<T>(callback: () => T, onError = console.error): T | null {
+export function runUnsafe<T>(
+  callback: () => T,
+  onError = console.error,
+): T | null {
   try {
     return callback()
   } catch (error) {

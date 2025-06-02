@@ -9,7 +9,11 @@ type SaveDataInstructionProps = {
   value: ScraperValue
 } & ComponentProps<"div">
 
-export function SaveDataInstruction({ dataKey, value, ...divProps }: SaveDataInstructionProps) {
+export function SaveDataInstruction({
+  dataKey,
+  value,
+  ...divProps
+}: SaveDataInstructionProps) {
   return (
     <div {...divProps}>
       <div className="flex items-center gap-2">
@@ -32,7 +36,10 @@ type DeleteDataInstructionProps = {
   dataKey: ScraperDataKey
 } & ComponentProps<"div">
 
-export function DeleteDataInstruction({ dataKey, ...divProps }: DeleteDataInstructionProps) {
+export function DeleteDataInstruction({
+  dataKey,
+  ...divProps
+}: DeleteDataInstructionProps) {
   return (
     <div {...divProps}>
       <div className="flex items-center gap-2">

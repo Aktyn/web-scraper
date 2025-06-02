@@ -44,7 +44,9 @@ export async function userDataStoresRoutes(fastify: FastifyInstance) {
       const userDataStores = await Promise.all(
         stores.map(async (store) => {
           const countResult = await fastify.db
-            .run(sql`SELECT COUNT(*) as count FROM ${sql.identifier(store.tableName)}`)
+            .run(
+              sql`SELECT COUNT(*) as count FROM ${sql.identifier(store.tableName)}`,
+            )
             .execute()
           return {
             ...store,
@@ -183,7 +185,10 @@ export async function userDataStoresRoutes(fastify: FastifyInstance) {
           .select()
           .from(userDataStoresTable)
           .where(
-            and(eq(userDataStoresTable.name, name), ne(userDataStoresTable.tableName, tableName)),
+            and(
+              eq(userDataStoresTable.name, name),
+              ne(userDataStoresTable.tableName, tableName),
+            ),
           )
           .get()
 
@@ -198,7 +203,9 @@ export async function userDataStoresRoutes(fastify: FastifyInstance) {
 
       if (JSON.stringify(columns) !== JSON.stringify(columnsInfo)) {
         //Recreate the table with new columns
-        await fastify.db.run(sql`DROP TABLE IF EXISTS ${sql.identifier(tableName)}`).execute()
+        await fastify.db
+          .run(sql`DROP TABLE IF EXISTS ${sql.identifier(tableName)}`)
+          .execute()
 
         await fastify.db
           .delete(userDataStoresTable)
@@ -274,7 +281,9 @@ export async function userDataStoresRoutes(fastify: FastifyInstance) {
         .delete(scraperDataSourcesTable)
         .where(eq(scraperDataSourcesTable.dataStoreTableName, tableName))
 
-      await fastify.db.run(sql`DROP TABLE IF EXISTS ${sql.identifier(tableName)}`).execute()
+      await fastify.db
+        .run(sql`DROP TABLE IF EXISTS ${sql.identifier(tableName)}`)
+        .execute()
 
       await fastify.db
         .delete(userDataStoresTable)
@@ -406,7 +415,9 @@ export async function userDataStoresRoutes(fastify: FastifyInstance) {
       }
 
       const columns = Object.keys(recordData).filter((key) => key !== "id")
-      const setClause = columns.map((col) => sql`${sql.identifier(col)} = ${recordData[col]}`)
+      const setClause = columns.map(
+        (col) => sql`${sql.identifier(col)} = ${recordData[col]}`,
+      )
 
       await fastify.db
         .run(
@@ -460,7 +471,9 @@ export async function userDataStoresRoutes(fastify: FastifyInstance) {
         })
       }
 
-      await fastify.db.run(sql`DELETE FROM ${sql.identifier(tableName)} WHERE id = ${id}`).execute()
+      await fastify.db
+        .run(sql`DELETE FROM ${sql.identifier(tableName)} WHERE id = ${id}`)
+        .execute()
 
       return reply.status(204).send()
     },

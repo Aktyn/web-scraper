@@ -16,7 +16,9 @@ import z from "zod"
 import { scraperDataSourcesTable, scrapersTable } from "../../db/schema"
 
 export async function scrapersRoutes(fastify: FastifyInstance) {
-  async function joinScraperWithDataSources(scraper: Omit<ScraperType, "dataSources">) {
+  async function joinScraperWithDataSources(
+    scraper: Omit<ScraperType, "dataSources">,
+  ) {
     const dataSources = await fastify.db
       .select()
       .from(scraperDataSourcesTable)
@@ -48,7 +50,9 @@ export async function scrapersRoutes(fastify: FastifyInstance) {
         .limit(pageSize + 1)
         .offset(page * pageSize)
 
-      const data = await Promise.all(scrapers.slice(0, pageSize).map(joinScraperWithDataSources))
+      const data = await Promise.all(
+        scrapers.slice(0, pageSize).map(joinScraperWithDataSources),
+      )
 
       return reply.status(200).send({
         data,
@@ -103,7 +107,13 @@ export async function scrapersRoutes(fastify: FastifyInstance) {
       },
     },
     async (request, reply) => {
-      const { name, description, instructions, userDataDirectory, dataSources } = request.body
+      const {
+        name,
+        description,
+        instructions,
+        userDataDirectory,
+        dataSources,
+      } = request.body
 
       const existingScraper = await fastify.db
         .select()
@@ -171,7 +181,13 @@ export async function scrapersRoutes(fastify: FastifyInstance) {
     },
     async (request, reply) => {
       const { id } = request.params
-      const { name, description, instructions, userDataDirectory, dataSources } = request.body
+      const {
+        name,
+        description,
+        instructions,
+        userDataDirectory,
+        dataSources,
+      } = request.body
 
       const existingScraper = await fastify.db
         .select()
@@ -211,7 +227,9 @@ export async function scrapersRoutes(fastify: FastifyInstance) {
           .where(eq(scrapersTable.id, id))
           .returning()
 
-        await tx.delete(scraperDataSourcesTable).where(eq(scraperDataSourcesTable.scraperId, id))
+        await tx
+          .delete(scraperDataSourcesTable)
+          .where(eq(scraperDataSourcesTable.scraperId, id))
 
         for (const dataSource of dataSources) {
           await tx
@@ -300,6 +318,13 @@ export async function scrapersRoutes(fastify: FastifyInstance) {
 
       //TODO: test with custom userDataDirectory
       console.info("Executing scraper:", scraper)
+
+      //TODO: use to broadcast scraper execution events for real-time feedback
+      // events.emit("broadcast", {
+      //   type: SubscriptionMessageType.SubscriptionInitialized,
+      //   sessionId,
+      // })
+
       return reply.status(200).send({
         data: null,
       })

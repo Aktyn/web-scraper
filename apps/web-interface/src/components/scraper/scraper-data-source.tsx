@@ -22,7 +22,9 @@ export function ScraperDataSource({ dataSource }: ScraperDataSourceProps) {
       </LabeledValue>
       {sql && (
         <LabeledValue label="Filter">
-          <Code className="max-w-full text-pretty whitespace-pre-wrap">{sql}</Code>
+          <Code className="max-w-full text-pretty whitespace-pre-wrap">
+            {sql}
+          </Code>
         </LabeledValue>
       )}
     </div>

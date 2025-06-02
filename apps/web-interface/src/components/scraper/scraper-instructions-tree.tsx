@@ -5,12 +5,16 @@ type ScraperInstructionsProps = {
   instructions: ScraperInstructions
 }
 
-export function ScraperInstructionsTree({ instructions }: ScraperInstructionsProps) {
+export function ScraperInstructionsTree({
+  instructions,
+}: ScraperInstructionsProps) {
   if (instructions.length === 0) {
     return (
       <div className="border rounded-lg p-6 bg-muted/30">
         <div className="text-center text-muted-foreground">
-          <p className="text-sm text-warning">No scraper instructions defined</p>
+          <p className="text-sm text-warning">
+            No scraper instructions defined
+          </p>
         </div>
       </div>
     )

@@ -6,7 +6,9 @@ import { useWatch } from "react-hook-form"
 import { useMemo } from "react"
 import { WhereSchemaForm } from "./where-schema-form"
 
-interface ScraperDataSourceFormProps<TFieldValues extends FieldValues = FieldValues> {
+interface ScraperDataSourceFormProps<
+  TFieldValues extends FieldValues = FieldValues,
+> {
   control: Control<TFieldValues>
   index: number
   dataStores: UserDataStore[]
