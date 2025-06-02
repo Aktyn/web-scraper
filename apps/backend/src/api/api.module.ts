@@ -4,6 +4,10 @@ import fastifyPlugin from "fastify-plugin"
 import { serializerCompiler, validatorCompiler } from "fastify-type-provider-zod"
 import type { DbModule } from "../db/db.module"
 import * as routes from "./routes"
+import { FastifySSEPlugin } from "fastify-sse-v2"
+import type { SimpleLogger } from "@web-scraper/common"
+import type { Config } from "../config/config"
+import type { EventsModule } from "../events/events.module"
 
 declare module "fastify" {
   interface FastifyInstance {
@@ -11,7 +15,17 @@ declare module "fastify" {
   }
 }
 
-export async function getApiModule(db: DbModule, fastifyOptions: FastifyServerOptions = {}) {
+export type ApiModuleContext = {
+  db: DbModule
+  config: Config
+  logger: SimpleLogger
+  events: EventsModule
+}
+
+export async function getApiModule(
+  context: ApiModuleContext,
+  fastifyOptions: FastifyServerOptions = {},
+) {
   const fastify = Fastify({
     logger: true,
     bodyLimit: 1024 * 1024 * 128, // 128MB
@@ -19,10 +33,10 @@ export async function getApiModule(db: DbModule, fastifyOptions: FastifyServerOp
   })
 
   const drizzlePlugin = fastifyPlugin((fastify) => {
-    fastify.decorate("db", db)
+    fastify.decorate("db", context.db)
 
     fastify.addHook("onClose", () => {
-      db.$client.close()
+      context.db.$client.close()
     })
   })
   fastify.register(drizzlePlugin)
@@ -35,8 +49,10 @@ export async function getApiModule(db: DbModule, fastifyOptions: FastifyServerOp
   fastify.setValidatorCompiler(validatorCompiler)
   fastify.setSerializerCompiler(serializerCompiler)
 
+  fastify.register(FastifySSEPlugin)
+
   for (const route of Object.values(routes)) {
-    fastify.register(route)
+    fastify.register(route, context)
   }
 
   return fastify

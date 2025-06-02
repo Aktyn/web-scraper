@@ -1,7 +1,7 @@
 import { useCachedState } from "@/hooks/useCachedState"
 import { useSizer } from "@/hooks/useSizer"
 import { cn } from "@/lib/utils"
-import { usePinnedDataStores } from "@/providers/pinned-data-stores-provider"
+import { usePinnedDataStores } from "@/providers/pinned-data-stores.provider"
 import { type UserDataStore } from "@web-scraper/common"
 import { PanelRightClose, PinOff } from "lucide-react"
 import { useState } from "react"
@@ -13,9 +13,14 @@ import { Separator } from "../shadcn/separator"
 import { Tooltip, TooltipContent, TooltipTrigger } from "../shadcn/tooltip"
 import { Footer } from "./footer"
 import { NavigationMenu } from "./navigation-menu"
+import { useServerEvents } from "@/providers/server-events.provider"
+
+const { ConnectionStatus } = useServerEvents
 
 export function Sidebar() {
   const { ref, width } = useSizer()
+
+  const { status } = useServerEvents()
 
   const [isOpen, setIsOpen] = useCachedState("sidebar-open", true, localStorage)
   const [isInitiallyOpen] = useState(isOpen)
@@ -44,7 +49,11 @@ export function Sidebar() {
             <Button
               variant="ghost"
               size="icon"
-              className="ml-auto absolute z-50 w-9 right-4 transition-[translate,background-color,color]"
+              className={cn(
+                "ml-auto absolute z-50 w-9 right-4 transition-[translate,background-color,border-color,color] border border-transparent",
+                status === ConnectionStatus.Connecting && "border-muted",
+                status === ConnectionStatus.Error && "border-destructive",
+              )}
               onClick={() => setIsOpen(!isOpen)}
             >
               <PanelRightClose
@@ -55,7 +64,11 @@ export function Sidebar() {
               />
             </Button>
           </TooltipTrigger>
-          <TooltipContent>Toggle sidebar</TooltipContent>
+          <TooltipContent>
+            Toggle sidebar
+            {status === ConnectionStatus.Connecting && " (establishing server connection)"}
+            {status === ConnectionStatus.Error && " (sever connection error)"}
+          </TooltipContent>
         </Tooltip>
       </header>
       <Separator />

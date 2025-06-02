@@ -1,7 +1,7 @@
 import { cn } from "@/lib/utils"
 import { DynamicIcon, type IconName } from "lucide-react/dynamic"
 import { type ComponentType, type SVGProps } from "react"
-import { useView } from "../../providers/view-provider"
+import { useView } from "../../providers/view.provider"
 import { ScraperIcon } from "../icons/scraper-icon"
 import { Button } from "../shadcn/button"
 

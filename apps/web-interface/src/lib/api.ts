@@ -44,6 +44,8 @@ function parametrizeRoute<ParamsType extends Record<string, string | number>>(
 }
 
 export const api = {
+  baseUrl,
+
   get: async <RoutePath extends RoutesWithMethod<"get">>(
     route: `/${RoutePath}`,
     params?: RouteParameters<RoutePath>,

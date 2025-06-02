@@ -21,17 +21,20 @@ import { DataBridge, DataBridgeSourceType } from "./db/data-bridge"
 import { type DbModule, getDbModule } from "./db/db.module"
 import { createTemporaryView, removeTemporaryView } from "./db/view-helpers"
 import { getLogger } from "./logger"
+import { getEventsModule } from "./events/events.module"
 
 async function main() {
   const logger = getLogger()
 
   logger.info(`Starting application at ${new Date().toUTCString()}`)
 
+  const events = getEventsModule()
+
   const config = getConfig()
 
   const db = getDbModule(config)
 
-  const api = await getApiModule(db)
+  const api = await getApiModule({ db, config, logger, events })
 
   api.listen({ port: config.apiPort }, (err, address) => {
     if (err) {

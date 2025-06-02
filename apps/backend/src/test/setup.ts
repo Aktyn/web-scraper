@@ -5,6 +5,7 @@ import type { Config } from "../config/config"
 import { type DbModule, getDbModule } from "../db/db.module"
 import { seed } from "../db/seed/seed"
 import { vi } from "vitest"
+import { getEventsModule } from "../events/events.module"
 
 const mockConfig: Config = {
   dbUrl: ":memory:",
@@ -25,14 +26,19 @@ export async function setup() {
   await migrate(db, { migrationsFolder: `${__dirname}/../../drizzle` })
   await seed(db)
 
-  const api = await getApiModule(db, {
-    logger: false,
-  })
-
   const logger: SimpleLogger = {
     ...console,
     fatal: console.error,
   }
+
+  const events = getEventsModule()
+
+  const api = await getApiModule(
+    { db, logger, config: mockConfig, events },
+    {
+      logger: false,
+    },
+  )
 
   return { api, db, logger }
 }
