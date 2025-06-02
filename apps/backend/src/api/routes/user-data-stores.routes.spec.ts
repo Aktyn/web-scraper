@@ -87,6 +87,42 @@ describe("User Data Stores Routes", () => {
     })
   })
 
+  describe("GET /user-data-stores/:tableName", () => {
+    it("should return status 200 and the user data store if it exists", async () => {
+      const response = await modules.api.inject({
+        method: "GET",
+        url: "/user-data-stores/personal_credentials_random_string",
+      })
+      expect(response.statusCode).toBe(200)
+      expect(JSON.parse(response.payload)).toEqual({
+        data: {
+          tableName: "personal_credentials_random_string",
+          name: "Personal credentials",
+          description: "Personal credentials for various websites",
+          recordsCount: 2,
+          columns: [
+            { name: "id", type: SqliteColumnType.INTEGER, notNull: true },
+            { name: "origin", type: SqliteColumnType.TEXT, notNull: true },
+            { name: "username", type: SqliteColumnType.TEXT },
+            { name: "email", type: SqliteColumnType.TEXT },
+            { name: "password", type: SqliteColumnType.TEXT, notNull: true },
+          ],
+        },
+      })
+    })
+
+    it("should return 404 if the data store does not exist", async () => {
+      const response = await modules.api.inject({
+        method: "GET",
+        url: "/user-data-stores/non_existent_table",
+      })
+      expect(response.statusCode).toBe(404)
+      expect(JSON.parse(response.payload)).toEqual({
+        error: "Data store not found",
+      })
+    })
+  })
+
   describe("GET /user-data-stores/:tableName/records", () => {
     it("should return status 200 and store data from the database", async () => {
       const response = await modules.api.inject({

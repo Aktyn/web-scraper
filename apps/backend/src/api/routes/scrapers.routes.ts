@@ -298,6 +298,7 @@ export async function scrapersRoutes(fastify: FastifyInstance) {
         })
       }
 
+      //TODO: test with custom userDataDirectory
       console.info("Executing scraper:", scraper)
       return reply.status(200).send({
         data: null,

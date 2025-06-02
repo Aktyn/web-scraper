@@ -20,4 +20,6 @@ export async function miscRoutes(fastify: FastifyInstance) {
       })
     },
   )
+
+  //TODO: implement SSE route here
 }

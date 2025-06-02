@@ -63,6 +63,48 @@ export async function userDataStoresRoutes(fastify: FastifyInstance) {
     },
   )
 
+  fastify.withTypeProvider<ZodTypeProvider>().get(
+    "/user-data-stores/:tableName",
+    {
+      schema: {
+        params: paramsWithTableNameSchema,
+        response: {
+          200: getApiResponseSchema(userDataStoreSchema),
+          404: apiErrorResponseSchema,
+        },
+      },
+    },
+    async (request, reply) => {
+      const { tableName } = request.params
+
+      const existingStore = await fastify.db
+        .select()
+        .from(userDataStoresTable)
+        .where(eq(userDataStoresTable.tableName, tableName))
+        .get()
+
+      if (!existingStore) {
+        return reply.status(404).send({
+          error: "Data store not found",
+        })
+      }
+
+      const countResult = await fastify.db
+        .run(sql`SELECT COUNT(*) as count FROM ${sql.identifier(tableName)}`)
+        .execute()
+
+      const userDataStore = {
+        ...existingStore,
+        recordsCount: Number(countResult.rows.at(0)?.count ?? 0),
+        columns: existingStore.columnDefinitions,
+      }
+
+      return reply.status(200).send({
+        data: userDataStore,
+      })
+    },
+  )
+
   fastify.withTypeProvider<ZodTypeProvider>().post(
     "/user-data-stores",
     {

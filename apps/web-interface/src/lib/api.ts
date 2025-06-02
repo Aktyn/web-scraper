@@ -72,7 +72,7 @@ export const api = {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(body),
+      body: body ? JSON.stringify(body) : "{}",
     })
     return await assertResponseOk(response)
   },
@@ -121,6 +121,9 @@ export type Routes = {
     }
   }
   "user-data-stores/:tableName": {
+    get: {
+      response: ApiResponse<UserDataStore>
+    }
     put: {
       body: UpdateUserDataStore
       response: ApiResponse<UserDataStore>

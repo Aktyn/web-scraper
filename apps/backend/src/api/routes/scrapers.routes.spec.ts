@@ -540,7 +540,7 @@ describe("Scrapers Routes", () => {
       })
 
       expect(response.statusCode).toBe(200)
-      expect(JSON.parse(response.payload)).toEqual({})
+      expect(JSON.parse(response.payload)).toEqual({ data: null })
     })
 
     it("should return status 404 if the scraper does not exist", async () => {

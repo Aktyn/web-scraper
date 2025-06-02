@@ -1,5 +1,5 @@
 import type { ScraperType } from "@web-scraper/common"
-import { type ComponentProps } from "react"
+import { useEffect, useState, type ComponentProps } from "react"
 import {
   Dialog,
   DialogContent,
@@ -14,7 +14,16 @@ type ScraperPanelDialogProps = {
   scraper: ScraperType
 } & ComponentProps<typeof Dialog>
 
-export function ScraperPanelDialog({ scraper, ...dialogProps }: ScraperPanelDialogProps) {
+export function ScraperPanelDialog({
+  scraper: scraperSource,
+  ...dialogProps
+}: ScraperPanelDialogProps) {
+  const [scraper, setScraper] = useState<ScraperType>(scraperSource)
+
+  useEffect(() => {
+    setScraper(scraperSource)
+  }, [scraperSource])
+
   return (
     <Dialog {...dialogProps}>
       <DialogContent
@@ -26,7 +35,7 @@ export function ScraperPanelDialog({ scraper, ...dialogProps }: ScraperPanelDial
           {scraper.description && <DialogDescription>{scraper.description}</DialogDescription>}
         </DialogHeader>
         <ScrollArea className="max-h-full overflow-hidden **:data-[radix-scroll-area-viewport]:px-6">
-          <ScraperPanel scraper={scraper} />
+          <ScraperPanel scraper={scraper} onEditSuccess={setScraper} />
         </ScrollArea>
       </DialogContent>
     </Dialog>
