@@ -166,7 +166,10 @@ export function ScraperFormDialog({
 
         <ScrollArea className="-m-6 **:[form]:p-6 overflow-hidden mask-t-from-[calc(100%-var(--spacing)*8)] mask-b-from-[calc(100%-var(--spacing)*8)]">
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+            <form
+              onSubmit={form.handleSubmit(onSubmit, console.error)}
+              className="space-y-6"
+            >
               <div className="space-y-4">
                 <h3 className="text-lg font-medium">Basic information</h3>
 

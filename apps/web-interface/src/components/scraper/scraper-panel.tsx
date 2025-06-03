@@ -15,6 +15,7 @@ import { Edit, Play } from "lucide-react"
 import { usePost } from "@/hooks/api/usePost"
 import { useState } from "react"
 import { ScraperFormDialog } from "./scraper-form-dialog"
+import { ScraperProvider } from "@/providers/scraper.provider"
 
 type ScraperPanelProps = {
   scraper: ScraperType
@@ -30,11 +31,10 @@ export function ScraperPanel({ scraper, onEditSuccess }: ScraperPanelProps) {
     await postItem(undefined, { id: scraper.id })
   }
 
-  //TODO: manage running state scraper instances on the server
-  // Scraper are stored in the database. It can be run by api endpoint, also paused etc. Use SSE to get realtime scraper state.
+  //TODO: manage running state scraper instances on the server (pause, resume, show realtime updates, etc.)
 
   return (
-    <>
+    <ScraperProvider scraper={scraper}>
       <div className="flex flex-col gap-4">
         <div className="flex flex-row items-center gap-2">
           {/* TODO: run and watch for scraper updates in real time with SSE */}
@@ -132,6 +132,6 @@ export function ScraperPanel({ scraper, onEditSuccess }: ScraperPanelProps) {
         onSuccess={onEditSuccess}
         editScraper={scraper}
       />
-    </>
+    </ScraperProvider>
   )
 }

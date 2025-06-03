@@ -29,6 +29,7 @@ import { ScraperExecutionInfo } from "./scraper-execution-info"
 export enum ScraperState {
   Idle = "idle",
   Running = "running",
+  Exited = "exited",
 }
 
 type ScraperOptions = {
@@ -58,12 +59,19 @@ export class Scraper extends EventEmitter {
     )
   }
 
+  public static getInstances() {
+    return Array.from(Scraper.instances.values())
+  }
+
+  public static getInstance(id: string) {
+    return Scraper.instances.get(id) ?? null
+  }
+
   private readonly id: string
   private readonly logger: SimpleLogger
 
   private initPromise: Promise<Browser> | null = null
 
-  private destroyed = false
   private browser: Browser | null = null
   private abortController = new AbortController()
 
@@ -79,6 +87,11 @@ export class Scraper extends EventEmitter {
       ...console,
       fatal: console.error,
     }
+
+    assert(
+      !Scraper.instances.has(options.id ?? ""),
+      "Scraper with this ID already exists",
+    )
 
     Scraper.instances.set(this.id, this)
 
@@ -130,7 +143,20 @@ export class Scraper extends EventEmitter {
     })
 
     this.initPromise
-      .then((browser) => (this.browser = browser))
+      .then((browser) => {
+        this.browser = browser
+
+        browser.once("disconnected", () => {
+          if (this.destroyed) {
+            return
+          }
+
+          this.logger.error(
+            `Browser disconnected unexpectedly, destroying scraper ${this.id}`,
+          )
+          this.destroy()
+        })
+      })
       .catch(this.logger.error)
       .finally(() => {
         this.initPromise = null
@@ -139,21 +165,31 @@ export class Scraper extends EventEmitter {
     return this.initPromise
   }
 
-  destroy() {
-    Scraper.instances.delete(this.id)
+  isReady() {
+    return this.initPromise === null && this.browser !== null
+  }
 
+  get destroyed() {
+    return !Scraper.instances.has(this.id)
+  }
+
+  destroy() {
     assert(!this.destroyed, "Scraper already destroyed")
-    this.destroyed = true
+
+    Scraper.instances.delete(this.id)
 
     this.abortController.abort("Scraper instance destroyed")
 
     if (this.browser) {
+      this.browser.removeAllListeners()
       void this.browser
         .close()
         .then(() => this.logger.info("Browser closed"))
         .catch(this.logger.error)
+      this.browser = null
     }
-    this.browser = null
+    this.initPromise = null
+    this.state = ScraperState.Exited
 
     this.emit("destroy")
   }
@@ -209,14 +245,15 @@ export class Scraper extends EventEmitter {
       pageMiddleware?: (page: Page) => void | Promise<void>
       leavePageOpen?: boolean
     },
-  ): Promise<ScraperExecutionInfo> {
+  ) {
     const executionInfo = new ScraperExecutionInfo(instructions, dataBridge)
 
     if (this.state !== ScraperState.Idle) {
       this.logger.warn("Scraper is not in idle state. Aborting run request.")
       executionInfo.push({
         type: ScraperInstructionsExecutionInfoType.Error,
-        errorMessage: "Run cancelled due to scraper not being in idle state",
+        errorMessage:
+          "Execution cancelled due to Scraper not being in idle state",
       })
       return executionInfo
     }

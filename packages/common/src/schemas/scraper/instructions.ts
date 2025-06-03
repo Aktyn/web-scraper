@@ -1,7 +1,12 @@
 import { z } from "zod"
 import { type ScraperCondition, scraperConditionSchema } from "./condition"
 import { type PageAction, pageActionSchema } from "./page-action"
-import type { ScraperDataKey, ScraperValue } from "./value"
+import {
+  scraperDataKeySchema,
+  scraperValueSchema,
+  type ScraperDataKey,
+  type ScraperValue,
+} from "./value"
 
 export enum ScraperInstructionType {
   /** Used to interact with the page */
@@ -56,7 +61,6 @@ export const scraperInstructionsSchema: z.ZodType<ScraperInstructionsRecursive> 
         type: z.literal(ScraperInstructionType.PageAction),
         action: pageActionSchema,
       }),
-
       z.object({
         type: z.literal(ScraperInstructionType.Condition),
         if: scraperConditionSchema,
@@ -65,10 +69,19 @@ export const scraperInstructionsSchema: z.ZodType<ScraperInstructionsRecursive> 
       }),
 
       z.object({
+        type: z.literal(ScraperInstructionType.SaveData),
+        dataKey: scraperDataKeySchema,
+        value: scraperValueSchema,
+      }),
+      z.object({
+        type: z.literal(ScraperInstructionType.DeleteData),
+        dataKey: scraperDataKeySchema,
+      }),
+
+      z.object({
         type: z.literal(ScraperInstructionType.Marker),
         name: z.string(),
       }),
-
       z.object({
         type: z.literal(ScraperInstructionType.Jump),
         markerName: z.string(),

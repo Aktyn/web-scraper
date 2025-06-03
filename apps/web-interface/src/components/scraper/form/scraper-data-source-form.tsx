@@ -34,14 +34,14 @@ export function ScraperDataSourceForm({
   }))
 
   return (
-    <div className="space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div className="flex flex-col gap-6">
+      <div className="flex flex-row flex-wrap items-start gap-4 *:flex-1 *:basis-1/2">
         {/* TODO: implement auto-complete search with dynamic data fetching */}
         <FormSelect
           control={control}
           className="*:[button]:w-full"
           name={`dataSources.${index}.dataStoreTableName`}
-          label="Data Store"
+          label="Data store"
           placeholder="Select data store"
           options={dataStoreOptions}
           description="The data store table to read from."

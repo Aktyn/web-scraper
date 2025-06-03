@@ -3,6 +3,7 @@ import { Save, Trash2 } from "lucide-react"
 import { ScraperValue as ScraperValueComponent } from "./scraper-value"
 import type { ComponentProps } from "react"
 import { LabeledValue } from "@/components/common/labeled-value"
+import { DataKeyValue } from "./data-key-value"
 
 type SaveDataInstructionProps = {
   dataKey: ScraperDataKey
@@ -22,7 +23,7 @@ export function SaveDataInstruction({
       </div>
 
       <LabeledValue label="Data key:">
-        <pre className="break-all whitespace-normal">{dataKey}</pre>
+        <DataKeyValue dataKey={dataKey} />
       </LabeledValue>
 
       <LabeledValue label="Value:">
@@ -48,7 +49,7 @@ export function DeleteDataInstruction({
       </div>
 
       <LabeledValue label="Data key:">
-        <pre className="break-all whitespace-normal">{dataKey}</pre>
+        <DataKeyValue dataKey={dataKey} />
       </LabeledValue>
     </div>
   )

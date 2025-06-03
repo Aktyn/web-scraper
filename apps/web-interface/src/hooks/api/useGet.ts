@@ -8,7 +8,7 @@ import { useEffect, useState } from "react"
 import { toast } from "sonner"
 
 export function useGet<RoutePath extends RoutesWithMethod<"get">>(
-  route: `/${RoutePath}`,
+  route: `/${RoutePath}` | null,
   params?: RouteParameters<RoutePath>,
   queryParams?: Routes[RoutePath] extends { get: { querystring: infer Query } }
     ? Query
@@ -19,11 +19,23 @@ export function useGet<RoutePath extends RoutesWithMethod<"get">>(
   const [data, setData] = useState<ResponseType | null>(null)
   const [isLoading, setIsLoading] = useState(true)
 
+  const stringifiedParams = params && JSON.stringify(params)
   useEffect(() => {
     let mounted = true
 
+    if (!route) {
+      setIsLoading(false)
+      return
+    } else {
+      setIsLoading(true)
+    }
+
+    const paramsString = stringifiedParams
+      ? (JSON.parse(stringifiedParams) as RouteParameters<RoutePath>)
+      : undefined
+
     api
-      .get<RoutePath>(route, params, queryParams)
+      .get<RoutePath>(route, paramsString, queryParams)
       .then((data) => setData(data))
       .catch((error) => {
         console.error(error)
@@ -40,7 +52,7 @@ export function useGet<RoutePath extends RoutesWithMethod<"get">>(
     return () => {
       mounted = false
     }
-  }, [route, params, queryParams])
+  }, [route, stringifiedParams, queryParams])
 
   return { data, isLoading }
 }

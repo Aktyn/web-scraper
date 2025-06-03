@@ -18,7 +18,6 @@ import {
 
 function BlockContainer({ children }: PropsWithChildren) {
   return (
-    //in-data-[then-instructions]:border-primary/50 in-data-[then-instructions]:bg-primary/3 in-data-[else-instructions]:border-secondary/50 in-data-[else-instructions]:bg-secondary/3
     <Slot className="border rounded-lg bg-card flex flex-col gap-2 p-3 in-data-[then-instructions]:bg-transparent in-data-[else-instructions]:bg-transparent">
       {children}
     </Slot>

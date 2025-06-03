@@ -14,8 +14,14 @@ import type { FastifyInstance } from "fastify"
 import type { ZodTypeProvider } from "fastify-type-provider-zod"
 import z from "zod"
 import { scraperDataSourcesTable, scrapersTable } from "../../db/schema"
+import { Scraper } from "@web-scraper/core"
+import { type ApiModuleContext } from "../api.module"
+import { executeNewScraper } from "../../handlers/scraper.handler"
 
-export async function scrapersRoutes(fastify: FastifyInstance) {
+export async function scrapersRoutes(
+  fastify: FastifyInstance,
+  { logger, events }: ApiModuleContext,
+) {
   async function joinScraperWithDataSources(
     scraper: Omit<ScraperType, "dataSources">,
   ) {
@@ -298,32 +304,48 @@ export async function scrapersRoutes(fastify: FastifyInstance) {
         params: paramsWithScraperIdSchema,
         response: {
           200: getApiResponseSchema(z.null()),
+          400: apiErrorResponseSchema,
           404: apiErrorResponseSchema,
         },
       },
     },
     async (request, reply) => {
       const { id } = request.params
-      const scraper = await fastify.db
+      const scraperResponse = await fastify.db
         .select()
         .from(scrapersTable)
         .where(eq(scrapersTable.id, id))
         .get()
 
-      if (!scraper) {
+      if (!scraperResponse) {
         return reply.status(404).send({
           error: "Scraper not found",
         })
       }
 
-      //TODO: test with custom userDataDirectory
-      console.info("Executing scraper:", scraper)
+      // NOTE: scrapersTable.name is an unique column
+      const scraperId = scraperResponse.name
 
+      if (Scraper.getInstance(scraperId)) {
+        return reply.status(400).send({
+          error: "Scraper is already running",
+        })
+      }
+
+      //TODO: if scraper will run iteratively (for example for each row in some subset of data) then DataBridge should keep track of the current row index
+      //TODO: save last N run configurations (instructions + data sources) so it can be reused by user later (after implementing dynamic instruction arguments)
       //TODO: use to broadcast scraper execution events for real-time feedback
       // events.emit("broadcast", {
       //   type: SubscriptionMessageType.SubscriptionInitialized,
       //   sessionId,
       // })
+      const scraperData = await joinScraperWithDataSources(scraperResponse)
+
+      executeNewScraper(scraperId, scraperData, {
+        db: fastify.db,
+        logger,
+        events,
+      }).catch(logger.error)
 
       return reply.status(200).send({
         data: null,

@@ -8,9 +8,10 @@ import {
 import type { DbModule } from "../db/db.module"
 import * as routes from "./routes"
 import { FastifySSEPlugin } from "fastify-sse-v2"
-import type { SimpleLogger } from "@web-scraper/common"
 import type { Config } from "../config/config"
 import type { EventsModule } from "../events/events.module"
+import type { Logger } from "pino"
+import type { SimpleLogger } from "@web-scraper/common"
 
 declare module "fastify" {
   interface FastifyInstance {
@@ -21,7 +22,7 @@ declare module "fastify" {
 export type ApiModuleContext = {
   db: DbModule
   config: Config
-  logger: SimpleLogger
+  logger: Logger | SimpleLogger
   events: EventsModule
 }
 

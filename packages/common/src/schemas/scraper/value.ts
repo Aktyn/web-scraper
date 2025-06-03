@@ -4,6 +4,17 @@ import { scraperElementSelectorSchema } from "./selector"
 /** DataSourceName.ColumnName where data source name refers to table or view name */
 export type ScraperDataKey = `${string}.${string}`
 
+export const scraperDataKeySchema = z.custom<ScraperDataKey>(
+  (value) => {
+    if (typeof value !== "string") return false
+    return /^[^.]+\.[^.]+$/.test(value)
+  },
+  {
+    message:
+      "Invalid data key format. Expected format: 'DataSourceName.ColumnName'",
+  },
+)
+
 export enum ScraperValueType {
   Literal = "literal",
   CurrentTimestamp = "currentTimestamp",
@@ -26,7 +37,7 @@ export const scraperValueSchema = z.discriminatedUnion("type", [
 
   z.object({
     type: z.literal(ScraperValueType.ExternalData),
-    dataKey: z.custom<ScraperDataKey>(),
+    dataKey: scraperDataKeySchema,
     defaultValue: z.string().optional(),
   }),
 

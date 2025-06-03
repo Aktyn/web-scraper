@@ -30,7 +30,8 @@ export type RouteParameters<RoutePath extends keyof Routes> =
         [key in Param]: string | number
         //@ts-expect-error Hacky type enforcement
       } & (RouteParameters<Rest> extends object
-        ? RouteParameters<Rest>
+        ? //@ts-expect-error Hacky type enforcement
+          RouteParameters<Rest>
         : unknown)
     : RoutePath extends `${string}/:${infer Param}`
       ? {

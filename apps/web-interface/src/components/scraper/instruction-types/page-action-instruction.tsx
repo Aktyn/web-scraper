@@ -11,6 +11,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/shadcn/tooltip"
+import { formatDuration } from "@/lib/utils"
 
 type PageActionInstructionProps = {
   action: PageAction
@@ -43,7 +44,11 @@ const iconsMap: { [key in PageActionType]: IconName } = {
 function ActionDetails({ action }: { action: PageAction }) {
   switch (action.type) {
     case PageActionType.Wait:
-      return <LabeledValue label="Duration">{action.duration}ms</LabeledValue>
+      return (
+        <LabeledValue label="Duration">
+          {formatDuration(action.duration)}
+        </LabeledValue>
+      )
 
     case PageActionType.Navigate:
       return (

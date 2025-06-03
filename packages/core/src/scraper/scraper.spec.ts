@@ -62,7 +62,7 @@ describe(
       } as SimpleLogger,
     )
 
-    beforeEach(() => {
+    beforeEach(async () => {
       scraper = new Scraper({ headless: true, logger: voidLogger })
     })
 
@@ -160,7 +160,7 @@ describe(
         },
       ]
 
-      const mockExecutionInfo: ScraperInstructionsExecutionInfo = [
+      const mockExecutionInfo = [
         {
           type: ScraperInstructionsExecutionInfoType.Instruction,
           instructionInfo: {
@@ -263,102 +263,100 @@ describe(
         },
       ]
 
-      const mockExecutionInfoWithoutCookiesBanner: ScraperInstructionsExecutionInfo =
-        [
-          {
-            type: ScraperInstructionsExecutionInfoType.Instruction,
-            instructionInfo: {
-              action: {
-                type: PageActionType.Navigate,
-                url: "http://127.0.0.1:1337/api",
-              },
-              type: ScraperInstructionType.PageAction,
+      const mockExecutionInfoWithoutCookiesBanner = [
+        {
+          type: ScraperInstructionsExecutionInfoType.Instruction,
+          instructionInfo: {
+            action: {
+              type: PageActionType.Navigate,
+              url: "http://127.0.0.1:1337/api",
             },
-            url: { from: "about:blank", to: "http://127.0.0.1:1337/api" },
+            type: ScraperInstructionType.PageAction,
+          },
+          url: { from: "about:blank", to: "http://127.0.0.1:1337/api" },
+          duration: expect.any(Number),
+        },
+        {
+          type: ScraperInstructionsExecutionInfoType.Instruction,
+          instructionInfo: {
+            condition: {
+              selector: {
+                tagName: "button",
+                text: { source: "accept cookies", flags: "i" },
+                type: ElementSelectorType.FindByTextContent,
+              },
+              type: ScraperConditionType.IsVisible,
+            },
+            isMet: false,
+            type: ScraperInstructionType.Condition,
+          },
+          url: "http://127.0.0.1:1337/api",
+          duration: expect.any(Number),
+        },
+        {
+          type: ScraperInstructionsExecutionInfoType.Instruction,
+          instructionInfo: {
+            action: {
+              selector: {
+                tagName: "button",
+                text: { source: "login", flags: "i" },
+                type: ElementSelectorType.FindByTextContent,
+              },
+              type: PageActionType.Click,
+            },
+            type: ScraperInstructionType.PageAction,
+          },
+          url: "http://127.0.0.1:1337/api",
+          duration: expect.any(Number),
+        },
+        {
+          type: ScraperInstructionsExecutionInfoType.Instruction,
+          instructionInfo: {
+            condition: {
+              selector: {
+                tagName: "button",
+                text: { source: "login", flags: "i" },
+                type: ElementSelectorType.FindByTextContent,
+              },
+              type: ScraperConditionType.IsVisible,
+            },
+            isMet: true,
+            type: ScraperInstructionType.Condition,
+          },
+          url: "http://127.0.0.1:1337/api",
+          duration: expect.any(Number),
+        },
+        {
+          type: ScraperInstructionsExecutionInfoType.Instruction,
+          instructionInfo: {
+            action: {
+              selector: {
+                tagName: "button",
+                text: { source: "login", flags: "i" },
+                type: ElementSelectorType.FindByTextContent,
+              },
+              type: PageActionType.Click,
+            },
+            type: ScraperInstructionType.PageAction,
+          },
+          url: "http://127.0.0.1:1337/api",
+          duration: expect.any(Number),
+        },
+        {
+          type: ScraperInstructionsExecutionInfoType.Success,
+          summary: {
             duration: expect.any(Number),
           },
-          {
-            type: ScraperInstructionsExecutionInfoType.Instruction,
-            instructionInfo: {
-              condition: {
-                selector: {
-                  tagName: "button",
-                  text: { source: "accept cookies", flags: "i" },
-                  type: ElementSelectorType.FindByTextContent,
-                },
-                type: ScraperConditionType.IsVisible,
-              },
-              isMet: false,
-              type: ScraperInstructionType.Condition,
-            },
-            url: "http://127.0.0.1:1337/api",
-            duration: expect.any(Number),
-          },
-          {
-            type: ScraperInstructionsExecutionInfoType.Instruction,
-            instructionInfo: {
-              action: {
-                selector: {
-                  tagName: "button",
-                  text: { source: "login", flags: "i" },
-                  type: ElementSelectorType.FindByTextContent,
-                },
-                type: PageActionType.Click,
-              },
-              type: ScraperInstructionType.PageAction,
-            },
-            url: "http://127.0.0.1:1337/api",
-            duration: expect.any(Number),
-          },
-          {
-            type: ScraperInstructionsExecutionInfoType.Instruction,
-            instructionInfo: {
-              condition: {
-                selector: {
-                  tagName: "button",
-                  text: { source: "login", flags: "i" },
-                  type: ElementSelectorType.FindByTextContent,
-                },
-                type: ScraperConditionType.IsVisible,
-              },
-              isMet: true,
-              type: ScraperInstructionType.Condition,
-            },
-            url: "http://127.0.0.1:1337/api",
-            duration: expect.any(Number),
-          },
-          {
-            type: ScraperInstructionsExecutionInfoType.Instruction,
-            instructionInfo: {
-              action: {
-                selector: {
-                  tagName: "button",
-                  text: { source: "login", flags: "i" },
-                  type: ElementSelectorType.FindByTextContent,
-                },
-                type: PageActionType.Click,
-              },
-              type: ScraperInstructionType.PageAction,
-            },
-            url: "http://127.0.0.1:1337/api",
-            duration: expect.any(Number),
-          },
-          {
-            type: ScraperInstructionsExecutionInfoType.Success,
-            summary: {
-              duration: expect.any(Number),
-            },
-          },
-        ]
+        },
+      ]
 
       it("should execute given instructions", async () => {
-        await expect(
-          scraper
-            .execute(mockInstructions, mockDataBridge, {
-              pageMiddleware: setupInterceptor,
-            })
-            .then((res) => res.get()),
-        ).resolves.toEqual(mockExecutionInfo)
+        const executionInfo = await scraper
+          .execute(mockInstructions, mockDataBridge, {
+            pageMiddleware: setupInterceptor,
+          })
+          .then((res) => res.get())
+        expect(executionInfo).toEqual(mockExecutionInfo)
       }, 60_000)
 
       it("should execute given instructions and result depending on page state", async () => {
@@ -475,7 +473,7 @@ describe(
         },
       ]
 
-      const mockExecutionInfo: ScraperInstructionsExecutionInfo = [
+      const mockExecutionInfo = [
         {
           type: ScraperInstructionsExecutionInfoType.Instruction,
           instructionInfo: {
@@ -622,7 +620,7 @@ describe(
         },
       ]
 
-      const mockExecutionInfo: ScraperInstructionsExecutionInfo = [
+      const mockExecutionInfo = [
         {
           type: ScraperInstructionsExecutionInfoType.Instruction,
           instructionInfo: {

@@ -7,7 +7,12 @@ import {
   type CreateScraper,
   type ScraperInstructions,
 } from "@web-scraper/common"
-import { Plus, Trash2 } from "lucide-react"
+import { Plus, Trash2, ArrowUpFromLine, ArrowDownFromLine } from "lucide-react"
+import {
+  Tooltip,
+  TooltipTrigger,
+  TooltipContent,
+} from "@/components/shadcn/tooltip"
 import { useFieldArray, useFormContext, type Control } from "react-hook-form"
 import { mapToSelectOptions } from "./helpers"
 import { ConditionInstructionForm } from "./instruction-types/condition-instruction-form"
@@ -37,7 +42,7 @@ export function ScraperInstructionsForm({
   name = "instructions",
   condition,
 }: ScraperInstructionsFormProps) {
-  const { fields, append, remove } = useFieldArray<
+  const { fields, append, remove, move } = useFieldArray<
     CreateScraper,
     "instructions"
   >({
@@ -68,15 +73,59 @@ export function ScraperInstructionsForm({
           >
             <div className="flex items-center justify-between">
               <h4 className="font-medium">Instruction {index + 1}</h4>
-              <Button
-                type="button"
-                variant="ghost"
-                size="sm"
-                onClick={() => remove(index)}
-                className="text-destructive hover:text-destructive"
-              >
-                <Trash2 />
-              </Button>
+              <div className="flex items-center gap-1">
+                {fields.length > 1 && (
+                  <>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => move(index, index - 1)}
+                          disabled={index === 0}
+                          className="text-muted-foreground"
+                          aria-label="Move up"
+                        >
+                          <ArrowUpFromLine />
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent>Move up</TooltipContent>
+                    </Tooltip>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => move(index, index + 1)}
+                          disabled={index === fields.length - 1}
+                          className="text-muted-foreground"
+                          aria-label="Move down"
+                        >
+                          <ArrowDownFromLine />
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent>Move down</TooltipContent>
+                    </Tooltip>
+                  </>
+                )}
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => remove(index)}
+                      className="text-destructive hover:text-destructive"
+                      aria-label="Delete"
+                    >
+                      <Trash2 />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>Delete</TooltipContent>
+                </Tooltip>
+              </div>
             </div>
 
             <FormSelect

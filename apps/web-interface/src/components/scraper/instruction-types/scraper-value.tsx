@@ -1,8 +1,8 @@
+import { LabeledValue } from "@/components/common/labeled-value"
 import { ScraperValueType, type ScraperValue } from "@web-scraper/common"
 import { DynamicIcon, type IconName } from "lucide-react/dynamic"
+import { DataKeyValue } from "./data-key-value"
 import { ScraperSelector } from "./scraper-selector"
-import { LabeledValue } from "@/components/common/labeled-value"
-import { Clock } from "lucide-react"
 
 type ScraperValueProps = {
   value: ScraperValue
@@ -13,8 +13,8 @@ export function ScraperValue({ value }: ScraperValueProps) {
     <div className="border-2 border-dashed border-primary/30 rounded-sm p-2 flex flex-col gap-2 bg-background-lighter">
       <div className="flex items-center gap-2">
         <DynamicIcon name={iconsMap[value.type]} className="size-4" />
-        <span className="text-sm font-medium capitalize leading-none">
-          {value.type}
+        <span className="text-sm font-medium leading-none">
+          {formatValueType(value.type)}
         </span>
       </div>
       <ValueDetails value={value} />
@@ -40,22 +40,13 @@ function ValueDetails({ value }: { value: ScraperValue }) {
       )
 
     case ScraperValueType.CurrentTimestamp:
-      return (
-        <div className="text-sm flex flex-row items-center gap-2">
-          <Clock className="size-4" />
-          Current timestamp
-        </div>
-      )
+      return null
 
     case ScraperValueType.ExternalData:
       return (
         <div className="space-y-2">
           <LabeledValue label="Data key:">
-            {/* Note: first part of dataKey should match one of data source aliases */}
-            {/* TODO: use scraper instructions context and check dataKey validity */}
-            <pre className="text-sm break-all whitespace-normal">
-              {value.dataKey}
-            </pre>
+            <DataKeyValue dataKey={value.dataKey} className="text-sm" />
           </LabeledValue>
           {value.defaultValue && (
             <LabeledValue label="Default value:">
@@ -87,5 +78,20 @@ function ValueDetails({ value }: { value: ScraperValue }) {
           </LabeledValue>
         </div>
       )
+  }
+}
+
+function formatValueType(type: ScraperValueType) {
+  switch (type) {
+    case ScraperValueType.Literal:
+      return "Literal"
+    case ScraperValueType.CurrentTimestamp:
+      return "Current timestamp"
+    case ScraperValueType.ExternalData:
+      return "External data"
+    case ScraperValueType.ElementTextContent:
+      return "Element text content"
+    case ScraperValueType.ElementAttribute:
+      return "Element attribute value"
   }
 }

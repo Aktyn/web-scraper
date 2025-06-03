@@ -18,7 +18,7 @@ interface FormInputProps<
   name: TName
   label: ReactNode
   placeholder?: string
-  description?: string
+  description?: ReactNode
   type?: string
   disabled?: boolean
   className?: string

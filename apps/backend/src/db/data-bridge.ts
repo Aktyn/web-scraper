@@ -1,6 +1,8 @@
+import { type ScraperDataSource, whereSchemaToSql } from "@web-scraper/common"
 import type { DataBridge as DataBridgeInterface } from "@web-scraper/core"
 import { sql } from "drizzle-orm"
 import type { DbModule } from "./db.module"
+import { createTemporaryView, removeTemporaryView } from "./view-helpers"
 
 export enum DataBridgeSourceType {
   Table = "table",
@@ -28,11 +30,19 @@ export class DataBridge<
     public readonly dataSources: SourcesType,
   ) {}
 
+  async destroy() {
+    for (const source of Object.values(this.dataSources)) {
+      if (source.type === DataBridgeSourceType.TemporaryView) {
+        await removeTemporaryView(this.db, source.name)
+      }
+    }
+  }
+
   async get(key: SourceTypeKey<SourcesType>) {
     const [sourceAlias, column] = key.split(".") as [SourceAlias, string]
     const source = this.dataSources[sourceAlias]
 
-    //TODO: all user-store-tables are supposed to have a numeric id column; use it to get specific row when scraper runs iteratively
+    //TODO: all user-store-tables are supposed to have a numeric id column; use it to get specific row when scraper executes iteratively
     const result = await this.db
       .run(sql.raw(`SELECT ${column} FROM ${source.name} LIMIT 1`))
       .execute()
@@ -45,5 +55,30 @@ export class DataBridge<
 
   async delete(_key: SourceTypeKey<SourcesType>): Promise<void> {
     //TODO: implement
+  }
+
+  static async buildDataBridgeSources(
+    db: DbModule,
+    dataSources: ScraperDataSource[],
+  ) {
+    const sources: Record<string, DataBridgeSource> = {}
+
+    for (const dataSource of dataSources) {
+      sources[dataSource.sourceAlias] = dataSource.whereSchema
+        ? {
+            type: DataBridgeSourceType.TemporaryView,
+            name: await createTemporaryView(
+              db,
+              dataSource.dataStoreTableName,
+              whereSchemaToSql(dataSource.whereSchema),
+            ),
+          }
+        : {
+            type: DataBridgeSourceType.Table,
+            name: dataSource.dataStoreTableName,
+          }
+    }
+
+    return sources
   }
 }
