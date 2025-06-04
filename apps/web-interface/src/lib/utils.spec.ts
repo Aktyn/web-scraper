@@ -20,7 +20,7 @@ describe("formatDateTime", () => {
   it("formats a date to MM/DD/YYYY, HH:MM:SS", () => {
     const date = new Date("2023-12-31T23:59:59")
     expect(formatDateTime(date)).toMatch(
-      /\d{2}\/\d{2}\/\d{4}, \d{2}:\d{2}:\d{2}/,
+      /\d{2}\.\d{2}\.\d{4}, \d{2}:\d{2}:\d{2}/,
     )
   })
 })

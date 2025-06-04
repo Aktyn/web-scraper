@@ -4,3 +4,5 @@ export type SimpleLogger = Pick<
 > & {
   fatal: typeof console.error
 }
+
+export type ExtendArray<T> = T extends Array<unknown> ? T : Array<T> | T

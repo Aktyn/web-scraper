@@ -22,8 +22,18 @@ const instructionInfoSchema = z.discriminatedUnion("type", [
     value: scraperValueSchema,
   }),
   z.object({
+    type: z.literal(ScraperInstructionType.SaveDataBatch),
+    dataSourceName: z.string(),
+    items: z.array(
+      z.object({
+        columnName: z.string(),
+        value: scraperValueSchema,
+      }),
+    ),
+  }),
+  z.object({
     type: z.literal(ScraperInstructionType.DeleteData),
-    dataKey: scraperDataKeySchema,
+    dataSourceName: z.string(),
   }),
 
   z.object({
@@ -45,6 +55,8 @@ export enum ScraperInstructionsExecutionInfoType {
   Error = "error",
 }
 
+const valueSchema = z.union([z.string(), z.number(), z.null()])
+
 export const scraperInstructionsExecutionInfoSchema = z.array(
   z.discriminatedUnion("type", [
     z.object({
@@ -64,16 +76,26 @@ export const scraperInstructionsExecutionInfoSchema = z.array(
         z.object({
           type: z.literal("get"),
           key: z.string(),
-          returnedValue: z.string().nullable(),
+          returnedValue: valueSchema,
         }),
         z.object({
           type: z.literal("set"),
           key: z.string(),
-          value: z.string().nullable(),
+          value: valueSchema,
+        }),
+        z.object({
+          type: z.literal("setMany"),
+          dataSourceName: z.string(),
+          items: z.array(
+            z.object({
+              columnName: z.string(),
+              value: valueSchema,
+            }),
+          ),
         }),
         z.object({
           type: z.literal("delete"),
-          key: z.string(),
+          dataSourceName: z.string(),
         }),
       ]),
     }),

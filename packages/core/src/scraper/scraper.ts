@@ -350,7 +350,7 @@ export class Scraper extends EventEmitter {
 
         case ScraperInstructionType.Condition:
           {
-            this.logger.info({
+            context.logger.info({
               msg: "Checking condition",
               condition: instruction.if,
             })
@@ -390,6 +390,11 @@ export class Scraper extends EventEmitter {
 
         case ScraperInstructionType.SaveData:
           {
+            context.logger.info("Saving data to data bridge", {
+              dataKey: instruction.dataKey,
+              value: instruction.value,
+            })
+
             lastInstructionInfo = pushInstructionInfo({
               type: instruction.type,
               dataKey: instruction.dataKey,
@@ -410,28 +415,71 @@ export class Scraper extends EventEmitter {
             })
           }
           break
+        case ScraperInstructionType.SaveDataBatch:
+          {
+            context.logger.info("Saving batch data to data bridge", {
+              dataSourceName: instruction.dataSourceName,
+              items: instruction.items,
+            })
+
+            lastInstructionInfo = pushInstructionInfo({
+              type: instruction.type,
+              dataSourceName: instruction.dataSourceName,
+              items: instruction.items,
+            })
+
+            const items = await Promise.all(
+              instruction.items.map(async (item) => ({
+                columnName: item.columnName,
+                value: await getScraperValue(context, item.value),
+              })),
+            )
+
+            await context.dataBridge.setMany(instruction.dataSourceName, items)
+            context.executionInfo.push({
+              type: ScraperInstructionsExecutionInfoType.ExternalDataOperation,
+              operation: {
+                type: "setMany",
+                dataSourceName: instruction.dataSourceName,
+                items: items,
+              },
+            })
+          }
+          break
         case ScraperInstructionType.DeleteData:
+          context.logger.info("Deleting data from data bridge", {
+            dataSourceName: instruction.dataSourceName,
+          })
+
           lastInstructionInfo = pushInstructionInfo({
             type: instruction.type,
-            dataKey: instruction.dataKey,
+            dataSourceName: instruction.dataSourceName,
           })
-          await context.dataBridge.delete(instruction.dataKey)
+          await context.dataBridge.delete(instruction.dataSourceName)
           context.executionInfo.push({
             type: ScraperInstructionsExecutionInfoType.ExternalDataOperation,
             operation: {
               type: "delete",
-              key: instruction.dataKey,
+              dataSourceName: instruction.dataSourceName,
             },
           })
           break
 
         case ScraperInstructionType.Marker:
+          context.logger.info("Marking position in scraper execution", {
+            markerName: instruction.name,
+          })
+
           lastInstructionInfo = pushInstructionInfo({
             type: instruction.type,
             name: instruction.name,
           })
           continue
         case ScraperInstructionType.Jump:
+          context.logger.info("Jumping to marker", {
+            markerName: instruction.markerName,
+          })
+
           lastInstructionInfo = pushInstructionInfo({
             type: instruction.type,
             markerName: instruction.markerName,
@@ -480,7 +528,7 @@ export class Scraper extends EventEmitter {
     context: ScraperExecutionContext,
     action: PageAction,
   ) {
-    this.logger.info({ msg: "Performing action", action })
+    context.logger.info({ msg: "Performing action", action })
     switch (action.type) {
       case PageActionType.Wait:
         await wait(action.duration)
@@ -515,7 +563,7 @@ export class Scraper extends EventEmitter {
 
         const value = await getScraperValue(context, action.value)
         if (value) {
-          await handle.type(value, {
+          await handle.type(value.toString(), {
             delay: randomInt(1, 4),
           })
         }
@@ -546,7 +594,7 @@ export class Scraper extends EventEmitter {
             return value === condition.text
           }
           return new RegExp(condition.text.source, condition.text.flags).test(
-            value,
+            value.toString(),
           )
         }
       }

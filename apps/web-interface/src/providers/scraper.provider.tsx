@@ -9,6 +9,8 @@ export function ScraperProvider({
   children,
   scraper,
 }: PropsWithChildren<{ scraper: ScraperType }>) {
+  //TODO: implement sse based updates for scraper
+
   return <ScraperContext value={{ scraper }}>{children}</ScraperContext>
 }
 

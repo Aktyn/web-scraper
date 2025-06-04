@@ -33,12 +33,52 @@ export function SaveDataInstruction({
   )
 }
 
+type SaveDataBatchInstructionProps = {
+  dataSourceName: string
+  items: Array<{ columnName: string; value: ScraperValue }>
+} & ComponentProps<"div">
+
+export function SaveDataBatchInstruction({
+  dataSourceName,
+  items,
+  ...divProps
+}: SaveDataBatchInstructionProps) {
+  return (
+    <div {...divProps}>
+      <div className="flex items-center gap-2">
+        <Save className="size-4" />
+        <span className="font-medium leading-none">Save data batch</span>
+      </div>
+
+      <LabeledValue label="Data source alias:">
+        <DataKeyValue dataKey={dataSourceName} />
+      </LabeledValue>
+
+      <LabeledValue label="Items (column and value):">
+        <div className="flex flex-row flex-wrap items-start gap-2">
+          {items.map((item, index) => (
+            <div
+              key={`${item.columnName}-${index}`}
+              className="flex flex-col bg-background p-2 rounded-lg border border-border/50"
+            >
+              <pre className="font-bold break-all whitespace-normal">
+                {item.columnName}
+              </pre>
+              <ScraperValueComponent value={item.value} />
+            </div>
+          ))}
+        </div>
+      </LabeledValue>
+    </div>
+  )
+}
+
 type DeleteDataInstructionProps = {
-  dataKey: ScraperDataKey
+  dataSourceName: string
 } & ComponentProps<"div">
 
 export function DeleteDataInstruction({
-  dataKey,
+  dataSourceName,
   ...divProps
 }: DeleteDataInstructionProps) {
   return (
@@ -48,8 +88,8 @@ export function DeleteDataInstruction({
         <span className="font-medium leading-none">Delete data</span>
       </div>
 
-      <LabeledValue label="Data key:">
-        <DataKeyValue dataKey={dataKey} />
+      <LabeledValue label="Data source alias:">
+        <DataKeyValue dataKey={dataSourceName} />
       </LabeledValue>
     </div>
   )

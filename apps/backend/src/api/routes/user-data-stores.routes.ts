@@ -376,6 +376,40 @@ export async function userDataStoresRoutes(fastify: FastifyInstance) {
     },
   )
 
+  fastify.withTypeProvider<ZodTypeProvider>().delete(
+    "/user-data-stores/:tableName/records",
+    {
+      schema: {
+        params: paramsWithTableNameSchema,
+        response: {
+          204: z.void(),
+          404: apiErrorResponseSchema,
+        },
+      },
+    },
+    async (request, reply) => {
+      const { tableName } = request.params
+
+      const existingStore = await fastify.db
+        .select()
+        .from(userDataStoresTable)
+        .where(eq(userDataStoresTable.tableName, tableName))
+        .get()
+
+      if (!existingStore) {
+        return reply.status(404).send({
+          error: "Data store not found",
+        })
+      }
+
+      await fastify.db
+        .run(sql`DELETE FROM ${sql.identifier(tableName)}`)
+        .execute()
+
+      return reply.status(204).send()
+    },
+  )
+
   fastify.withTypeProvider<ZodTypeProvider>().put(
     "/user-data-stores/:tableName/records/:id",
     {

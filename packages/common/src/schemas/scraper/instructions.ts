@@ -18,6 +18,13 @@ export enum ScraperInstructionType {
   /** Used to save data to the data bridge */
   SaveData = "saveData",
 
+  /**
+   * Used to upsert multiple keys of the same data source\
+   * Useful for inserting new database rows that require multiple columns to be set at once\
+   * or for updating multiple columns of the same row in a database table
+   */
+  SaveDataBatch = "saveDataBatch",
+
   /** Used to delete data from the data bridge */
   DeleteData = "deleteData",
 
@@ -33,7 +40,6 @@ export enum ScraperInstructionType {
   Jump = "jump",
 }
 
-// Helper TypeScript types for defining the recursive Zod schema
 type ScraperInstructionRecursive =
   | { type: ScraperInstructionType.PageAction; action: PageAction }
   | {
@@ -47,7 +53,15 @@ type ScraperInstructionRecursive =
       dataKey: ScraperDataKey
       value: ScraperValue
     }
-  | { type: ScraperInstructionType.DeleteData; dataKey: ScraperDataKey }
+  | {
+      type: ScraperInstructionType.SaveDataBatch
+      dataSourceName: string
+      items: Array<{
+        columnName: string
+        value: ScraperValue
+      }>
+    }
+  | { type: ScraperInstructionType.DeleteData; dataSourceName: string }
   | { type: ScraperInstructionType.Marker; name: string }
   | { type: ScraperInstructionType.Jump; markerName: string }
 //TODO: add "show notification" instruction
@@ -74,17 +88,27 @@ export const scraperInstructionsSchema: z.ZodType<ScraperInstructionsRecursive> 
         value: scraperValueSchema,
       }),
       z.object({
+        type: z.literal(ScraperInstructionType.SaveDataBatch),
+        dataSourceName: z.string().min(1, "Data source name must not be empty"),
+        items: z.array(
+          z.object({
+            columnName: z.string().min(1, "Column name must not be empty"),
+            value: scraperValueSchema,
+          }),
+        ),
+      }),
+      z.object({
         type: z.literal(ScraperInstructionType.DeleteData),
-        dataKey: scraperDataKeySchema,
+        dataSourceName: z.string().min(1, "Data source name must not be empty"),
       }),
 
       z.object({
         type: z.literal(ScraperInstructionType.Marker),
-        name: z.string(),
+        name: z.string().min(1, "Marker name must not be empty"),
       }),
       z.object({
         type: z.literal(ScraperInstructionType.Jump),
-        markerName: z.string(),
+        markerName: z.string().min(1, "Marker name must not be empty"),
       }),
     ]),
   )

@@ -1,7 +1,7 @@
 import z from "zod"
 import { scraperElementSelectorSchema } from "./selector"
 
-/** DataSourceName.ColumnName where data source name refers to table or view name */
+/** DataSourceName.ColumnName where data source name refers to table or view name or its alias */
 export type ScraperDataKey = `${string}.${string}`
 
 export const scraperDataKeySchema = z.custom<ScraperDataKey>(
@@ -48,7 +48,7 @@ export const scraperValueSchema = z.discriminatedUnion("type", [
   z.object({
     type: z.literal(ScraperValueType.ElementAttribute),
     selector: scraperElementSelectorSchema,
-    attributeName: z.string(),
+    attributeName: z.string().min(1, "Attribute name must not be empty"),
   }),
 ])
 

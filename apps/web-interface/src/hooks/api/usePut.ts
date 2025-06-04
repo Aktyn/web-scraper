@@ -19,11 +19,11 @@ export function usePut<RoutePath extends RoutesWithMethod<"put">>(
     setIsPutting(true)
     try {
       const result = await api.put<RoutePath>(route, body, params)
-      toast.success("Item updated successfully")
+      toast.success("Request successful")
       return result
     } catch (error) {
       console.error(error)
-      toast.error("Failed to update item", {
+      toast.error("Request failed", {
         description: error instanceof Error ? error.message : "Unknown error",
       })
       return null

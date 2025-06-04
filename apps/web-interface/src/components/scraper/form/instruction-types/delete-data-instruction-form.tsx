@@ -11,5 +11,5 @@ export function DeleteDataInstructionForm({
   control,
   fieldName,
 }: DeleteDataInstructionFormProps) {
-  return <DataKeyField control={control} name={`${fieldName}.dataKey`} />
+  return <DataKeyField control={control} name={`${fieldName}.dataSourceName`} />
 }

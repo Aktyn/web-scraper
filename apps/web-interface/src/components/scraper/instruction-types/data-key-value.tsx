@@ -8,7 +8,7 @@ import {
 import { useContext, useMemo } from "react"
 
 type DataKeyValueProps = {
-  dataKey: ScraperDataKey
+  dataKey: ScraperDataKey | string
   className?: string
 }
 
@@ -36,9 +36,13 @@ export function DataKeyValue({ dataKey, className }: DataKeyValueProps) {
 }
 
 function validateDataKey(
-  dataKey: ScraperDataKey,
+  dataKey: ScraperDataKey | string,
   dataSources: ScraperDataSource[],
 ) {
+  if (!dataKey.includes(".")) {
+    return dataSources.some((source) => source.sourceAlias === dataKey)
+  }
+
   const parsedKey = scraperDataKeySchema.safeParse(dataKey)
   if (!parsedKey.success) {
     return false

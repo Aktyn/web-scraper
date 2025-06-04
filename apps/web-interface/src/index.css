@@ -267,6 +267,26 @@
   [data-slot="table-cell"] {
     @apply truncate max-w-64;
   }
+
+  ::-webkit-scrollbar {
+    width: 12px;
+    background: var(--color-background-darker);
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--color-muted);
+    border-radius: var(--radius);
+    border: 2px solid var(--color-background-darker);
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--color-primary);
+  }
+  ::-webkit-scrollbar-corner {
+    background: var(--color-background-darker);
+  }
+  html {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-muted) var(--color-background-darker);
+  }
 }
 
 @utility view-transition {

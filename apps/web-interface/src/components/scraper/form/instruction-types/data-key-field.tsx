@@ -30,7 +30,11 @@ export function DataKeyField(props: DataKeyFieldProps) {
   const { control, watch } = useFormContext<CreateScraper>()
 
   const dataSources = watch("dataSources")
-  const dataKey = watch(props.name as `instructions.${number}.dataKey`)
+  const dataKey = watch(
+    props.name as
+      | `instructions.${number}.dataKey`
+      | `instructions.${number}.dataSourceName`,
+  )
 
   const [aliasValue, columnValue] = dataKey?.split(".") ?? []
 
@@ -51,20 +55,29 @@ export function DataKeyField(props: DataKeyFieldProps) {
     { tableName: selectedTableName },
   )
 
+  const isDeleteInstruction = props.name.endsWith("dataSourceName")
+
   return (
     <FormField
       control={control}
       name={props.name}
       render={({ field }) => (
         <FormItem>
-          <FormLabel>{props.label ?? "Data Key"}</FormLabel>
+          <FormLabel>
+            {props.label ??
+              (isDeleteInstruction ? "Source to delete row from" : "Data Key")}
+          </FormLabel>
           <FormControl>
             <div className="flex flex-row items-center gap-2 *:not-[span]:flex-1">
               <Select
                 value={aliasValue ?? ""}
                 disabled={!availableAliases.length}
                 onValueChange={(value) => {
-                  field.onChange(`${value}.${columnValue ?? ""}`)
+                  if (isDeleteInstruction) {
+                    field.onChange(value)
+                  } else {
+                    field.onChange(`${value}.${columnValue ?? ""}`)
+                  }
                 }}
               >
                 <FormControl>
@@ -80,30 +93,36 @@ export function DataKeyField(props: DataKeyFieldProps) {
                   ))}
                 </SelectContent>
               </Select>
-              <span className="self-end">.</span>
-              <Select
-                value={aliasValue ? (columnValue ?? "") : ""}
-                disabled={!aliasValue || isLoading}
-                onValueChange={(value) => {
-                  if (!aliasValue) {
-                    return
-                  }
-                  field.onChange(`${aliasValue}.${value ?? ""}`)
-                }}
-              >
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Column name" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  {userDataStore?.data.columns.map((column) => (
-                    <SelectItem key={column.name} value={column.name}>
-                      {column.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              {!isDeleteInstruction && (
+                <>
+                  <span className="self-end">.</span>
+                  <Select
+                    value={aliasValue ? (columnValue ?? "") : ""}
+                    disabled={
+                      !availableAliases.length || !aliasValue || isLoading
+                    }
+                    onValueChange={(value) => {
+                      if (!aliasValue) {
+                        return
+                      }
+                      field.onChange(`${aliasValue}.${value ?? ""}`)
+                    }}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Column name" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {userDataStore?.data.columns.map((column) => (
+                        <SelectItem key={column.name} value={column.name}>
+                          {column.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </>
+              )}
             </div>
           </FormControl>
           <FormDescription>
@@ -114,11 +133,15 @@ export function DataKeyField(props: DataKeyFieldProps) {
                 ) : (
                   "dataSourceAlias"
                 )}
-                <span>.</span>
-                {columnValue ? (
-                  <b className="text-success-foreground">{columnValue}</b>
-                ) : (
-                  <span className="text-muted-foreground">columnName</span>
+                {!isDeleteInstruction && (
+                  <>
+                    <span>.</span>
+                    {columnValue ? (
+                      <b className="text-success-foreground">{columnValue}</b>
+                    ) : (
+                      <span className="text-muted-foreground">columnName</span>
+                    )}
+                  </>
                 )}
               </span>
             ) : (
@@ -131,20 +154,5 @@ export function DataKeyField(props: DataKeyFieldProps) {
         </FormItem>
       )}
     />
-    // <FormInput
-    //   placeholder="dataSourceAlias.columnName"
-    //   description={
-    //     dataSources.length ? (
-    //       "dataSourceAlias must be defined in the scraper's data sources."
-    //     ) : (
-    //       <span className="text-warning">
-    //         No data sources defined. Please add a data source first.
-    //       </span>
-    //     )
-    //   }
-    //   disabled={!dataSources.length}
-    //   {...props}
-    //   label={props.label ?? "Data Key"}
-    // />
   )
 }

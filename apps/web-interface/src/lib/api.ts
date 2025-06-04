@@ -165,6 +165,9 @@ export type Routes = {
       body: UpsertUserDataStoreRecord
       response: ApiResponse<Record<string, unknown>>
     }
+    delete: {
+      response: void
+    }
   }
   "user-data-stores/:tableName/records/:id": {
     put: {

@@ -15,17 +15,27 @@ export function usePost<RoutePath extends RoutesWithMethod<"post">>(
   const postItem = async (
     body: Routes[RoutePath]["post"]["body"],
     params?: RouteParameters<RoutePath>,
+    onSuccess?: (result: Routes[RoutePath]["post"]["response"]) => void,
+    onError?: (error: unknown) => void,
   ) => {
     setIsPosting(true)
     try {
       const result = await api.post<RoutePath>(route, body, params)
-      toast.success("Item created successfully")
+      if (onSuccess) {
+        onSuccess(result)
+      } else {
+        toast.success("Request successful")
+      }
       return result
     } catch (error) {
       console.error(error)
-      toast.error("Failed to create item", {
-        description: error instanceof Error ? error.message : "Unknown error",
-      })
+      if (onError) {
+        onError(error)
+      } else {
+        toast.error("Request failed", {
+          description: error instanceof Error ? error.message : "Unknown error",
+        })
+      }
       return null
     } finally {
       setIsPosting(false)

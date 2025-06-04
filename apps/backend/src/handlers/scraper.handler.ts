@@ -35,9 +35,10 @@ export async function executeNewScraper(
   })
 
   try {
-    await scraper.execute(data.instructions, dataBridge, {
+    const executionInfo = await scraper.execute(data.instructions, dataBridge, {
       leavePageOpen: false,
     })
+    console.info(executionInfo.get()) //TODO: save execution info to the database for later analysis (make it cascade delete with scraper)
     logger.info("Scraper execution finished")
   } catch (error) {
     logger.error("Error executing scraper:", error)

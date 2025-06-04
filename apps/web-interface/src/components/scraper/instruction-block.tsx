@@ -9,6 +9,7 @@ import { ConditionInstruction } from "./instruction-types/condition-instruction"
 import { PageActionInstruction } from "./instruction-types/page-action-instruction"
 import {
   DeleteDataInstruction,
+  SaveDataBatchInstruction,
   SaveDataInstruction,
 } from "./instruction-types/data-instruction"
 import {
@@ -57,11 +58,20 @@ export function InstructionBlock({
           />
         </BlockContainer>
       )
+    case ScraperInstructionType.SaveDataBatch:
+      return (
+        <BlockContainer>
+          <SaveDataBatchInstruction
+            dataSourceName={instruction.dataSourceName}
+            items={instruction.items}
+          />
+        </BlockContainer>
+      )
 
     case ScraperInstructionType.DeleteData:
       return (
         <BlockContainer>
-          <DeleteDataInstruction dataKey={instruction.dataKey} />
+          <DeleteDataInstruction dataSourceName={instruction.dataSourceName} />
         </BlockContainer>
       )
 

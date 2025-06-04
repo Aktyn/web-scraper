@@ -2,29 +2,33 @@ import { FormInput } from "@/components/common/form/form-input"
 import { FormSelect } from "@/components/common/form/form-select"
 import { Button } from "@/components/shadcn/button"
 import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/shadcn/tooltip"
+import { cn } from "@/lib/utils"
+import {
   PageActionType,
   ScraperInstructionType,
   type CreateScraper,
   type ScraperInstructions,
 } from "@web-scraper/common"
-import { Plus, Trash2, ArrowUpFromLine, ArrowDownFromLine } from "lucide-react"
-import {
-  Tooltip,
-  TooltipTrigger,
-  TooltipContent,
-} from "@/components/shadcn/tooltip"
+import { ArrowDownFromLine, ArrowUpFromLine, Plus, Trash2 } from "lucide-react"
 import { useFieldArray, useFormContext, type Control } from "react-hook-form"
 import { mapToSelectOptions } from "./helpers"
 import { ConditionInstructionForm } from "./instruction-types/condition-instruction-form"
 import { DeleteDataInstructionForm } from "./instruction-types/delete-data-instruction-form"
 import { PageActionForm } from "./instruction-types/page-action-form"
-import { SaveDataInstructionForm } from "./instruction-types/save-data-instruction-form"
-import { cn } from "@/lib/utils"
+import {
+  SaveDataBatchInstructionForm,
+  SaveDataInstructionForm,
+} from "./instruction-types/save-data-instruction-form"
 
 const instructionTypeLabels: { [key in ScraperInstructionType]: string } = {
   [ScraperInstructionType.PageAction]: "Page action",
   [ScraperInstructionType.Condition]: "Condition",
   [ScraperInstructionType.SaveData]: "Save data",
+  [ScraperInstructionType.SaveDataBatch]: "Save data batch",
   [ScraperInstructionType.DeleteData]: "Delete data",
   [ScraperInstructionType.Marker]: "Marker",
   [ScraperInstructionType.Jump]: "Jump",
@@ -199,6 +203,10 @@ function InstructionForm({ control, fieldName }: InstructionFormProps) {
 
     case ScraperInstructionType.SaveData:
       return <SaveDataInstructionForm control={control} fieldName={fieldName} />
+    case ScraperInstructionType.SaveDataBatch:
+      return (
+        <SaveDataBatchInstructionForm control={control} fieldName={fieldName} />
+      )
 
     case ScraperInstructionType.DeleteData:
       return (

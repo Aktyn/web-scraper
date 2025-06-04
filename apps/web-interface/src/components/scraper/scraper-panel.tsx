@@ -23,15 +23,17 @@ type ScraperPanelProps = {
 }
 
 export function ScraperPanel({ scraper, onEditSuccess }: ScraperPanelProps) {
-  const { postItem, isPosting } = usePost("/scrapers/:id/execute")
+  const { postItem: execute, isPosting } = usePost("/scrapers/:id/execute")
 
   const [editDialogOpen, setEditDialogOpen] = useState(false)
 
   const handleExecute = async () => {
-    await postItem(undefined, { id: scraper.id })
+    await execute(undefined, { id: scraper.id }, () => void 0)
   }
 
   //TODO: manage running state scraper instances on the server (pause, resume, show realtime updates, etc.)
+
+  //TODO: setup iterator form before executing scraper to iterate over specific rows, until condition is met, etc. This will generate cursors for each get/set/delete operation on data bridge
 
   return (
     <ScraperProvider scraper={scraper}>

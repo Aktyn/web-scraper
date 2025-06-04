@@ -14,7 +14,7 @@ import mockServer from "pptr-mock-server"
 import type { ResponseOptions } from "pptr-mock-server/dist/handle-request"
 import type { Page } from "rebrowser-puppeteer"
 import { afterEach, beforeEach, describe, expect, it } from "vitest"
-import type { DataBridge } from "./data-helper"
+import type { DataBridge, DataBridgeValue } from "./data-helper"
 import { Scraper } from "./scraper"
 
 const mockBaseUrl = "http://127.0.0.1:1337"
@@ -24,7 +24,7 @@ describe(
   () => {
     let scraper: Scraper
 
-    const mockStore = new Map<string, string | null>([
+    const mockStore = new Map<string, DataBridgeValue>([
       ["user.name", "mock-user-name"],
       ["user.password", "mock-user-password"],
       ["button.next", "second"],
@@ -33,11 +33,20 @@ describe(
       get: async (key) => {
         return mockStore.get(key) ?? null
       },
-      set: async (_key, _value) => {
-        mockStore.set(_key, _value)
+      set: async (key: string, value) => {
+        mockStore.set(key, value)
       },
-      delete: async (key) => {
-        mockStore.delete(key)
+      setMany: async (dataSourceName: string, items) => {
+        for (const item of items) {
+          mockStore.set(`${dataSourceName}.${item.columnName}`, item.value)
+        }
+      },
+      delete: async (key: string) => {
+        for (const existingKey of mockStore.keys()) {
+          if (existingKey.startsWith(key)) {
+            mockStore.delete(existingKey)
+          }
+        }
       },
     }
 
@@ -932,7 +941,7 @@ describe(
 
         const savedTimestamp = await mockDataBridge.get("test.timestamp")
         expect(savedTimestamp).toBeTruthy()
-        const timestamp = parseInt(savedTimestamp || "0", 10)
+        const timestamp = parseInt(savedTimestamp?.toString() || "0", 10)
         expect(timestamp).toBeGreaterThanOrEqual(timestampBefore)
         expect(timestamp).toBeLessThanOrEqual(timestampAfter)
       }, 60_000)
@@ -1109,7 +1118,7 @@ describe(
           },
           {
             type: ScraperInstructionType.DeleteData,
-            dataKey: "test.delete",
+            dataSourceName: "test",
           },
         ]
 
@@ -1136,7 +1145,7 @@ describe(
             type: ScraperInstructionsExecutionInfoType.Instruction,
             instructionInfo: {
               type: ScraperInstructionType.DeleteData,
-              dataKey: "test.delete",
+              dataSourceName: "test",
             },
             duration: expect.any(Number),
             url: "http://127.0.0.1:1337/api",
@@ -1145,7 +1154,7 @@ describe(
             type: ScraperInstructionsExecutionInfoType.ExternalDataOperation,
             operation: {
               type: "delete",
-              key: "test.delete",
+              dataSourceName: "test",
             },
           },
           {
@@ -1173,7 +1182,7 @@ describe(
           },
           {
             type: ScraperInstructionType.DeleteData,
-            dataKey: "test.nonexistent",
+            dataSourceName: "nonexistent",
           },
         ]
 
@@ -1200,7 +1209,7 @@ describe(
             type: ScraperInstructionsExecutionInfoType.Instruction,
             instructionInfo: {
               type: ScraperInstructionType.DeleteData,
-              dataKey: "test.nonexistent",
+              dataSourceName: "nonexistent",
             },
             duration: expect.any(Number),
             url: "http://127.0.0.1:1337/api",
@@ -1209,7 +1218,7 @@ describe(
             type: ScraperInstructionsExecutionInfoType.ExternalDataOperation,
             operation: {
               type: "delete",
-              key: "test.nonexistent",
+              dataSourceName: "nonexistent",
             },
           },
           {
@@ -1243,7 +1252,7 @@ describe(
           },
           {
             type: ScraperInstructionType.DeleteData,
-            dataKey: "test.combined",
+            dataSourceName: "test",
           },
         ]
 
@@ -1291,7 +1300,7 @@ describe(
             type: ScraperInstructionsExecutionInfoType.Instruction,
             instructionInfo: {
               type: ScraperInstructionType.DeleteData,
-              dataKey: "test.combined",
+              dataSourceName: "test",
             },
             duration: expect.any(Number),
             url: "http://127.0.0.1:1337/api",
@@ -1300,7 +1309,7 @@ describe(
             type: ScraperInstructionsExecutionInfoType.ExternalDataOperation,
             operation: {
               type: "delete",
-              key: "test.combined",
+              dataSourceName: "test",
             },
           },
           {

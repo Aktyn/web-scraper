@@ -8,10 +8,48 @@ import {
 import { type ScraperExecutionContext } from "./helpers"
 import { getElementHandle } from "./selectors"
 
+// type Range =
+//   | {
+//       index: number
+//     }
+//   | {
+//       start: number
+//       end: number
+//       step?: number
+//     }
+
+// //TODO: use in DataBridge interface as optional parameter
+// type Iterator =
+//   | {
+//       type: "range"
+//       /**
+//        * It is used to determine the target on which the range will be based.
+//        * For a database table, for example, this would be the name of the primary key column.
+//        */
+//       identifier: string
+//       range: Range
+//     }
+//   | {
+//       type: "entire-set"
+//     }
+
+export type Cursor = { [key: string]: string | number }
+
+export type DataBridgeValue = string | number | null
+
 export interface DataBridge {
-  get(key: ScraperDataKey): Promise<string | null>
-  set(key: ScraperDataKey, value: string | null): Promise<void>
-  delete(key: ScraperDataKey): Promise<void>
+  get(key: ScraperDataKey, cursor?: Cursor): Promise<DataBridgeValue>
+  set(
+    key: ScraperDataKey,
+    value: DataBridgeValue,
+    cursor?: Cursor,
+  ): Promise<void>
+  setMany(
+    dataSourceName: string,
+    items: Array<{ columnName: string; value: DataBridgeValue }>,
+    cursor?: Cursor,
+  ): Promise<void>
+  delete(dataSourceName: string, cursor?: Cursor): Promise<void>
 }
 
 export async function getScraperValue(

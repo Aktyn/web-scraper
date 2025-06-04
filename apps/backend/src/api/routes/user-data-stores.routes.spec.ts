@@ -468,6 +468,38 @@ describe("User Data Stores Routes", () => {
     })
   })
 
+  describe("DELETE /user-data-stores/:tableName/records", () => {
+    it("should delete all existing records and return status 204", async () => {
+      const response = await modules.api.inject({
+        method: "DELETE",
+        url: "/user-data-stores/personal_credentials_random_string/records",
+      })
+
+      expect(response.statusCode).toBe(204)
+      expect(response.payload).toBe("")
+
+      const getResponse = await modules.api.inject({
+        method: "GET",
+        url: "/user-data-stores/personal_credentials_random_string/records",
+      })
+
+      const getData = JSON.parse(getResponse.payload)
+      expect(getData.data).toHaveLength(0)
+    })
+
+    it("should return status 404 if the data store does not exist", async () => {
+      const response = await modules.api.inject({
+        method: "DELETE",
+        url: "/user-data-stores/non_existent_table/records",
+      })
+
+      expect(response.statusCode).toBe(404)
+      expect(JSON.parse(response.payload)).toEqual({
+        error: "Data store not found",
+      })
+    })
+  })
+
   describe("PUT /user-data-stores/:tableName/records/:id", () => {
     it("should update an existing record and return status 200", async () => {
       const updateData = {

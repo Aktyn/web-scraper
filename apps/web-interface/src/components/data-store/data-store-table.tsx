@@ -5,11 +5,11 @@ import { cn, formatDateTime } from "@/lib/utils"
 import { type ColumnDef } from "@tanstack/react-table"
 import {
   SqliteColumnType,
-  type UserDataStoreColumn,
   type UserDataStore,
+  type UserDataStoreColumn,
 } from "@web-scraper/common"
-import { Check, Download, Edit, Plus, Trash, X } from "lucide-react"
-import { useMemo, useState } from "react"
+import { Check, Download, Edit, Eraser, Plus, Trash, X } from "lucide-react"
+import { type ReactNode, useMemo, useState } from "react"
 import { ConfirmationDialog } from "../common/confirmation-dialog"
 import { NullBadge } from "../common/null-badge"
 import { DataTable } from "../common/table/data-table"
@@ -46,11 +46,15 @@ export function DataStoreTable({
 
   const [editDialogOpen, setEditDialogOpen] = useState(false)
 
+  const [eraseDialogOpen, setEraseDialogOpen] = useState(false)
+
   const { data, isLoading, isLoadingMore, hasMore, loadMore, refresh } =
     useInfiniteGet("/user-data-stores/:tableName/records", {
       tableName: store.tableName,
     })
 
+  const { deleteItem: deleteAllRecords, isDeleting: isDeletingAllRecords } =
+    useDelete("/user-data-stores/:tableName/records")
   const { deleteItem, isDeleting } = useDelete(
     "/user-data-stores/:tableName/records/:id",
   )
@@ -76,6 +80,14 @@ export function DataStoreTable({
     }
   }
 
+  const handleEraseAllRecords = async () => {
+    const success = await deleteAllRecords({ tableName: store.tableName })
+    if (success) {
+      refresh()
+      setEraseDialogOpen(false)
+    }
+  }
+
   const columns: ColumnDef<Record<string, unknown>>[] = useMemo(
     () => [
       ...store.columns.map<ColumnDef<Record<string, unknown>>>((column) => ({
@@ -95,7 +107,7 @@ export function DataStoreTable({
       {
         id: "actions",
         cell: ({ row }) => (
-          <div className="flex items-center gap-1 max-w-24">
+          <div className="flex items-center gap-1 w-fit">
             <Tooltip>
               <TooltipTrigger asChild>
                 <Button
@@ -165,7 +177,17 @@ export function DataStoreTable({
             <Edit />
             Edit structure
           </Button>
+          <Button
+            variant="outline"
+            className="ml-auto"
+            onClick={() => setEraseDialogOpen(true)}
+            disabled={isDeletingAllRecords}
+          >
+            <Eraser />
+            {isDeletingAllRecords ? "Erasing..." : "Erase all records"}
+          </Button>
           <RefreshButton
+            className="ml-0"
             onClick={refresh}
             refreshing={isLoading || isLoadingMore}
           />
@@ -194,6 +216,18 @@ export function DataStoreTable({
         confirmText={isDeleting ? "Deleting..." : "Delete"}
         cancelText="Cancel"
         onConfirm={handleDeleteConfirm}
+        variant="destructive"
+      />
+
+      <ConfirmationDialog
+        className="**:data-[slot=dialog-title]:text-destructive"
+        open={eraseDialogOpen}
+        onOpenChange={setEraseDialogOpen}
+        title="Erase all records"
+        description="Are you sure you want to erase all records from this data store? This action cannot be undone and will permanently delete all records."
+        confirmText={isDeletingAllRecords ? "Erasing..." : "Erase all"}
+        cancelText="Cancel"
+        onConfirm={handleEraseAllRecords}
         variant="destructive"
       />
 
@@ -238,7 +272,11 @@ function TypedValue({
     case SqliteColumnType.NUMERIC:
     case SqliteColumnType.INTEGER:
     case SqliteColumnType.REAL:
-      return <div>{value as string | number}</div>
+      return (
+        <div className="whitespace-normal text-pretty max-h-24 overflow-y-auto">
+          {value as ReactNode}
+        </div>
+      )
     case SqliteColumnType.BLOB:
       return (
         <div className="flex flex-row items-center gap-1">
