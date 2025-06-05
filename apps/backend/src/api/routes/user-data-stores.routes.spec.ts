@@ -1,4 +1,8 @@
-import { type CreateUserDataStore, SqliteColumnType } from "@web-scraper/common"
+import {
+  type ApiPaginatedResponse,
+  type CreateUserDataStore,
+  SqliteColumnType,
+} from "@web-scraper/common"
 import { beforeEach, describe, expect, it, vi } from "vitest"
 import { userDataStoresTable } from "../../db/schema"
 import { setup, type TestModules } from "../../test/setup"
@@ -48,6 +52,27 @@ describe("User Data Stores Routes", () => {
                 name: "password",
                 type: SqliteColumnType.TEXT,
                 notNull: true,
+              },
+            ],
+          },
+          {
+            tableName: "example_test_of_saving_page_content",
+            name: "Example test of saving page content",
+            description: "Example test of saving page content",
+            recordsCount: 0,
+            columns: [
+              { name: "id", type: SqliteColumnType.INTEGER, notNull: true },
+              {
+                name: "Scraper text",
+                type: SqliteColumnType.TEXT,
+                notNull: true,
+                defaultValue: null,
+              },
+              {
+                name: "Update time",
+                type: SqliteColumnType.TIMESTAMP,
+                notNull: true,
+                defaultValue: 0,
               },
             ],
           },
@@ -406,8 +431,10 @@ describe("User Data Stores Routes", () => {
         url: "/user-data-stores",
       })
 
-      const getData = JSON.parse(getResponse.payload)
-      expect(getData.data).toEqual([])
+      const getData = JSON.parse(
+        getResponse.payload,
+      ) as ApiPaginatedResponse<object>
+      expect(getData.data.length).toBe(1)
     })
 
     it("should return status 404 if the data store does not exist", async () => {

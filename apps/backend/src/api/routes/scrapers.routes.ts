@@ -332,13 +332,6 @@ export async function scrapersRoutes(
         })
       }
 
-      //TODO: if scraper will run iteratively (for example for each row in some subset of data) then DataBridge should keep track of the current row index
-      //TODO: save last N run configurations (instructions + data sources) so it can be reused by user later (after implementing dynamic instruction arguments)
-      //TODO: use to broadcast scraper execution events for real-time feedback
-      // events.emit("broadcast", {
-      //   type: SubscriptionMessageType.SubscriptionInitialized,
-      //   sessionId,
-      // })
       const scraperData = await joinScraperWithDataSources(scraperResponse)
 
       executeNewScraper(scraperId, scraperData, {

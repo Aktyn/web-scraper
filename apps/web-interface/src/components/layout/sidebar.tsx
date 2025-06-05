@@ -13,14 +13,14 @@ import { Separator } from "../shadcn/separator"
 import { Tooltip, TooltipContent, TooltipTrigger } from "../shadcn/tooltip"
 import { Footer } from "./footer"
 import { NavigationMenu } from "./navigation-menu"
-import { useServerEvents } from "@/providers/server-events.provider"
+import { ServerEventsProvider } from "@/providers/server-events.provider"
 
-const { ConnectionStatus } = useServerEvents
+const { ConnectionStatus } = ServerEventsProvider
 
 export function Sidebar() {
   const { ref, width } = useSizer()
 
-  const { status } = useServerEvents()
+  const { status } = ServerEventsProvider.useContext()
 
   const [isOpen, setIsOpen] = useCachedState("sidebar-open", true, localStorage)
   const [isInitiallyOpen] = useState(isOpen)

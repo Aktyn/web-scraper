@@ -7,16 +7,9 @@ import type { ConditionInstructionFieldName } from "./condition-instruction-form
 import { DataKeyField } from "./data-key-field"
 import type { PageActionFieldName } from "./page-action-form"
 import { ScraperSelectorForm } from "./scraper-selector-form"
+import { scraperValueTypeLabels } from "@/lib/dictionaries"
 
-const valueTypeLabels: { [key in ScraperValueType]: string } = {
-  [ScraperValueType.Literal]: "Literal value",
-  [ScraperValueType.CurrentTimestamp]: "Current timestamp",
-  [ScraperValueType.ExternalData]: "External data",
-  [ScraperValueType.ElementTextContent]: "Element text content",
-  [ScraperValueType.ElementAttribute]: "Element attribute",
-}
-
-const valueTypeOptions = mapToSelectOptions(valueTypeLabels)
+const valueTypeOptions = mapToSelectOptions(scraperValueTypeLabels)
 
 export type ScraperValueFieldName =
   | `instructions.${number}.value`

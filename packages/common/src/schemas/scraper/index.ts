@@ -9,6 +9,7 @@ export * from "./page-action"
 export * from "./results"
 export * from "./selector"
 export * from "./value"
+export * from "./event"
 
 export const scraperDataSourceSchema = z.object({
   dataStoreTableName: z.string(),

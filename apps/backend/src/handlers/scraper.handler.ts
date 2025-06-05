@@ -1,4 +1,9 @@
-import { type ScraperType, type SimpleLogger } from "@web-scraper/common"
+import {
+  ScraperEventType,
+  SubscriptionMessageType,
+  type ScraperType,
+  type SimpleLogger,
+} from "@web-scraper/common"
 import { Scraper } from "@web-scraper/core"
 import { type Logger } from "pino"
 import { DataBridge } from "../db/data-bridge"
@@ -34,14 +39,66 @@ export async function executeNewScraper(
     userDataDir: data.userDataDirectory ?? undefined,
   })
 
+  scraper.on("stateChange", (state, previousState) => {
+    context.events.emit("broadcast", {
+      type: SubscriptionMessageType.ScraperEvent,
+      scraperId: scraper.id,
+      event: {
+        type: ScraperEventType.StateChange,
+        state,
+        previousState,
+      },
+    })
+  })
+  scraper.on("executionStarted", () => {
+    context.events.emit("broadcast", {
+      type: SubscriptionMessageType.ScraperEvent,
+      scraperId: scraper.id,
+      event: {
+        type: ScraperEventType.ExecutionStarted,
+      },
+    })
+  })
+  scraper.on("executionUpdate", (update) => {
+    context.events.emit("broadcast", {
+      type: SubscriptionMessageType.ScraperEvent,
+      scraperId: scraper.id,
+      event: {
+        type: ScraperEventType.ExecutionUpdate,
+        update,
+      },
+    })
+  })
+  scraper.on("executionFinished", (executionInfo) => {
+    console.info(executionInfo.get()) //TODO: save execution info to the database for later analysis (make it cascade delete with scraper)
+
+    context.events.emit("broadcast", {
+      type: SubscriptionMessageType.ScraperEvent,
+      scraperId: scraper.id,
+      event: {
+        type: ScraperEventType.ExecutionFinished,
+        executionInfo: executionInfo.get(),
+      },
+    })
+  })
+
   try {
-    const executionInfo = await scraper.execute(data.instructions, dataBridge, {
+    await scraper.execute(data.instructions, dataBridge, {
       leavePageOpen: false,
     })
-    console.info(executionInfo.get()) //TODO: save execution info to the database for later analysis (make it cascade delete with scraper)
+
     logger.info("Scraper execution finished")
   } catch (error) {
     logger.error("Error executing scraper:", error)
+
+    context.events.emit("broadcast", {
+      type: SubscriptionMessageType.ScraperEvent,
+      scraperId: scraper.id,
+      event: {
+        type: ScraperEventType.ExecutionError,
+        error: error instanceof Error ? error.message : String(error),
+      },
+    })
   }
 
   try {

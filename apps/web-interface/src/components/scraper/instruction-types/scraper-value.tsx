@@ -1,4 +1,5 @@
 import { LabeledValue } from "@/components/common/labeled-value"
+import { scraperValueTypeLabels } from "@/lib/dictionaries"
 import { ScraperValueType, type ScraperValue } from "@web-scraper/common"
 import { DynamicIcon, type IconName } from "lucide-react/dynamic"
 import { DataKeyValue } from "./data-key-value"
@@ -14,7 +15,7 @@ export function ScraperValue({ value }: ScraperValueProps) {
       <div className="flex items-center gap-2">
         <DynamicIcon name={iconsMap[value.type]} className="size-4" />
         <span className="text-sm font-medium leading-none">
-          {formatValueType(value.type)}
+          {scraperValueTypeLabels[value.type]}
         </span>
       </div>
       <ValueDetails value={value} />
@@ -78,20 +79,5 @@ function ValueDetails({ value }: { value: ScraperValue }) {
           </LabeledValue>
         </div>
       )
-  }
-}
-
-function formatValueType(type: ScraperValueType) {
-  switch (type) {
-    case ScraperValueType.Literal:
-      return "Literal"
-    case ScraperValueType.CurrentTimestamp:
-      return "Current timestamp"
-    case ScraperValueType.ExternalData:
-      return "External data"
-    case ScraperValueType.ElementTextContent:
-      return "Element text content"
-    case ScraperValueType.ElementAttribute:
-      return "Element attribute value"
   }
 }

@@ -11,10 +11,12 @@ import {
   type ScraperInstructionsExecutionInfo,
   ScraperInstructionsExecutionInfoType,
   ScraperInstructionType,
+  ScraperState,
   type SimpleLogger,
   uuid,
   wait,
 } from "@web-scraper/common"
+import EventEmitter from "node:events"
 import puppeteer, {
   type Browser,
   type LaunchOptions,
@@ -22,15 +24,8 @@ import puppeteer, {
 } from "rebrowser-puppeteer"
 import { type DataBridge, getScraperValue } from "./data-helper"
 import { type ScraperExecutionContext } from "./helpers"
-import { getElementHandle } from "./selectors"
-import EventEmitter from "node:events"
 import { ScraperExecutionInfo } from "./scraper-execution-info"
-
-export enum ScraperState {
-  Idle = "idle",
-  Running = "running",
-  Exited = "exited",
-}
+import { getElementHandle } from "./selectors"
 
 type ScraperOptions = {
   id?: string
@@ -38,8 +33,9 @@ type ScraperOptions = {
 } & Partial<LaunchOptions>
 
 interface ScraperEvents {
-  stateChange: (state: ScraperState) => void
   destroy: () => void
+  stateChange: (state: ScraperState, previousState: ScraperState) => void
+  executionStarted: () => void
   executionFinished: (executionInfo: ScraperExecutionInfo) => void
   executionUpdate: (
     executionInfo: ScraperInstructionsExecutionInfo[number],
@@ -67,7 +63,7 @@ export class Scraper extends EventEmitter {
     return Scraper.instances.get(id) ?? null
   }
 
-  private readonly id: string
+  public readonly id: string
   private readonly logger: SimpleLogger
 
   private initPromise: Promise<Browser> | null = null
@@ -75,7 +71,7 @@ export class Scraper extends EventEmitter {
   private browser: Browser | null = null
   private abortController = new AbortController()
 
-  private _state = ScraperState.Idle
+  private _state = ScraperState.Pending
 
   constructor(private readonly options: ScraperOptions = {}) {
     super()
@@ -214,8 +210,9 @@ export class Scraper extends EventEmitter {
   }
 
   set state(state: ScraperState) {
+    const previousState = this._state
     this._state = state
-    this.emit("stateChange", state)
+    this.emit("stateChange", state, previousState)
   }
 
   private async getPage() {
@@ -248,8 +245,13 @@ export class Scraper extends EventEmitter {
   ) {
     const executionInfo = new ScraperExecutionInfo(instructions, dataBridge)
 
-    if (this.state !== ScraperState.Idle) {
-      this.logger.warn("Scraper is not in idle state. Aborting run request.")
+    if (
+      this.state !== ScraperState.Idle &&
+      this.state !== ScraperState.Pending
+    ) {
+      this.logger.warn(
+        "Scraper is not in idle or pending state. Aborting run request.",
+      )
       executionInfo.push({
         type: ScraperInstructionsExecutionInfoType.Error,
         errorMessage:
@@ -258,7 +260,8 @@ export class Scraper extends EventEmitter {
       return executionInfo
     }
 
-    this.state = ScraperState.Running
+    this.emit("executionStarted")
+    this.state = ScraperState.Executing
 
     if (!this.browser) {
       this.browser = await this.init(this.options)

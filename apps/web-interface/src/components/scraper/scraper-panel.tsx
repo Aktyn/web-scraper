@@ -1,4 +1,5 @@
-import type { ScraperType } from "@web-scraper/common"
+import { ScraperProvider } from "@/providers/scraper.provider"
+import { type ScraperType } from "@web-scraper/common"
 import { CopyButton } from "../common/button/copy-button"
 import { LabeledValue } from "../common/labeled-value"
 import {
@@ -8,14 +9,9 @@ import {
   AccordionTrigger,
 } from "../shadcn/accordion"
 import { Separator } from "../shadcn/separator"
+import { ScraperExecutionPanel } from "./execution/scraper-execution-panel"
 import { ScraperDataSource } from "./scraper-data-source"
 import { ScraperInstructionsTree } from "./scraper-instructions-tree"
-import { Button } from "../shadcn/button"
-import { Edit, Play } from "lucide-react"
-import { usePost } from "@/hooks/api/usePost"
-import { useState } from "react"
-import { ScraperFormDialog } from "./scraper-form-dialog"
-import { ScraperProvider } from "@/providers/scraper.provider"
 
 type ScraperPanelProps = {
   scraper: ScraperType
@@ -23,14 +19,6 @@ type ScraperPanelProps = {
 }
 
 export function ScraperPanel({ scraper, onEditSuccess }: ScraperPanelProps) {
-  const { postItem: execute, isPosting } = usePost("/scrapers/:id/execute")
-
-  const [editDialogOpen, setEditDialogOpen] = useState(false)
-
-  const handleExecute = async () => {
-    await execute(undefined, { id: scraper.id }, () => void 0)
-  }
-
   //TODO: manage running state scraper instances on the server (pause, resume, show realtime updates, etc.)
 
   //TODO: setup iterator form before executing scraper to iterate over specific rows, until condition is met, etc. This will generate cursors for each get/set/delete operation on data bridge
@@ -38,26 +26,9 @@ export function ScraperPanel({ scraper, onEditSuccess }: ScraperPanelProps) {
   return (
     <ScraperProvider scraper={scraper}>
       <div className="flex flex-col gap-4">
-        <div className="flex flex-row items-center gap-2">
-          {/* TODO: run and watch for scraper updates in real time with SSE */}
-          {/* TODO: consider adding small form to configure number of scraper iterations and sequence of row indices to iterate over */}
-          <Button
-            variant="default"
-            onClick={handleExecute}
-            disabled={isPosting}
-          >
-            <Play />
-            {isPosting ? "Executing..." : "Execute"}
-          </Button>
-          <Button
-            variant="outline"
-            className="ml-auto"
-            onClick={() => setEditDialogOpen(true)}
-          >
-            <Edit />
-            Edit
-          </Button>
-        </div>
+        {/* TODO: run and watch for scraper updates in real time with SSE */}
+        {/* TODO: consider adding small form to configure number of scraper iterations and sequence of row indices to iterate over */}
+        <ScraperExecutionPanel onEditSuccess={onEditSuccess} />
 
         {/* TODO: load and show this scraper's execution history */}
 
@@ -128,12 +99,6 @@ export function ScraperPanel({ scraper, onEditSuccess }: ScraperPanelProps) {
           </AccordionItem>
         </Accordion>
       </div>
-      <ScraperFormDialog
-        open={editDialogOpen}
-        onOpenChange={setEditDialogOpen}
-        onSuccess={onEditSuccess}
-        editScraper={scraper}
-      />
     </ScraperProvider>
   )
 }

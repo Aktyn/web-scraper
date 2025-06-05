@@ -8,7 +8,7 @@ import type { ScraperCondition, ScraperInstructions } from "@web-scraper/common"
 import { ScraperConditionType } from "@web-scraper/common"
 import { Split } from "lucide-react"
 import { DynamicIcon, type IconName } from "lucide-react/dynamic"
-import type { ComponentProps } from "react"
+import type { ComponentProps, ReactNode } from "react"
 import { ScraperInstructionsTree } from "../scraper-instructions-tree"
 import { ScraperSelector } from "./scraper-selector"
 import { ScraperValue } from "./scraper-value"
@@ -18,12 +18,14 @@ type ConditionInstructionProps = {
   condition: ScraperCondition
   thenInstructions: ScraperInstructions
   elseInstructions?: ScraperInstructions
+  additionalHeaderContent?: ReactNode
 } & ComponentProps<"div">
 
 export function ConditionInstruction({
   condition,
   thenInstructions,
   elseInstructions,
+  additionalHeaderContent,
   ...divProps
 }: ConditionInstructionProps) {
   return (
@@ -31,6 +33,7 @@ export function ConditionInstruction({
       <div className="flex items-center gap-2">
         <Split className="size-4" />
         <span className="font-medium leading-none">Condition</span>
+        {additionalHeaderContent}
       </div>
 
       <div className="space-y-1 mt-2">

@@ -87,7 +87,7 @@ export default tseslint.config(
         "error",
         {
           prefer: "type-imports",
-          fixStyle: "inline-type-imports",
+          fixStyle: "separate-type-imports",
         },
       ],
       "import/no-duplicates": [

@@ -129,7 +129,7 @@ export function DataKeyField(props: DataKeyFieldProps) {
             {dataSources.length ? (
               <span>
                 {aliasValue ? (
-                  <b className="text-success-foreground">{aliasValue}</b>
+                  <b className="text-success-foreground-light">{aliasValue}</b>
                 ) : (
                   "dataSourceAlias"
                 )}
@@ -137,7 +137,9 @@ export function DataKeyField(props: DataKeyFieldProps) {
                   <>
                     <span>.</span>
                     {columnValue ? (
-                      <b className="text-success-foreground">{columnValue}</b>
+                      <b className="text-success-foreground-light">
+                        {columnValue}
+                      </b>
                     ) : (
                       <span className="text-muted-foreground">columnName</span>
                     )}

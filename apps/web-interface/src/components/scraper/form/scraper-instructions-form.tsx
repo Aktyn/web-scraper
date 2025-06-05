@@ -6,6 +6,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/shadcn/tooltip"
+import { instructionTypeLabels, pageActionTypeLabels } from "@/lib/dictionaries"
 import { cn } from "@/lib/utils"
 import {
   PageActionType,
@@ -24,15 +25,6 @@ import {
   SaveDataInstructionForm,
 } from "./instruction-types/save-data-instruction-form"
 
-const instructionTypeLabels: { [key in ScraperInstructionType]: string } = {
-  [ScraperInstructionType.PageAction]: "Page action",
-  [ScraperInstructionType.Condition]: "Condition",
-  [ScraperInstructionType.SaveData]: "Save data",
-  [ScraperInstructionType.SaveDataBatch]: "Save data batch",
-  [ScraperInstructionType.DeleteData]: "Delete data",
-  [ScraperInstructionType.Marker]: "Marker",
-  [ScraperInstructionType.Jump]: "Jump",
-}
 const instructionTypeOptions = mapToSelectOptions(instructionTypeLabels)
 
 interface ScraperInstructionsFormProps {
@@ -160,13 +152,6 @@ export function ScraperInstructionsForm({
       </Button>
     </div>
   )
-}
-
-const pageActionTypeLabels: { [key in PageActionType]: string } = {
-  [PageActionType.Navigate]: "Navigate",
-  [PageActionType.Wait]: "Wait",
-  [PageActionType.Click]: "Click",
-  [PageActionType.Type]: "Type",
 }
 
 const pageActionTypeOptions = mapToSelectOptions(pageActionTypeLabels)

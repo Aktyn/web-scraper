@@ -66,6 +66,7 @@
 
   --color-success: hsl(var(--success));
   --color-success-foreground: hsl(var(--success-foreground));
+  --color-success-foreground-light: hsl(var(--success-foreground-light));
 
   --color-info: hsl(var(--info));
   --color-info-foreground: hsl(var(--info-foreground));
@@ -178,7 +179,8 @@
     --info-foreground: 217 92% 90%;
 
     --success: 115 54% 76%;
-    --success-foreground: 115 54% 90%;
+    --success-foreground: 115 54% 15%;
+    --success-foreground-light: 115 54% 90%;
 
     --ring: 199 76% 69%;
 

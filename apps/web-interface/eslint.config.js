@@ -39,7 +39,6 @@ export default tseslint.config(
             "useFormField",
             "useView",
             "usePinnedDataStores",
-            "useServerEvents",
           ],
         },
       ],
@@ -64,7 +63,7 @@ export default tseslint.config(
         "error",
         {
           prefer: "type-imports",
-          fixStyle: "inline-type-imports",
+          fixStyle: "separate-type-imports",
         },
       ],
       "@typescript-eslint/consistent-type-exports": "error",

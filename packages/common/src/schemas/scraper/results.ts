@@ -68,6 +68,7 @@ export const scraperInstructionsExecutionInfoSchema = z.array(
       ]),
       duration: z.number(),
     }),
+
     z.object({
       type: z.literal(
         ScraperInstructionsExecutionInfoType.ExternalDataOperation,
@@ -99,12 +100,14 @@ export const scraperInstructionsExecutionInfoSchema = z.array(
         }),
       ]),
     }),
+
     z.object({
       type: z.literal(ScraperInstructionsExecutionInfoType.Success),
       summary: z.object({
         duration: z.number(),
       }),
     }),
+
     z.object({
       type: z.literal(ScraperInstructionsExecutionInfoType.Error),
       errorMessage: z.string(),

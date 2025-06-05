@@ -44,4 +44,25 @@ export async function seedUserDataStores(db: DbModule) {
       password: "pultetista@gufum.com",
     },
   ])
+
+  await createUserDataStore(db, {
+    tableName: sanitizeTableName("Example test of saving page content"),
+    name: "Example test of saving page content",
+    description: "Example test of saving page content",
+    columns: [
+      { name: "id", type: SqliteColumnType.INTEGER, notNull: true },
+      {
+        name: "Scraper text",
+        type: SqliteColumnType.TEXT,
+        notNull: true,
+        defaultValue: null,
+      },
+      {
+        name: "Update time",
+        type: SqliteColumnType.TIMESTAMP,
+        notNull: true,
+        defaultValue: 0,
+      },
+    ],
+  })
 }

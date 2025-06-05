@@ -25,11 +25,11 @@ function BlockContainer({ children }: PropsWithChildren) {
   )
 }
 
-export function InstructionBlock({
-  instruction,
-}: {
+type InstructionBlockProps = {
   instruction: ScraperInstructions[number]
-}) {
+}
+
+export function InstructionBlock({ instruction }: InstructionBlockProps) {
   switch (instruction.type) {
     case ScraperInstructionType.PageAction:
       return (

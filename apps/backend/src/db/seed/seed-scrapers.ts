@@ -16,9 +16,12 @@ export async function seedScrapersStores(db: DbModule) {
   const personalCredentialsTableName = sanitizeTableName(
     "Personal credentials random string",
   )
+  const exampleSiteContentTableName = sanitizeTableName(
+    "Example test of saving page content",
+  )
 
   await db.transaction(async (tx) => {
-    const [smallScraper, bigScraper] = await tx
+    const [scraper1, scraper2, scraper3] = await tx
       .insert(scrapersTable)
       .values([
         {
@@ -40,12 +43,17 @@ export async function seedScrapersStores(db: DbModule) {
             "See if there are new pepper alerts and notify user if so",
           instructions: checkNewPepperAlertsInstructions,
         },
+        {
+          name: "Site content scraper",
+          description: "Saves site content to the database",
+          instructions: scrapExampleSiteInstructions,
+        },
       ])
       .returning()
 
     await tx.insert(scraperDataSourcesTable).values([
       {
-        scraperId: smallScraper.id,
+        scraperId: scraper1.id,
         sourceAlias: "foo",
         dataStoreTableName: personalCredentialsTableName, //Note: it has to be already seeded
         whereSchema: {
@@ -64,7 +72,7 @@ export async function seedScrapersStores(db: DbModule) {
         },
       },
       {
-        scraperId: bigScraper.id,
+        scraperId: scraper2.id,
         sourceAlias: "user",
         dataStoreTableName: personalCredentialsTableName, //Note: it has to be already seeded
         whereSchema: {
@@ -72,6 +80,11 @@ export async function seedScrapersStores(db: DbModule) {
           condition: SqliteConditionType.ILike,
           value: "%pepper.pl%",
         },
+      },
+      {
+        scraperId: scraper3.id,
+        sourceAlias: "Store",
+        dataStoreTableName: exampleSiteContentTableName, //Note: it has to be already seeded
       },
     ])
   })
@@ -253,5 +266,36 @@ const checkNewPepperAlertsInstructions: ScraperInstructions = [
       type: PageActionType.Navigate,
       url: "https://www.pepper.pl/alerts",
     },
+  },
+]
+
+const scrapExampleSiteInstructions: ScraperInstructions = [
+  {
+    type: ScraperInstructionType.PageAction,
+    action: { type: PageActionType.Navigate, url: "https://example.com" },
+  },
+  {
+    type: ScraperInstructionType.SaveDataBatch,
+    dataSourceName: "Store",
+    items: [
+      {
+        columnName: "Scraper text",
+        value: {
+          type: ScraperValueType.ElementTextContent,
+          selector: {
+            type: ElementSelectorType.Query,
+            query: "body > div:nth-child(1) > p:nth-child(2)",
+          },
+        },
+      },
+      {
+        columnName: "Update time",
+        value: { type: ScraperValueType.CurrentTimestamp },
+      },
+    ],
+  },
+  {
+    type: ScraperInstructionType.PageAction,
+    action: { type: PageActionType.Wait, duration: 30_000 },
   },
 ]

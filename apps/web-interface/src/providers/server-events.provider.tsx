@@ -1,3 +1,4 @@
+import { useStateToRef } from "@/hooks/useStateToRef"
 import { api } from "@/lib/api"
 import {
   type SubscriptionMessage,
@@ -11,6 +12,7 @@ import {
   type PropsWithChildren,
   useEffect,
   useCallback,
+  useRef,
 } from "react"
 
 enum ConnectionStatus {
@@ -19,24 +21,75 @@ enum ConnectionStatus {
   Error = "error",
 }
 
-interface ServerEventsContextValue {
-  status: ConnectionStatus
-}
+// interface ServerEventsContextValue {
+//   status: ConnectionStatus
+// }
 
-const ServerEventsContext = createContext<ServerEventsContextValue>({
+type AnyMessageListener = (message: SubscriptionMessage) => void
+type GenericMessageListenerRegister = <Type extends SubscriptionMessageType>(
+  messageType: Type,
+  callback: (message: Extract<SubscriptionMessage, { type: Type }>) => void,
+) => void
+
+const ServerEventsContext = createContext({
   status: ConnectionStatus.Connecting,
+  registerMessageListener: (() => {}) as GenericMessageListenerRegister,
+  unregisterMessageListener: (() => {}) as GenericMessageListenerRegister,
 })
 
 export function ServerEventsProvider({ children }: PropsWithChildren) {
   const [status, setStatus] = useState(ConnectionStatus.Connecting)
+
+  const messageListeners = useRef(
+    new Map<SubscriptionMessageType, AnyMessageListener[]>(),
+  )
 
   const handleMessage = useCallback((message: SubscriptionMessage) => {
     switch (message.type) {
       case SubscriptionMessageType.SubscriptionInitialized:
         console.info("SSE connection initialized")
         break
+      case SubscriptionMessageType.ScraperEvent:
+        // noop
+        break
+      default:
+        console.warn(
+          "Unknown message type:",
+          (message as SubscriptionMessage).type,
+        )
+        return
     }
+
+    messageListeners.current
+      .get(message.type)
+      ?.forEach((listener) => listener(message))
   }, [])
+
+  const registerMessageListener = useCallback<GenericMessageListenerRegister>(
+    (messageType, listener) => {
+      if (!messageListeners.current.has(messageType)) {
+        messageListeners.current.set(messageType, [])
+      }
+      messageListeners.current
+        .get(messageType)!
+        .push(listener as AnyMessageListener)
+    },
+    [],
+  )
+  const unregisterMessageListener = useCallback<GenericMessageListenerRegister>(
+    (messageType, listener) => {
+      if (messageListeners.current.has(messageType)) {
+        const listeners = messageListeners.current.get(messageType)
+        if (listeners) {
+          messageListeners.current.set(
+            messageType,
+            listeners.filter((l) => l !== listener),
+          )
+        }
+      }
+    },
+    [],
+  )
 
   useEffect(() => {
     const sseUrl = `${api.baseUrl}/subscribe`
@@ -64,11 +117,45 @@ export function ServerEventsProvider({ children }: PropsWithChildren) {
   }, [handleMessage])
 
   return (
-    <ServerEventsContext value={{ status }}>{children}</ServerEventsContext>
+    <ServerEventsContext
+      value={{ status, registerMessageListener, unregisterMessageListener }}
+    >
+      {children}
+    </ServerEventsContext>
   )
 }
 
-export function useServerEvents() {
+const useServerEvents = () => {
   return useContext(ServerEventsContext)
 }
-useServerEvents.ConnectionStatus = ConnectionStatus
+
+const useServerEventMessages: GenericMessageListenerRegister = (
+  messageType,
+  callback,
+) => {
+  const { registerMessageListener, unregisterMessageListener } =
+    useServerEvents()
+
+  const callbackRef = useStateToRef(callback)
+  useEffect(() => {
+    const callback = callbackRef.current
+    if (!callback) {
+      console.warn("No callback provided for message type:", messageType)
+      return
+    }
+
+    registerMessageListener(messageType, callback)
+
+    return () => unregisterMessageListener(messageType, callback)
+  }, [
+    messageType,
+    callbackRef,
+    registerMessageListener,
+    unregisterMessageListener,
+  ])
+}
+
+ServerEventsProvider.useContext = useServerEvents
+ServerEventsProvider.useMessages = useServerEventMessages
+ServerEventsProvider.ConnectionStatus = ConnectionStatus
+ServerEventsProvider.displayName = "ServerEventsProvider"

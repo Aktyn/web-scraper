@@ -5,7 +5,7 @@ import {
   type ScraperDataKey,
   type ScraperDataSource,
 } from "@web-scraper/common"
-import { useContext, useMemo } from "react"
+import { useMemo } from "react"
 
 type DataKeyValueProps = {
   dataKey: ScraperDataKey | string
@@ -13,7 +13,7 @@ type DataKeyValueProps = {
 }
 
 export function DataKeyValue({ dataKey, className }: DataKeyValueProps) {
-  const scraperContext = useContext(ScraperProvider.Context)
+  const scraperContext = ScraperProvider.useContext()
 
   const dataSources = scraperContext?.scraper.dataSources
   const isValid = useMemo(
