@@ -5,18 +5,19 @@ import {
   getApiPaginatedResponseSchema,
   getApiResponseSchema,
   paramsWithScraperIdSchema,
+  scraperExecutionStatusSchema,
   scraperSchema,
   updateScraperSchema,
   type ScraperType,
 } from "@web-scraper/common"
+import { Scraper } from "@web-scraper/core"
 import { eq } from "drizzle-orm"
 import type { FastifyInstance } from "fastify"
 import type { ZodTypeProvider } from "fastify-type-provider-zod"
 import z from "zod"
 import { scraperDataSourcesTable, scrapersTable } from "../../db/schema"
-import { Scraper } from "@web-scraper/core"
-import { type ApiModuleContext } from "../api.module"
 import { executeNewScraper } from "../../handlers/scraper.handler"
+import { type ApiModuleContext } from "../api.module"
 
 export async function scrapersRoutes(
   fastify: FastifyInstance,
@@ -342,6 +343,47 @@ export async function scrapersRoutes(
 
       return reply.status(200).send({
         data: null,
+      })
+    },
+  )
+
+  fastify.withTypeProvider<ZodTypeProvider>().get(
+    "/scrapers/:id/execution-status",
+    {
+      schema: {
+        params: paramsWithScraperIdSchema,
+        response: {
+          200: getApiResponseSchema(scraperExecutionStatusSchema.nullable()),
+          404: apiErrorResponseSchema,
+        },
+      },
+    },
+    async (request, reply) => {
+      const { id } = request.params
+      const scraperResponse = await fastify.db
+        .select()
+        .from(scrapersTable)
+        .where(eq(scrapersTable.id, id))
+        .get()
+
+      if (!scraperResponse) {
+        return reply.status(404).send({
+          error: "Scraper not found",
+        })
+      }
+
+      const scraperId = scraperResponse.name
+      const scraper = Scraper.getInstance(scraperId)
+
+      return reply.status(200).send({
+        data: scraper
+          ? {
+              state: scraper.state,
+              executionInfo: scraper.executionInfo,
+              currentlyExecutingInstruction:
+                scraper.currentlyExecutingInstruction,
+            }
+          : null,
       })
     },
   )

@@ -69,6 +69,16 @@ export async function executeNewScraper(
       },
     })
   })
+  scraper.on("executingInstruction", (instruction) => {
+    context.events.emit("broadcast", {
+      type: SubscriptionMessageType.ScraperEvent,
+      scraperId: scraper.id,
+      event: {
+        type: ScraperEventType.ExecutingInstruction,
+        instruction,
+      },
+    })
+  })
   scraper.on("executionFinished", (executionInfo) => {
     console.info(executionInfo.get()) //TODO: save execution info to the database for later analysis (make it cascade delete with scraper)
 

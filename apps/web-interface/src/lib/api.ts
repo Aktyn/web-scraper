@@ -1,3 +1,4 @@
+import type { ScraperExecutionStatus } from "@web-scraper/common"
 import {
   type ApiErrorResponse,
   apiErrorResponseSchema,
@@ -205,6 +206,11 @@ export type Routes = {
     post: {
       body: undefined
       response: ApiResponse<null>
+    }
+  }
+  "scrapers/:id/execution-status": {
+    get: {
+      response: ApiResponse<ScraperExecutionStatus>
     }
   }
 }

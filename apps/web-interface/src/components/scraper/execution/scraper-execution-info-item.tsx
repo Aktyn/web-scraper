@@ -146,6 +146,8 @@ function ContainerLayout(props: ComponentProps<"div">) {
   )
 }
 
+export const ScraperExecutionInfoContainer = ContainerLayout
+
 function HeaderLayout({ children }: PropsWithChildren) {
   return (
     <div className="text-base *:leading-none flex flex-row items-center justify-start gap-3 whitespace-nowrap">
@@ -153,3 +155,5 @@ function HeaderLayout({ children }: PropsWithChildren) {
     </div>
   )
 }
+
+export const ScraperExecutionInfoHeader = HeaderLayout

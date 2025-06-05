@@ -30,6 +30,9 @@ import { getElementHandle } from "./selectors"
 type ScraperOptions = {
   id?: string
   logger?: SimpleLogger
+
+  /** Used for testing purposes */
+  noInit?: boolean
 } & Partial<LaunchOptions>
 
 interface ScraperEvents {
@@ -40,6 +43,7 @@ interface ScraperEvents {
   executionUpdate: (
     executionInfo: ScraperInstructionsExecutionInfo[number],
   ) => void
+  executingInstruction: (instruction: ScraperInstructions[number]) => void
 }
 
 export class Scraper extends EventEmitter {
@@ -72,6 +76,9 @@ export class Scraper extends EventEmitter {
   private abortController = new AbortController()
 
   private _state = ScraperState.Pending
+  private activeExecutionInfo: ScraperExecutionInfo | null = null
+  private _currentlyExecutingInstruction: ScraperInstructions[number] | null =
+    null
 
   constructor(private readonly options: ScraperOptions = {}) {
     super()
@@ -91,10 +98,12 @@ export class Scraper extends EventEmitter {
 
     Scraper.instances.set(this.id, this)
 
-    this.init(browserOptions).catch((error) => {
-      this.logger.error(error)
-      this.destroy()
-    })
+    if (!options.noInit) {
+      this.init(browserOptions).catch((error) => {
+        this.logger.error(error)
+        this.destroy()
+      })
+    }
   }
 
   private init(options: Partial<LaunchOptions>) {
@@ -215,6 +224,14 @@ export class Scraper extends EventEmitter {
     this.emit("stateChange", state, previousState)
   }
 
+  get executionInfo() {
+    return this.activeExecutionInfo?.get() ?? []
+  }
+
+  get currentlyExecutingInstruction() {
+    return this._currentlyExecutingInstruction
+  }
+
   private async getPage() {
     assert(!!this.browser, "Browser not initialized")
 
@@ -244,6 +261,8 @@ export class Scraper extends EventEmitter {
     },
   ) {
     const executionInfo = new ScraperExecutionInfo(instructions, dataBridge)
+    this.activeExecutionInfo = executionInfo
+    this._currentlyExecutingInstruction = null
 
     if (
       this.state !== ScraperState.Idle &&
@@ -296,12 +315,17 @@ export class Scraper extends EventEmitter {
       })
     }
 
+    executionInfo.flush()
+
+    this.emit("executionFinished", executionInfo)
+    this.state = ScraperState.Idle
+
     if (!options?.leavePageOpen) {
       await page.close()
     }
 
-    this.emit("executionFinished", executionInfo)
-    this.state = ScraperState.Idle
+    this.activeExecutionInfo = null
+    this._currentlyExecutingInstruction = null
 
     return executionInfo
   }
@@ -341,6 +365,9 @@ export class Scraper extends EventEmitter {
       const instructionStartTime = performance.now()
       let lastInstructionInfo: ScraperInstructionsExecutionInfo[number] | null =
         null
+
+      this._currentlyExecutingInstruction = instruction
+      this.emit("executingInstruction", instruction)
 
       switch (instruction.type) {
         case ScraperInstructionType.PageAction:
@@ -408,14 +435,17 @@ export class Scraper extends EventEmitter {
               instruction.value,
             )
             await context.dataBridge.set(instruction.dataKey, scraperValue)
-            context.executionInfo.push({
-              type: ScraperInstructionsExecutionInfoType.ExternalDataOperation,
-              operation: {
-                type: "set",
-                key: instruction.dataKey,
-                value: scraperValue,
+            context.executionInfo.push(
+              {
+                type: ScraperInstructionsExecutionInfoType.ExternalDataOperation,
+                operation: {
+                  type: "set",
+                  key: instruction.dataKey,
+                  value: scraperValue,
+                },
               },
-            })
+              false,
+            )
           }
           break
         case ScraperInstructionType.SaveDataBatch:
@@ -439,14 +469,17 @@ export class Scraper extends EventEmitter {
             )
 
             await context.dataBridge.setMany(instruction.dataSourceName, items)
-            context.executionInfo.push({
-              type: ScraperInstructionsExecutionInfoType.ExternalDataOperation,
-              operation: {
-                type: "setMany",
-                dataSourceName: instruction.dataSourceName,
-                items: items,
+            context.executionInfo.push(
+              {
+                type: ScraperInstructionsExecutionInfoType.ExternalDataOperation,
+                operation: {
+                  type: "setMany",
+                  dataSourceName: instruction.dataSourceName,
+                  items: items,
+                },
               },
-            })
+              false,
+            )
           }
           break
         case ScraperInstructionType.DeleteData:
@@ -459,13 +492,16 @@ export class Scraper extends EventEmitter {
             dataSourceName: instruction.dataSourceName,
           })
           await context.dataBridge.delete(instruction.dataSourceName)
-          context.executionInfo.push({
-            type: ScraperInstructionsExecutionInfoType.ExternalDataOperation,
-            operation: {
-              type: "delete",
-              dataSourceName: instruction.dataSourceName,
+          context.executionInfo.push(
+            {
+              type: ScraperInstructionsExecutionInfoType.ExternalDataOperation,
+              operation: {
+                type: "delete",
+                dataSourceName: instruction.dataSourceName,
+              },
             },
-          })
+            false,
+          )
           break
 
         case ScraperInstructionType.Marker:
@@ -477,6 +513,7 @@ export class Scraper extends EventEmitter {
             type: instruction.type,
             name: instruction.name,
           })
+          context.executionInfo.flush()
           continue
         case ScraperInstructionType.Jump:
           context.logger.info("Jumping to marker", {

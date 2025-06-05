@@ -17,7 +17,7 @@ import {
   Play,
 } from "lucide-react"
 import type { RefObject } from "react"
-import { useMemo, useRef, useState } from "react"
+import { useEffect, useMemo, useRef, useState } from "react"
 import { ScraperFormDialog } from "../scraper-form-dialog"
 import { ScraperExecutionInfo } from "./scraper-execution-info"
 
@@ -34,6 +34,7 @@ export function ScraperExecutionPanel({
     sendingExecutionRequest,
     state,
     partialExecutionInfo,
+    currentlyExecutingInstruction,
   } = ScraperProvider.useContext()
 
   const horizontalItemsContainerRef = useRef<HTMLDivElement>(null)
@@ -80,6 +81,22 @@ export function ScraperExecutionPanel({
       })
     }
   }
+
+  const isCurrentlyExecuting = !!currentlyExecutingInstruction
+  useEffect(() => {
+    const container = horizontalItemsContainerRef.current
+    if (!container) {
+      return
+    }
+
+    if (partialExecutionInfo.length > 0 || isCurrentlyExecuting) {
+      Array.from(container.children).at(-1)?.scrollIntoView({
+        behavior: "smooth",
+        inline: "start",
+        block: "nearest",
+      })
+    }
+  }, [partialExecutionInfo.length, isCurrentlyExecuting])
 
   return (
     <div className="flex flex-col items-stretch gap-3">
@@ -134,6 +151,7 @@ export function ScraperExecutionPanel({
           <ScraperExecutionInfo
             ref={horizontalItemsContainerRef}
             executionInfo={partialExecutionInfo}
+            currentlyExecutingInstruction={currentlyExecutingInstruction}
           />
           <Button
             variant="ghost"
@@ -285,6 +303,10 @@ function ExecutionConditionsMap({
       [] as Array<{ isMet: boolean; xLeft: number; xRight: number }>,
     )
   }, [executionInfo, rowRef])
+
+  if (!connectors.length) {
+    return null
+  }
 
   return (
     <div className="w-full h-6 relative">

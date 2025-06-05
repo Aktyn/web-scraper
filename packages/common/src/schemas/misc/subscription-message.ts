@@ -1,5 +1,5 @@
 import { z } from "zod"
-import { scraperEventSchema } from "../scraper/event"
+import { scraperEventSchema } from "../scraper/execution"
 
 export enum SubscriptionMessageType {
   SubscriptionInitialized = "subscriptionInitialized",

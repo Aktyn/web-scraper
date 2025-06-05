@@ -33,7 +33,7 @@ export default function App() {
                   title: "font-semibold! text-sm!",
                   description: "font-normal text-sm",
                   success:
-                    "border-success! text-success-foreground! bg-success/40!",
+                    "border-success! text-success-foreground-light! bg-success/40!",
                   error:
                     "border-destructive! text-destructive-foreground! bg-destructive/40!",
                   warning:

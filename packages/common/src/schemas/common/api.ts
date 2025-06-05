@@ -5,7 +5,7 @@ export type ApiResponse<T extends object | null> = {
 }
 
 export function getApiResponseSchema<T extends z.ZodType>(zodSchema: T) {
-  return z.object<ApiResponse<z.infer<T>>>({
+  return z.object({
     data: zodSchema,
   })
 }

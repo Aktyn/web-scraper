@@ -1,8 +1,11 @@
 import { LabeledValue } from "@/components/common/labeled-value"
+import { Separator } from "@/components/shadcn/separator"
+import { cn } from "@/lib/utils"
 import type {
   ScraperInstructionsExecutionInfo,
   ScraperInstructionsExecutionInfoType,
 } from "@web-scraper/common"
+import { Fragment, type ComponentProps } from "react"
 
 type ExternalDataOperationProps = {
   operation: Extract<
@@ -17,62 +20,77 @@ export function ExternalDataOperation({
   switch (operation.type) {
     case "get":
       return (
-        <div className="flex flex-col gap-1 grow">
+        <ContainerLayout>
           <LabeledValue label="Key">
-            <pre className="text-sm break-all whitespace-normal">
-              {operation.key}
-            </pre>
+            <pre>{operation.key}</pre>
           </LabeledValue>
           <LabeledValue
             label="Returned value"
             className="grow grid grid-rows-[auto_1fr]"
           >
-            <div className="max-w-54 contain-size h-full min-h-24 overflow-auto">
+            <pre className="max-w-54 contain-size h-full min-h-24 overflow-auto">
               {operation.returnedValue}
-            </div>
+            </pre>
           </LabeledValue>
-        </div>
+        </ContainerLayout>
       )
     case "set":
       return (
-        <div className="flex flex-col gap-1">
+        <ContainerLayout>
           <LabeledValue label="Key">
-            <pre className="text-sm break-all whitespace-normal">
-              {operation.key}
+            <pre>{operation.key}</pre>
+          </LabeledValue>
+          <LabeledValue label="Value">
+            <pre className="max-w-54 contain-size h-full min-h-24 overflow-auto">
+              {operation.value}
             </pre>
           </LabeledValue>
-          <LabeledValue label="Value">{operation.value}</LabeledValue>
-        </div>
+        </ContainerLayout>
       )
     case "setMany":
       return (
-        <div className="flex flex-col gap-1">
-          <LabeledValue label="Data Source Name">
-            <pre className="text-sm break-all whitespace-normal">
-              {operation.dataSourceName}
-            </pre>
+        <ContainerLayout>
+          <LabeledValue label="Data source name">
+            <pre>{operation.dataSourceName}</pre>
           </LabeledValue>
-          <div className="flex flex-col gap-1">
+          <div className="flex flex-col gap-1 max-w-54 contain-size h-full min-h-32 overflow-auto">
             {operation.items.map((item, idx) => (
-              <div key={idx} className="flex gap-2">
-                <LabeledValue label="Column">{item.columnName}</LabeledValue>
-                <LabeledValue label="Value">{item.value}</LabeledValue>
-              </div>
+              <Fragment key={idx}>
+                {idx > 0 && <Separator className="opacity-50 my-1" />}
+                <div className="flex flex-wrap gap-2">
+                  <LabeledValue label="Column">
+                    <pre>{item.columnName}</pre>
+                  </LabeledValue>
+                  <LabeledValue label="Value">
+                    <pre>{item.value}</pre>
+                  </LabeledValue>
+                </div>
+              </Fragment>
             ))}
           </div>
-        </div>
+        </ContainerLayout>
       )
     case "delete":
       return (
-        <div className="flex flex-col gap-1">
-          <LabeledValue label="Data Source Name">
-            <pre className="text-sm break-all whitespace-normal">
-              {operation.dataSourceName}
-            </pre>
+        <ContainerLayout>
+          <LabeledValue label="Data source name">
+            <pre>{operation.dataSourceName}</pre>
           </LabeledValue>
-        </div>
+        </ContainerLayout>
       )
     default:
       return null
   }
+}
+
+function ContainerLayout(props: ComponentProps<"div">) {
+  return (
+    <div
+      {...props}
+      className={cn(
+        "flex flex-col gap-1 grow **:[pre]:text-sm **:[pre]:break-all **:[pre]:whitespace-normal",
+        props.className,
+      )}
+    />
+  )
 }

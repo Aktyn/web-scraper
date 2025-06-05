@@ -45,8 +45,8 @@ type ScraperInstructionRecursive =
   | {
       type: ScraperInstructionType.Condition
       if: ScraperCondition
-      then: ScraperInstructionsRecursive
-      else?: ScraperInstructionsRecursive
+      then: Array<ScraperInstructionRecursive>
+      else?: Array<ScraperInstructionRecursive>
     }
   | {
       type: ScraperInstructionType.SaveData
@@ -66,51 +66,51 @@ type ScraperInstructionRecursive =
   | { type: ScraperInstructionType.Jump; markerName: string }
 //TODO: add "show notification" instruction
 
-type ScraperInstructionsRecursive = Array<ScraperInstructionRecursive>
+// type ScraperInstructionsRecursive = Array<ScraperInstructionRecursive>
 
-export const scraperInstructionsSchema: z.ZodType<ScraperInstructionsRecursive> =
-  z.array(
-    z.discriminatedUnion("type", [
-      z.object({
-        type: z.literal(ScraperInstructionType.PageAction),
-        action: pageActionSchema,
-      }),
-      z.object({
-        type: z.literal(ScraperInstructionType.Condition),
-        if: scraperConditionSchema,
-        then: z.lazy(() => scraperInstructionsSchema),
-        else: z.lazy(() => scraperInstructionsSchema).optional(),
-      }),
+const scraperInstructionSchema: z.ZodType<ScraperInstructionRecursive> =
+  z.discriminatedUnion("type", [
+    z.object({
+      type: z.literal(ScraperInstructionType.PageAction),
+      action: pageActionSchema,
+    }),
+    z.object({
+      type: z.literal(ScraperInstructionType.Condition),
+      if: scraperConditionSchema,
+      then: z.lazy(() => scraperInstructionsSchema),
+      else: z.lazy(() => scraperInstructionsSchema).optional(),
+    }),
 
-      z.object({
-        type: z.literal(ScraperInstructionType.SaveData),
-        dataKey: scraperDataKeySchema,
-        value: scraperValueSchema,
-      }),
-      z.object({
-        type: z.literal(ScraperInstructionType.SaveDataBatch),
-        dataSourceName: z.string().min(1, "Data source name must not be empty"),
-        items: z.array(
-          z.object({
-            columnName: z.string().min(1, "Column name must not be empty"),
-            value: scraperValueSchema,
-          }),
-        ),
-      }),
-      z.object({
-        type: z.literal(ScraperInstructionType.DeleteData),
-        dataSourceName: z.string().min(1, "Data source name must not be empty"),
-      }),
+    z.object({
+      type: z.literal(ScraperInstructionType.SaveData),
+      dataKey: scraperDataKeySchema,
+      value: scraperValueSchema,
+    }),
+    z.object({
+      type: z.literal(ScraperInstructionType.SaveDataBatch),
+      dataSourceName: z.string().min(1, "Data source name must not be empty"),
+      items: z.array(
+        z.object({
+          columnName: z.string().min(1, "Column name must not be empty"),
+          value: scraperValueSchema,
+        }),
+      ),
+    }),
+    z.object({
+      type: z.literal(ScraperInstructionType.DeleteData),
+      dataSourceName: z.string().min(1, "Data source name must not be empty"),
+    }),
 
-      z.object({
-        type: z.literal(ScraperInstructionType.Marker),
-        name: z.string().min(1, "Marker name must not be empty"),
-      }),
-      z.object({
-        type: z.literal(ScraperInstructionType.Jump),
-        markerName: z.string().min(1, "Marker name must not be empty"),
-      }),
-    ]),
-  )
+    z.object({
+      type: z.literal(ScraperInstructionType.Marker),
+      name: z.string().min(1, "Marker name must not be empty"),
+    }),
+    z.object({
+      type: z.literal(ScraperInstructionType.Jump),
+      markerName: z.string().min(1, "Marker name must not be empty"),
+    }),
+  ])
+
+export const scraperInstructionsSchema = z.array(scraperInstructionSchema)
 
 export type ScraperInstructions = z.infer<typeof scraperInstructionsSchema>

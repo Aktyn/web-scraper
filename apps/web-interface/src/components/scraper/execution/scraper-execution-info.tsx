@@ -1,14 +1,25 @@
 import { cn } from "@/lib/utils"
-import type { ScraperInstructionsExecutionInfo } from "@web-scraper/common"
-import type { ComponentProps } from "react"
-import { ScraperExecutionInfoItem } from "./scraper-execution-info-item"
+import {
+  type ScraperInstructions,
+  type ScraperInstructionsExecutionInfo,
+} from "@web-scraper/common"
+import { Loader2 } from "lucide-react"
+import { type ComponentProps } from "react"
+import { InstructionBlock } from "../instruction-block"
+import {
+  ScraperExecutionInfoContainer,
+  ScraperExecutionInfoHeader,
+  ScraperExecutionInfoItem,
+} from "./scraper-execution-info-item"
 
 type ScraperExecutionInfoProps = ComponentProps<"div"> & {
   executionInfo: ScraperInstructionsExecutionInfo
+  currentlyExecutingInstruction: ScraperInstructions[number] | null
 }
 
 export function ScraperExecutionInfo({
   executionInfo,
+  currentlyExecutingInstruction,
   ...divProps
 }: ScraperExecutionInfoProps) {
   return (
@@ -20,12 +31,17 @@ export function ScraperExecutionInfo({
       )}
     >
       {executionInfo.map((executionInfo, index) => (
-        <ScraperExecutionInfoItem
-          key={index}
-          // data-index={index}
-          executionInfo={executionInfo}
-        />
+        <ScraperExecutionInfoItem key={index} executionInfo={executionInfo} />
       ))}
+      {currentlyExecutingInstruction && (
+        <ScraperExecutionInfoContainer className="text-sm border border-primary border-dashed">
+          <ScraperExecutionInfoHeader>
+            <Loader2 className="animate-spin ease-in-out inline size-5" />
+            Executing instruction
+          </ScraperExecutionInfoHeader>
+          <InstructionBlock instruction={currentlyExecutingInstruction} />
+        </ScraperExecutionInfoContainer>
+      )}
     </div>
   )
 }

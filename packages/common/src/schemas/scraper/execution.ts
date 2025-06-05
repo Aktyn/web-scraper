@@ -1,26 +1,13 @@
 import { z } from "zod"
+import { scraperInstructionsSchema } from "./instructions"
 import { scraperInstructionsExecutionInfoSchema } from "./results"
-
-export enum ScraperState {
-  /** Pending initial execution */
-  Pending = "pending",
-
-  /** Between execution iterations or before clean exit */
-  Idle = "idle",
-
-  /** Scraper is currently executing given instructions */
-  Executing = "executing",
-
-  /** Scraper has been destroyed, either due to an error, user intervention or it finished all its executions */
-  Exited = "exited",
-
-  //TODO: awaiting user action, e.g. captcha
-}
+import { ScraperState } from "./common"
 
 export enum ScraperEventType {
   StateChange = "stateChange",
   ExecutionStarted = "executionStarted",
   ExecutionUpdate = "executionUpdate",
+  ExecutingInstruction = "executingInstruction",
   ExecutionFinished = "executionFinished",
   ExecutionError = "executionError",
 }
@@ -39,6 +26,10 @@ export const scraperEventSchema = z.discriminatedUnion("type", [
     update: scraperInstructionsExecutionInfoSchema.element,
   }),
   z.object({
+    type: z.literal(ScraperEventType.ExecutingInstruction),
+    instruction: scraperInstructionsSchema.element,
+  }),
+  z.object({
     type: z.literal(ScraperEventType.ExecutionFinished),
     executionInfo: scraperInstructionsExecutionInfoSchema,
   }),
@@ -49,3 +40,13 @@ export const scraperEventSchema = z.discriminatedUnion("type", [
 ])
 
 export type ScraperEvent = z.infer<typeof scraperEventSchema>
+
+export const scraperExecutionStatusSchema = z.object({
+  state: z.nativeEnum(ScraperState),
+  executionInfo: scraperInstructionsExecutionInfoSchema,
+  currentlyExecutingInstruction: scraperInstructionsSchema.element.nullable(),
+})
+
+export type ScraperExecutionStatus = z.infer<
+  typeof scraperExecutionStatusSchema
+>

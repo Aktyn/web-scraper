@@ -1,9 +1,16 @@
 import {
+  type ScraperInstructions,
   type CreateScraper,
-  ScraperInstructionType,
   PageActionType,
+  ScraperInstructionsExecutionInfoType,
+  ScraperInstructionType,
   type UpdateScraper,
+  wait,
+  ScraperState,
 } from "@web-scraper/common"
+import type { DataBridge } from "@web-scraper/core"
+import { ScraperExecutionInfo } from "@web-scraper/core/src/scraper/scraper-execution-info"
+import { count } from "drizzle-orm"
 import { beforeEach, describe, expect, it, vi } from "vitest"
 import {
   scraperDataSourcesTable,
@@ -11,7 +18,49 @@ import {
   userDataStoresTable,
 } from "../../db/schema"
 import { setup, type TestModules } from "../../test/setup"
-import { count } from "drizzle-orm"
+
+vi.mock("@web-scraper/core", async (importActual) => {
+  // eslint-disable-next-line @typescript-eslint/consistent-type-imports
+  const actual = (await importActual()) as typeof import("@web-scraper/core")
+  return {
+    ...actual,
+    Scraper: class MockScraper extends actual.Scraper {
+      constructor(options: object) {
+        super({ ...options, noInit: true })
+      }
+
+      override async execute(
+        instructions: ScraperInstructions,
+        dataBridge: DataBridge,
+      ) {
+        await wait(100)
+        const executionInfo = new ScraperExecutionInfo(instructions, dataBridge)
+        executionInfo.push({
+          type: ScraperInstructionsExecutionInfoType.Instruction,
+          instructionInfo: {
+            action: {
+              type: PageActionType.Navigate,
+              url: "http://127.0.0.1:1337/api",
+            },
+            type: ScraperInstructionType.PageAction,
+          },
+          url: { from: "about:blank", to: "http://127.0.0.1:1337/api" },
+          duration: 3000,
+        })
+        executionInfo.push({
+          type: ScraperInstructionsExecutionInfoType.Success,
+          summary: {
+            duration: 4000,
+          },
+        })
+        return executionInfo
+      }
+      get currentlyExecutingInstruction() {
+        return null
+      }
+    },
+  }
+})
 
 describe("Scrapers Routes", () => {
   let modules: TestModules
@@ -573,6 +622,69 @@ describe("Scrapers Routes", () => {
       const response = await modules.api.inject({
         method: "POST",
         url: "/scrapers/invalid/execute",
+      })
+      expect(response.statusCode).toBe(400)
+    })
+  })
+
+  describe("POST /scrapers/:id/execution-status", () => {
+    it("should execute the scraper and return status 200 with execution status object", async () => {
+      const listResponse = await modules.api.inject({
+        method: "GET",
+        url: "/scrapers",
+      })
+      const listData = JSON.parse(listResponse.payload)
+      const scraper1Id = listData.data[0].id
+
+      const response = await modules.api.inject({
+        method: "GET",
+        url: `/scrapers/${scraper1Id}/execution-status`,
+      })
+
+      expect(response.statusCode).toBe(200)
+      expect(JSON.parse(response.payload)).toEqual({
+        data: {
+          state: ScraperState.Pending,
+          executionInfo: [],
+          currentlyExecutingInstruction: null,
+        },
+      })
+    })
+
+    it("should return null if the scraper is not executing", async () => {
+      const listResponse = await modules.api.inject({
+        method: "GET",
+        url: "/scrapers",
+      })
+      const listData = JSON.parse(listResponse.payload)
+      const scraper2Id = listData.data[1].id
+
+      const response = await modules.api.inject({
+        method: "GET",
+        url: `/scrapers/${scraper2Id}/execution-status`,
+      })
+
+      expect(response.statusCode).toBe(200)
+      expect(JSON.parse(response.payload)).toEqual({
+        data: null,
+      })
+    })
+
+    it("should return status 404 if the scraper does not exist", async () => {
+      const response = await modules.api.inject({
+        method: "GET",
+        url: "/scrapers/99999/execution-status",
+      })
+      expect(response.statusCode).toBe(404)
+      expect(JSON.parse(response.payload)).toEqual({
+        error: "Scraper not found",
+      })
+    })
+
+    it("should return status 400 for invalid id param", async () => {
+      const response = await modules.api.inject({
+        method: "GET",
+        url: "/scrapers/invalid/execution-status",
       })
       expect(response.statusCode).toBe(400)
     })

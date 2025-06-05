@@ -11,6 +11,7 @@ interface ScraperExecutionInfoEvents {
 
 export class ScraperExecutionInfo extends EventEmitter {
   private readonly executionInfo: ScraperInstructionsExecutionInfo = []
+  private pushBuffer: ScraperInstructionsExecutionInfo = []
 
   constructor(
     public readonly instructions: ScraperInstructions,
@@ -19,9 +20,21 @@ export class ScraperExecutionInfo extends EventEmitter {
     super()
   }
 
-  push(info: ScraperInstructionsExecutionInfo[number]) {
+  push(info: ScraperInstructionsExecutionInfo[number], flush = true) {
     this.executionInfo.push(info)
-    this.emit("update", info)
+
+    if (flush) {
+      this.flush()
+    }
+    this.pushBuffer.push(info)
+  }
+
+  flush() {
+    for (const info of this.pushBuffer) {
+      this.emit("update", info)
+    }
+
+    this.pushBuffer = []
   }
 
   override emit<E extends keyof ScraperExecutionInfoEvents>(

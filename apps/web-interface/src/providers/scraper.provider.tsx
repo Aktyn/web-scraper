@@ -1,16 +1,18 @@
+import { useGet } from "@/hooks/api/useGet"
 import { usePost } from "@/hooks/api/usePost"
+import type { ScraperInstructions, ScraperState } from "@web-scraper/common"
 import {
   ScraperEventType,
-  type ScraperInstructionsExecutionInfo,
-  ScraperState,
   SubscriptionMessageType,
   type ScraperEvent,
+  type ScraperInstructionsExecutionInfo,
   type ScraperType,
 } from "@web-scraper/common"
 import {
   createContext,
   useCallback,
   useContext,
+  useEffect,
   useState,
   type PropsWithChildren,
 } from "react"
@@ -22,8 +24,9 @@ const ScraperContext = createContext({
   execute: () => Promise.resolve(),
   sendingExecutionRequest: false,
 
-  state: ScraperState.Pending as ScraperState | null,
+  state: null as ScraperState | null,
   partialExecutionInfo: [] as ScraperInstructionsExecutionInfo,
+  currentlyExecutingInstruction: null as ScraperInstructions[number] | null,
 })
 
 const { useMessages } = ServerEventsProvider
@@ -35,8 +38,22 @@ export function ScraperProvider({
   const [state, setState] = useState<ScraperState | null>(null)
   const [partialExecutionInfo, setPartialExecutionInfo] =
     useState<ScraperInstructionsExecutionInfo>([])
+  const [currentlyExecutingInstruction, setCurrentlyExecutingInstruction] =
+    useState<ScraperInstructions[number] | null>(null)
 
-  //TODO: load current state from server (REST API) because user can open the panel (which means initializing the ScraperProvider) in the middle of an execution
+  const { data: executionStatus } = useGet("/scrapers/:id/execution-status", {
+    id: scraper.id,
+  })
+
+  useEffect(() => {
+    if (executionStatus?.data) {
+      setState(executionStatus.data.state)
+      setPartialExecutionInfo(executionStatus.data.executionInfo)
+      setCurrentlyExecutingInstruction(
+        executionStatus.data.currentlyExecutingInstruction,
+      )
+    }
+  }, [executionStatus])
 
   useMessages(SubscriptionMessageType.ScraperEvent, (message) => {
     if (message.scraperId !== scraper.name) {
@@ -59,12 +76,17 @@ export function ScraperProvider({
           setPartialExecutionInfo((prev) => [...prev, update])
         }
         break
+      case ScraperEventType.ExecutingInstruction:
+        setCurrentlyExecutingInstruction(message.event.instruction)
+        break
       case ScraperEventType.ExecutionFinished:
+        setCurrentlyExecutingInstruction(null)
         toast.info("Scraper execution finished", {
           description: `Scraper "${scraper.name}" has finished executing.`,
         })
         break
       case ScraperEventType.ExecutionError:
+        setCurrentlyExecutingInstruction(null)
         toast.error("Scraper execution error", {
           description: `Scraper "${scraper.name}" encountered an error: ${message.event.error}`,
         })
@@ -92,6 +114,7 @@ export function ScraperProvider({
         sendingExecutionRequest: isPosting,
         state,
         partialExecutionInfo,
+        currentlyExecutingInstruction,
       }}
     >
       {children}
