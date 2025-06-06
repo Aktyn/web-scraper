@@ -403,6 +403,9 @@ describe(
           {
             type: ScraperInstructionsExecutionInfoType.Error,
             errorMessage: "Instructions are empty",
+            summary: {
+              duration: expect.any(Number) as never,
+            },
           },
         ] satisfies ErrorResultType[])
       }, 60_000)
@@ -420,6 +423,9 @@ describe(
           {
             type: ScraperInstructionsExecutionInfoType.Error,
             errorMessage: "First instruction must be a navigation action",
+            summary: {
+              duration: expect.any(Number) as never,
+            },
           },
         ] satisfies ErrorResultType[])
       }, 60_000)

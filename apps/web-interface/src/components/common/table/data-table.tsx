@@ -12,14 +12,17 @@ import {
 import { cn } from "@/lib/utils"
 import {
   type ColumnDef,
+  type ExpandedState,
   flexRender,
   getCoreRowModel,
+  getExpandedRowModel,
   type Row,
   useReactTable,
 } from "@tanstack/react-table"
 import { ChevronUp } from "lucide-react"
 import {
   type ComponentProps,
+  Fragment,
   useCallback,
   useEffect,
   useRef,
@@ -32,6 +35,8 @@ type DataTableProps<TData, TValue> = {
   data: TData[]
   isLoading?: boolean
   hasMore?: boolean
+  getRowCanExpand?: (row: Row<TData>) => boolean
+  SubComponent?: (props: { row: Row<TData> }) => React.ReactNode
   onLoadMore?: () => void
   onRowClick?: (row: Row<TData>) => void
 } & ComponentProps<"div">
@@ -41,19 +46,30 @@ export function DataTable<TData, TValue>({
   data,
   isLoading = false,
   hasMore = false,
+  getRowCanExpand,
+  SubComponent,
   onLoadMore,
   onRowClick,
   ...containerProps
 }: DataTableProps<TData, TValue>) {
   const [showBackToTop, setShowBackToTop] = useState(false)
+  const [expanded, setExpanded] = useState<ExpandedState>({})
   const containerRef = useRef<HTMLDivElement>(null)
   const tableRef = useRef<HTMLTableElement>(null)
   const scrollPositionRef = useRef(0)
 
+  const expandable = !!SubComponent
+
   const table = useReactTable({
     data,
     columns,
+    state: {
+      expanded,
+    },
+    onExpandedChange: setExpanded,
     getCoreRowModel: getCoreRowModel(),
+    getExpandedRowModel: getExpandedRowModel(),
+    getRowCanExpand: getRowCanExpand ?? (SubComponent ? () => true : undefined),
   })
 
   const handleScroll = useCallback(() => {
@@ -92,6 +108,19 @@ export function DataTable<TData, TValue>({
     return () => container.removeEventListener("scroll", handleScroll)
   }, [handleScroll])
 
+  const handleRowClick = useCallback(
+    (row: Row<TData>) => {
+      if (expandable) {
+        row.toggleExpanded()
+      }
+
+      if (onRowClick) {
+        onRowClick(row)
+      }
+    },
+    [onRowClick, expandable],
+  )
+
   return (
     <div
       {...containerProps}
@@ -117,22 +146,37 @@ export function DataTable<TData, TValue>({
           </TableHeader>
           <TableBody>
             {table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  data-state={row.getIsSelected() && "selected"}
-                  onClick={() => onRowClick?.(row)}
-                  className={cn(onRowClick && "not-disabled:cursor-pointer")}
-                >
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext(),
-                      )}
-                    </TableCell>
-                  ))}
-                </TableRow>
+              table.getRowModel().rows.map((row, index) => (
+                <Fragment key={row.id}>
+                  <TableRow
+                    data-expanded={!!expanded[index as never]}
+                    data-state={row.getIsSelected() && "selected"}
+                    onClick={() => handleRowClick?.(row)}
+                    className={cn(
+                      SubComponent &&
+                        row.getIsExpanded() &&
+                        "border-b-transparent",
+                      (onRowClick || expandable) &&
+                        "not-disabled:cursor-pointer",
+                    )}
+                  >
+                    {row.getVisibleCells().map((cell) => (
+                      <TableCell key={cell.id}>
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext(),
+                        )}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                  {SubComponent && row.getIsExpanded() && (
+                    <TableRow className="cursor-default">
+                      <TableCell colSpan={row.getVisibleCells().length}>
+                        <SubComponent row={row} />
+                      </TableCell>
+                    </TableRow>
+                  )}
+                </Fragment>
               ))
             ) : (
               <TableRow>

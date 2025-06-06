@@ -80,12 +80,14 @@ export function ScraperProvider({
         setCurrentlyExecutingInstruction(message.event.instruction)
         break
       case ScraperEventType.ExecutionFinished:
+        setPartialExecutionInfo(message.event.executionInfo)
         setCurrentlyExecutingInstruction(null)
         toast.info("Scraper execution finished", {
           description: `Scraper "${scraper.name}" has finished executing.`,
         })
         break
       case ScraperEventType.ExecutionError:
+        setPartialExecutionInfo(message.event.executionInfo ?? [])
         setCurrentlyExecutingInstruction(null)
         toast.error("Scraper execution error", {
           description: `Scraper "${scraper.name}" encountered an error: ${message.event.error}`,

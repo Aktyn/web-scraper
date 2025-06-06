@@ -12,6 +12,7 @@ import { Separator } from "../shadcn/separator"
 import { ScraperExecutionPanel } from "./execution/scraper-execution-panel"
 import { ScraperDataSource } from "./scraper-data-source"
 import { ScraperInstructionsTree } from "./scraper-instructions-tree"
+import { ScraperExecutionHistory } from "./execution/scraper-execution-history"
 
 type ScraperPanelProps = {
   scraper: ScraperType
@@ -19,73 +20,75 @@ type ScraperPanelProps = {
 }
 
 export function ScraperPanel({ scraper, onEditSuccess }: ScraperPanelProps) {
-  //TODO: manage running state scraper instances on the server (pause, resume, show realtime updates, etc.)
-
   //TODO: setup iterator form before executing scraper to iterate over specific rows, until condition is met, etc. This will generate cursors for each get/set/delete operation on data bridge
 
   return (
     <ScraperProvider scraper={scraper}>
       <div className="flex flex-col gap-4">
-        {/* TODO: run and watch for scraper updates in real time with SSE */}
         {/* TODO: consider adding small form to configure number of scraper iterations and sequence of row indices to iterate over */}
         <ScraperExecutionPanel onEditSuccess={onEditSuccess} />
 
-        {/* TODO: load and show this scraper's execution history */}
-
-        <Separator />
-
         {scraper.userDataDirectory && (
           <>
+            <Separator />
             <LabeledValue
               label={
-                <>
-                  Custom <b>userData</b> directory
-                </>
+                <div className="space-x-1">
+                  <span>Custom</span>
+                  <b>userData</b>
+                  <span>directory</span>
+                </div>
               }
             >
               <div className="flex flex-row items-center gap-2 overflow-hidden contain-inline-size">
-                <pre dir="rtl" className="truncate">
+                <pre dir="rtl" className="truncate leading-none">
                   {scraper.userDataDirectory}
                 </pre>
                 <CopyButton value={scraper.userDataDirectory} />
               </div>
             </LabeledValue>
-            <Separator />
           </>
         )}
 
-        {scraper.dataSources.length > 0 && (
-          <>
-            <Accordion
-              type="single"
-              collapsible
-              defaultValue="sources"
-              className="w-full"
-            >
-              <AccordionItem value="sources">
-                <AccordionTrigger tabIndex={-1}>Data Sources</AccordionTrigger>
-                <AccordionContent className="pb-0 flex flex-col items-stretch gap-2">
-                  {scraper.dataSources.map((dataSource) => (
-                    <ScraperDataSource
-                      key={dataSource.dataStoreTableName}
-                      dataSource={dataSource}
-                    />
-                  ))}
-                </AccordionContent>
-              </AccordionItem>
-            </Accordion>
-            <Separator />
-          </>
-        )}
+        <Separator />
 
         <Accordion
-          type="single"
-          collapsible
-          defaultValue="instructions"
-          className="w-full"
+          type="multiple"
+          defaultValue={["execution-history"]}
+          className="w-full *:data-[slot=accordion-item]:border-b-0"
         >
+          <AccordionItem
+            value="execution-history"
+            className="grid grid-cols-1 grid-rows-[auto_1fr] -mx-6"
+          >
+            <AccordionTrigger className="px-6">
+              Execution History
+            </AccordionTrigger>
+            <AccordionContent className="pb-0">
+              <ScraperExecutionHistory
+                scraperId={scraper.id}
+                scraperName={scraper.name}
+                className="max-h-192"
+              />
+            </AccordionContent>
+          </AccordionItem>
+
+          {scraper.dataSources.length > 0 && (
+            <AccordionItem value="sources">
+              <AccordionTrigger>Data Sources</AccordionTrigger>
+              <AccordionContent className="flex flex-col items-stretch gap-2">
+                {scraper.dataSources.map((dataSource) => (
+                  <ScraperDataSource
+                    key={dataSource.dataStoreTableName}
+                    dataSource={dataSource}
+                  />
+                ))}
+              </AccordionContent>
+            </AccordionItem>
+          )}
+
           <AccordionItem value="instructions">
-            <AccordionTrigger tabIndex={-1}>
+            <AccordionTrigger>
               <div className="flex flex-row items-baseline gap-2">
                 <span>Instructions</span>
                 <span className="text-xs text-muted-foreground mr-auto">

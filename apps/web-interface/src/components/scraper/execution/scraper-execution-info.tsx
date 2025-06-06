@@ -14,7 +14,7 @@ import {
 
 type ScraperExecutionInfoProps = ComponentProps<"div"> & {
   executionInfo: ScraperInstructionsExecutionInfo
-  currentlyExecutingInstruction: ScraperInstructions[number] | null
+  currentlyExecutingInstruction?: ScraperInstructions[number] | null
 }
 
 export function ScraperExecutionInfo({

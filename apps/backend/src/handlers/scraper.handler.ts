@@ -1,6 +1,8 @@
 import {
+  runUnsafe,
   ScraperEventType,
   SubscriptionMessageType,
+  uuid,
   type ScraperType,
   type SimpleLogger,
 } from "@web-scraper/common"
@@ -9,6 +11,7 @@ import { type Logger } from "pino"
 import { DataBridge } from "../db/data-bridge"
 import { type DbModule } from "../db/db.module"
 import { type EventsModule } from "../events/events.module"
+import { scraperExecutionInfosTable } from "../db/schema/scraper-execution-infos.schema"
 
 type ScraperExecutorContext = {
   db: DbModule
@@ -18,7 +21,7 @@ type ScraperExecutorContext = {
 
 export async function executeNewScraper(
   scraperId: string,
-  data: ScraperType,
+  scraperData: ScraperType,
   context: ScraperExecutorContext,
 ) {
   const logger =
@@ -30,13 +33,16 @@ export async function executeNewScraper(
 
   const dataBridge = new DataBridge(
     context.db,
-    await DataBridge.buildDataBridgeSources(context.db, data.dataSources),
+    await DataBridge.buildDataBridgeSources(
+      context.db,
+      scraperData.dataSources,
+    ),
   )
 
   const scraper = new Scraper({
     id: scraperId,
     logger,
-    userDataDir: data.userDataDirectory ?? undefined,
+    userDataDir: scraperData.userDataDirectory ?? undefined,
   })
 
   scraper.on("stateChange", (state, previousState) => {
@@ -80,20 +86,32 @@ export async function executeNewScraper(
     })
   })
   scraper.on("executionFinished", (executionInfo) => {
-    console.info(executionInfo.get()) //TODO: save execution info to the database for later analysis (make it cascade delete with scraper)
-
-    context.events.emit("broadcast", {
-      type: SubscriptionMessageType.ScraperEvent,
-      scraperId: scraper.id,
-      event: {
-        type: ScraperEventType.ExecutionFinished,
+    context.db
+      .insert(scraperExecutionInfosTable)
+      .values({
+        executionId: uuid(),
+        iteration: 1,
+        scraperId: scraperData.id,
         executionInfo: executionInfo.get(),
-      },
-    })
+      })
+      .execute()
+      .catch((error) =>
+        logger.error("Error saving execution info to the database:", error),
+      )
+      .finally(() =>
+        context.events.emit("broadcast", {
+          type: SubscriptionMessageType.ScraperEvent,
+          scraperId: scraper.id,
+          event: {
+            type: ScraperEventType.ExecutionFinished,
+            executionInfo: executionInfo.get(),
+          },
+        }),
+      )
   })
 
   try {
-    await scraper.execute(data.instructions, dataBridge, {
+    await scraper.execute(scraperData.instructions, dataBridge, {
       leavePageOpen: false,
     })
 
@@ -107,6 +125,7 @@ export async function executeNewScraper(
       event: {
         type: ScraperEventType.ExecutionError,
         error: error instanceof Error ? error.message : String(error),
+        executionInfo: runUnsafe(() => scraper.executionInfo),
       },
     })
   }

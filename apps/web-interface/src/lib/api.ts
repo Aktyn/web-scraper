@@ -1,19 +1,20 @@
-import type { ScraperExecutionStatus } from "@web-scraper/common"
-import {
-  type ApiErrorResponse,
-  apiErrorResponseSchema,
-  type ApiPaginatedResponse,
-  type ApiPaginationQuery,
-  type ApiResponse,
-  type CreateScraper,
-  type CreateUserDataStore,
-  type Preferences,
-  type ScraperType,
-  type UpdateScraper,
-  type UpdateUserDataStore,
-  type UpsertUserDataStoreRecord,
-  type UserDataStore,
+import type {
+  ApiResponse,
+  Preferences,
+  ApiPaginationQuery,
+  ApiPaginatedResponse,
+  UserDataStore,
+  CreateUserDataStore,
+  UpdateUserDataStore,
+  UpsertUserDataStoreRecord,
+  ScraperType,
+  CreateScraper,
+  UpdateScraper,
+  ScraperExecutionStatus,
+  ScraperExecutionInfo,
+  ApiErrorResponse,
 } from "@web-scraper/common"
+import { apiErrorResponseSchema } from "@web-scraper/common"
 
 const baseUrl = import.meta.env.VITE_API_URL_BASE.replace(/\/$/, "")
 
@@ -211,6 +212,12 @@ export type Routes = {
   "scrapers/:id/execution-status": {
     get: {
       response: ApiResponse<ScraperExecutionStatus>
+    }
+  }
+  "scrapers/:id/execution-infos": {
+    get: {
+      querystring: Partial<ApiPaginationQuery>
+      response: ApiPaginatedResponse<ScraperExecutionInfo>
     }
   }
 }

@@ -36,6 +36,7 @@ export const scraperEventSchema = z.discriminatedUnion("type", [
   z.object({
     type: z.literal(ScraperEventType.ExecutionError),
     error: z.string(),
+    executionInfo: scraperInstructionsExecutionInfoSchema.nullable(),
   }),
 ])
 

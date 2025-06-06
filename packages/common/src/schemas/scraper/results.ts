@@ -57,6 +57,10 @@ export enum ScraperInstructionsExecutionInfoType {
 
 const valueSchema = z.union([z.string(), z.number(), z.null()])
 
+const summarySchema = z.object({
+  duration: z.number(),
+})
+
 export const scraperInstructionsExecutionInfoSchema = z.array(
   z.discriminatedUnion("type", [
     z.object({
@@ -103,14 +107,13 @@ export const scraperInstructionsExecutionInfoSchema = z.array(
 
     z.object({
       type: z.literal(ScraperInstructionsExecutionInfoType.Success),
-      summary: z.object({
-        duration: z.number(),
-      }),
+      summary: summarySchema,
     }),
 
     z.object({
       type: z.literal(ScraperInstructionsExecutionInfoType.Error),
       errorMessage: z.string(),
+      summary: summarySchema,
     }),
   ]),
 )
@@ -118,3 +121,12 @@ export const scraperInstructionsExecutionInfoSchema = z.array(
 export type ScraperInstructionsExecutionInfo = z.infer<
   typeof scraperInstructionsExecutionInfoSchema
 >
+
+export const scraperExecutionInfoSchema = z.object({
+  executionId: z.string(),
+  iteration: z.number(),
+  executionInfo: scraperInstructionsExecutionInfoSchema,
+  createdAt: z.number(),
+})
+
+export type ScraperExecutionInfo = z.infer<typeof scraperExecutionInfoSchema>

@@ -5,17 +5,22 @@ import {
   getApiPaginatedResponseSchema,
   getApiResponseSchema,
   paramsWithScraperIdSchema,
+  scraperExecutionInfoSchema,
   scraperExecutionStatusSchema,
   scraperSchema,
   updateScraperSchema,
   type ScraperType,
 } from "@web-scraper/common"
 import { Scraper } from "@web-scraper/core"
-import { eq } from "drizzle-orm"
+import { desc, eq } from "drizzle-orm"
 import type { FastifyInstance } from "fastify"
 import type { ZodTypeProvider } from "fastify-type-provider-zod"
 import z from "zod"
-import { scraperDataSourcesTable, scrapersTable } from "../../db/schema"
+import {
+  scraperDataSourcesTable,
+  scraperExecutionInfosTable,
+  scrapersTable,
+} from "../../db/schema"
 import { executeNewScraper } from "../../handlers/scraper.handler"
 import { type ApiModuleContext } from "../api.module"
 
@@ -384,6 +389,63 @@ export async function scrapersRoutes(
                 scraper.currentlyExecutingInstruction,
             }
           : null,
+      })
+    },
+  )
+
+  fastify.withTypeProvider<ZodTypeProvider>().get(
+    "/scrapers/:id/execution-infos",
+    {
+      schema: {
+        params: paramsWithScraperIdSchema,
+        querystring: apiPaginationQuerySchema,
+        response: {
+          200: getApiPaginatedResponseSchema(scraperExecutionInfoSchema),
+          404: apiErrorResponseSchema,
+        },
+      },
+    },
+    async (request, reply) => {
+      const { id } = request.params
+      const { page, pageSize } = request.query
+
+      const scraper = await fastify.db
+        .select({ id: scrapersTable.id })
+        .from(scrapersTable)
+        .where(eq(scrapersTable.id, id))
+        .get()
+
+      if (!scraper) {
+        return reply.status(404).send({
+          error: "Scraper not found",
+        })
+      }
+
+      const executionInfos = await fastify.db
+        .select({
+          executionId: scraperExecutionInfosTable.executionId,
+          iteration: scraperExecutionInfosTable.iteration,
+          executionInfo: scraperExecutionInfosTable.executionInfo,
+          createdAt: scraperExecutionInfosTable.createdAt,
+        })
+        .from(scraperExecutionInfosTable)
+        .where(eq(scraperExecutionInfosTable.scraperId, id))
+        .orderBy(desc(scraperExecutionInfosTable.createdAt))
+        .limit(pageSize + 1)
+        .offset(page * pageSize)
+
+      const data = executionInfos.slice(0, pageSize).map((info) => ({
+        executionId: info.executionId,
+        iteration: info.iteration,
+        executionInfo: info.executionInfo,
+        createdAt: info.createdAt.getTime(),
+      }))
+
+      return reply.status(200).send({
+        data,
+        page,
+        pageSize,
+        hasMore: executionInfos.length > pageSize,
       })
     },
   )

@@ -275,6 +275,9 @@ export class Scraper extends EventEmitter {
         type: ScraperInstructionsExecutionInfoType.Error,
         errorMessage:
           "Execution cancelled due to Scraper not being in idle state",
+        summary: {
+          duration: 0,
+        },
       })
       return executionInfo
     }
@@ -312,6 +315,9 @@ export class Scraper extends EventEmitter {
       executionInfo.push({
         type: ScraperInstructionsExecutionInfoType.Error,
         errorMessage: error instanceof Error ? error.message : String(error),
+        summary: {
+          duration: performance.now() - startTime,
+        },
       })
     }
 
