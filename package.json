@@ -22,7 +22,8 @@
     "test:watch": "turbo run test:watch",
     "lint": "turbo run lint",
     "typecheck": "turbo run typecheck",
-    "format": "prettier --write \"**/*.{ts,tsx}\""
+    "format": "prettier --write \"**/*.{ts,tsx}\"",
+    "depcheck": "find . -name node_modules -prune -o -name package.json -execdir bash -c 'echo $(pwd): && npx depcheck ; echo -e \"\b\"' \\;"
   },
   "workspaces": [
     "packages/*",
@@ -30,11 +31,8 @@
   ],
   "devDependencies": {
     "@tsconfig/recommended": "^1.0.8",
-    "@types/node": "^22.15.29",
     "prettier": "^3.5.3",
-    "ts-node": "^10.9.2",
-    "turbo": "^2.5.4",
-    "typescript": "^5.8.3"
+    "turbo": "^2.5.4"
   },
   "packageManager": "npm@10.9.2"
 }

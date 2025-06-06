@@ -22,11 +22,11 @@
   "devDependencies": {
     "@eslint/js": "^9.28.0",
     "@types/node": "^22.15.29",
-    "@vitest/coverage-istanbul": "^3.2.0",
     "eslint": "^9.28.0",
     "eslint-config-prettier": "^10.1.5",
     "eslint-plugin-import": "^2.31.0",
     "eslint-plugin-prettier": "^5.4.1",
+    "globals": "^16.2.0",
     "pptr-mock-server": "^1.4.0",
     "prettier": "^3.5.3",
     "typescript": "^5.8.3",
