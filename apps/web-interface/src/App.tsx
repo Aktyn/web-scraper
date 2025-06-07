@@ -28,7 +28,7 @@ export default function App() {
               style={{}}
               swipeDirections={["top", "bottom"]}
               toastOptions={{
-                className: "backdrop-blur-sm shadow-md!",
+                className: "backdrop-blur-sm shadow-md! z-200!",
                 classNames: {
                   title: "font-semibold! text-sm!",
                   description: "font-normal text-sm",

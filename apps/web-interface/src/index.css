@@ -32,6 +32,7 @@
   --default-transition-timing-function: ease-in-out;
 
   --font: "Inter Variable", Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
 
   --color-background-lighter: hsl(var(--background-lighter));
   --color-background: hsl(var(--background));
@@ -125,6 +126,22 @@
     src: url("/Inter-Italic-VariableFont_opsz,wght.ttf") format("truetype");
   }
 
+  @font-face {
+    font-family: "JetBrains Mono";
+    font-weight: 100 900;
+    font-display: swap;
+    font-style: normal;
+    src: url("/JetBrainsMono[wght].ttf") format("truetype");
+  }
+
+  @font-face {
+    font-family: "JetBrains Mono";
+    font-weight: 100 900;
+    font-display: swap;
+    font-style: italic;
+    src: url("/JetBrainsMono-Italic[wght].ttf") format("truetype");
+  }
+
   :root {
     font-family:
       "Inter Variable", Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
@@ -134,6 +151,10 @@
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+  }
+
+  pre {
+    font-family: "JetBrains Mono", monospace;
   }
 }
 

@@ -151,7 +151,7 @@ export function ScraperFormDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
         aria-describedby={undefined}
-        className="max-w-4xl max-h-[90vh] overflow-y-auto grid grid-rows-[auto_1fr]"
+        className="sm:max-w-2xl max-h-[90vh] overflow-y-auto grid grid-rows-[auto_1fr]"
       >
         <DialogHeader>
           <DialogTitle>

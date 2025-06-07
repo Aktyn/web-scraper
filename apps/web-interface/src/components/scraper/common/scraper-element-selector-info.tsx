@@ -1,7 +1,5 @@
-import { LabeledValue } from "@/components/common/labeled-value"
 import type { ScraperElementSelectors } from "@web-scraper/common"
 import { ElementSelectorType } from "@web-scraper/common"
-import { Fragment } from "react/jsx-runtime"
 
 type ScraperElementSelectorInfoProps = {
   selector: ScraperElementSelectors[number]
@@ -20,50 +18,38 @@ export function ScraperElementSelectorInfo({
 
     case ElementSelectorType.TextContent:
       return (
-        <div className="flex flex-row flex-wrap gap-2 gap-x-4">
-          <LabeledValue
-            label={typeof selector.text === "string" ? "Text:" : "RegExp:"}
-          >
-            {typeof selector.text === "string"
-              ? selector.text
-              : `/${selector.text.source}/${selector.text.flags}`}
-          </LabeledValue>
-        </div>
+        <pre className="text-sm break-all whitespace-normal">
+          {typeof selector.text === "string"
+            ? selector.text
+            : `/${selector.text.source}/${selector.text.flags}`}
+        </pre>
       )
 
     case ElementSelectorType.TagName:
       return (
-        <LabeledValue label="Tag:">
-          <pre className="text-sm break-all whitespace-normal">
-            {selector.tagName}
-          </pre>
-        </LabeledValue>
+        <pre className="text-sm break-all whitespace-normal">
+          {selector.tagName}
+        </pre>
       )
 
     case ElementSelectorType.Attributes:
       return (
-        <LabeledValue label="Attributes:">
-          <div>
-            {Object.entries(selector.attributes).map(([key, value], index) => (
-              <Fragment key={key}>
-                {index > 0 && (
-                  <span className="text-xs text-muted-foreground">, </span>
-                )}
-                <div
-                  key={key}
-                  className="inline-flex flex-row items-baseline gap-1"
-                >
-                  <span className="text-xs text-muted-foreground">{key}:</span>
-                  <pre className="text-sm break-all whitespace-normal">
-                    {typeof value === "string"
-                      ? value
-                      : `/${value.source}/${value.flags}`}
-                  </pre>
-                </div>
-              </Fragment>
-            ))}
-          </div>
-        </LabeledValue>
+        <div className="flex flex-col">
+          {Object.entries(selector.attributes).map(([key, value]) => (
+            <div
+              key={key}
+              className="inline-flex flex-row items-baseline gap-0.5 text-sm text-muted-foreground"
+            >
+              <span>{key}</span>
+              <span>=</span>
+              <pre className="break-all whitespace-normal text-foreground font-semibold">
+                {typeof value === "string"
+                  ? value
+                  : `/${value.source}/${value.flags}`}
+              </pre>
+            </div>
+          ))}
+        </div>
       )
   }
 }

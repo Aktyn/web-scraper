@@ -169,16 +169,6 @@ function SelectorFormByType({ control, fieldName }: SelectorFormByTypeProps) {
             placeholder="Button text or /regex/"
             description="Text content to search for. Use /pattern/flags for regex."
           />
-
-          <FormSelect
-            control={control}
-            className="*:[button]:w-full"
-            name={`${fieldName}.tagName`}
-            label={selectorTypeLabels[selectorType]}
-            placeholder="Select tag name"
-            options={tagNameOptions}
-            description="Limit search to specific HTML tag."
-          />
         </div>
       )
     case ElementSelectorType.TagName:
@@ -266,7 +256,7 @@ function AttributesForm({ control, fieldName }: AttributesFormProps) {
         )}
       </div>
 
-      <div className="flex items-end gap-2 pt-2">
+      <div className="flex flex-wrap items-end gap-2 pt-2">
         <div className="flex-1">
           <Label>Attribute name</Label>
           <Input
@@ -283,8 +273,9 @@ function AttributesForm({ control, fieldName }: AttributesFormProps) {
             placeholder="Value or /regex/"
           />
         </div>
-        <Button type="button" onClick={handleAddAttribute} size="sm">
-          <Plus className="size-4" /> Add
+        <Button type="button" variant="secondary" onClick={handleAddAttribute}>
+          <Plus className="size-4" />
+          Add
         </Button>
       </div>
     </div>
