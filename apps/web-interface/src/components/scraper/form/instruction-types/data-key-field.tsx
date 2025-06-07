@@ -65,7 +65,7 @@ export function DataKeyField(props: DataKeyFieldProps) {
         <FormItem>
           <FormLabel>
             {props.label ??
-              (isDeleteInstruction ? "Source to delete row from" : "Data Key")}
+              (isDeleteInstruction ? "Source to delete row from" : "Data key")}
           </FormLabel>
           <FormControl>
             <div className="flex flex-row items-center gap-2 *:not-[span]:flex-1">

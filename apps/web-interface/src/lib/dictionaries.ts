@@ -1,9 +1,11 @@
 import {
   ElementSelectorType,
+  ExecutionIteratorType,
   PageActionType,
   ScraperInstructionsExecutionInfoType,
   ScraperInstructionType,
   ScraperValueType,
+  SqliteConditionType,
 } from "@web-scraper/common"
 
 export const instructionTypeLabels: {
@@ -48,4 +50,31 @@ export const selectorTypeLabels: { [key in ElementSelectorType]: string } = {
   [ElementSelectorType.TextContent]: "Text content",
   [ElementSelectorType.TagName]: "Tag name",
   [ElementSelectorType.Attributes]: "Attributes",
+}
+
+export const executionIteratorTypeLabels: {
+  [key in ExecutionIteratorType]: string
+} = {
+  [ExecutionIteratorType.Range]: "Range",
+  [ExecutionIteratorType.EntireSet]: "Entire set",
+  [ExecutionIteratorType.FilteredSet]: "Filtered set",
+}
+
+export const conditionLabels: { [key in SqliteConditionType]: string } = {
+  [SqliteConditionType.Equals]: "Equals",
+  [SqliteConditionType.NotEquals]: "Not Equals",
+  [SqliteConditionType.GreaterThan]: "Greater Than",
+  [SqliteConditionType.GreaterThanOrEqual]: "Greater Than or Equal",
+  [SqliteConditionType.LessThan]: "Less Than",
+  [SqliteConditionType.LessThanOrEqual]: "Less Than or Equal",
+  [SqliteConditionType.Like]: "Like",
+  [SqliteConditionType.NotLike]: "Not Like",
+  [SqliteConditionType.ILike]: "Case-insensitive Like",
+  [SqliteConditionType.NotILike]: "Case-insensitive Not Like",
+  [SqliteConditionType.In]: "In",
+  [SqliteConditionType.NotIn]: "Not In",
+  [SqliteConditionType.IsNull]: "Is Null",
+  [SqliteConditionType.IsNotNull]: "Is Not Null",
+  [SqliteConditionType.Between]: "Between",
+  [SqliteConditionType.NotBetween]: "Not Between",
 }

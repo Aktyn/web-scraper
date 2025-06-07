@@ -8,31 +8,6 @@ import {
 import { type ScraperExecutionContext } from "./helpers"
 import { getElementHandle } from "./selectors"
 
-// type Range =
-//   | {
-//       index: number
-//     }
-//   | {
-//       start: number
-//       end: number
-//       step?: number
-//     }
-
-// //TODO: use in DataBridge interface as optional parameter
-// type Iterator =
-//   | {
-//       type: "range"
-//       /**
-//        * It is used to determine the target on which the range will be based.
-//        * For a database table, for example, this would be the name of the primary key column.
-//        */
-//       identifier: string
-//       range: Range
-//     }
-//   | {
-//       type: "entire-set"
-//     }
-
 export type Cursor = { [key: string]: string | number }
 
 export type DataBridgeValue = string | number | null

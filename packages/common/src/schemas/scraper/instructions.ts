@@ -1,11 +1,12 @@
 import { z } from "zod"
 import { type ScraperCondition, scraperConditionSchema } from "./condition"
+import { dataSourceNameSchema } from "./data-source"
 import { type PageAction, pageActionSchema } from "./page-action"
 import {
-  scraperDataKeySchema,
-  scraperValueSchema,
   type ScraperDataKey,
+  scraperDataKeySchema,
   type ScraperValue,
+  scraperValueSchema,
 } from "./value"
 
 export enum ScraperInstructionType {
@@ -88,7 +89,7 @@ const scraperInstructionSchema: z.ZodType<ScraperInstructionRecursive> =
     }),
     z.object({
       type: z.literal(ScraperInstructionType.SaveDataBatch),
-      dataSourceName: z.string().min(1, "Data source name must not be empty"),
+      dataSourceName: dataSourceNameSchema,
       items: z.array(
         z.object({
           columnName: z.string().min(1, "Column name must not be empty"),
@@ -98,7 +99,7 @@ const scraperInstructionSchema: z.ZodType<ScraperInstructionRecursive> =
     }),
     z.object({
       type: z.literal(ScraperInstructionType.DeleteData),
-      dataSourceName: z.string().min(1, "Data source name must not be empty"),
+      dataSourceName: dataSourceNameSchema,
     }),
 
     z.object({

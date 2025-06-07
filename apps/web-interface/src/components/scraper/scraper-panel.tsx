@@ -1,4 +1,5 @@
 import { ScraperProvider } from "@/providers/scraper.provider"
+import type { ExecutionIterator } from "@web-scraper/common"
 import { type ScraperType } from "@web-scraper/common"
 import { CopyButton } from "../common/button/copy-button"
 import { LabeledValue } from "../common/labeled-value"
@@ -13,6 +14,12 @@ import { ScraperExecutionPanel } from "./execution/scraper-execution-panel"
 import { ScraperDataSource } from "./scraper-data-source"
 import { ScraperInstructionsTree } from "./scraper-instructions-tree"
 import { ScraperExecutionHistory } from "./execution/scraper-execution-history"
+import { Button } from "../shadcn/button"
+import { IteratorDescription } from "../iterator/iterator-description"
+import { Settings2 } from "lucide-react"
+import { Tooltip, TooltipContent, TooltipTrigger } from "../shadcn/tooltip"
+import { useState } from "react"
+import { IteratorFormDialog } from "../iterator/iterator-form-dialog"
 
 type ScraperPanelProps = {
   scraper: ScraperType
@@ -20,12 +27,38 @@ type ScraperPanelProps = {
 }
 
 export function ScraperPanel({ scraper, onEditSuccess }: ScraperPanelProps) {
-  //TODO: setup iterator form before executing scraper to iterate over specific rows, until condition is met, etc. This will generate cursors for each get/set/delete operation on data bridge
+  const [iterator, setIterator] = useState<ExecutionIterator | null>(null)
+  const [iteratorDialogOpen, setIteratorDialogOpen] = useState(false)
 
   return (
     <ScraperProvider scraper={scraper}>
       <div className="flex flex-col gap-4">
         {/* TODO: consider adding small form to configure number of scraper iterations and sequence of row indices to iterate over */}
+        <div className="flex flex-row items-center gap-2">
+          <IteratorDescription iterator={iterator} />
+
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant="outline"
+                size="icon"
+                tabIndex={-1}
+                onClick={() => setIteratorDialogOpen(true)}
+              >
+                <Settings2 />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>Configure iterator</TooltipContent>
+          </Tooltip>
+
+          <IteratorFormDialog
+            open={iteratorDialogOpen}
+            onOpenChange={setIteratorDialogOpen}
+            iterator={iterator}
+            onChange={setIterator}
+            dataSources={scraper.dataSources}
+          />
+        </div>
         <ScraperExecutionPanel onEditSuccess={onEditSuccess} />
 
         {scraper.userDataDirectory && (

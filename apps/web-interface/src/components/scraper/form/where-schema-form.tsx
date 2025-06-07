@@ -3,6 +3,7 @@ import { FormInput } from "@/components/common/form/form-input"
 import { FormSelect } from "@/components/common/form/form-select"
 import { LabeledValue } from "@/components/common/labeled-value"
 import { Button } from "@/components/shadcn/button"
+import type { ExecutionIterator } from "@web-scraper/common"
 import {
   runUnsafe,
   SqliteColumnType,
@@ -16,20 +17,30 @@ import { Fragment, useMemo } from "react"
 import type { Control } from "react-hook-form"
 import { useFieldArray, useFormContext } from "react-hook-form"
 import { mapToSelectOptions } from "./helpers"
+import { conditionLabels } from "@/lib/dictionaries"
 
-interface WhereSchemaFormProps {
-  control: Control<CreateScraper>
-  name: `dataSources.${number}.whereSchema`
+type WhereSchemaFormProps = {
   columns: UserDataStoreColumn[]
-  dataSourceIndex: number
-}
+} & (
+  | {
+      control: Control<CreateScraper>
+      name: `dataSources.${number}.whereSchema`
+      dataSourceIndex: number
+    }
+  | {
+      control: Control<ExecutionIterator>
+      name: "where"
+    }
+)
 
 export function WhereSchemaForm({
   control,
   name,
   columns,
 }: WhereSchemaFormProps) {
-  const { watch, setValue } = useFormContext<CreateScraper>()
+  const { watch, setValue } = useFormContext<
+    CreateScraper | ExecutionIterator
+  >()
   const whereSchema = watch(name)
 
   const sqlPreview = whereSchema
@@ -90,7 +101,7 @@ export function WhereSchemaForm({
 
       {isLogicalGroup ? (
         <LogicalGroupForm
-          control={control}
+          control={control as never}
           name={name}
           columns={columns}
           onRemove={clearSchema}
@@ -98,7 +109,7 @@ export function WhereSchemaForm({
         />
       ) : (
         <ConditionForm
-          control={control}
+          control={control as never}
           name={name}
           columns={columns}
           onRemove={clearSchema}
@@ -119,13 +130,20 @@ export function WhereSchemaForm({
   )
 }
 
-interface LogicalGroupFormProps {
-  control: Control<CreateScraper>
-  name: `dataSources.${number}.whereSchema`
+type LogicalGroupFormProps = {
   columns: UserDataStoreColumn[]
   onRemove: () => void
   level: number
-}
+} & (
+  | {
+      control: Control<CreateScraper>
+      name: `dataSources.${number}.whereSchema`
+    }
+  | {
+      control: Control<ExecutionIterator>
+      name: "where"
+    }
+)
 
 function LogicalGroupForm({
   control,
@@ -134,7 +152,9 @@ function LogicalGroupForm({
   onRemove,
   level,
 }: LogicalGroupFormProps) {
-  const { watch, setValue } = useFormContext<CreateScraper>()
+  const { watch, setValue } = useFormContext<
+    CreateScraper | ExecutionIterator
+  >()
   const group = watch(name)
 
   const isLogicalGroup = group && ("and" in group || "or" in group)
@@ -143,7 +163,7 @@ function LogicalGroupForm({
   const items = isLogicalGroup ? ("and" in group ? group.and : group.or) : []
 
   const { fields, append, remove } = useFieldArray({
-    control,
+    control: control as never,
     name: `${name}.${groupType}`,
   })
 
@@ -259,7 +279,7 @@ function LogicalGroupForm({
               )}
               {isLogicalGroup ? (
                 <LogicalGroupForm
-                  control={control}
+                  control={control as never}
                   name={fieldName}
                   columns={columns}
                   onRemove={() => remove(index)}
@@ -267,7 +287,7 @@ function LogicalGroupForm({
                 />
               ) : (
                 <ConditionForm
-                  control={control}
+                  control={control as never}
                   name={fieldName}
                   columns={columns}
                   onRemove={() => remove(index)}
@@ -281,32 +301,21 @@ function LogicalGroupForm({
   )
 }
 
-const conditionLabels: { [key in SqliteConditionType]: string } = {
-  [SqliteConditionType.Equals]: "Equals",
-  [SqliteConditionType.NotEquals]: "Not Equals",
-  [SqliteConditionType.GreaterThan]: "Greater Than",
-  [SqliteConditionType.GreaterThanOrEqual]: "Greater Than or Equal",
-  [SqliteConditionType.LessThan]: "Less Than",
-  [SqliteConditionType.LessThanOrEqual]: "Less Than or Equal",
-  [SqliteConditionType.Like]: "Like",
-  [SqliteConditionType.NotLike]: "Not Like",
-  [SqliteConditionType.ILike]: "Case-insensitive Like",
-  [SqliteConditionType.NotILike]: "Case-insensitive Not Like",
-  [SqliteConditionType.In]: "In",
-  [SqliteConditionType.NotIn]: "Not In",
-  [SqliteConditionType.IsNull]: "Is Null",
-  [SqliteConditionType.IsNotNull]: "Is Not Null",
-  [SqliteConditionType.Between]: "Between",
-  [SqliteConditionType.NotBetween]: "Not Between",
-}
 const conditionOptions = mapToSelectOptions(conditionLabels)
 
-interface ConditionFormProps {
-  control: Control<CreateScraper>
-  name: `dataSources.${number}.whereSchema`
+type ConditionFormProps = {
   columns: UserDataStoreColumn[]
   onRemove: () => void
-}
+} & (
+  | {
+      control: Control<CreateScraper>
+      name: `dataSources.${number}.whereSchema`
+    }
+  | {
+      control: Control<ExecutionIterator>
+      name: "where"
+    }
+)
 
 function ConditionForm({
   control,
@@ -314,7 +323,9 @@ function ConditionForm({
   columns,
   onRemove,
 }: ConditionFormProps) {
-  const { watch, setValue } = useFormContext<CreateScraper>()
+  const { watch, setValue } = useFormContext<
+    CreateScraper | ExecutionIterator
+  >()
   const condition = watch(`${name}.condition`)
   const selectedColumn = watch(`${name}.column`)
 
@@ -385,7 +396,7 @@ function ConditionForm({
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <FormSelect
-          control={control}
+          control={control as never}
           className="*:[button]:w-full"
           name={`${name}.column`}
           label="Column"
@@ -411,7 +422,7 @@ function ConditionForm({
         />
 
         <FormSelect
-          control={control}
+          control={control as never}
           className="*:[button]:w-full"
           name={`${name}.condition`}
           label="Condition"
@@ -441,7 +452,7 @@ function ConditionForm({
         <>
           {isBooleanColumn && !condition?.includes("Like") ? (
             <FormSelect
-              control={control}
+              control={control as never}
               name={`${name}.value`}
               label="Value"
               placeholder="Select value"
@@ -449,7 +460,7 @@ function ConditionForm({
             />
           ) : (
             <FormInput
-              control={control}
+              control={control as never}
               name={`${name}.value`}
               label="Value"
               placeholder="Enter value"
@@ -461,7 +472,7 @@ function ConditionForm({
 
       {needsArrayValue && (
         <ArrayValueForm
-          control={control}
+          control={control as never}
           name={`${name}.value`}
           inputType={inputType}
           isBooleanColumn={isBooleanColumn}
@@ -473,14 +484,14 @@ function ConditionForm({
           {isBooleanColumn ? (
             <>
               <FormSelect
-                control={control}
+                control={control as never}
                 name={`${name}.value.from`}
                 label="From"
                 placeholder="Select from value"
                 options={getBooleanOptions()}
               />
               <FormSelect
-                control={control}
+                control={control as never}
                 name={`${name}.value.to`}
                 label="To"
                 placeholder="Select to value"
@@ -490,14 +501,14 @@ function ConditionForm({
           ) : (
             <>
               <FormInput
-                control={control}
+                control={control as never}
                 name={`${name}.value.from`}
                 label="From"
                 placeholder="Start value"
                 type={inputType}
               />
               <FormInput
-                control={control}
+                control={control as never}
                 name={`${name}.value.to`}
                 label="To"
                 placeholder="End value"
@@ -511,12 +522,19 @@ function ConditionForm({
   )
 }
 
-interface ArrayValueFormProps {
-  control: Control<CreateScraper>
-  name: `dataSources.${number}.whereSchema.value`
+type ArrayValueFormProps = {
   inputType: string
   isBooleanColumn: boolean
-}
+} & (
+  | {
+      control: Control<CreateScraper>
+      name: `dataSources.${number}.whereSchema.value`
+    }
+  | {
+      control: Control<ExecutionIterator>
+      name: "where.value"
+    }
+)
 
 function ArrayValueForm({
   control,
@@ -525,7 +543,7 @@ function ArrayValueForm({
   isBooleanColumn,
 }: ArrayValueFormProps) {
   const { fields, append, remove } = useFieldArray({
-    control,
+    control: control as never,
     name: name as never,
   })
 
@@ -559,7 +577,7 @@ function ArrayValueForm({
           <div key={field.id} className="flex items-center gap-2">
             {isBooleanColumn ? (
               <FormSelect
-                control={control}
+                control={control as never}
                 name={`${name}.${index}`}
                 label=""
                 placeholder="Select value"
@@ -568,7 +586,7 @@ function ArrayValueForm({
               />
             ) : (
               <FormInput
-                control={control}
+                control={control as never}
                 name={`${name}.${index}`}
                 label=""
                 placeholder={`Value ${index + 1}`}

@@ -9,7 +9,6 @@ export enum ElementSelectorType {
   Attributes = "attributes",
 }
 
-//TODO: turn it into an array of selectors; it will work as list of [and] conditions
 export const scraperElementSelectorsSchema = z
   .array(
     z.discriminatedUnion("type", [

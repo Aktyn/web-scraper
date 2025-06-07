@@ -1,24 +1,17 @@
 import z from "zod"
-import { whereSchema } from "../common/where"
+import { scraperDataSourceSchema } from "./data-source"
 import { scraperInstructionsSchema } from "./instructions"
 
+export * from "./common"
 export * from "./condition"
+export * from "./data-source"
+export * from "./execution"
 export * from "./helpers"
 export * from "./instructions"
 export * from "./page-action"
 export * from "./results"
 export * from "./selectors"
 export * from "./value"
-export * from "./execution"
-export * from "./common"
-
-export const scraperDataSourceSchema = z.object({
-  dataStoreTableName: z.string(),
-  sourceAlias: z.string().min(1, "Source alias is required"),
-  whereSchema: whereSchema.nullable(),
-})
-
-export type ScraperDataSource = z.infer<typeof scraperDataSourceSchema>
 
 export const scraperSchema = z.object({
   id: z.number(),
