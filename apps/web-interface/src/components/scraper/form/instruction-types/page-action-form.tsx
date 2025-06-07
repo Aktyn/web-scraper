@@ -10,7 +10,7 @@ import {
 import { Switch } from "@/components/shadcn/switch"
 import { PageActionType, type CreateScraper } from "@web-scraper/common"
 import { useFormContext, type Control } from "react-hook-form"
-import { ScraperSelectorForm } from "./scraper-selector-form"
+import { ScraperSelectorsForm } from "./scraper-selectors-form"
 import { ScraperValueForm } from "./scraper-value-form"
 
 export type PageActionFieldName = `instructions.${number}.action`
@@ -53,9 +53,9 @@ export function PageActionForm({ control, fieldName }: PageActionFormProps) {
         <div className="space-y-4">
           <div>
             <h5 className="font-medium mb-2">Element Selector</h5>
-            <ScraperSelectorForm
+            <ScraperSelectorsForm
               control={control}
-              fieldName={`${fieldName}.selector`}
+              fieldName={`${fieldName}.selectors`}
             />
           </div>
         </div>
@@ -66,9 +66,9 @@ export function PageActionForm({ control, fieldName }: PageActionFormProps) {
         <div className="space-y-4">
           <div>
             <h5 className="font-medium mb-2">Element Selector</h5>
-            <ScraperSelectorForm
+            <ScraperSelectorsForm
               control={control}
-              fieldName={`${fieldName}.selector`}
+              fieldName={`${fieldName}.selectors`}
             />
           </div>
 

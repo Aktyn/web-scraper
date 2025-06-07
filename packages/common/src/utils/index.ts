@@ -1,5 +1,6 @@
 export * from "./common"
 export * from "./error"
 export * from "./random"
+export * from "./array"
 export * from "./time"
 export type * from "./types"

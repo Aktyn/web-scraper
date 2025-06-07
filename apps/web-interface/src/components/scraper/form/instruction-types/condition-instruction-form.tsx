@@ -2,7 +2,7 @@ import { FormSelect } from "@/components/common/form/form-select"
 import { FormInput } from "@/components/common/form/form-input"
 import { ScraperConditionType, type CreateScraper } from "@web-scraper/common"
 import { type Control, useFormContext } from "react-hook-form"
-import { ScraperSelectorForm } from "./scraper-selector-form"
+import { ScraperSelectorsForm } from "./scraper-selectors-form"
 import { ScraperValueForm } from "./scraper-value-form"
 import { ScraperInstructionsForm } from "../scraper-instructions-form"
 import { mapToSelectOptions } from "../helpers"
@@ -105,9 +105,9 @@ function ConditionFormByType({
       return (
         <div>
           <h6 className="font-medium mb-2">Element Selector</h6>
-          <ScraperSelectorForm
+          <ScraperSelectorsForm
             control={control}
-            fieldName={`${fieldName}.if.selector`}
+            fieldName={`${fieldName}.if.selectors`}
           />
         </div>
       )

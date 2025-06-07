@@ -4,15 +4,16 @@ import {
   type ScraperElementSelectors,
 } from "@web-scraper/common"
 import { DynamicIcon, type IconName } from "lucide-react/dynamic"
-import { type ComponentProps } from "react"
+import { Fragment, type ComponentProps } from "react"
 import { ScraperElementSelectorInfo } from "../common/scraper-element-selector-info"
+import { SelectorsSeparator } from "../common/selectors-separator"
 
 type ScraperSelectorProps = {
-  selector: ScraperElementSelectors
+  selectors: ScraperElementSelectors
 } & ComponentProps<"div">
 
 export function ScraperSelector({
-  selector,
+  selectors,
   ...divProps
 }: ScraperSelectorProps) {
   return (
@@ -23,18 +24,25 @@ export function ScraperSelector({
         divProps.className,
       )}
     >
-      <div className="flex items-center gap-2">
-        <DynamicIcon name={iconsMap[selector.type]} className="size-4" />
-        <span className="text-sm font-medium capitalize leading-none">
-          {selector.type}
-        </span>
-      </div>
-      <ScraperElementSelectorInfo selector={selector} />
+      {selectors.map((selector, index) => (
+        <Fragment key={`${selector.type}=${index}`}>
+          {index > 0 && <SelectorsSeparator />}
+          <div className="flex items-center gap-2">
+            <DynamicIcon name={iconsMap[selector.type]} className="size-4" />
+            <span className="text-sm font-medium capitalize leading-none">
+              {selector.type}
+            </span>
+          </div>
+          <ScraperElementSelectorInfo selector={selector} />
+        </Fragment>
+      ))}
     </div>
   )
 }
 
 const iconsMap: { [key in ElementSelectorType]: IconName } = {
   [ElementSelectorType.Query]: "search",
-  [ElementSelectorType.FindByTextContent]: "type",
+  [ElementSelectorType.TextContent]: "type",
+  [ElementSelectorType.TagName]: "tag",
+  [ElementSelectorType.Attributes]: "variable",
 }

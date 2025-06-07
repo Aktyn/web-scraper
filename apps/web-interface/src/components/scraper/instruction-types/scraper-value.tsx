@@ -62,7 +62,7 @@ function ValueDetails({ value }: { value: ScraperValue }) {
     case ScraperValueType.ElementTextContent:
       return (
         <LabeledValue label="Element:">
-          <ScraperSelector selector={value.selectors} />
+          <ScraperSelector selectors={value.selectors} />
         </LabeledValue>
       )
 
@@ -70,7 +70,7 @@ function ValueDetails({ value }: { value: ScraperValue }) {
       return (
         <div className="space-y-2">
           <LabeledValue label="Element:">
-            <ScraperSelector selector={value.selectors} />
+            <ScraperSelector selectors={value.selectors} />
           </LabeledValue>
           <LabeledValue label="Attribute:">
             <pre className="text-sm break-all whitespace-normal">

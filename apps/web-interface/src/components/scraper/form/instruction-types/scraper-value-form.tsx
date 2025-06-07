@@ -6,7 +6,7 @@ import { mapToSelectOptions } from "../helpers"
 import type { ConditionInstructionFieldName } from "./condition-instruction-form"
 import { DataKeyField } from "./data-key-field"
 import type { PageActionFieldName } from "./page-action-form"
-import { ScraperSelectorForm } from "./scraper-selector-form"
+import { ScraperSelectorsForm } from "./scraper-selectors-form"
 import { scraperValueTypeLabels } from "@/lib/dictionaries"
 
 const valueTypeOptions = mapToSelectOptions(scraperValueTypeLabels)
@@ -78,9 +78,9 @@ function ValueFormByType({ control, fieldName }: ScraperValueFormProps) {
       return (
         <div>
           <h6 className="font-medium mb-2">Element Selector</h6>
-          <ScraperSelectorForm
+          <ScraperSelectorsForm
             control={control}
-            fieldName={`${fieldName}.selector`}
+            fieldName={`${fieldName}.selectors`}
           />
         </div>
       )
@@ -90,9 +90,9 @@ function ValueFormByType({ control, fieldName }: ScraperValueFormProps) {
         <div className="space-y-4">
           <div>
             <h6 className="font-medium mb-2">Element Selector</h6>
-            <ScraperSelectorForm
+            <ScraperSelectorsForm
               control={control}
-              fieldName={`${fieldName}.selector`}
+              fieldName={`${fieldName}.selectors`}
             />
           </div>
           <FormInput

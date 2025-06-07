@@ -1,4 +1,5 @@
 import {
+  ElementSelectorType,
   PageActionType,
   ScraperInstructionsExecutionInfoType,
   ScraperInstructionType,
@@ -40,4 +41,11 @@ export const pageActionTypeLabels: { [key in PageActionType]: string } = {
   [PageActionType.Wait]: "Wait",
   [PageActionType.Click]: "Click",
   [PageActionType.Type]: "Type",
+}
+
+export const selectorTypeLabels: { [key in ElementSelectorType]: string } = {
+  [ElementSelectorType.Query]: "CSS Query",
+  [ElementSelectorType.TextContent]: "Text content",
+  [ElementSelectorType.TagName]: "Tag name",
+  [ElementSelectorType.Attributes]: "Attributes",
 }
