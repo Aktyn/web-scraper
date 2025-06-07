@@ -1,10 +1,10 @@
 import { LabeledValue } from "@/components/common/labeled-value"
-import type { ScraperElementSelector } from "@web-scraper/common"
+import type { ScraperElementSelectors } from "@web-scraper/common"
 import { ElementSelectorType } from "@web-scraper/common"
 import { Fragment } from "react/jsx-runtime"
 
 type ScraperElementSelectorInfoProps = {
-  selector: ScraperElementSelector
+  selector: ScraperElementSelectors
 }
 
 export function ScraperElementSelectorInfo({

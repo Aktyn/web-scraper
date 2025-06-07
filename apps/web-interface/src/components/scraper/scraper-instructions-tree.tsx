@@ -1,5 +1,5 @@
 import type { ScraperInstructions } from "@web-scraper/common"
-import { InstructionBlock } from "./instruction-block.js"
+import { InstructionBlock } from "./instruction-block"
 
 type ScraperInstructionsProps = {
   instructions: ScraperInstructions

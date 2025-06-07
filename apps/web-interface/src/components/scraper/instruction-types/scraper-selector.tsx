@@ -1,14 +1,14 @@
 import { cn } from "@/lib/utils"
 import {
   ElementSelectorType,
-  type ScraperElementSelector,
+  type ScraperElementSelectors,
 } from "@web-scraper/common"
 import { DynamicIcon, type IconName } from "lucide-react/dynamic"
 import { type ComponentProps } from "react"
 import { ScraperElementSelectorInfo } from "../common/scraper-element-selector-info"
 
 type ScraperSelectorProps = {
-  selector: ScraperElementSelector
+  selector: ScraperElementSelectors
 } & ComponentProps<"div">
 
 export function ScraperSelector({

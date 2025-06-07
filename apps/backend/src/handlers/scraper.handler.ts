@@ -20,14 +20,15 @@ type ScraperExecutorContext = {
 }
 
 export async function executeNewScraper(
-  scraperId: string,
+  id: ScraperType["id"],
+  name: ScraperType["name"],
   scraperData: ScraperType,
   context: ScraperExecutorContext,
 ) {
   const logger =
     "child" in context.logger
       ? context.logger.child({
-          scraper: scraperId,
+          scraper: `${id}-${name}`,
         })
       : context.logger
 
@@ -40,7 +41,8 @@ export async function executeNewScraper(
   )
 
   const scraper = new Scraper({
-    id: scraperId,
+    id,
+    name,
     logger,
     userDataDir: scraperData.userDataDirectory ?? undefined,
   })
@@ -48,7 +50,7 @@ export async function executeNewScraper(
   scraper.on("stateChange", (state, previousState) => {
     context.events.emit("broadcast", {
       type: SubscriptionMessageType.ScraperEvent,
-      scraperId: scraper.id,
+      scraperId: scraper.options.id,
       event: {
         type: ScraperEventType.StateChange,
         state,
@@ -59,7 +61,7 @@ export async function executeNewScraper(
   scraper.on("executionStarted", () => {
     context.events.emit("broadcast", {
       type: SubscriptionMessageType.ScraperEvent,
-      scraperId: scraper.id,
+      scraperId: scraper.options.id,
       event: {
         type: ScraperEventType.ExecutionStarted,
       },
@@ -68,7 +70,7 @@ export async function executeNewScraper(
   scraper.on("executionUpdate", (update) => {
     context.events.emit("broadcast", {
       type: SubscriptionMessageType.ScraperEvent,
-      scraperId: scraper.id,
+      scraperId: scraper.options.id,
       event: {
         type: ScraperEventType.ExecutionUpdate,
         update,
@@ -78,7 +80,7 @@ export async function executeNewScraper(
   scraper.on("executingInstruction", (instruction) => {
     context.events.emit("broadcast", {
       type: SubscriptionMessageType.ScraperEvent,
-      scraperId: scraper.id,
+      scraperId: scraper.options.id,
       event: {
         type: ScraperEventType.ExecutingInstruction,
         instruction,
@@ -101,7 +103,7 @@ export async function executeNewScraper(
       .finally(() =>
         context.events.emit("broadcast", {
           type: SubscriptionMessageType.ScraperEvent,
-          scraperId: scraper.id,
+          scraperId: scraper.options.id,
           event: {
             type: ScraperEventType.ExecutionFinished,
             executionInfo: executionInfo.get(),
@@ -121,7 +123,7 @@ export async function executeNewScraper(
 
     context.events.emit("broadcast", {
       type: SubscriptionMessageType.ScraperEvent,
-      scraperId: scraper.id,
+      scraperId: scraper.options.id,
       event: {
         type: ScraperEventType.ExecutionError,
         error: error instanceof Error ? error.message : String(error),
@@ -130,10 +132,14 @@ export async function executeNewScraper(
     })
   }
 
-  try {
-    scraper.destroy()
-  } catch (error) {
-    logger.error("Error destroying scraper:", error)
+  if (!scraper.destroyed) {
+    try {
+      scraper.destroy()
+    } catch (error) {
+      logger.error("Error destroying scraper:", error)
+    }
+  } else {
+    logger.warn("Scraper was destroyed unexpectedly")
   }
 
   try {

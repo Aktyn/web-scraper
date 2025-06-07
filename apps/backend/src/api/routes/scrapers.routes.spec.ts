@@ -26,7 +26,7 @@ vi.mock("@web-scraper/core", async (importActual) => {
     ...actual,
     Scraper: class MockScraper extends actual.Scraper {
       constructor(options: object) {
-        super({ ...options, noInit: true })
+        super({ id: 1, name: "test", ...options, noInit: true })
       }
 
       override async execute(
@@ -175,6 +175,85 @@ describe("Scrapers Routes", () => {
       })
 
       expect(response.statusCode).toBe(500)
+    })
+  })
+
+  describe("GET /scrapers/currently-executing", () => {
+    it("should return status 200 and an empty list if no scrapers are running", async () => {
+      const { Scraper } = await import("@web-scraper/core")
+      vi.spyOn(Scraper, "getInstances").mockReturnValue([])
+
+      const response = await modules.api.inject({
+        method: "GET",
+        url: "/scrapers/currently-executing?page=0&pageSize=10",
+      })
+
+      expect(response.statusCode).toBe(200)
+      const body = JSON.parse(response.payload)
+      expect(body.data).toEqual([])
+      expect(body.hasMore).toBe(false)
+      expect(body.page).toBe(0)
+      expect(body.pageSize).toBe(10)
+    })
+
+    it("should return status 200 and a list of currently executing scrapers", async () => {
+      const { Scraper } = await import("@web-scraper/core")
+      const mockScraperInstances = [
+        new Scraper({ id: 1, name: "Test Scraper 1" }),
+        new Scraper({ id: 2, name: "Test Scraper 2" }),
+      ]
+      vi.spyOn(Scraper, "getInstances").mockReturnValue(mockScraperInstances)
+
+      const response = await modules.api.inject({
+        method: "GET",
+        url: "/scrapers/currently-executing?page=0&pageSize=10",
+      })
+
+      expect(response.statusCode).toBe(200)
+      const body = JSON.parse(response.payload)
+      expect(body.data).toEqual([
+        { id: 1, name: "Test Scraper 1" },
+        { id: 2, name: "Test Scraper 2" },
+      ])
+      expect(body.hasMore).toBe(false)
+      expect(body.page).toBe(0)
+      expect(body.pageSize).toBe(10)
+    })
+
+    it("should handle pagination correctly", async () => {
+      const { Scraper } = await import("@web-scraper/core")
+      const mockScraperInstances = [
+        new Scraper({ id: 1, name: "Scraper 1" }),
+        new Scraper({ id: 2, name: "Scraper 2" }),
+        new Scraper({ id: 3, name: "Scraper 3" }),
+      ]
+      vi.spyOn(Scraper, "getInstances").mockReturnValue(mockScraperInstances)
+
+      const responsePage1 = await modules.api.inject({
+        method: "GET",
+        url: "/scrapers/currently-executing?page=0&pageSize=2",
+      })
+
+      expect(responsePage1.statusCode).toBe(200)
+      const bodyPage1 = JSON.parse(responsePage1.payload)
+      expect(bodyPage1.data).toEqual([
+        { id: 1, name: "Scraper 1" },
+        { id: 2, name: "Scraper 2" },
+      ])
+      expect(bodyPage1.hasMore).toBe(true)
+      expect(bodyPage1.page).toBe(0)
+      expect(bodyPage1.pageSize).toBe(2)
+
+      const responsePage2 = await modules.api.inject({
+        method: "GET",
+        url: "/scrapers/currently-executing?page=1&pageSize=2",
+      })
+      const bodyPage2 = JSON.parse(responsePage2.payload)
+      expect(responsePage2.statusCode).toBe(200)
+      expect(bodyPage2.data).toEqual([{ id: 3, name: "Scraper 3" }])
+      expect(bodyPage2.hasMore).toBe(false)
+      expect(bodyPage2.page).toBe(1)
+      expect(bodyPage2.pageSize).toBe(2)
     })
   })
 

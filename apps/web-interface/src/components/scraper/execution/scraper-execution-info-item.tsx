@@ -14,8 +14,8 @@ import {
 } from "@web-scraper/common"
 import { MoveRight } from "lucide-react"
 import { type ComponentProps, type PropsWithChildren } from "react"
-import { ExternalDataOperation } from "./external-data-operation.js"
-import { ScraperInstructionInfo } from "./scraper-instruction-info.js"
+import { ExternalDataOperation } from "./external-data-operation"
+import { ScraperInstructionInfo } from "./scraper-instruction-info"
 
 type ScraperExecutionInfoItemProps = {
   executionInfo: ScraperInstructionsExecutionInfo[number]
@@ -86,7 +86,10 @@ export function ScraperExecutionInfoItem({
       return (
         <ContainerLayout
           {...divProps}
-          className={cn("border-success/50 min-w-48", divProps.className)}
+          className={cn(
+            "border-success/50 min-w-48 max-w-64",
+            divProps.className,
+          )}
         >
           <HeaderLayout>
             <Badge className="bg-success text-success-foreground">
@@ -98,7 +101,7 @@ export function ScraperExecutionInfoItem({
               {formatDuration(executionInfo.summary.duration, "second")}
             </span>
           </LabeledValue>
-          <div className="text-sm text-balance text-success">
+          <div className="text-sm text-pretty text-success">
             Scraper finished successfully.
           </div>
         </ContainerLayout>
@@ -107,7 +110,10 @@ export function ScraperExecutionInfoItem({
       return (
         <ContainerLayout
           {...divProps}
-          className={cn("border-destructive/50", divProps.className)}
+          className={cn(
+            "border-destructive/50 min-w-56 max-w-64",
+            divProps.className,
+          )}
         >
           <HeaderLayout>
             <Badge variant="destructive">
@@ -115,11 +121,11 @@ export function ScraperExecutionInfoItem({
             </Badge>
             <CopyButton
               value={executionInfo.errorMessage}
-              className="size-6"
-              title="Copy error message"
+              className="size-6 ml-auto"
+              content="Copy error message"
             />
           </HeaderLayout>
-          <div className="text-sm text-center text-destructive min-w-32">
+          <div className="text-sm text-pretty text-destructive whitespace-normal break-all">
             {executionInfo.errorMessage}
           </div>
         </ContainerLayout>

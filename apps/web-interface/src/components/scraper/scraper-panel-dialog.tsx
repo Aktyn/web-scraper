@@ -39,8 +39,8 @@ export function ScraperPanelDialog({
       <DialogContent
         aria-describedby={undefined}
         className={cn(
-          "overflow-hidden grid grid-rows-[auto_1fr] p-0",
-          stretched && "w-full max-w-full sm:max-w-full",
+          "overflow-hidden grid grid-rows-[auto_1fr] p-0 sm:max-w-3xl",
+          stretched && "w-full sm:max-w-[calc(100%-2rem)]",
         )}
       >
         <DialogHeader className="p-6 pb-0">

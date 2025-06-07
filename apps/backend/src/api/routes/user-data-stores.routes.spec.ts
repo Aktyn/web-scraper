@@ -76,6 +76,35 @@ describe("User Data Stores Routes", () => {
               },
             ],
           },
+          {
+            tableName: "crypto_prices",
+            name: "Crypto prices",
+            description: null,
+            recordsCount: 4,
+            columns: [
+              {
+                name: "id",
+                notNull: true,
+                type: "INTEGER",
+              },
+              {
+                name: "Cryptocurrency",
+                notNull: true,
+                type: "TEXT",
+              },
+              {
+                name: "Price",
+                notNull: false,
+                type: "REAL",
+              },
+              {
+                defaultValue: 0,
+                name: "Last update",
+                notNull: true,
+                type: "TIMESTAMP",
+              },
+            ],
+          },
         ],
         page: 0,
         pageSize: 32,
@@ -434,7 +463,7 @@ describe("User Data Stores Routes", () => {
       const getData = JSON.parse(
         getResponse.payload,
       ) as ApiPaginatedResponse<object>
-      expect(getData.data.length).toBe(1)
+      expect(getData.data.length).toBe(2)
     })
 
     it("should return status 404 if the data store does not exist", async () => {

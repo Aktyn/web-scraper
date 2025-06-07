@@ -51,3 +51,10 @@ export const scraperExecutionStatusSchema = z.object({
 export type ScraperExecutionStatus = z.infer<
   typeof scraperExecutionStatusSchema
 >
+
+export const executingScraperInfoSchema = z.object({
+  id: z.number(),
+  name: z.string(),
+})
+
+export type ExecutingScraperInfo = z.infer<typeof executingScraperInfoSchema>

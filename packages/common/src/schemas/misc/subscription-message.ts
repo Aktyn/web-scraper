@@ -13,7 +13,7 @@ export const subscriptionMessageSchema = z.discriminatedUnion("type", [
   }),
   z.object({
     type: z.literal(SubscriptionMessageType.ScraperEvent),
-    scraperId: z.string(),
+    scraperId: z.number(),
     event: scraperEventSchema,
   }),
 ])

@@ -56,7 +56,7 @@ export function ScraperProvider({
   }, [executionStatus])
 
   useMessages(SubscriptionMessageType.ScraperEvent, (message) => {
-    if (message.scraperId !== scraper.name) {
+    if (message.scraperId !== scraper.id) {
       return
     }
 

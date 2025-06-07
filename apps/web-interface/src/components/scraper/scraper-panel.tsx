@@ -67,8 +67,7 @@ export function ScraperPanel({ scraper, onEditSuccess }: ScraperPanelProps) {
             <AccordionContent className="pb-0">
               <ScraperExecutionHistory
                 scraperId={scraper.id}
-                scraperName={scraper.name}
-                className="max-h-192"
+                className="max-h-160"
               />
             </AccordionContent>
           </AccordionItem>

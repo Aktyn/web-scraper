@@ -2,7 +2,7 @@ import {
   ElementSelectorType,
   PageActionType,
   ScraperConditionType,
-  type ScraperElementSelector,
+  type ScraperElementSelectors,
   type ScraperInstructions,
   type ScraperInstructionsExecutionInfo,
   ScraperInstructionsExecutionInfoType,
@@ -72,7 +72,12 @@ describe(
     )
 
     beforeEach(async () => {
-      scraper = new Scraper({ headless: true, logger: voidLogger })
+      scraper = new Scraper({
+        id: 1,
+        name: "test",
+        headless: true,
+        logger: voidLogger,
+      })
     })
 
     afterEach(() => {
@@ -102,17 +107,21 @@ describe(
         mockRequest.on("get", `${mockBaseUrl}/api`, 200, responseConfig)
       }
 
-      const acceptCookiesButtonSelector: ScraperElementSelector = {
-        type: ElementSelectorType.FindByTextContent,
-        text: { source: "accept cookies", flags: "i" },
-        tagName: "button",
-      }
+      const acceptCookiesButtonSelector: ScraperElementSelectors = [
+        {
+          type: ElementSelectorType.TextContent,
+          text: { source: "accept cookies", flags: "i" },
+        },
+        { type: ElementSelectorType.TagName, tagName: "button" },
+      ]
 
-      const loginButtonSelector: ScraperElementSelector = {
-        type: ElementSelectorType.FindByTextContent,
-        text: { source: "login", flags: "i" },
-        tagName: "button",
-      }
+      const loginButtonSelector: ScraperElementSelectors = [
+        {
+          type: ElementSelectorType.TextContent,
+          text: { source: "login", flags: "i" },
+        },
+        { type: ElementSelectorType.TagName, tagName: "button" },
+      ]
 
       const mockInstructions: ScraperInstructions = [
         {
@@ -128,14 +137,14 @@ describe(
           type: ScraperInstructionType.Condition,
           if: {
             type: ScraperConditionType.IsVisible,
-            selector: acceptCookiesButtonSelector,
+            selectors: acceptCookiesButtonSelector,
           },
           then: [
             {
               type: ScraperInstructionType.PageAction,
               action: {
                 type: PageActionType.Click,
-                selector: acceptCookiesButtonSelector,
+                selectors: acceptCookiesButtonSelector,
               },
             },
           ],
@@ -146,7 +155,7 @@ describe(
           type: ScraperInstructionType.PageAction,
           action: {
             type: PageActionType.Click,
-            selector: loginButtonSelector,
+            selectors: loginButtonSelector,
           },
         },
 
@@ -154,14 +163,14 @@ describe(
           type: ScraperInstructionType.Condition,
           if: {
             type: ScraperConditionType.IsVisible,
-            selector: loginButtonSelector,
+            selectors: loginButtonSelector,
           },
           then: [
             {
               type: ScraperInstructionType.PageAction,
               action: {
                 type: PageActionType.Click,
-                selector: loginButtonSelector,
+                selectors: loginButtonSelector,
               },
             },
             //TODO: fill login form and finish login process
@@ -188,11 +197,13 @@ describe(
             type: ScraperInstructionType.Condition,
             condition: {
               type: ScraperConditionType.IsVisible,
-              selector: {
-                type: ElementSelectorType.FindByTextContent,
-                tagName: "button",
-                text: { source: "accept cookies", flags: "i" },
-              },
+              selectors: [
+                {
+                  type: ElementSelectorType.TextContent,
+                  text: { source: "accept cookies", flags: "i" },
+                },
+                { type: ElementSelectorType.TagName, tagName: "button" },
+              ],
             },
             isMet: true,
           },
@@ -205,11 +216,13 @@ describe(
             type: ScraperInstructionType.PageAction,
             action: {
               type: PageActionType.Click,
-              selector: {
-                tagName: "button",
-                text: { source: "accept cookies", flags: "i" },
-                type: ElementSelectorType.FindByTextContent,
-              },
+              selectors: [
+                {
+                  type: ElementSelectorType.TextContent,
+                  text: { source: "accept cookies", flags: "i" },
+                },
+                { type: ElementSelectorType.TagName, tagName: "button" },
+              ],
             },
           },
           url: "http://127.0.0.1:1337/api",
@@ -220,11 +233,13 @@ describe(
           instructionInfo: {
             action: {
               type: PageActionType.Click,
-              selector: {
-                tagName: "button",
-                text: { source: "login", flags: "i" },
-                type: ElementSelectorType.FindByTextContent,
-              },
+              selectors: [
+                {
+                  type: ElementSelectorType.TextContent,
+                  text: { source: "login", flags: "i" },
+                },
+                { type: ElementSelectorType.TagName, tagName: "button" },
+              ],
             },
             type: ScraperInstructionType.PageAction,
           },
@@ -237,11 +252,13 @@ describe(
             type: ScraperInstructionType.Condition,
             condition: {
               type: ScraperConditionType.IsVisible,
-              selector: {
-                tagName: "button",
-                text: { source: "login", flags: "i" },
-                type: ElementSelectorType.FindByTextContent,
-              },
+              selectors: [
+                {
+                  type: ElementSelectorType.TextContent,
+                  text: { source: "login", flags: "i" },
+                },
+                { type: ElementSelectorType.TagName, tagName: "button" },
+              ],
             },
             isMet: true,
           },
@@ -254,11 +271,13 @@ describe(
             type: ScraperInstructionType.PageAction,
             action: {
               type: PageActionType.Click,
-              selector: {
-                tagName: "button",
-                text: { source: "login", flags: "i" },
-                type: ElementSelectorType.FindByTextContent,
-              },
+              selectors: [
+                {
+                  type: ElementSelectorType.TextContent,
+                  text: { source: "login", flags: "i" },
+                },
+                { type: ElementSelectorType.TagName, tagName: "button" },
+              ],
             },
           },
           url: "http://127.0.0.1:1337/api",
@@ -289,11 +308,13 @@ describe(
           type: ScraperInstructionsExecutionInfoType.Instruction,
           instructionInfo: {
             condition: {
-              selector: {
-                tagName: "button",
-                text: { source: "accept cookies", flags: "i" },
-                type: ElementSelectorType.FindByTextContent,
-              },
+              selectors: [
+                {
+                  type: ElementSelectorType.TextContent,
+                  text: { source: "accept cookies", flags: "i" },
+                },
+                { type: ElementSelectorType.TagName, tagName: "button" },
+              ],
               type: ScraperConditionType.IsVisible,
             },
             isMet: false,
@@ -306,11 +327,13 @@ describe(
           type: ScraperInstructionsExecutionInfoType.Instruction,
           instructionInfo: {
             action: {
-              selector: {
-                tagName: "button",
-                text: { source: "login", flags: "i" },
-                type: ElementSelectorType.FindByTextContent,
-              },
+              selectors: [
+                {
+                  type: ElementSelectorType.TextContent,
+                  text: { source: "login", flags: "i" },
+                },
+                { type: ElementSelectorType.TagName, tagName: "button" },
+              ],
               type: PageActionType.Click,
             },
             type: ScraperInstructionType.PageAction,
@@ -322,11 +345,13 @@ describe(
           type: ScraperInstructionsExecutionInfoType.Instruction,
           instructionInfo: {
             condition: {
-              selector: {
-                tagName: "button",
-                text: { source: "login", flags: "i" },
-                type: ElementSelectorType.FindByTextContent,
-              },
+              selectors: [
+                {
+                  type: ElementSelectorType.TextContent,
+                  text: { source: "login", flags: "i" },
+                },
+                { type: ElementSelectorType.TagName, tagName: "button" },
+              ],
               type: ScraperConditionType.IsVisible,
             },
             isMet: true,
@@ -339,11 +364,13 @@ describe(
           type: ScraperInstructionsExecutionInfoType.Instruction,
           instructionInfo: {
             action: {
-              selector: {
-                tagName: "button",
-                text: { source: "login", flags: "i" },
-                type: ElementSelectorType.FindByTextContent,
-              },
+              selectors: [
+                {
+                  type: ElementSelectorType.TextContent,
+                  text: { source: "login", flags: "i" },
+                },
+                { type: ElementSelectorType.TagName, tagName: "button" },
+              ],
               type: PageActionType.Click,
             },
             type: ScraperInstructionType.PageAction,
@@ -462,10 +489,12 @@ describe(
           type: ScraperInstructionType.PageAction,
           action: {
             type: PageActionType.Type,
-            selector: {
-              type: ElementSelectorType.Query,
-              query: "input[name='username']",
-            },
+            selectors: [
+              {
+                type: ElementSelectorType.Query,
+                query: "input[name='username']",
+              },
+            ],
             value: {
               type: ScraperValueType.ExternalData,
               dataKey: "user.name",
@@ -476,10 +505,12 @@ describe(
           type: ScraperInstructionType.PageAction,
           action: {
             type: PageActionType.Type,
-            selector: {
-              type: ElementSelectorType.Query,
-              query: "input[name='password']",
-            },
+            selectors: [
+              {
+                type: ElementSelectorType.Query,
+                query: "input[name='password']",
+              },
+            ],
             value: {
               type: ScraperValueType.ExternalData,
               dataKey: "user.password",
@@ -507,10 +538,12 @@ describe(
             type: ScraperInstructionType.PageAction,
             action: {
               type: PageActionType.Type,
-              selector: {
-                type: ElementSelectorType.Query,
-                query: "input[name='username']",
-              },
+              selectors: [
+                {
+                  type: ElementSelectorType.Query,
+                  query: "input[name='username']",
+                },
+              ],
               value: {
                 type: ScraperValueType.ExternalData,
                 dataKey: "user.name",
@@ -534,10 +567,12 @@ describe(
             type: ScraperInstructionType.PageAction,
             action: {
               type: PageActionType.Type,
-              selector: {
-                type: ElementSelectorType.Query,
-                query: "input[name='password']",
-              },
+              selectors: [
+                {
+                  type: ElementSelectorType.Query,
+                  query: "input[name='password']",
+                },
+              ],
               value: {
                 type: ScraperValueType.ExternalData,
                 dataKey: "user.password",
@@ -613,10 +648,12 @@ describe(
               type: ScraperInstructionType.PageAction,
               action: {
                 type: PageActionType.Click,
-                selector: {
-                  type: ElementSelectorType.Query,
-                  query: "button#first-button",
-                },
+                selectors: [
+                  {
+                    type: ElementSelectorType.Query,
+                    query: "button#first-button",
+                  },
+                ],
               },
             },
           ],
@@ -625,10 +662,12 @@ describe(
               type: ScraperInstructionType.PageAction,
               action: {
                 type: PageActionType.Click,
-                selector: {
-                  type: ElementSelectorType.Query,
-                  query: "button#second-button",
-                },
+                selectors: [
+                  {
+                    type: ElementSelectorType.Query,
+                    query: "button#second-button",
+                  },
+                ],
               },
             },
           ],
@@ -679,10 +718,12 @@ describe(
             type: ScraperInstructionType.PageAction,
             action: {
               type: PageActionType.Click,
-              selector: {
-                type: ElementSelectorType.Query,
-                query: "button#second-button",
-              },
+              selectors: [
+                {
+                  type: ElementSelectorType.Query,
+                  query: "button#second-button",
+                },
+              ],
             },
           },
           url: "http://127.0.0.1:1337/api",
@@ -966,10 +1007,12 @@ describe(
             dataKey: "test.text",
             value: {
               type: ScraperValueType.ElementTextContent,
-              selector: {
-                type: ElementSelectorType.Query,
-                query: "#test-text",
-              },
+              selectors: [
+                {
+                  type: ElementSelectorType.Query,
+                  query: "#test-text",
+                },
+              ],
             },
           },
         ]
@@ -1000,10 +1043,12 @@ describe(
               dataKey: "test.text",
               value: {
                 type: ScraperValueType.ElementTextContent,
-                selector: {
-                  type: ElementSelectorType.Query,
-                  query: "#test-text",
-                },
+                selectors: [
+                  {
+                    type: ElementSelectorType.Query,
+                    query: "#test-text",
+                  },
+                ],
               },
             },
             duration: expect.any(Number),
@@ -1043,11 +1088,13 @@ describe(
             dataKey: "test.attribute",
             value: {
               type: ScraperValueType.ElementAttribute,
-              selector: {
-                type: ElementSelectorType.FindByTextContent,
-                tagName: "div",
-                text: "Element with attribute",
-              },
+              selectors: [
+                {
+                  type: ElementSelectorType.TextContent,
+                  text: "Element with attribute",
+                },
+                { type: ElementSelectorType.TagName, tagName: "div" },
+              ],
               attributeName: "data-value",
             },
           },
@@ -1079,11 +1126,13 @@ describe(
               dataKey: "test.attribute",
               value: {
                 type: ScraperValueType.ElementAttribute,
-                selector: {
-                  type: ElementSelectorType.FindByTextContent,
-                  tagName: "div",
-                  text: "Element with attribute",
-                },
+                selectors: [
+                  {
+                    type: ElementSelectorType.TextContent,
+                    text: "Element with attribute",
+                  },
+                  { type: ElementSelectorType.TagName, tagName: "div" },
+                ],
                 attributeName: "data-value",
               },
             },

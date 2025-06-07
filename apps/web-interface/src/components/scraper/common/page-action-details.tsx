@@ -30,7 +30,7 @@ export function PageActionDetails({ action }: { action: PageAction }) {
     case PageActionType.Click:
       return (
         <LabeledValue label="Target:">
-          <ScraperSelector selector={action.selector} />
+          <ScraperSelector selector={action.selectors} />
         </LabeledValue>
       )
 
@@ -38,7 +38,7 @@ export function PageActionDetails({ action }: { action: PageAction }) {
       return (
         <div className="flex flex-row flex-wrap gap-2 gap-x-4">
           <LabeledValue label="Target:">
-            <ScraperSelector selector={action.selector} />
+            <ScraperSelector selector={action.selectors} />
           </LabeledValue>
           <LabeledValue label="Value:">
             <ScraperValue value={action.value} />

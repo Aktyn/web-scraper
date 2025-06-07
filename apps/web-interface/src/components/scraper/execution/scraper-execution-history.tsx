@@ -11,17 +11,15 @@ import {
   type ScraperExecutionInfo,
 } from "@web-scraper/common"
 import { Check, X } from "lucide-react"
-import { type ComponentProps } from "react"
+import { useEffect, useRef, type ComponentProps } from "react"
 import { ScrollableScraperExecutionInfo } from "./scraper-execution-panel"
 
 type ScraperExecutionHistoryProps = ComponentProps<"div"> & {
   scraperId: number
-  scraperName: string
 }
 
 export function ScraperExecutionHistory({
   scraperId,
-  scraperName,
   ...divProps
 }: ScraperExecutionHistoryProps) {
   const {
@@ -36,7 +34,7 @@ export function ScraperExecutionHistory({
   ServerEventsProvider.useMessages(
     SubscriptionMessageType.ScraperEvent,
     (message) => {
-      if (message.scraperId !== scraperName) {
+      if (message.scraperId !== scraperId) {
         return
       }
 
@@ -65,8 +63,17 @@ export function ScraperExecutionHistory({
 }
 
 function ExecutionInfoRow({ row }: { row: Row<ScraperExecutionInfo> }) {
+  const ref = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    if (ref.current) {
+      ref.current.scrollIntoView({ behavior: "smooth", block: "center" })
+    }
+  }, [])
+
   return (
     <ScrollableScraperExecutionInfo
+      ref={ref}
       className="-m-2 pt-2"
       executionInfo={row.original.executionInfo}
     />
@@ -135,25 +142,4 @@ const columns: ColumnDef<ScraperExecutionInfo>[] = [
       return null
     },
   },
-  // {
-  //   accessorKey: "actions",
-  //   header: () => null,
-  //   cell: ({ row }) => {
-  //     return (
-  //       <Tooltip disableHoverableContent>
-  //         <TooltipTrigger asChild>
-  //           <ChevronDown
-  //             className={cn(
-  //               "transition-transform ease-bounce size-4 text-muted-foreground",
-  //               row.getIsExpanded() && "rotate-180",
-  //             )}
-  //           />
-  //         </TooltipTrigger>
-  //         <TooltipContent>
-  //           {row.getIsExpanded() ? "Expanded" : "Collapsed"}
-  //         </TooltipContent>
-  //       </Tooltip>
-  //     )
-  //   },
-  // },
 ]

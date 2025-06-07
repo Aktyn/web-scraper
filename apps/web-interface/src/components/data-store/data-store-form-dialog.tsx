@@ -30,8 +30,8 @@ import {
 import { AlertTriangle, Plus, Trash2 } from "lucide-react"
 import { useEffect } from "react"
 import { useFieldArray, useForm } from "react-hook-form"
-import { FormInput } from "../common/form/form-input.js"
-import { FormSelect } from "../common/form/form-select.js"
+import { FormInput } from "../common/form/form-input"
+import { FormSelect } from "../common/form/form-select"
 import { cn } from "@/lib/utils"
 
 const columnTypeOptions = [

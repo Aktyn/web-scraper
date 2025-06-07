@@ -8,6 +8,7 @@ import type {
 } from "@web-scraper/common"
 import {
   ScraperInstructionsExecutionInfoType,
+  scraperInstructionsSchema,
   ScraperInstructionType,
   ScraperState,
   type ScraperType,
@@ -19,8 +20,8 @@ import {
   LoaderCircle,
   Play,
 } from "lucide-react"
-import type { RefObject } from "react"
-import { useEffect, useMemo, useRef, useState } from "react"
+import type { ComponentProps, RefObject } from "react"
+import { useCallback, useEffect, useRef, useState } from "react"
 import { ScraperFormDialog } from "../scraper-form-dialog"
 import { ScraperExecutionInfo } from "./scraper-execution-info"
 
@@ -144,14 +145,13 @@ type ScrollableScraperExecutionInfoProps = {
   autoScroll?: boolean
   executionInfo: ScraperInstructionsExecutionInfo
   currentlyExecutingInstruction?: ScraperInstructions[number] | null
-  className?: string
-}
+} & ComponentProps<typeof ScrollArea>
 
 export function ScrollableScraperExecutionInfo({
   autoScroll,
   executionInfo,
   currentlyExecutingInstruction,
-  className,
+  ...scrollAreaProps
 }: ScrollableScraperExecutionInfoProps) {
   const horizontalItemsContainerRef = useRef<HTMLDivElement>(null)
 
@@ -213,7 +213,10 @@ export function ScrollableScraperExecutionInfo({
   }, [autoScroll, executionInfo.length, isCurrentlyExecuting])
 
   return (
-    <ScrollArea className={cn("relative", className)}>
+    <ScrollArea
+      {...scrollAreaProps}
+      className={cn("relative", scrollAreaProps.className)}
+    >
       <Button
         variant="ghost"
         className="absolute inset-y-0 left-0 w-6 h-full bg-gradient-to-r from-background to-transparent"
@@ -222,7 +225,9 @@ export function ScrollableScraperExecutionInfo({
         <ChevronLeft />
       </Button>
       <ExecutionConditionsMap
-        executionInfo={executionInfo}
+        executionInfo={[...executionInfo, currentlyExecutingInstruction].filter(
+          (info) => !!info,
+        )}
         rowRef={horizontalItemsContainerRef}
       />
       <ScraperExecutionInfo
@@ -256,7 +261,9 @@ const AnimatedLine = ({ reverse }: { reverse?: boolean }) => (
 )
 
 type ExecutionConditionsMapProps = {
-  executionInfo: ScraperInstructionsExecutionInfo
+  executionInfo: Array<
+    ScraperInstructionsExecutionInfo[number] | ScraperInstructions[number]
+  >
   rowRef: RefObject<HTMLDivElement | null>
 }
 
@@ -264,9 +271,10 @@ function ExecutionConditionsMap({
   executionInfo,
   rowRef,
 }: ExecutionConditionsMapProps) {
-  const connectors = useMemo(() => {
+  const updateConnectors = useCallback(() => {
     const rowContainer = rowRef.current
     const executionInfoElements = rowContainer?.children
+
     if (!rowContainer || !executionInfoElements?.length) {
       return []
     }
@@ -288,7 +296,9 @@ function ExecutionConditionsMap({
         const nextInstructionIndex = executionInfo.findIndex(
           (nextInfo, index) =>
             index > i &&
-            nextInfo.type === ScraperInstructionsExecutionInfoType.Instruction,
+            (nextInfo.type ===
+              ScraperInstructionsExecutionInfoType.Instruction ||
+              scraperInstructionsSchema.element.safeParse(nextInfo).success),
         )
 
         if (nextInstructionIndex === -1) {
@@ -329,6 +339,15 @@ function ExecutionConditionsMap({
       [] as Array<{ isMet: boolean; xLeft: number; xRight: number }>,
     )
   }, [executionInfo, rowRef])
+
+  const [connectors, setConnectors] = useState(updateConnectors())
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      setConnectors(updateConnectors())
+    }, 16)
+    return () => clearTimeout(timeout)
+  }, [updateConnectors])
 
   if (!connectors.length) {
     return null

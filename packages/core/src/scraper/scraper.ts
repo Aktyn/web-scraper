@@ -4,6 +4,7 @@ import {
   type PageAction,
   PageActionType,
   randomInt,
+  runUnsafe,
   type ScraperCondition,
   ScraperConditionType,
   type ScraperInstructionInfo,
@@ -12,8 +13,8 @@ import {
   ScraperInstructionsExecutionInfoType,
   ScraperInstructionType,
   ScraperState,
+  type ScraperType,
   type SimpleLogger,
-  uuid,
   wait,
 } from "@web-scraper/common"
 import EventEmitter from "node:events"
@@ -27,8 +28,7 @@ import { type ScraperExecutionContext } from "./helpers"
 import { ScraperExecutionInfo } from "./scraper-execution-info"
 import { getElementHandle } from "./selectors"
 
-type ScraperOptions = {
-  id?: string
+type ScraperOptions = Pick<ScraperType, "id" | "name"> & {
   logger?: SimpleLogger
 
   /** Used for testing purposes */
@@ -47,7 +47,7 @@ interface ScraperEvents {
 }
 
 export class Scraper extends EventEmitter {
-  private static instances = new Map<string, Scraper>()
+  private static instances = new Map<`${number}-${string}`, Scraper>()
 
   public static destroyAll() {
     for (const instance of Scraper.instances.values()) {
@@ -63,11 +63,10 @@ export class Scraper extends EventEmitter {
     return Array.from(Scraper.instances.values())
   }
 
-  public static getInstance(id: string) {
-    return Scraper.instances.get(id) ?? null
+  public static getInstance(identifier: `${number}-${string}`) {
+    return Scraper.instances.get(identifier) ?? null
   }
 
-  public readonly id: string
   private readonly logger: SimpleLogger
 
   private initPromise: Promise<Browser> | null = null
@@ -80,23 +79,23 @@ export class Scraper extends EventEmitter {
   private _currentlyExecutingInstruction: ScraperInstructions[number] | null =
     null
 
-  constructor(private readonly options: ScraperOptions = {}) {
+  constructor(public readonly options: ScraperOptions) {
     super()
 
-    const { id, logger, ...browserOptions } = options
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { id, name, logger, ...browserOptions } = options
 
-    this.id = id ?? uuid()
     this.logger = logger ?? {
       ...console,
       fatal: console.error,
     }
 
     assert(
-      !Scraper.instances.has(options.id ?? ""),
+      !Scraper.instances.has(this.identifier),
       "Scraper with this ID already exists",
     )
 
-    Scraper.instances.set(this.id, this)
+    Scraper.instances.set(this.identifier, this)
 
     if (!options.noInit) {
       this.init(browserOptions).catch((error) => {
@@ -157,7 +156,7 @@ export class Scraper extends EventEmitter {
           }
 
           this.logger.error(
-            `Browser disconnected unexpectedly, destroying scraper ${this.id}`,
+            `Browser disconnected unexpectedly, destroying scraper ${this.identifier}`,
           )
           this.destroy()
         })
@@ -174,14 +173,18 @@ export class Scraper extends EventEmitter {
     return this.initPromise === null && this.browser !== null
   }
 
+  private get identifier() {
+    return `${this.options.id}-${this.options.name}` as const
+  }
+
   get destroyed() {
-    return !Scraper.instances.has(this.id)
+    return !Scraper.instances.has(this.identifier)
   }
 
   destroy() {
     assert(!this.destroyed, "Scraper already destroyed")
 
-    Scraper.instances.delete(this.id)
+    Scraper.instances.delete(this.identifier)
 
     this.abortController.abort("Scraper instance destroyed")
 
@@ -215,10 +218,17 @@ export class Scraper extends EventEmitter {
   }
 
   get state() {
+    if (this.destroyed) {
+      return ScraperState.Exited
+    }
     return this._state
   }
 
   set state(state: ScraperState) {
+    if (this._state === ScraperState.Exited) {
+      return
+    }
+
     const previousState = this._state
     this._state = state
     this.emit("stateChange", state, previousState)
@@ -304,12 +314,14 @@ export class Scraper extends EventEmitter {
         undefined,
       )
 
-      executionInfo.push({
-        type: ScraperInstructionsExecutionInfoType.Success,
-        summary: {
-          duration: performance.now() - startTime,
-        },
-      })
+      if (!this.destroyed) {
+        executionInfo.push({
+          type: ScraperInstructionsExecutionInfoType.Success,
+          summary: {
+            duration: performance.now() - startTime,
+          },
+        })
+      }
     } catch (error) {
       this.logger.error(error)
       executionInfo.push({
@@ -327,7 +339,7 @@ export class Scraper extends EventEmitter {
     this.state = ScraperState.Idle
 
     if (!options?.leavePageOpen) {
-      await page.close()
+      await runUnsafe(async () => await page.close(), this.logger.error)
     }
 
     this.activeExecutionInfo = null
@@ -585,7 +597,7 @@ export class Scraper extends EventEmitter {
       case PageActionType.Click: {
         const handle = await getElementHandle(
           context.page,
-          action.selector,
+          action.selectors,
           true,
         )
         await handle.click({
@@ -596,7 +608,7 @@ export class Scraper extends EventEmitter {
       case PageActionType.Type: {
         const handle = await getElementHandle(
           context.page,
-          action.selector,
+          action.selectors,
           true,
         )
         if (action.clearBeforeType) {
@@ -627,7 +639,7 @@ export class Scraper extends EventEmitter {
         case ScraperConditionType.IsVisible: {
           const handle = await getElementHandle(
             context.page,
-            condition.selector,
+            condition.selectors,
           )
           return !!(await handle?.isVisible())
         }

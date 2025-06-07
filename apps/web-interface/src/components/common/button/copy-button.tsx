@@ -6,14 +6,20 @@ import {
 } from "@/components/shadcn/tooltip"
 import { cn } from "@/lib/utils"
 import { Check, Copy } from "lucide-react"
-import { type ComponentProps, useRef, useState } from "react"
+import type { ComponentProps, ReactNode } from "react"
+import { useRef, useState } from "react"
 import { toast } from "sonner"
 
 type CopyButtonProps = {
   value: string
+  content?: ReactNode
 } & ComponentProps<typeof Button>
 
-export function CopyButton({ value, ...buttonProps }: CopyButtonProps) {
+export function CopyButton({
+  value,
+  content,
+  ...buttonProps
+}: CopyButtonProps) {
   const timeoutRef = useRef<NodeJS.Timeout | null>(null)
 
   const [copied, setCopied] = useState(false)
@@ -64,7 +70,7 @@ export function CopyButton({ value, ...buttonProps }: CopyButtonProps) {
           />
         </Button>
       </TooltipTrigger>
-      <TooltipContent>Copy to clipboard</TooltipContent>
+      <TooltipContent>{content ?? "Copy to clipboard"}</TooltipContent>
     </Tooltip>
   )
 }

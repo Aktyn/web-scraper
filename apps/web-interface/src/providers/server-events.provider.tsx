@@ -7,12 +7,12 @@ import {
 } from "@web-scraper/common"
 import {
   createContext,
-  useContext,
-  useState,
   type PropsWithChildren,
-  useEffect,
   useCallback,
+  useContext,
+  useEffect,
   useRef,
+  useState,
 } from "react"
 
 enum ConnectionStatus {
@@ -20,10 +20,6 @@ enum ConnectionStatus {
   Open = "open",
   Error = "error",
 }
-
-// interface ServerEventsContextValue {
-//   status: ConnectionStatus
-// }
 
 type AnyMessageListener = (message: SubscriptionMessage) => void
 type GenericMessageListenerRegister = <Type extends SubscriptionMessageType>(

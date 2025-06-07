@@ -30,7 +30,7 @@ export function getApiPaginatedResponseSchema<T extends z.ZodType<object>>(
 
 export const apiPaginationQuerySchema = z.object({
   page: z.coerce.number().min(0).default(0),
-  pageSize: z.coerce.number().min(1).max(128).optional().default(64),
+  pageSize: z.coerce.number().min(1).max(1024).optional().default(64),
 })
 
 export type ApiPaginationQuery = z.infer<typeof apiPaginationQuerySchema>

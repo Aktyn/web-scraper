@@ -2,7 +2,7 @@ import {
   ElementSelectorType,
   PageActionType,
   ScraperConditionType,
-  type ScraperElementSelector,
+  type ScraperElementSelectors,
   type ScraperInstructions,
   ScraperInstructionType,
   ScraperValueType,
@@ -19,9 +19,10 @@ export async function seedScrapersStores(db: DbModule) {
   const exampleSiteContentTableName = sanitizeTableName(
     "Example test of saving page content",
   )
+  const cryptoPricesTableName = sanitizeTableName("Crypto prices")
 
   await db.transaction(async (tx) => {
-    const [scraper1, scraper2, scraper3] = await tx
+    const [scraper1, scraper2, scraper3, scraper4] = await tx
       .insert(scrapersTable)
       .values([
         {
@@ -47,6 +48,11 @@ export async function seedScrapersStores(db: DbModule) {
           name: "Site content scraper",
           description: "Saves site content to the database",
           instructions: scrapExampleSiteInstructions,
+        },
+        {
+          name: "Update crypto prices",
+          description: "Saves or updates crypto prices from coinmarketcap.com",
+          instructions: scrapCryptoPricesInstructions,
         },
       ])
       .returning()
@@ -86,21 +92,30 @@ export async function seedScrapersStores(db: DbModule) {
         sourceAlias: "Store",
         dataStoreTableName: exampleSiteContentTableName, //Note: it has to be already seeded
       },
+      {
+        scraperId: scraper4.id,
+        sourceAlias: "crypto",
+        dataStoreTableName: cryptoPricesTableName, //Note: it has to be already seeded
+      },
     ])
   })
 }
 
-const acceptCookiesButtonSelector: ScraperElementSelector = {
-  type: ElementSelectorType.FindByTextContent,
-  text: { source: "akceptuj wszystkie", flags: "i" },
-  tagName: "button",
-}
+const acceptCookiesButtonSelector: ScraperElementSelectors = [
+  {
+    type: ElementSelectorType.TextContent,
+    text: { source: "akceptuj wszystkie", flags: "i" },
+  },
+  { type: ElementSelectorType.TagName, tagName: "button" },
+]
 
-const loginButtonSelector: ScraperElementSelector = {
-  type: ElementSelectorType.FindByTextContent,
-  text: { source: "zaloguj się", flags: "i" },
-  tagName: "button",
-}
+const loginButtonSelector: ScraperElementSelectors = [
+  {
+    type: ElementSelectorType.TextContent,
+    text: { source: "zaloguj się", flags: "i" },
+  },
+  { type: ElementSelectorType.TagName, tagName: "button" },
+]
 
 const checkNewPepperAlertsInstructions: ScraperInstructions = [
   {
@@ -123,14 +138,14 @@ const checkNewPepperAlertsInstructions: ScraperInstructions = [
     type: ScraperInstructionType.Condition,
     if: {
       type: ScraperConditionType.IsVisible,
-      selector: acceptCookiesButtonSelector,
+      selectors: acceptCookiesButtonSelector,
     },
     then: [
       {
         type: ScraperInstructionType.PageAction,
         action: {
           type: PageActionType.Click,
-          selector: acceptCookiesButtonSelector,
+          selectors: acceptCookiesButtonSelector,
         },
       },
     ],
@@ -149,24 +164,26 @@ const checkNewPepperAlertsInstructions: ScraperInstructions = [
     type: ScraperInstructionType.Condition,
     if: {
       type: ScraperConditionType.IsVisible,
-      selector: loginButtonSelector,
+      selectors: loginButtonSelector,
     },
     then: [
       {
         type: ScraperInstructionType.PageAction,
         action: {
           type: PageActionType.Click,
-          selector: loginButtonSelector,
+          selectors: loginButtonSelector,
         },
       },
       {
         type: ScraperInstructionType.PageAction,
         action: {
           type: PageActionType.Type,
-          selector: {
-            type: ElementSelectorType.Query,
-            query: "input[type='email'][name='identity']",
-          },
+          selectors: [
+            {
+              type: ElementSelectorType.Query,
+              query: "input[type='email'][name='identity']",
+            },
+          ],
           value: {
             type: ScraperValueType.ExternalData,
             dataKey: "user.email",
@@ -184,14 +201,19 @@ const checkNewPepperAlertsInstructions: ScraperInstructions = [
         type: ScraperInstructionType.PageAction,
         action: {
           type: PageActionType.Click,
-          selector: {
-            type: ElementSelectorType.FindByTextContent,
-            text: { source: "Kontynuuj", flags: "i" },
-            tagName: "button",
-            args: {
-              type: "submit",
+          selectors: [
+            {
+              type: ElementSelectorType.TextContent,
+              text: { source: "Kontynuuj", flags: "i" },
             },
-          },
+            { type: ElementSelectorType.TagName, tagName: "button" },
+            {
+              type: ElementSelectorType.Attributes,
+              attributes: {
+                type: "submit",
+              },
+            },
+          ],
         },
       },
       {
@@ -205,10 +227,12 @@ const checkNewPepperAlertsInstructions: ScraperInstructions = [
         type: ScraperInstructionType.PageAction,
         action: {
           type: PageActionType.Type,
-          selector: {
-            type: ElementSelectorType.Query,
-            query: "input[type='password'][name='password']",
-          },
+          selectors: [
+            {
+              type: ElementSelectorType.Query,
+              query: "input[type='password'][name='password']",
+            },
+          ],
           value: {
             type: ScraperValueType.ExternalData,
             dataKey: "user.password",
@@ -227,10 +251,12 @@ const checkNewPepperAlertsInstructions: ScraperInstructions = [
         type: ScraperInstructionType.PageAction,
         action: {
           type: PageActionType.Click,
-          selector: {
-            type: ElementSelectorType.Query,
-            query: "input[type='password'][name='password'] + span>button",
-          },
+          selectors: [
+            {
+              type: ElementSelectorType.Query,
+              query: "input[type='password'][name='password'] + span>button",
+            },
+          ],
         },
       },
       {
@@ -246,14 +272,19 @@ const checkNewPepperAlertsInstructions: ScraperInstructions = [
         type: ScraperInstructionType.PageAction,
         action: {
           type: PageActionType.Click,
-          selector: {
-            type: ElementSelectorType.FindByTextContent,
-            text: { source: "Zaloguj się", flags: "i" },
-            tagName: "button",
-            args: {
-              type: "submit",
+          selectors: [
+            {
+              type: ElementSelectorType.TextContent,
+              text: { source: "Zaloguj się", flags: "i" },
             },
-          },
+            { type: ElementSelectorType.TagName, tagName: "button" },
+            {
+              type: ElementSelectorType.Attributes,
+              attributes: {
+                type: "submit",
+              },
+            },
+          ],
         },
       },
     ],
@@ -282,10 +313,12 @@ const scrapExampleSiteInstructions: ScraperInstructions = [
         columnName: "Scraper text",
         value: {
           type: ScraperValueType.ElementTextContent,
-          selector: {
-            type: ElementSelectorType.Query,
-            query: "body > div:nth-child(1) > p:nth-child(2)",
-          },
+          selectors: [
+            {
+              type: ElementSelectorType.Query,
+              query: "body > div:nth-child(1) > p:nth-child(2)",
+            },
+          ],
         },
       },
       {
@@ -296,6 +329,51 @@ const scrapExampleSiteInstructions: ScraperInstructions = [
   },
   {
     type: ScraperInstructionType.PageAction,
-    action: { type: PageActionType.Wait, duration: 30_000 },
+    action: { type: PageActionType.Wait, duration: 10_000 },
+  },
+]
+
+const scrapCryptoPricesInstructions: ScraperInstructions = [
+  {
+    type: ScraperInstructionType.PageAction,
+    action: {
+      type: PageActionType.Navigate,
+      url: "https://coinmarketcap.com/",
+    },
+  },
+  {
+    type: ScraperInstructionType.PageAction,
+    action: {
+      type: PageActionType.Click,
+      selectors: [
+        {
+          type: ElementSelectorType.TextContent,
+          text: "{{crypto.Cryptocurrency}}",
+        },
+        { type: ElementSelectorType.TagName, tagName: "p" },
+      ],
+    },
+  },
+  {
+    type: ScraperInstructionType.SaveDataBatch,
+    dataSourceName: "crypto",
+    items: [
+      {
+        columnName: "Price",
+        value: {
+          type: ScraperValueType.ElementTextContent,
+          selectors: [
+            {
+              type: ElementSelectorType.Query,
+              query: "#section-coin-overview > div:nth-child(2) > span",
+            },
+          ],
+        },
+      },
+      {
+        columnName: "Last update",
+        value: { type: ScraperValueType.CurrentTimestamp },
+      },
+    ],
   },
 ]

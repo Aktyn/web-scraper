@@ -65,4 +65,38 @@ export async function seedUserDataStores(db: DbModule) {
       },
     ],
   })
+
+  const { table: cryptocurrenciesTable } = await createUserDataStore(db, {
+    tableName: sanitizeTableName("Crypto prices"),
+    name: "Crypto prices",
+    columns: [
+      { name: "Cryptocurrency", type: SqliteColumnType.TEXT, notNull: true },
+      { name: "Price", type: SqliteColumnType.REAL, notNull: false },
+      {
+        name: "Last update",
+        type: SqliteColumnType.TIMESTAMP,
+        notNull: true,
+        defaultValue: 0,
+      },
+    ],
+  })
+
+  await db.insert(cryptocurrenciesTable).values([
+    {
+      Cryptocurrency: "Bitcoin",
+      "Last update": new Date(0),
+    },
+    {
+      Cryptocurrency: "Ethereum",
+      "Last update": new Date(0),
+    },
+    {
+      Cryptocurrency: "Ethereum Classic",
+      "Last update": new Date(0),
+    },
+    {
+      Cryptocurrency: "Monero",
+      "Last update": new Date(0),
+    },
+  ])
 }

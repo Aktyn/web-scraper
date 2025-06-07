@@ -61,7 +61,7 @@ export async function createUserDataStore(
           break
         case SqliteColumnType.TIMESTAMP:
           acc[columnSchema.name] = integer(columnSchema.name, {
-            mode: "timestamp",
+            mode: "timestamp_ms",
           })
           break
         case SqliteColumnType.BLOB:

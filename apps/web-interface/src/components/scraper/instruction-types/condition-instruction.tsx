@@ -99,7 +99,7 @@ function ConditionDetails({ condition }: { condition: ScraperCondition }) {
     case ScraperConditionType.IsVisible:
       return (
         <LabeledValue label="Check if element is visible:">
-          <ScraperSelector selector={condition.selector} />
+          <ScraperSelector selector={condition.selectors} />
         </LabeledValue>
       )
 

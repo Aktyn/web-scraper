@@ -5,7 +5,7 @@ import {
   ScraperInstructionType,
 } from "./instructions"
 import { PageActionType } from "./page-action"
-import { ElementSelectorType } from "./selector"
+import { ElementSelectorType } from "./selectors"
 
 describe("scraperInstructionsSchema", () => {
   it("should properly parse instructions", () => {
@@ -14,11 +14,13 @@ describe("scraperInstructionsSchema", () => {
         type: ScraperInstructionType.PageAction,
         action: {
           type: PageActionType.Click,
-          selector: {
-            type: ElementSelectorType.FindByTextContent,
-            text: "Click me",
-            tagName: "button",
-          },
+          selectors: [
+            {
+              type: ElementSelectorType.TextContent,
+              text: "Click me",
+            },
+            { type: ElementSelectorType.TagName, tagName: "button" },
+          ],
         },
       },
     ]
@@ -35,14 +37,16 @@ describe("scraperInstructionsSchema", () => {
         type: ScraperInstructionType.PageAction,
         action: {
           type: PageActionType.Click,
-          selector: {
-            type: ElementSelectorType.FindByTextContent,
-            text: {
-              source: "Click me",
-              flags: "i",
+          selectors: [
+            {
+              type: ElementSelectorType.TextContent,
+              text: {
+                source: "Click me",
+                flags: "i",
+              },
             },
-            tagName: "button",
-          },
+            { type: ElementSelectorType.TagName, tagName: "button" },
+          ],
         },
       },
     ]

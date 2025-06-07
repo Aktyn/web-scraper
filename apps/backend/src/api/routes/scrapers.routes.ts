@@ -2,6 +2,7 @@ import {
   apiErrorResponseSchema,
   apiPaginationQuerySchema,
   createScraperSchema,
+  executingScraperInfoSchema,
   getApiPaginatedResponseSchema,
   getApiResponseSchema,
   paramsWithScraperIdSchema,
@@ -71,6 +72,37 @@ export async function scrapersRoutes(
         page,
         pageSize,
         hasMore: scrapers.length > pageSize,
+      })
+    },
+  )
+
+  fastify.withTypeProvider<ZodTypeProvider>().get(
+    "/scrapers/currently-executing",
+    {
+      schema: {
+        querystring: apiPaginationQuerySchema,
+        response: {
+          200: getApiPaginatedResponseSchema(executingScraperInfoSchema),
+          400: apiErrorResponseSchema,
+        },
+      },
+    },
+    async (request, reply) => {
+      const { page, pageSize } = request.query
+
+      const instances = Scraper.getInstances()
+      const data = instances
+        .map((scraper) => ({
+          id: scraper.options.id,
+          name: scraper.options.name,
+        }))
+        .slice(page * pageSize, (page + 1) * pageSize)
+
+      return reply.status(200).send({
+        data,
+        page,
+        pageSize,
+        hasMore: instances.length > (page + 1) * pageSize,
       })
     },
   )
@@ -329,10 +361,11 @@ export async function scrapersRoutes(
         })
       }
 
-      // NOTE: scrapersTable.name is an unique column
-      const scraperId = scraperResponse.name
+      // NOTE: scrapersTable.id and scrapersTable.name are unique columns
+      const scraperIdentifier =
+        `${scraperResponse.id}-${scraperResponse.name}` as const
 
-      if (Scraper.getInstance(scraperId)) {
+      if (Scraper.getInstance(scraperIdentifier)) {
         return reply.status(400).send({
           error: "Scraper is already running",
         })
@@ -340,7 +373,7 @@ export async function scrapersRoutes(
 
       const scraperData = await joinScraperWithDataSources(scraperResponse)
 
-      executeNewScraper(scraperId, scraperData, {
+      executeNewScraper(scraperResponse.id, scraperResponse.name, scraperData, {
         db: fastify.db,
         logger,
         events,
@@ -377,8 +410,9 @@ export async function scrapersRoutes(
         })
       }
 
-      const scraperId = scraperResponse.name
-      const scraper = Scraper.getInstance(scraperId)
+      const scraperIdentifier =
+        `${scraperResponse.id}-${scraperResponse.name}` as const
+      const scraper = Scraper.getInstance(scraperIdentifier)
 
       return reply.status(200).send({
         data: scraper

@@ -82,20 +82,20 @@ export async function getScraperValue(
     }
 
     case ScraperValueType.ElementTextContent: {
-      const handle = await getElementHandle(context.page, value.selector)
+      const handle = await getElementHandle(context.page, value.selectors)
       if (!handle) {
         context.logger.warn(
-          `Cannot get text content; element not found: ${value.selector}`,
+          `Cannot get text content; element not found: ${value.selectors}`,
         )
         return null
       }
       return await handle?.evaluate((el) => el.textContent)
     }
     case ScraperValueType.ElementAttribute: {
-      const handle = await getElementHandle(context.page, value.selector)
+      const handle = await getElementHandle(context.page, value.selectors)
       if (!handle) {
         context.logger.warn(
-          `Cannot get attribute; element not found: ${value.selector}`,
+          `Cannot get attribute; element not found: ${value.selectors}`,
         )
         return null
       }

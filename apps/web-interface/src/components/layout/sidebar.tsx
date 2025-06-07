@@ -1,19 +1,17 @@
 import { useCachedState } from "@/hooks/useCachedState"
 import { useSizer } from "@/hooks/useSizer"
 import { cn } from "@/lib/utils"
-import { usePinnedDataStores } from "@/providers/pinned-data-stores.provider"
-import { type UserDataStore } from "@web-scraper/common"
-import { PanelRightClose, PinOff } from "lucide-react"
+import { ServerEventsProvider } from "@/providers/server-events.provider"
+import { PanelRightClose } from "lucide-react"
 import { useState } from "react"
-import { DataStoreDialog } from "../data-store/data-store-dialog"
-import { Badge } from "../shadcn/badge"
+import { PinnedDataStores } from "../data-store/pinned-data-stores"
 import { Button } from "../shadcn/button"
 import { ScrollArea } from "../shadcn/scroll-area"
 import { Separator } from "../shadcn/separator"
 import { Tooltip, TooltipContent, TooltipTrigger } from "../shadcn/tooltip"
 import { Footer } from "./footer"
 import { NavigationMenu } from "./navigation-menu"
-import { ServerEventsProvider } from "@/providers/server-events.provider"
+import { ExecutingScrapersCompactInfo } from "../scraper/executing-scrapers-compact-info"
 
 const { ConnectionStatus } = ServerEventsProvider
 
@@ -77,73 +75,10 @@ export function Sidebar() {
       <ScrollArea className="grow">
         <NavigationMenu compact={!isOpen} />
         <PinnedDataStores />
+        <ExecutingScrapersCompactInfo />
       </ScrollArea>
       <Separator />
       <Footer isOpen={isOpen} />
     </aside>
-  )
-}
-
-function PinnedDataStores() {
-  const { pinnedDataStores, unpinDataStore } = usePinnedDataStores()
-
-  const [dataStoreTableOpen, setDataStoreTableOpen] = useState(false)
-  const [storeToView, setStoreToView] = useState<UserDataStore | null>(null)
-
-  return (
-    <>
-      {pinnedDataStores.length > 0 && (
-        <Separator className="my-2 opacity-50 animate-in zoom-in" />
-      )}
-
-      <div className="grow flex flex-col gap-2 p-2 contain-inline-size">
-        {pinnedDataStores.map((store) => (
-          <Button
-            key={store.tableName}
-            variant="outline"
-            size="sm"
-            className="animate-in fade-in max-w-full overflow-hidden"
-            onClick={() => {
-              setStoreToView(store)
-              setDataStoreTableOpen(true)
-            }}
-          >
-            <strong className="truncate">{store.name}</strong>
-            <Badge className="text-muted-foreground bg-muted">
-              {store.recordsCount}
-            </Badge>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button
-                  asChild
-                  variant="ghost"
-                  size="icon"
-                  tabIndex={-1}
-                  onClick={(event) => {
-                    event.stopPropagation()
-                    unpinDataStore(store)
-                  }}
-                >
-                  <div>
-                    <PinOff />
-                  </div>
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>Unpin</TooltipContent>
-            </Tooltip>
-          </Button>
-        ))}
-      </div>
-
-      {storeToView && (
-        <DataStoreDialog
-          store={storeToView}
-          open={dataStoreTableOpen}
-          onOpenChange={(openState) => {
-            setDataStoreTableOpen(openState)
-          }}
-        />
-      )}
-    </>
   )
 }
