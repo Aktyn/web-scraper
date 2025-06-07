@@ -3,6 +3,7 @@ import { useMemo } from "react"
 import { Code } from "../common/code"
 import { LabeledValue } from "../common/labeled-value"
 import { DataSourceLabel } from "../common/data-source-label"
+import { InstructionBlockContainer } from "./instruction-block"
 
 type ScraperDataSourceProps = {
   dataSource: ScraperDataSource
@@ -15,7 +16,7 @@ export function ScraperDataSource({ dataSource }: ScraperDataSourceProps) {
   }, [dataSource.whereSchema])
 
   return (
-    <div className="border rounded-lg bg-card flex flex-row flex-wrap justify-between gap-2 p-3">
+    <InstructionBlockContainer className="flex-row flex-wrap gap-x-4">
       <LabeledValue label="Alias">{dataSource.sourceAlias}</LabeledValue>
       <LabeledValue label="Table">
         <DataSourceLabel tableName={dataSource.dataStoreTableName} />
@@ -27,6 +28,6 @@ export function ScraperDataSource({ dataSource }: ScraperDataSourceProps) {
           </Code>
         </LabeledValue>
       )}
-    </div>
+    </InstructionBlockContainer>
   )
 }

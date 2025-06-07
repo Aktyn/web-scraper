@@ -59,7 +59,7 @@ export function ScraperPanel({ scraper, onEditSuccess }: ScraperPanelProps) {
         >
           <AccordionItem
             value="execution-history"
-            className="grid grid-cols-1 grid-rows-[auto_1fr] -mx-6"
+            className="grid grid-cols-1 grid-rows-[auto_1fr] -mx-6 "
           >
             <AccordionTrigger className="px-6">
               Execution History

@@ -2,14 +2,19 @@ import { useGet } from "@/hooks/api/useGet"
 import { Button } from "../shadcn/button"
 import { Table } from "lucide-react"
 import { Tooltip, TooltipContent, TooltipTrigger } from "../shadcn/tooltip"
+import type { ComponentProps } from "react"
 import { useState } from "react"
 import { DataStoreDialog } from "../data-store/data-store-dialog"
+import { cn } from "@/lib/utils"
 
 type DataSourceLabelProps = {
   tableName: string
-}
+} & ComponentProps<"div">
 
-export function DataSourceLabel({ tableName }: DataSourceLabelProps) {
+export function DataSourceLabel({
+  tableName,
+  ...divProps
+}: DataSourceLabelProps) {
   const { data: userDataStore, isLoading } = useGet(
     "/user-data-stores/:tableName",
     { tableName },
@@ -18,7 +23,10 @@ export function DataSourceLabel({ tableName }: DataSourceLabelProps) {
   const [dataStoreTableOpen, setDataStoreTableOpen] = useState(false)
 
   return (
-    <div className="flex flex-row items-center gap-2">
+    <div
+      {...divProps}
+      className={cn("flex flex-row items-center gap-2", divProps.className)}
+    >
       {isLoading ? (
         tableName
       ) : (
@@ -30,6 +38,7 @@ export function DataSourceLabel({ tableName }: DataSourceLabelProps) {
                 variant="ghost"
                 size="icon"
                 onClick={() => setDataStoreTableOpen(true)}
+                className="-my-1.5 size-auto p-2"
               >
                 <Table />
               </Button>

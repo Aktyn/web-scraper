@@ -406,6 +406,10 @@ export async function userDataStoresRoutes(fastify: FastifyInstance) {
         .run(sql`DELETE FROM ${sql.identifier(tableName)}`)
         .execute()
 
+      await fastify.db
+        .run(sql`DELETE FROM sqlite_sequence WHERE name = ${tableName}`)
+        .execute()
+
       return reply.status(204).send()
     },
   )

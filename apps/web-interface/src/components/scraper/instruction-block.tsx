@@ -6,24 +6,17 @@ import {
 import { CircleAlert } from "lucide-react"
 import type { PropsWithChildren } from "react"
 import { ConditionInstruction } from "./instruction-types/condition-instruction"
-import { PageActionInstruction } from "./instruction-types/page-action-instruction"
+import {
+  JumpInstruction,
+  MarkerInstruction,
+} from "./instruction-types/control-flow-instruction"
 import {
   DeleteDataInstruction,
   SaveDataBatchInstruction,
   SaveDataInstruction,
 } from "./instruction-types/data-instruction"
-import {
-  JumpInstruction,
-  MarkerInstruction,
-} from "./instruction-types/control-flow-instruction"
-
-function BlockContainer({ children }: PropsWithChildren) {
-  return (
-    <Slot className="border rounded-lg bg-card flex flex-col gap-2 p-3 in-data-[then-instructions]:bg-transparent in-data-[else-instructions]:bg-transparent">
-      {children}
-    </Slot>
-  )
-}
+import { PageActionInstruction } from "./instruction-types/page-action-instruction"
+import { cn } from "@/lib/utils"
 
 type InstructionBlockProps = {
   instruction: ScraperInstructions[number]
@@ -33,14 +26,14 @@ export function InstructionBlock({ instruction }: InstructionBlockProps) {
   switch (instruction.type) {
     case ScraperInstructionType.PageAction:
       return (
-        <BlockContainer>
+        <BlockContainer asChild>
           <PageActionInstruction action={instruction.action} />
         </BlockContainer>
       )
 
     case ScraperInstructionType.Condition:
       return (
-        <BlockContainer>
+        <BlockContainer asChild>
           <ConditionInstruction
             condition={instruction.if}
             thenInstructions={instruction.then}
@@ -51,7 +44,7 @@ export function InstructionBlock({ instruction }: InstructionBlockProps) {
 
     case ScraperInstructionType.SaveData:
       return (
-        <BlockContainer>
+        <BlockContainer asChild>
           <SaveDataInstruction
             dataKey={instruction.dataKey}
             value={instruction.value}
@@ -60,7 +53,7 @@ export function InstructionBlock({ instruction }: InstructionBlockProps) {
       )
     case ScraperInstructionType.SaveDataBatch:
       return (
-        <BlockContainer>
+        <BlockContainer asChild>
           <SaveDataBatchInstruction
             dataSourceName={instruction.dataSourceName}
             items={instruction.items}
@@ -70,34 +63,55 @@ export function InstructionBlock({ instruction }: InstructionBlockProps) {
 
     case ScraperInstructionType.DeleteData:
       return (
-        <BlockContainer>
+        <BlockContainer asChild>
           <DeleteDataInstruction dataSourceName={instruction.dataSourceName} />
         </BlockContainer>
       )
 
     case ScraperInstructionType.Marker:
       return (
-        <BlockContainer>
+        <BlockContainer asChild>
           <MarkerInstruction name={instruction.name} />
         </BlockContainer>
       )
 
     case ScraperInstructionType.Jump:
       return (
-        <BlockContainer>
+        <BlockContainer asChild>
           <JumpInstruction markerName={instruction.markerName} />
         </BlockContainer>
       )
 
     default:
       return (
-        <div className="border rounded-lg p-3 bg-destructive/20 border-destructive-foreground text-destructive-foreground flex flex-row items-center gap-2">
+        <BlockContainer className="bg-destructive/20 border-destructive-foreground text-destructive-foreground flex-row items-center gap-2">
           <CircleAlert />
           <span className="text-sm">
             Unknown instruction type:{" "}
             <strong>{String((instruction as { type: unknown }).type)}</strong>
           </span>
-        </div>
+        </BlockContainer>
       )
   }
 }
+
+function BlockContainer({
+  children,
+  asChild,
+  className,
+}: PropsWithChildren<{ asChild?: boolean; className?: string }>) {
+  const Comp = asChild ? Slot : "div"
+
+  return (
+    <Comp
+      className={cn(
+        "border rounded-lg bg-card flex flex-col gap-2 p-3 in-data-[then-instructions]:bg-transparent in-data-[else-instructions]:bg-transparent",
+        className,
+      )}
+    >
+      {children}
+    </Comp>
+  )
+}
+
+export const InstructionBlockContainer = BlockContainer
