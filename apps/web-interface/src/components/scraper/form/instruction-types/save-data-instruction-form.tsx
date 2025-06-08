@@ -1,5 +1,5 @@
 import type { CreateScraper } from "@web-scraper/common"
-import { useFieldArray, type Control, useFormContext } from "react-hook-form"
+import { useFieldArray, type Control, useWatch } from "react-hook-form"
 import { DataKeyField } from "./data-key-field"
 import { ScraperValueForm } from "./scraper-value-form"
 import { FormSelect } from "@/components/common/form/form-select"
@@ -43,10 +43,14 @@ export function SaveDataBatchInstructionForm({
     control,
     name: `${fieldName}.items`,
   })
-  const { watch } = useFormContext<CreateScraper>()
 
-  const dataSources = watch("dataSources")
-  const dataSourceName = watch(`${fieldName}.dataSourceName`)
+  const dataSources = useWatch({ control, name: "dataSources" })
+  const dataSourceName = useWatch({
+    control,
+    name: `${fieldName}.dataSourceName`,
+  })
+  const items = useWatch({ control, name: `${fieldName}.items` })
+  const selectedColumnNames = (items ?? []).map((item) => item.columnName)
 
   const selectedDataSource = dataSources.find(
     (ds) => ds.sourceAlias === dataSourceName,
@@ -59,9 +63,7 @@ export function SaveDataBatchInstructionForm({
   type Column = { name: string }
   const columns: Column[] =
     userDataStore?.data.columns.filter((column) => column.name !== "id") ?? []
-  const selectedColumnNames = fields.map((_, idx) =>
-    watch(`${fieldName}.items.${idx}.columnName`),
-  )
+
   const getAvailableColumns = (currentIdx: number) =>
     columns.filter(
       (col) =>

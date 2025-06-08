@@ -1,25 +1,24 @@
 import { ScraperProvider } from "@/providers/scraper.provider"
 import type { ExecutionIterator } from "@web-scraper/common"
 import { type ScraperType } from "@web-scraper/common"
+import { Settings2 } from "lucide-react"
+import { useState } from "react"
 import { CopyButton } from "../common/button/copy-button"
 import { LabeledValue } from "../common/labeled-value"
+import { IteratorDescription } from "../iterator/iterator-description"
+import { IteratorFormDialog } from "../iterator/iterator-form-dialog"
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
 } from "../shadcn/accordion"
+import { Button } from "../shadcn/button"
 import { Separator } from "../shadcn/separator"
+import { ScraperExecutionHistory } from "./execution/scraper-execution-history"
 import { ScraperExecutionPanel } from "./execution/scraper-execution-panel"
 import { ScraperDataSource } from "./scraper-data-source"
 import { ScraperInstructionsTree } from "./scraper-instructions-tree"
-import { ScraperExecutionHistory } from "./execution/scraper-execution-history"
-import { Button } from "../shadcn/button"
-import { IteratorDescription } from "../iterator/iterator-description"
-import { Settings2 } from "lucide-react"
-import { Tooltip, TooltipContent, TooltipTrigger } from "../shadcn/tooltip"
-import { useState } from "react"
-import { IteratorFormDialog } from "../iterator/iterator-form-dialog"
 
 type ScraperPanelProps = {
   scraper: ScraperType
@@ -35,21 +34,16 @@ export function ScraperPanel({ scraper, onEditSuccess }: ScraperPanelProps) {
       <div className="flex flex-col gap-4">
         {/* TODO: consider adding small form to configure number of scraper iterations and sequence of row indices to iterate over */}
         <div className="flex flex-row items-center gap-2">
-          <IteratorDescription iterator={iterator} />
-
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button
-                variant="outline"
-                size="icon"
-                tabIndex={-1}
-                onClick={() => setIteratorDialogOpen(true)}
-              >
-                <Settings2 />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent>Configure iterator</TooltipContent>
-          </Tooltip>
+          <IteratorDescription iterator={iterator}>
+            <Button
+              variant="outline"
+              tabIndex={-1}
+              onClick={() => setIteratorDialogOpen(true)}
+            >
+              <Settings2 />
+              Configure iterator
+            </Button>
+          </IteratorDescription>
 
           <IteratorFormDialog
             open={iteratorDialogOpen}

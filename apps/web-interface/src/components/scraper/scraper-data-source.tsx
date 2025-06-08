@@ -11,7 +11,9 @@ type ScraperDataSourceProps = {
 
 export function ScraperDataSource({ dataSource }: ScraperDataSourceProps) {
   const sql = useMemo(() => {
-    if (!dataSource.whereSchema) return null
+    if (!dataSource.whereSchema) {
+      return null
+    }
     return whereSchemaToSql(dataSource.whereSchema)
   }, [dataSource.whereSchema])
 

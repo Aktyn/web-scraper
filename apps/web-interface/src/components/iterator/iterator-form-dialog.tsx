@@ -22,7 +22,7 @@ import {
 } from "@web-scraper/common"
 import type { Dispatch, SetStateAction } from "react"
 import { useEffect, useMemo, useState } from "react"
-import { useForm, useFormContext } from "react-hook-form"
+import { useForm, useFormContext, useWatch } from "react-hook-form"
 import { mapToSelectOptions } from "../scraper/form/helpers"
 import { WhereSchemaForm } from "../scraper/form/where-schema-form"
 
@@ -148,7 +148,12 @@ export function IteratorFormDialog({
                 className="*:[button]:w-full"
               />
 
-              <DynamicIteratorFields dataSources={dataSources} type={type} />
+              {type === ExecutionIteratorType.Range && (
+                <RangeFields dataSources={dataSources} />
+              )}
+              {type === ExecutionIteratorType.FilteredSet && (
+                <IteratorWhereSchemaForm dataSources={dataSources} />
+              )}
             </form>
           </Form>
         </ScrollArea>
@@ -172,51 +177,22 @@ export function IteratorFormDialog({
   )
 }
 
-function DynamicIteratorFields({
-  dataSources,
-  type,
-}: Pick<IteratorFormDialogProps, "dataSources"> & {
-  type: ExecutionIterator["type"]
-}) {
-  switch (type) {
-    case ExecutionIteratorType.Range:
-      return <RangeFields />
-    case ExecutionIteratorType.FilteredSet:
-      return <IteratorWhereSchemaForm dataSources={dataSources} />
-    case ExecutionIteratorType.EntireSet:
-      return null
-    default:
-      throw new Error(`Unknown iterator type: ${type}`)
-  }
-}
-
 function IteratorWhereSchemaForm({
   dataSources,
 }: Pick<IteratorFormDialogProps, "dataSources">) {
-  const { control, watch } = useFormContext<ExecutionIterator>()
-
-  const selectedDataSourceName = watch("dataSourceName")
-  const selectedDataSource = useMemo(
-    () =>
-      dataSources.find((ds) => ds.sourceAlias === selectedDataSourceName) ??
-      null,
-    [dataSources, selectedDataSourceName],
-  )
-  const { data: userDataStore } = useGet(
-    selectedDataSource ? "/user-data-stores/:tableName" : null,
-    { tableName: selectedDataSource?.dataStoreTableName ?? "" },
-  )
-
-  const columns = userDataStore?.data.columns ?? []
+  const { control } = useFormContext<ExecutionIterator>()
+  const { columns } = useDataSourceColumns(dataSources)
 
   return <WhereSchemaForm control={control} name="where" columns={columns} />
 }
 
-function RangeFields() {
-  const { control, watch } = useFormContext<ExecutionIterator>()
-  const range = watch("range")
+function RangeFields({
+  dataSources,
+}: Pick<IteratorFormDialogProps, "dataSources">) {
+  const { control } = useFormContext<ExecutionIterator>()
+  const range = useWatch({ control, name: "range" })
 
-  const [rangeType, setRangeType] = useState(
+  const [rangeType, setRangeType] = useState<"number" | "object">(
     typeof range === "number" ? "number" : "object",
   )
 
@@ -224,13 +200,21 @@ function RangeFields() {
     setRangeType(typeof range === "number" ? "number" : "object")
   }, [range])
 
+  const { columns, recordsCount } = useDataSourceColumns(dataSources)
+
   return (
     <div className="space-y-4">
-      <FormInput
+      <FormSelect
         control={control}
+        className="*:[button]:w-full"
         name="identifier"
         label="Identifier"
-        description="The column to iterate over. Numeric primary key is recommended for range iterator."
+        placeholder="Select identifier column"
+        options={columns.map((c) => ({
+          value: c.name,
+          label: c.name,
+        }))}
+        description="The data store table to read from."
       />
       <RadioGroup
         defaultValue={rangeType}
@@ -256,37 +240,75 @@ function RangeFields() {
         <FormInput
           control={control}
           name="range"
-          label="Iterations"
+          label="Identifier value"
           type="number"
         />
       ) : (
-        <FormField
-          control={control}
-          name="range"
-          render={() => (
-            <div className="grid grid-cols-3 gap-2">
-              <FormInput
-                control={control}
-                name="range.start"
-                label="Start"
-                type="number"
-              />
-              <FormInput
-                control={control}
-                name="range.end"
-                label="End"
-                type="number"
-              />
-              <FormInput
-                control={control}
-                name="range.step"
-                label="Step"
-                type="number"
-              />
-            </div>
-          )}
-        />
+        <div className="flex flex-col gap-2">
+          <p>
+            <b>{recordsCount}</b> records found in the data source.
+          </p>
+          <FormField
+            control={control}
+            name="range"
+            render={() => (
+              <div className="grid grid-cols-3 gap-2">
+                <FormInput
+                  control={control}
+                  name="range.start"
+                  label="Start"
+                  type="number"
+                  inputProps={{
+                    min: 1,
+                    max: recordsCount,
+                  }}
+                />
+                <FormInput
+                  control={control}
+                  name="range.end"
+                  label="End"
+                  type="number"
+                  inputProps={{
+                    min: 1,
+                    max: recordsCount,
+                  }}
+                />
+                <FormInput
+                  control={control}
+                  name="range.step"
+                  label="Step"
+                  type="number"
+                  inputProps={{
+                    min: 1,
+                  }}
+                />
+              </div>
+            )}
+          />
+        </div>
       )}
     </div>
   )
+}
+
+function useDataSourceColumns(dataSources: ScraperDataSource[]) {
+  const { control } = useFormContext<ExecutionIterator>()
+  const selectedDataSourceName = useWatch({ control, name: "dataSourceName" })
+
+  const selectedDataSource = useMemo(
+    () =>
+      dataSources.find((ds) => ds.sourceAlias === selectedDataSourceName) ??
+      null,
+    [dataSources, selectedDataSourceName],
+  )
+
+  const { data: userDataStore } = useGet(
+    selectedDataSource ? "/user-data-stores/:tableName" : null,
+    { tableName: selectedDataSource?.dataStoreTableName ?? "" },
+  )
+
+  return {
+    recordsCount: userDataStore?.data.recordsCount ?? 0,
+    columns: userDataStore?.data.columns ?? [],
+  }
 }

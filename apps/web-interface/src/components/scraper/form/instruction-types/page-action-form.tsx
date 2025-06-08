@@ -9,7 +9,7 @@ import {
 } from "@/components/shadcn/form"
 import { Switch } from "@/components/shadcn/switch"
 import { PageActionType, type CreateScraper } from "@web-scraper/common"
-import { useFormContext, type Control } from "react-hook-form"
+import { useWatch, type Control } from "react-hook-form"
 import { ScraperSelectorsForm } from "./scraper-selectors-form"
 import { ScraperValueForm } from "./scraper-value-form"
 
@@ -21,8 +21,7 @@ interface PageActionFormProps {
 }
 
 export function PageActionForm({ control, fieldName }: PageActionFormProps) {
-  const { watch } = useFormContext<CreateScraper>()
-  const actionType = watch(`${fieldName}.type`)
+  const actionType = useWatch({ control, name: `${fieldName}.type` })
 
   switch (actionType) {
     case PageActionType.Navigate:

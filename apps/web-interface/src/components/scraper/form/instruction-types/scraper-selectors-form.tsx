@@ -12,7 +12,12 @@ import {
   type CreateScraper,
 } from "@web-scraper/common"
 import { ArrowDownFromLine, ArrowUpFromLine, Plus, Trash2 } from "lucide-react"
-import { useFieldArray, useFormContext, type Control } from "react-hook-form"
+import {
+  useFieldArray,
+  useFormContext,
+  useWatch,
+  type Control,
+} from "react-hook-form"
 import { Fragment, useState } from "react"
 import { Button } from "@/components/shadcn/button"
 import { Input } from "@/components/shadcn/input"
@@ -144,8 +149,7 @@ type SelectorFormByTypeProps = Pick<ScraperSelectorFormProps, "control"> & {
 }
 
 function SelectorFormByType({ control, fieldName }: SelectorFormByTypeProps) {
-  const { watch } = useFormContext<CreateScraper>()
-  const selectorType = watch(`${fieldName}.type`)
+  const selectorType = useWatch({ control, name: `${fieldName}.type` })
 
   switch (selectorType) {
     case ElementSelectorType.Query:
@@ -193,9 +197,9 @@ type AttributesFormProps = {
 }
 
 function AttributesForm({ control, fieldName }: AttributesFormProps) {
-  const { watch, setValue } = useFormContext<CreateScraper>()
+  const { setValue } = useFormContext<CreateScraper>()
   const attributesFieldName = `${fieldName}.attributes` as const
-  const attributes = watch(attributesFieldName) ?? {}
+  const attributes = useWatch({ control, name: attributesFieldName }) ?? {}
 
   const [newAttributeKey, setNewAttributeKey] = useState("")
   const [newAttributeValue, setNewAttributeValue] = useState("")

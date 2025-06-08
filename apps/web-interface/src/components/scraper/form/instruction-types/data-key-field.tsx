@@ -17,7 +17,7 @@ import {
 import { useGet } from "@/hooks/api/useGet"
 import type { CreateScraper } from "@web-scraper/common"
 import { useMemo, type ComponentProps } from "react"
-import { useFormContext } from "react-hook-form"
+import { useFormContext, useWatch } from "react-hook-form"
 
 type DataKeyFieldProps = Omit<
   ComponentProps<typeof FormInput<CreateScraper>>,
@@ -27,14 +27,15 @@ type DataKeyFieldProps = Omit<
 }
 
 export function DataKeyField(props: DataKeyFieldProps) {
-  const { control, watch } = useFormContext<CreateScraper>()
+  const { control } = useFormContext<CreateScraper>()
 
-  const dataSources = watch("dataSources")
-  const dataKey = watch(
-    props.name as
+  const dataSources = useWatch({ control, name: "dataSources" })
+  const dataKey = useWatch({
+    control,
+    name: props.name as
       | `instructions.${number}.dataKey`
       | `instructions.${number}.dataSourceName`,
-  )
+  })
 
   const [aliasValue, columnValue] = dataKey?.split(".") ?? []
 

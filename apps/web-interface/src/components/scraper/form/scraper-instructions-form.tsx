@@ -15,7 +15,7 @@ import {
   type ScraperInstructions,
 } from "@web-scraper/common"
 import { ArrowDownFromLine, ArrowUpFromLine, Plus, Trash2 } from "lucide-react"
-import { useFieldArray, useFormContext, type Control } from "react-hook-form"
+import { useFieldArray, useWatch, type Control } from "react-hook-form"
 import { mapToSelectOptions } from "./helpers"
 import { ConditionInstructionForm } from "./instruction-types/condition-instruction-form"
 import { DeleteDataInstructionForm } from "./instruction-types/delete-data-instruction-form"
@@ -162,8 +162,7 @@ type InstructionFormProps = {
 }
 
 function InstructionForm({ control, fieldName }: InstructionFormProps) {
-  const { watch } = useFormContext<CreateScraper>()
-  const instructionType = watch(fieldName)?.type
+  const instructionType = useWatch({ control, name: fieldName })?.type
 
   switch (instructionType) {
     case ScraperInstructionType.PageAction:

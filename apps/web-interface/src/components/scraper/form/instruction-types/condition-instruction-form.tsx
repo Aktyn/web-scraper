@@ -1,7 +1,7 @@
 import { FormSelect } from "@/components/common/form/form-select"
 import { FormInput } from "@/components/common/form/form-input"
 import { ScraperConditionType, type CreateScraper } from "@web-scraper/common"
-import { type Control, useFormContext } from "react-hook-form"
+import { type Control, useWatch } from "react-hook-form"
 import { ScraperSelectorsForm } from "./scraper-selectors-form"
 import { ScraperValueForm } from "./scraper-value-form"
 import { ScraperInstructionsForm } from "../scraper-instructions-form"
@@ -97,8 +97,7 @@ function ConditionFormByType({
   control,
   fieldName,
 }: ConditionInstructionFormProps) {
-  const { watch } = useFormContext<CreateScraper>()
-  const conditionType = watch(`${fieldName}.if.type`)
+  const conditionType = useWatch({ control, name: `${fieldName}.if.type` })
 
   switch (conditionType) {
     case ScraperConditionType.IsVisible:

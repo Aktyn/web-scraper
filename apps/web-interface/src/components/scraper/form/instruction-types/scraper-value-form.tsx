@@ -1,7 +1,7 @@
 import { FormInput } from "@/components/common/form/form-input"
 import { FormSelect } from "@/components/common/form/form-select"
 import { ScraperValueType, type CreateScraper } from "@web-scraper/common"
-import { useFormContext, type Control } from "react-hook-form"
+import { useWatch, type Control } from "react-hook-form"
 import { mapToSelectOptions } from "../helpers"
 import type { ConditionInstructionFieldName } from "./condition-instruction-form"
 import { DataKeyField } from "./data-key-field"
@@ -42,8 +42,7 @@ export function ScraperValueForm({
 }
 
 function ValueFormByType({ control, fieldName }: ScraperValueFormProps) {
-  const { watch } = useFormContext<CreateScraper>()
-  const valueType = watch(`${fieldName}.type`)
+  const valueType = useWatch({ control, name: `${fieldName}.type` })
 
   switch (valueType) {
     case ScraperValueType.CurrentTimestamp:

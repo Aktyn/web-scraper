@@ -4,9 +4,9 @@ import { whereSchema } from "./common"
 
 export const executionRangeSchema = z
   .object({
-    start: z.number(),
-    end: z.number(),
-    step: z.number().optional(),
+    start: z.number().min(1),
+    end: z.number().min(1),
+    step: z.number().min(1).optional(),
   })
   .refine((data) => data.start <= data.end, {
     message: "Start must be less than or equal to end",
