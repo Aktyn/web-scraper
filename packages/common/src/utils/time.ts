@@ -1,9 +1,7 @@
-// istanbul ignore next
 export function wait(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms))
 }
 
-// istanbul ignore next
 export async function waitFor(
   condition: () => boolean,
   timeout = 5000,

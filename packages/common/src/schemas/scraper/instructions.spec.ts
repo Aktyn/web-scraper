@@ -6,6 +6,7 @@ import {
 } from "./instructions"
 import { PageActionType } from "./page-action"
 import { ElementSelectorType } from "./selectors"
+import { ScraperConditionType } from "./condition"
 
 describe("scraperInstructionsSchema", () => {
   it("should properly parse instructions", () => {
@@ -70,5 +71,50 @@ describe("scraperInstructionsSchema", () => {
 
     expect(result.success).toBe(false)
     expect(result.error).toBeDefined()
+  })
+
+  it("should parse a condition instruction with then and else blocks", () => {
+    const instructions: ScraperInstructions = [
+      {
+        type: ScraperInstructionType.Condition,
+        if: {
+          type: ScraperConditionType.IsVisible,
+          selectors: [{ type: ElementSelectorType.TagName, tagName: "div" }],
+        },
+        then: [
+          {
+            type: ScraperInstructionType.PageAction,
+            action: {
+              type: PageActionType.Click,
+              selectors: [
+                {
+                  type: ElementSelectorType.TextContent,
+                  text: "OK",
+                },
+              ],
+            },
+          },
+        ],
+        else: [
+          {
+            type: ScraperInstructionType.PageAction,
+            action: {
+              type: PageActionType.Click,
+              selectors: [
+                {
+                  type: ElementSelectorType.TextContent,
+                  text: "Cancel",
+                },
+              ],
+            },
+          },
+        ],
+      },
+    ]
+
+    const result = scraperInstructionsSchema.safeParse(instructions)
+
+    expect(result.success).toBe(true)
+    expect(result.data).toEqual(instructions)
   })
 })

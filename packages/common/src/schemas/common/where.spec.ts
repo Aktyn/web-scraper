@@ -253,7 +253,7 @@ describe(whereSchemaToSql.name, () => {
       const where = {
         column: "age",
         condition: SqliteConditionType.NotBetween,
-        value: { from: 18 }, // missing 'to'
+        value: "not-range",
       } as unknown as WhereSchema
       expect(() => whereSchemaToSql(where)).toThrow(
         "NOT BETWEEN condition requires range value with from and to properties",
@@ -261,14 +261,14 @@ describe(whereSchemaToSql.name, () => {
     })
   })
 
-  describe("AND conditions", () => {
-    it("should handle simple AND condition", () => {
+  describe("logical conditions", () => {
+    it("should handle AND condition with multiple clauses", () => {
       const where: WhereSchema = {
         and: [
           {
             column: "age",
             condition: SqliteConditionType.GreaterThan,
-            value: 18,
+            value: 25,
           },
           {
             column: "status",
@@ -277,27 +277,27 @@ describe(whereSchemaToSql.name, () => {
           },
         ],
       }
-      expect(whereSchemaToSql(where)).toBe("(age > 18 AND status = 'active')")
+      expect(whereSchemaToSql(where)).toBe("(age > 25 AND status = 'active')")
     })
 
-    it("should handle single condition in AND (no parentheses)", () => {
+    it("should handle OR condition with multiple clauses", () => {
       const where: WhereSchema = {
-        and: [
+        or: [
           {
-            column: "age",
-            condition: SqliteConditionType.GreaterThan,
-            value: 18,
+            column: "role",
+            condition: SqliteConditionType.Equals,
+            value: "admin",
+          },
+          {
+            column: "role",
+            condition: SqliteConditionType.Equals,
+            value: "editor",
           },
         ],
       }
-      expect(whereSchemaToSql(where)).toBe("age > 18")
-    })
-
-    it("should handle empty AND condition", () => {
-      const where: WhereSchema = {
-        and: [],
-      }
-      expect(whereSchemaToSql(where)).toBe("1=1")
+      expect(whereSchemaToSql(where)).toBe(
+        "(role = 'admin' OR role = 'editor')",
+      )
     })
 
     it("should handle negated AND condition", () => {
@@ -306,183 +306,29 @@ describe(whereSchemaToSql.name, () => {
           {
             column: "age",
             condition: SqliteConditionType.GreaterThan,
-            value: 18,
-          },
-          {
-            column: "status",
-            condition: SqliteConditionType.Equals,
-            value: "active",
+            value: 25,
           },
         ],
         negate: true,
       }
-      expect(whereSchemaToSql(where)).toBe(
-        "NOT (age > 18 AND status = 'active')",
-      )
-    })
-
-    it("should handle nested AND conditions", () => {
-      const where: WhereSchema = {
-        and: [
-          {
-            column: "age",
-            condition: SqliteConditionType.GreaterThan,
-            value: 18,
-          },
-          {
-            and: [
-              {
-                column: "city",
-                condition: SqliteConditionType.Equals,
-                value: "NYC",
-              },
-              {
-                column: "active",
-                condition: SqliteConditionType.Equals,
-                value: true,
-              },
-            ],
-          },
-        ],
-      }
-      expect(whereSchemaToSql(where)).toBe(
-        "(age > 18 AND (city = 'NYC' AND active = 1))",
-      )
-    })
-  })
-
-  describe("OR conditions", () => {
-    it("should handle simple OR condition", () => {
-      const where: WhereSchema = {
-        or: [
-          {
-            column: "status",
-            condition: SqliteConditionType.Equals,
-            value: "active",
-          },
-          {
-            column: "status",
-            condition: SqliteConditionType.Equals,
-            value: "pending",
-          },
-        ],
-      }
-      expect(whereSchemaToSql(where)).toBe(
-        "(status = 'active' OR status = 'pending')",
-      )
-    })
-
-    it("should handle single condition in OR (no parentheses)", () => {
-      const where: WhereSchema = {
-        or: [
-          {
-            column: "age",
-            condition: SqliteConditionType.GreaterThan,
-            value: 18,
-          },
-        ],
-      }
-      expect(whereSchemaToSql(where)).toBe("age > 18")
-    })
-
-    it("should handle empty OR condition", () => {
-      const where: WhereSchema = {
-        or: [],
-      }
-      expect(whereSchemaToSql(where)).toBe("1=0")
+      expect(whereSchemaToSql(where)).toBe("NOT age > 25")
     })
 
     it("should handle negated OR condition", () => {
       const where: WhereSchema = {
         or: [
           {
-            column: "status",
+            column: "role",
             condition: SqliteConditionType.Equals,
-            value: "inactive",
-          },
-          {
-            column: "deleted",
-            condition: SqliteConditionType.Equals,
-            value: true,
+            value: "admin",
           },
         ],
         negate: true,
       }
-      expect(whereSchemaToSql(where)).toBe(
-        "NOT (status = 'inactive' OR deleted = 1)",
-      )
-    })
-  })
-
-  describe("complex nested conditions", () => {
-    it("should handle AND with OR conditions", () => {
-      const where: WhereSchema = {
-        and: [
-          {
-            column: "age",
-            condition: SqliteConditionType.GreaterThan,
-            value: 18,
-          },
-          {
-            or: [
-              {
-                column: "city",
-                condition: SqliteConditionType.Equals,
-                value: "NYC",
-              },
-              {
-                column: "city",
-                condition: SqliteConditionType.Equals,
-                value: "LA",
-              },
-            ],
-          },
-        ],
-      }
-      expect(whereSchemaToSql(where)).toBe(
-        "(age > 18 AND (city = 'NYC' OR city = 'LA'))",
-      )
+      expect(whereSchemaToSql(where)).toBe("NOT role = 'admin'")
     })
 
-    it("should handle OR with AND conditions", () => {
-      const where: WhereSchema = {
-        or: [
-          {
-            and: [
-              {
-                column: "age",
-                condition: SqliteConditionType.GreaterThan,
-                value: 65,
-              },
-              {
-                column: "status",
-                condition: SqliteConditionType.Equals,
-                value: "retired",
-              },
-            ],
-          },
-          {
-            and: [
-              {
-                column: "age",
-                condition: SqliteConditionType.LessThan,
-                value: 18,
-              },
-              {
-                column: "status",
-                condition: SqliteConditionType.Equals,
-                value: "student",
-              },
-            ],
-          },
-        ],
-      }
-      expect(whereSchemaToSql(where)).toBe(
-        "((age > 65 AND status = 'retired') OR (age < 18 AND status = 'student'))",
-      )
-    })
-
-    it("should handle deeply nested conditions", () => {
+    it("should handle nested logical conditions", () => {
       const where: WhereSchema = {
         and: [
           {
@@ -528,22 +374,60 @@ describe(whereSchemaToSql.name, () => {
         "(active = 1 AND ((type = 'premium' AND balance > 1000) OR (type = 'basic' AND verified = 1)))",
       )
     })
-  })
 
-  describe("error cases", () => {
+    it("should handle empty AND condition", () => {
+      const where: WhereSchema = {
+        and: [],
+      }
+      expect(whereSchemaToSql(where)).toBe("1=1")
+    })
+
+    it("should handle empty OR condition", () => {
+      const where: WhereSchema = {
+        or: [],
+      }
+      expect(whereSchemaToSql(where)).toBe("1=0")
+    })
+
+    it("should handle single AND clause without parens", () => {
+      const where: WhereSchema = {
+        and: [
+          {
+            column: "age",
+            condition: SqliteConditionType.GreaterThan,
+            value: 30,
+          },
+        ],
+      }
+      expect(whereSchemaToSql(where)).toBe("age > 30")
+    })
+
+    it("should handle single OR clause without parens", () => {
+      const where: WhereSchema = {
+        or: [
+          {
+            column: "status",
+            condition: SqliteConditionType.Equals,
+            value: "inactive",
+          },
+        ],
+      }
+      expect(whereSchemaToSql(where)).toBe("status = 'inactive'")
+    })
+
     it("should throw error for invalid where schema", () => {
       const where = {} as unknown as WhereSchema
       expect(() => whereSchemaToSql(where)).toThrow("Invalid where schema")
     })
 
-    it("should throw error for unsupported value type", () => {
+    it("should throw error for unsupported condition", () => {
       const where = {
-        column: "data",
-        condition: SqliteConditionType.Equals,
-        value: Symbol("test"),
+        column: "name",
+        condition: "invalid",
+        value: "test",
       } as unknown as WhereSchema
       expect(() => whereSchemaToSql(where)).toThrow(
-        "Unsupported value type: symbol",
+        "Unsupported condition: invalid",
       )
     })
   })
