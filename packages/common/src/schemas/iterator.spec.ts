@@ -30,6 +30,7 @@ describe("executionIteratorSchema", () => {
     const data = {
       type: ExecutionIteratorType.Range,
       dataSourceName: "test",
+      identifier: "id",
       range: { start: 1, end: 5 },
     }
     const result = executionIteratorSchema.safeParse(data)
@@ -40,6 +41,7 @@ describe("executionIteratorSchema", () => {
     const data = {
       type: ExecutionIteratorType.Range,
       dataSourceName: "test",
+      identifier: "id",
       range: 5,
     }
     const result = executionIteratorSchema.safeParse(data)

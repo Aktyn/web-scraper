@@ -1,4 +1,5 @@
 import {
+  type SimpleLogger,
   assert,
   type ExecutionIterator,
   ExecutionIteratorType,
@@ -8,7 +9,6 @@ import {
   whereSchemaToSql,
 } from "@web-scraper/common"
 import type {
-  Cursor,
   DataBridge as DataBridgeInterface,
   DataBridgeValue,
 } from "@web-scraper/core"
@@ -54,6 +54,7 @@ export class DataBridge<
     private readonly db: DbModule,
     private readonly iterator: ExecutionIterator | null,
     private readonly dataSources: SourcesType,
+    private readonly logger: SimpleLogger,
   ) {}
 
   async destroy() {
@@ -171,7 +172,7 @@ export class DataBridge<
   }
 
   async get(key: SourceTypeKey<SourcesType>) {
-    const { source, column } = this.parseKey(key)
+    const { source, column, sourceAlias } = this.parseKey(key)
     const cursor = this.cursor
 
     let query = this.db
@@ -183,7 +184,7 @@ export class DataBridge<
       })
       .from(sql.identifier(source.name).getSQL())
 
-    if (cursor && cursor.dataSourceName === source.name) {
+    if (cursor && cursor.dataSourceName === sourceAlias) {
       if (cursor.where) {
         query = query.where(
           sql.raw(whereSchemaToSql(cursor.where)),
@@ -210,8 +211,8 @@ export class DataBridge<
   }
 
   async set(key: SourceTypeKey<SourcesType>, value: DataBridgeValue) {
-    const { source, column } = this.parseKey(key)
-    await this.setMany(source.name, [{ columnName: column, value }])
+    const { column, sourceAlias } = this.parseKey(key)
+    await this.setMany(sourceAlias, [{ columnName: column, value }])
   }
 
   async setMany(
@@ -225,30 +226,30 @@ export class DataBridge<
     const source = this.dataSources[dataSourceName]
     const cursor = this.cursor
 
-    const query = sql`UPDATE ${sql.identifier(source.name)} SET ${sql.join(
-      items.map(
-        (item) =>
-          `${sql.identifier(item.columnName)} = ${item.value === null || item.value === undefined ? sql.raw("NULL") : sql`${item.value}`}`,
-      ),
-      sql`, `,
-    )}`
+    if (cursor && cursor.dataSourceName === dataSourceName) {
+      const setClauses = sql.join(
+        items.map(
+          (item) =>
+            sql`${sql.identifier(item.columnName)} = ${item.value === null || item.value === undefined ? sql.raw("NULL") : sql`${item.value}`}`,
+        ),
+        sql`, `,
+      )
 
-    if (cursor && cursor.dataSourceName === source.name) {
-      if (cursor.where) {
-        query.append(sql` WHERE ${sql.raw(whereSchemaToSql(cursor.where))}`)
+      const whereClause = cursor.where
+        ? sql` WHERE ${sql.raw(whereSchemaToSql(cursor.where))}`
+        : sql``
+      const offsetClause =
+        typeof cursor.offset === "number"
+          ? sql` OFFSET ${cursor.offset}`
+          : sql``
+
+      const query = sql`UPDATE ${sql.identifier(source.name)} SET ${setClauses} WHERE ${sql.identifier("id")} IN (SELECT ${sql.identifier("id")} FROM ${sql.identifier(source.name)}${whereClause} LIMIT 1${offsetClause})`
+
+      const response = await this.db.run(query).execute()
+      if (!response.rowsAffected) {
+        this.logger.warn(`No rows were updated for ${source.name}`)
       }
-
-      if (typeof cursor.offset === "number") {
-        query.append(sql` OFFSET ${cursor.offset}`)
-      }
-    }
-
-    query.append(sql` LIMIT 1`)
-
-    const response = await this.db.run(query).execute()
-
-    // If no rows were affected, insert a new row
-    if (!response.rowsAffected) {
+    } else {
       const columns = items.map((item) => sql.identifier(item.columnName))
       const values = items.map((item) =>
         item.value === null || item.value === undefined
@@ -274,19 +275,20 @@ export class DataBridge<
     const source = this.dataSources[sourceAlias]
     const cursor = this.cursor
 
-    const query = sql`DELETE FROM ${sql.identifier(source.name)}`
-
-    if (cursor && cursor.dataSourceName === source.name) {
-      if (cursor.where) {
-        query.append(sql` WHERE ${sql.raw(whereSchemaToSql(cursor.where))}`)
-      }
-
-      if (typeof cursor.offset === "number") {
-        query.append(sql` OFFSET ${cursor.offset}`)
-      }
+    if (!cursor || cursor.dataSourceName !== sourceAlias) {
+      this.logger.error(
+        `No cursor found for ${source.name}. It is required to delete data through the data bridge.`,
+      )
+      return
     }
 
-    query.append(sql` LIMIT 1`)
+    const whereClause = cursor.where
+      ? sql` WHERE ${sql.raw(whereSchemaToSql(cursor.where))}`
+      : sql``
+    const offsetClause =
+      typeof cursor.offset === "number" ? sql` OFFSET ${cursor.offset}` : sql``
+
+    const query = sql`DELETE FROM ${sql.identifier(source.name)} WHERE ${sql.identifier("id")} IN (SELECT ${sql.identifier("id")} FROM ${sql.identifier(source.name)}${whereClause} LIMIT 1${offsetClause})`
 
     await this.db.run(query).execute()
 
@@ -306,7 +308,7 @@ export class DataBridge<
     )
 
     const source = this.dataSources[sourceAlias]
-    return { source, column }
+    return { source, column, sourceAlias }
   }
 
   static async buildDataBridgeSources(

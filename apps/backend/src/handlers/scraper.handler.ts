@@ -123,6 +123,7 @@ export async function executeNewScraper(
       context.db,
       scraperData.dataSources,
     ),
+    logger,
   )
 
   do {

@@ -2,17 +2,6 @@ import z from "zod"
 import { scraperDataSourceSchema } from "./data-source"
 import { scraperInstructionsSchema } from "./instructions"
 
-export * from "./common"
-export * from "./condition"
-export * from "./data-source"
-export * from "./execution"
-export * from "./helpers"
-export * from "./instructions"
-export * from "./page-action"
-export * from "./results"
-export * from "./selectors"
-export * from "./value"
-
 export const scraperSchema = z.object({
   id: z.number(),
   name: z.string().min(1, "Scraper name is required"),
@@ -35,3 +24,14 @@ export type UpdateScraper = z.infer<typeof updateScraperSchema>
 export const paramsWithScraperIdSchema = z.object({
   id: z.coerce.number(),
 })
+
+export * from "./common"
+export * from "./condition"
+export * from "./data-source"
+export * from "./execution"
+export * from "./helpers"
+export * from "./instructions"
+export * from "./page-action"
+export * from "./results"
+export * from "./selectors"
+export * from "./value"

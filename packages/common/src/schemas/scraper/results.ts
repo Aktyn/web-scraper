@@ -126,7 +126,9 @@ export type ScraperInstructionsExecutionInfo = z.infer<
 export const scraperExecutionInfoSchema = z.object({
   id: z.number(),
   scraperId: z.number(),
-  iterator: executionIteratorSchema.nullable(),
+  iterator: executionIteratorSchema
+    ? executionIteratorSchema.nullable()
+    : executionIteratorSchema,
   createdAt: z.number(),
   iterations: z.array(
     z.object({
