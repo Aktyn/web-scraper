@@ -5,7 +5,11 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
-export function formatDateTime(date: Date) {
+export function formatDateTime(date: Date | number) {
+  if (typeof date === "number") {
+    date = new Date(date)
+  }
+
   return date.toLocaleDateString("de-DE", {
     day: "2-digit",
     month: "2-digit",

@@ -61,7 +61,7 @@ export function SaveDataBatchInstruction({
               key={`${item.columnName}-${index}`}
               className="flex flex-col bg-background p-2 rounded-lg border border-border/50"
             >
-              <pre className="font-bold break-all whitespace-normal">
+              <pre className="font-bold break-words whitespace-normal">
                 {item.columnName}
               </pre>
               <ScraperValueComponent value={item.value} />

@@ -125,7 +125,7 @@ export function ScraperExecutionInfoItem({
               content="Copy error message"
             />
           </HeaderLayout>
-          <div className="text-sm text-pretty text-destructive whitespace-normal break-all">
+          <div className="text-sm text-pretty text-destructive whitespace-normal break-words">
             {executionInfo.errorMessage}
           </div>
         </ContainerLayout>

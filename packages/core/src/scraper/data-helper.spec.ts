@@ -1,0 +1,174 @@
+import {
+  ElementSelectorType,
+  type ScraperElementSelectors,
+} from "@web-scraper/common"
+import { describe, expect, it } from "vitest"
+import {
+  type DataBridge,
+  type DataBridgeValue,
+  replaceSpecialStrings,
+  replaceSpecialStringsInSelectors,
+} from "./data-helper"
+
+const mockStore = new Map<string, DataBridgeValue>([
+  ["user.name", "test-user"],
+  ["user.password", "test-password"],
+  ["button.next", "Next >"],
+  ["product.name", "Super Product"],
+  ["product.price", 99.99],
+  ["product.attribute", "data-testid"],
+  ["product.attributeValue", "product-price-id"],
+  ["user.greeting", "Hello {{user.name}}"],
+])
+
+const mockDataBridge: DataBridge = {
+  get: async (key) => {
+    return mockStore.get(key) ?? null
+  },
+  set: async (key: string, value) => {
+    mockStore.set(key, value)
+  },
+  setMany: async (dataSourceName: string, items) => {
+    for (const item of items) {
+      mockStore.set(`${dataSourceName}.${item.columnName}`, item.value)
+    }
+  },
+  delete: async (key: string) => {
+    for (const existingKey of mockStore.keys()) {
+      if (existingKey.startsWith(key)) {
+        mockStore.delete(existingKey)
+      }
+    }
+  },
+}
+
+describe("data-helper", () => {
+  describe(replaceSpecialStrings.name, () => {
+    it("should return the same string if no special strings are present", async () => {
+      const input = "This is a simple string."
+      const result = await replaceSpecialStrings(input, mockDataBridge)
+      expect(result).toBe(input)
+    })
+
+    it("should replace a single special string with its value from the data bridge", async () => {
+      const input = "Welcome, {{user.name}}!"
+      const result = await replaceSpecialStrings(input, mockDataBridge)
+      expect(result).toBe("Welcome, test-user!")
+    })
+
+    it("should replace multiple special strings", async () => {
+      const input =
+        "Product: {{product.name}}, Price: ${{product.price}}, User: {{user.name}}"
+      const result = await replaceSpecialStrings(input, mockDataBridge)
+      expect(result).toBe(
+        "Product: Super Product, Price: $99.99, User: test-user",
+      )
+    })
+
+    it("should replace a special string with an empty string if the key is not in the data bridge", async () => {
+      const input = "This key {{nonexistent.key}} does not exist."
+      const result = await replaceSpecialStrings(input, mockDataBridge)
+      expect(result).toBe("This key  does not exist.")
+    })
+
+    it("should handle a mix of existing and non-existing keys", async () => {
+      const input = "User: {{user.name}}, Status: {{user.status}}"
+      const result = await replaceSpecialStrings(input, mockDataBridge)
+      expect(result).toBe("User: test-user, Status: ")
+    })
+
+    it("should handle recursive replacement", async () => {
+      const input = "Greeting: {{user.greeting}}"
+      const result = await replaceSpecialStrings(input, mockDataBridge)
+      expect(result).toBe("Greeting: Hello test-user")
+    })
+  })
+
+  describe(replaceSpecialStringsInSelectors.name, () => {
+    it("should replace special strings in various selector types", async () => {
+      const selectors: ScraperElementSelectors = [
+        {
+          type: ElementSelectorType.Query,
+          query: "button[id='{{button.next}}']",
+        },
+        {
+          type: ElementSelectorType.TextContent,
+          text: "{{product.name}}",
+        },
+        {
+          type: ElementSelectorType.TagName,
+          tagName: "div",
+        },
+        {
+          type: ElementSelectorType.Attributes,
+          attributes: {
+            "{{product.attribute}}": "{{product.attributeValue}}",
+            "static-attr": "Welcome, {{user.name}}",
+            "non-existent": "{{non.existent}}",
+          },
+        },
+      ]
+
+      const result = await replaceSpecialStringsInSelectors(
+        selectors,
+        mockDataBridge,
+      )
+
+      expect(result).toEqual([
+        {
+          type: ElementSelectorType.Query,
+          query: "button[id='Next >']",
+        },
+        {
+          type: ElementSelectorType.TextContent,
+          text: "Super Product",
+        },
+        {
+          type: ElementSelectorType.TagName,
+          tagName: "div",
+        },
+        {
+          type: ElementSelectorType.Attributes,
+          attributes: {
+            "data-testid": "product-price-id",
+            "static-attr": "Welcome, test-user",
+            "non-existent": "",
+          },
+        },
+      ])
+    })
+
+    it("should not replace special strings in regex values", async () => {
+      const selectors: ScraperElementSelectors = [
+        {
+          type: ElementSelectorType.TextContent,
+          text: { source: "{{user.name}}", flags: "i" },
+        },
+        {
+          type: ElementSelectorType.Attributes,
+          attributes: {
+            "data-regex": { source: "{{product.name}}", flags: "g" },
+          },
+        },
+      ]
+
+      const result = await replaceSpecialStringsInSelectors(
+        selectors,
+        mockDataBridge,
+      )
+
+      expect(result).toEqual([
+        {
+          type: ElementSelectorType.TextContent,
+          text: { source: "{{user.name}}", flags: "i" },
+        },
+        {
+          type: ElementSelectorType.Attributes,
+          attributes: {
+            "data-regex": { source: "{{product.name}}", flags: "g" },
+          },
+        },
+      ])
+    })
+  })
+})

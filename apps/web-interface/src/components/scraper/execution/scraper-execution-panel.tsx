@@ -3,6 +3,7 @@ import { ScrollArea, ScrollBar } from "@/components/shadcn/scroll-area"
 import { cn } from "@/lib/utils"
 import { ScraperProvider } from "@/providers/scraper.provider"
 import type {
+  ExecutionIterator,
   ScraperInstructions,
   ScraperInstructionsExecutionInfo,
 } from "@web-scraper/common"
@@ -19,18 +20,33 @@ import {
   Edit,
   LoaderCircle,
   Play,
+  Settings2,
 } from "lucide-react"
-import type { ComponentProps, RefObject } from "react"
-import { useCallback, useEffect, useRef, useState } from "react"
+import type { ComponentProps, Ref, RefObject } from "react"
+import {
+  useCallback,
+  useEffect,
+  useImperativeHandle,
+  useRef,
+  useState,
+} from "react"
 import { ScraperFormDialog } from "../scraper-form-dialog"
 import { ScraperExecutionInfo } from "./scraper-execution-info"
+import { IteratorDescription } from "@/components/iterator/iterator-description"
+import { IteratorFormDialog } from "@/components/iterator/iterator-form-dialog"
+
+export type ScraperExecutionPanelRef = {
+  applyIterator: (iterator: ExecutionIterator) => void
+}
 
 type ScraperExecutionPanelProps = {
   onEditSuccess?: (scraper: ScraperType) => void
+  ref?: Ref<ScraperExecutionPanelRef>
 }
 
 export function ScraperExecutionPanel({
   onEditSuccess,
+  ref,
 }: ScraperExecutionPanelProps) {
   const {
     scraper,
@@ -41,26 +57,62 @@ export function ScraperExecutionPanel({
     currentlyExecutingInstruction,
   } = ScraperProvider.useContext()
 
+  const [iterator, setIterator] = useState<ExecutionIterator | null>(null)
+  const [iteratorDialogOpen, setIteratorDialogOpen] = useState(false)
+
   const [editDialogOpen, setEditDialogOpen] = useState(false)
+
+  useImperativeHandle(
+    ref,
+    () => ({
+      applyIterator: setIterator,
+    }),
+    [],
+  )
 
   return (
     <div className="flex flex-col items-stretch gap-3">
       {(!state || state === ScraperState.Exited) && (
-        <div className="flex flex-row items-center gap-4">
-          <Button
-            className="flex-grow"
-            variant="default"
-            onClick={execute}
-            disabled={sendingExecutionRequest}
-          >
-            <Play />
-            {sendingExecutionRequest ? "Executing..." : "Execute"}
-          </Button>
-          <Button variant="outline" onClick={() => setEditDialogOpen(true)}>
-            <Edit />
-            Edit
-          </Button>
-        </div>
+        <>
+          <div className="flex flex-row items-center gap-2">
+            <IteratorDescription
+              iterator={iterator}
+              className="w-full bg-card border p-3 rounded-xl"
+            >
+              <Button
+                variant="outline"
+                tabIndex={-1}
+                onClick={() => setIteratorDialogOpen(true)}
+              >
+                <Settings2 />
+                Configure iterator
+              </Button>
+            </IteratorDescription>
+
+            <IteratorFormDialog
+              open={iteratorDialogOpen}
+              onOpenChange={setIteratorDialogOpen}
+              iterator={iterator}
+              onChange={setIterator}
+              dataSources={scraper.dataSources}
+            />
+          </div>
+          <div className="flex flex-row items-center gap-4">
+            <Button
+              className="flex-grow"
+              variant="default"
+              onClick={() => execute(iterator)}
+              disabled={sendingExecutionRequest}
+            >
+              <Play />
+              {sendingExecutionRequest ? "Executing..." : "Execute"}
+            </Button>
+            <Button variant="outline" onClick={() => setEditDialogOpen(true)}>
+              <Edit />
+              Edit
+            </Button>
+          </div>
+        </>
       )}
       <ScraperFormDialog
         open={editDialogOpen}

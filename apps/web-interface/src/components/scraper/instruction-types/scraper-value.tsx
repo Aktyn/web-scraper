@@ -36,7 +36,7 @@ function ValueDetails({ value }: { value: ScraperValue }) {
     case ScraperValueType.Literal:
       return (
         <LabeledValue label="Literal value:">
-          <pre className="break-all whitespace-normal">{value.value}</pre>
+          <pre className="break-words whitespace-normal">{value.value}</pre>
         </LabeledValue>
       )
 
@@ -51,7 +51,7 @@ function ValueDetails({ value }: { value: ScraperValue }) {
           </LabeledValue>
           {value.defaultValue && (
             <LabeledValue label="Default value:">
-              <pre className="text-sm rounded break-all whitespace-normal">
+              <pre className="text-sm rounded break-words whitespace-normal">
                 {value.defaultValue}
               </pre>
             </LabeledValue>
@@ -73,7 +73,7 @@ function ValueDetails({ value }: { value: ScraperValue }) {
             <ScraperSelector selectors={value.selectors} />
           </LabeledValue>
           <LabeledValue label="Attribute:">
-            <pre className="text-sm break-all whitespace-normal">
+            <pre className="text-sm break-words whitespace-normal">
               {value.attributeName}
             </pre>
           </LabeledValue>

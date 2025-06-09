@@ -342,37 +342,59 @@ const scrapCryptoPricesInstructions: ScraperInstructions = [
     },
   },
   {
-    type: ScraperInstructionType.PageAction,
-    action: {
-      type: PageActionType.Click,
+    type: ScraperInstructionType.Condition,
+    if: {
+      type: ScraperConditionType.IsVisible,
       selectors: [
+        { type: ElementSelectorType.Query, query: "p.coin-item-name" },
         {
           type: ElementSelectorType.TextContent,
           text: "{{crypto.Cryptocurrency}}",
         },
-        { type: ElementSelectorType.TagName, tagName: "p" },
       ],
     },
-  },
-  {
-    type: ScraperInstructionType.SaveDataBatch,
-    dataSourceName: "crypto",
-    items: [
+    then: [
       {
-        columnName: "Price",
-        value: {
-          type: ScraperValueType.ElementTextContent,
+        type: ScraperInstructionType.PageAction,
+        action: {
+          type: PageActionType.Click,
           selectors: [
+            { type: ElementSelectorType.Query, query: "p.coin-item-name" },
             {
-              type: ElementSelectorType.Query,
-              query: "#section-coin-overview > div:nth-child(2) > span",
+              type: ElementSelectorType.TextContent,
+              text: "{{crypto.Cryptocurrency}}",
             },
           ],
         },
       },
       {
-        columnName: "Last update",
-        value: { type: ScraperValueType.CurrentTimestamp },
+        type: ScraperInstructionType.SaveDataBatch,
+        dataSourceName: "crypto",
+        items: [
+          {
+            columnName: "Price",
+            value: {
+              type: ScraperValueType.ElementTextContent,
+              selectors: [
+                {
+                  type: ElementSelectorType.Query,
+                  query: "#section-coin-overview > div:nth-child(2) > span",
+                },
+              ],
+            },
+          },
+          {
+            columnName: "Last update",
+            value: { type: ScraperValueType.CurrentTimestamp },
+          },
+        ],
+      },
+    ],
+    else: [
+      {
+        type: ScraperInstructionType.SaveData,
+        dataKey: "crypto.Price",
+        value: { type: ScraperValueType.Literal, value: "-1" },
       },
     ],
   },

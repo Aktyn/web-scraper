@@ -162,12 +162,15 @@ export function IteratorFormDialog({
             type="button"
             variant="outline"
             onClick={() => onOpenChange(false)}
+            disabled={!form.formState.isDirty}
           >
             Discard
           </Button>
-          <Button type="button" variant="destructive" onClick={onRemove}>
-            Remove
-          </Button>
+          {iterator && (
+            <Button type="button" variant="destructive" onClick={onRemove}>
+              Remove
+            </Button>
+          )}
           <Button type="submit" onClick={form.handleSubmit(onSubmit)}>
             Save
           </Button>

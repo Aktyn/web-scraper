@@ -88,7 +88,7 @@ function ContainerLayout(props: ComponentProps<"div">) {
     <div
       {...props}
       className={cn(
-        "flex flex-col gap-1 grow **:[pre]:text-sm **:[pre]:break-all **:[pre]:whitespace-normal",
+        "flex flex-col gap-1 grow **:[pre]:text-sm **:[pre]:break-words **:[pre]:whitespace-normal",
         props.className,
       )}
     />

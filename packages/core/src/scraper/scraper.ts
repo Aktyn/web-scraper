@@ -23,7 +23,11 @@ import puppeteer, {
   type LaunchOptions,
   type Page,
 } from "rebrowser-puppeteer"
-import { type DataBridge, getScraperValue } from "./data-helper"
+import {
+  type DataBridge,
+  getScraperValue,
+  replaceSpecialStrings,
+} from "./data-helper"
 import { type ScraperExecutionContext } from "./helpers"
 import { ScraperExecutionInfo } from "./scraper-execution-info"
 import { getElementHandle } from "./selectors"
@@ -35,19 +39,29 @@ type ScraperOptions = Pick<ScraperType, "id" | "name"> & {
   noInit?: boolean
 } & Partial<LaunchOptions>
 
-interface ScraperEvents {
+type Metadata = Record<string, unknown>
+
+interface ScraperEvents<MetadataType extends Metadata | undefined = undefined> {
   destroy: () => void
   stateChange: (state: ScraperState, previousState: ScraperState) => void
   executionStarted: () => void
-  executionFinished: (executionInfo: ScraperExecutionInfo) => void
+  executionFinished: (
+    executionInfo: ScraperExecutionInfo,
+    metadata: MetadataType,
+  ) => void
   executionUpdate: (
     executionInfo: ScraperInstructionsExecutionInfo[number],
   ) => void
   executingInstruction: (instruction: ScraperInstructions[number]) => void
 }
 
-export class Scraper extends EventEmitter {
-  private static instances = new Map<`${number}-${string}`, Scraper>()
+export class Scraper<
+  MetadataType extends Metadata | undefined = undefined,
+> extends EventEmitter {
+  private static instances = new Map<
+    `${number}-${string}`,
+    Scraper<Metadata | undefined>
+  >()
 
   public static destroyAll() {
     for (const instance of Scraper.instances.values()) {
@@ -202,18 +216,24 @@ export class Scraper extends EventEmitter {
     this.emit("destroy")
   }
 
-  override emit<E extends keyof ScraperEvents>(
+  override emit<E extends keyof ScraperEvents<MetadataType>>(
     event: E,
-    ...args: Parameters<ScraperEvents[E]>
+    ...args: Parameters<ScraperEvents<MetadataType>[E]>
   ): boolean {
     return super.emit(event, ...args)
   }
 
-  on<E extends keyof ScraperEvents>(event: E, listener: ScraperEvents[E]) {
+  on<E extends keyof ScraperEvents>(
+    event: E,
+    listener: ScraperEvents<MetadataType>[E],
+  ) {
     return super.on(event, listener)
   }
 
-  off<E extends keyof ScraperEvents>(event: E, listener: ScraperEvents[E]) {
+  off<E extends keyof ScraperEvents>(
+    event: E,
+    listener: ScraperEvents<MetadataType>[E],
+  ) {
     return super.off(event, listener)
   }
 
@@ -265,10 +285,29 @@ export class Scraper extends EventEmitter {
   async execute(
     instructions: ScraperInstructions,
     dataBridge: DataBridge,
-    options?: {
+    options?: MetadataType extends undefined
+      ?
+          | {
+              pageMiddleware?: (page: Page) => void | Promise<void>
+              leavePageOpen?: boolean
+              metadata?: MetadataType
+            }
+          | undefined
+      : {
+          pageMiddleware?: (page: Page) => void | Promise<void>
+          leavePageOpen?: boolean
+          metadata: MetadataType
+        },
+  ): Promise<ScraperExecutionInfo>
+
+  async execute(
+    instructions: ScraperInstructions,
+    dataBridge: DataBridge,
+    options: {
       pageMiddleware?: (page: Page) => void | Promise<void>
       leavePageOpen?: boolean
-    },
+      metadata?: MetadataType
+    } = {},
   ) {
     const executionInfo = new ScraperExecutionInfo(instructions, dataBridge)
     this.activeExecutionInfo = executionInfo
@@ -335,7 +374,11 @@ export class Scraper extends EventEmitter {
 
     executionInfo.flush()
 
-    this.emit("executionFinished", executionInfo)
+    this.emit(
+      "executionFinished",
+      executionInfo,
+      options.metadata as MetadataType,
+    )
     this.state = ScraperState.Idle
 
     if (!options?.leavePageOpen) {
@@ -592,25 +635,20 @@ export class Scraper extends EventEmitter {
         await wait(action.duration)
         break
       case PageActionType.Navigate:
-        await context.page.goto(action.url, { timeout: 60_000 })
+        await context.page.goto(
+          await replaceSpecialStrings(action.url, context.dataBridge),
+          { timeout: 60_000 },
+        )
         break
       case PageActionType.Click: {
-        const handle = await getElementHandle(
-          context.page,
-          action.selectors,
-          true,
-        )
+        const handle = await getElementHandle(context, action.selectors, true)
         await handle.click({
           delay: randomInt(1, 4),
         })
         break
       }
       case PageActionType.Type: {
-        const handle = await getElementHandle(
-          context.page,
-          action.selectors,
-          true,
-        )
+        const handle = await getElementHandle(context, action.selectors, true)
         if (action.clearBeforeType) {
           await handle.evaluate((el) => {
             if (el instanceof HTMLInputElement) {
@@ -637,10 +675,7 @@ export class Scraper extends EventEmitter {
     try {
       switch (condition.type) {
         case ScraperConditionType.IsVisible: {
-          const handle = await getElementHandle(
-            context.page,
-            condition.selectors,
-          )
+          const handle = await getElementHandle(context, condition.selectors)
           return !!(await handle?.isVisible())
         }
         case ScraperConditionType.TextEquals: {
@@ -649,7 +684,10 @@ export class Scraper extends EventEmitter {
             return false
           }
           if (typeof condition.text === "string") {
-            return value === condition.text
+            return (
+              value ===
+              (await replaceSpecialStrings(condition.text, context.dataBridge))
+            )
           }
           return new RegExp(condition.text.source, condition.text.flags).test(
             value.toString(),

@@ -48,6 +48,11 @@
 			"sonner",
 			"uuidv"
 		],
+		"tailwindCSS.classAttributes": [
+			"class",
+			"className",
+			".*Props"
+		],
 		"npm.packageManager": "npm",
 		"vitest.maximumConfigs": 4,
 		"typescript.tsdk": "Root/node_modules/typescript/lib"

@@ -3,6 +3,7 @@ import { scraperConditionSchema } from "./condition"
 import { ScraperInstructionType } from "./instructions"
 import { pageActionSchema } from "./page-action"
 import { scraperDataKeySchema, scraperValueSchema } from "./value"
+import { executionIteratorSchema } from "../iterator"
 
 const instructionInfoSchema = z.discriminatedUnion("type", [
   z.object({
@@ -123,10 +124,17 @@ export type ScraperInstructionsExecutionInfo = z.infer<
 >
 
 export const scraperExecutionInfoSchema = z.object({
-  executionId: z.string(),
-  iteration: z.number(),
-  executionInfo: scraperInstructionsExecutionInfoSchema,
+  id: z.number(),
+  scraperId: z.number(),
+  iterator: executionIteratorSchema.nullable(),
   createdAt: z.number(),
+  iterations: z.array(
+    z.object({
+      iteration: z.number().min(1),
+      executionInfo: scraperInstructionsExecutionInfoSchema,
+      finishedAt: z.number(),
+    }),
+  ),
 })
 
 export type ScraperExecutionInfo = z.infer<typeof scraperExecutionInfoSchema>

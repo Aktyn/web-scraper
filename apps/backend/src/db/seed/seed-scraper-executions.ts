@@ -1,12 +1,17 @@
 import {
+  ExecutionIteratorType,
   PageActionType,
   ScraperInstructionsExecutionInfoType,
   ScraperInstructionType,
-  uuid,
+  type ExecutionIterator,
   type ScraperInstructionsExecutionInfo,
 } from "@web-scraper/common"
 import type { DbModule } from "../db.module"
-import { scraperExecutionInfosTable, scrapersTable } from "../schema"
+import {
+  scraperExecutionsTable,
+  scraperExecutionIterationsTable,
+  scrapersTable,
+} from "../schema"
 
 function generateRandomExecutionInfo(): ScraperInstructionsExecutionInfo {
   const hasError = Math.random() > 0.8
@@ -41,25 +46,52 @@ function generateRandomExecutionInfo(): ScraperInstructionsExecutionInfo {
   return info
 }
 
-export async function seedScraperExecutionInfos(db: DbModule) {
+export async function seedScraperExecutions(db: DbModule) {
   const scrapers = await db.select({ id: scrapersTable.id }).from(scrapersTable)
 
   if (!scrapers.length) {
     return
   }
 
-  const values: (typeof scraperExecutionInfosTable.$inferInsert)[] = []
-
   for (const scraper of scrapers) {
     for (let i = 0; i < 5; i++) {
-      values.push({
-        scraperId: scraper.id,
-        executionId: uuid(),
+      const iteratorType =
+        i % 2 === 0
+          ? ExecutionIteratorType.Range
+          : ExecutionIteratorType.EntireSet
+
+      const iterator: ExecutionIterator | null =
+        i % 3 === 0
+          ? null
+          : iteratorType === ExecutionIteratorType.Range
+            ? {
+                type: ExecutionIteratorType.Range,
+                dataSourceName: "products",
+                identifier: "id",
+                range: i,
+              }
+            : {
+                type: ExecutionIteratorType.EntireSet,
+                dataSourceName: "products",
+              }
+      const newExecutions = await db
+        .insert(scraperExecutionsTable)
+        .values({
+          scraperId: scraper.id,
+          iterator,
+        })
+        .returning({ id: scraperExecutionsTable.id })
+        .get()
+
+      if (!newExecutions) {
+        continue
+      }
+
+      await db.insert(scraperExecutionIterationsTable).values({
+        executionId: newExecutions.id,
         iteration: 1,
         executionInfo: generateRandomExecutionInfo(),
       })
     }
   }
-
-  await db.insert(scraperExecutionInfosTable).values(values)
 }

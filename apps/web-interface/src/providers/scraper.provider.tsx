@@ -1,6 +1,10 @@
 import { useGet } from "@/hooks/api/useGet"
 import { usePost } from "@/hooks/api/usePost"
-import type { ScraperInstructions, ScraperState } from "@web-scraper/common"
+import type {
+  ExecutionIterator,
+  ScraperInstructions,
+  ScraperState,
+} from "@web-scraper/common"
 import {
   ScraperEventType,
   SubscriptionMessageType,
@@ -21,7 +25,7 @@ import { ServerEventsProvider } from "./server-events.provider"
 
 const ScraperContext = createContext({
   scraper: {} as ScraperType,
-  execute: () => Promise.resolve(),
+  execute: (_iterator: ExecutionIterator | null) => Promise.resolve(),
   sendingExecutionRequest: false,
 
   state: null as ScraperState | null,
@@ -104,9 +108,12 @@ export function ScraperProvider({
 
   const { postItem: execute, isPosting } = usePost("/scrapers/:id/execute")
 
-  const handleExecute = useCallback(async () => {
-    await execute(undefined, { id: scraper.id }, () => void 0)
-  }, [execute, scraper.id])
+  const handleExecute = useCallback(
+    async (iterator: ExecutionIterator | null) => {
+      await execute({ iterator }, { id: scraper.id }, () => void 0)
+    },
+    [execute, scraper.id],
+  )
 
   return (
     <ScraperContext

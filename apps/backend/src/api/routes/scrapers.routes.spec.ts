@@ -1,4 +1,5 @@
 import {
+  type SimpleLogger,
   type ScraperInstructions,
   type CreateScraper,
   PageActionType,
@@ -7,11 +8,12 @@ import {
   type UpdateScraper,
   wait,
   ScraperState,
+  runUnsafe,
 } from "@web-scraper/common"
-import type { DataBridge } from "@web-scraper/core"
+import { Scraper, type DataBridge } from "@web-scraper/core"
 import { ScraperExecutionInfo } from "@web-scraper/core/src/scraper/scraper-execution-info"
 import { count } from "drizzle-orm"
-import { beforeEach, describe, expect, it, vi } from "vitest"
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 import {
   scraperDataSourcesTable,
   scrapersTable,
@@ -20,13 +22,33 @@ import {
 import { setup, type TestModules } from "../../test/setup"
 
 vi.mock("@web-scraper/core", async (importActual) => {
+  const voidLogger = Object.entries(console).reduce(
+    (acc, [key, value]) => {
+      if (typeof value === "function") {
+        acc[key as keyof SimpleLogger] = () => {}
+      } else {
+        acc[key as keyof SimpleLogger] = value as never
+      }
+      return acc
+    },
+    {
+      fatal: console.error,
+    } as SimpleLogger,
+  )
+
   // eslint-disable-next-line @typescript-eslint/consistent-type-imports
   const actual = (await importActual()) as typeof import("@web-scraper/core")
   return {
     ...actual,
     Scraper: class MockScraper extends actual.Scraper {
       constructor(options: object) {
-        super({ id: 1, name: "test", ...options, noInit: true })
+        super({
+          id: 1,
+          name: "test",
+          ...options,
+          logger: voidLogger,
+          noInit: true,
+        })
       }
 
       override async execute(
@@ -67,6 +89,17 @@ describe("Scrapers Routes", () => {
 
   beforeEach(async () => {
     modules = await setup()
+  })
+
+  afterEach(async () => {
+    const scraperInstances = Scraper.getInstances()
+    for (const scraperInstance of scraperInstances) {
+      if (scraperInstance.destroyed) {
+        continue
+      }
+      runUnsafe(() => scraperInstance.destroy())
+    }
+    await wait(16)
   })
 
   describe("GET /scrapers", () => {
@@ -680,6 +713,12 @@ describe("Scrapers Routes", () => {
       const response = await modules.api.inject({
         method: "POST",
         url: `/scrapers/${scraperId}/execute`,
+        body: {
+          iterator: {
+            dataSourceName: "products",
+            type: "entire-set",
+          },
+        },
       })
 
       expect(response.statusCode).toBe(200)
@@ -690,6 +729,12 @@ describe("Scrapers Routes", () => {
       const response = await modules.api.inject({
         method: "POST",
         url: "/scrapers/99999/execute",
+        body: {
+          iterator: {
+            dataSourceName: "products",
+            type: "entire-set",
+          },
+        },
       })
       expect(response.statusCode).toBe(404)
       expect(JSON.parse(response.payload)).toEqual({
@@ -706,14 +751,23 @@ describe("Scrapers Routes", () => {
     })
   })
 
-  describe("POST /scrapers/:id/execution-status", () => {
+  describe("GET /scrapers/:id/execution-status", () => {
     it("should execute the scraper and return status 200 with execution status object", async () => {
       const listResponse = await modules.api.inject({
         method: "GET",
-        url: "/scrapers",
+        url: "/scrapers?page=0&pageSize=2",
       })
       const listData = JSON.parse(listResponse.payload)
-      const scraper1Id = listData.data[0].id
+      const scraper1Id = listData.data[1].id
+
+      const executeResponse = await modules.api.inject({
+        method: "POST",
+        url: `/scrapers/${scraper1Id}/execute`,
+        body: {
+          iterator: null,
+        },
+      })
+      expect(executeResponse.statusCode).toBe(200)
 
       const response = await modules.api.inject({
         method: "GET",
@@ -733,10 +787,10 @@ describe("Scrapers Routes", () => {
     it("should return null if the scraper is not executing", async () => {
       const listResponse = await modules.api.inject({
         method: "GET",
-        url: "/scrapers",
+        url: "/scrapers?page=0&pageSize=3",
       })
       const listData = JSON.parse(listResponse.payload)
-      const scraper2Id = listData.data[1].id
+      const scraper2Id = listData.data[2].id
 
       const response = await modules.api.inject({
         method: "GET",
@@ -769,7 +823,7 @@ describe("Scrapers Routes", () => {
     })
   })
 
-  describe("GET /scrapers/:id/execution-infos", () => {
+  describe("GET /scrapers/:id/executions", () => {
     it("should return status 200 and paginated execution infos", async () => {
       const listResponse = await modules.api.inject({
         method: "GET",
@@ -780,7 +834,7 @@ describe("Scrapers Routes", () => {
 
       const response = await modules.api.inject({
         method: "GET",
-        url: `/scrapers/${scraperId}/execution-infos?page=0&pageSize=2`,
+        url: `/scrapers/${scraperId}/executions?page=0&pageSize=2`,
       })
 
       expect(response.statusCode).toBe(200)
@@ -791,17 +845,18 @@ describe("Scrapers Routes", () => {
       expect(data.pageSize).toBe(2)
 
       expect(data.data[0]).toEqual({
-        executionId: expect.any(String),
-        iteration: 1,
-        executionInfo: expect.any(Array),
+        id: expect.any(Number),
         createdAt: expect.any(Number),
+        scraperId: listData.data[0].id,
+        iterator: expect.any(Object),
+        iterations: expect.any(Array),
       })
     })
 
     it("should return status 404 if scraper does not exist", async () => {
       const response = await modules.api.inject({
         method: "GET",
-        url: "/scrapers/999/execution-infos",
+        url: "/scrapers/999/executions",
       })
 
       expect(response.statusCode).toBe(404)

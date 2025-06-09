@@ -14,6 +14,7 @@ import type {
   ScraperExecutionInfo,
   ApiErrorResponse,
   ExecutingScraperInfo,
+  ExecutionIterator,
 } from "@web-scraper/common"
 import { apiErrorResponseSchema } from "@web-scraper/common"
 
@@ -212,7 +213,9 @@ export type Routes = {
   }
   "scrapers/:id/execute": {
     post: {
-      body: undefined
+      body: {
+        iterator: ExecutionIterator | null
+      }
       response: ApiResponse<null>
     }
   }
@@ -221,7 +224,7 @@ export type Routes = {
       response: ApiResponse<ScraperExecutionStatus>
     }
   }
-  "scrapers/:id/execution-infos": {
+  "scrapers/:id/executions": {
     get: {
       querystring: Partial<ApiPaginationQuery>
       response: ApiPaginatedResponse<ScraperExecutionInfo>

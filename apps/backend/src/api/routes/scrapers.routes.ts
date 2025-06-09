@@ -3,6 +3,7 @@ import {
   apiPaginationQuerySchema,
   createScraperSchema,
   executingScraperInfoSchema,
+  executionIteratorSchema,
   getApiPaginatedResponseSchema,
   getApiResponseSchema,
   paramsWithScraperIdSchema,
@@ -13,13 +14,14 @@ import {
   type ScraperType,
 } from "@web-scraper/common"
 import { Scraper } from "@web-scraper/core"
-import { desc, eq } from "drizzle-orm"
+import { asc, desc, eq } from "drizzle-orm"
 import type { FastifyInstance } from "fastify"
 import type { ZodTypeProvider } from "fastify-type-provider-zod"
 import z from "zod"
 import {
   scraperDataSourcesTable,
-  scraperExecutionInfosTable,
+  scraperExecutionsTable,
+  scraperExecutionIterationsTable,
   scrapersTable,
 } from "../../db/schema"
 import { executeNewScraper } from "../../handlers/scraper.handler"
@@ -41,6 +43,19 @@ export async function scrapersRoutes(
       ...scraper,
       dataSources,
     }
+  }
+
+  async function getExecutionIterations(executionId: number) {
+    const results = await fastify.db
+      .select()
+      .from(scraperExecutionIterationsTable)
+      .where(eq(scraperExecutionIterationsTable.executionId, executionId))
+      .orderBy(asc(scraperExecutionIterationsTable.iteration))
+
+    return results.map((result) => ({
+      ...result,
+      finishedAt: result.finishedAt.getTime(),
+    }))
   }
 
   fastify.withTypeProvider<ZodTypeProvider>().get(
@@ -340,6 +355,9 @@ export async function scrapersRoutes(
     {
       schema: {
         params: paramsWithScraperIdSchema,
+        body: z.object({
+          iterator: executionIteratorSchema.nullable(),
+        }),
         response: {
           200: getApiResponseSchema(z.null()),
           400: apiErrorResponseSchema,
@@ -349,6 +367,8 @@ export async function scrapersRoutes(
     },
     async (request, reply) => {
       const { id } = request.params
+      const { iterator } = request.body
+
       const scraperResponse = await fastify.db
         .select()
         .from(scrapersTable)
@@ -373,11 +393,17 @@ export async function scrapersRoutes(
 
       const scraperData = await joinScraperWithDataSources(scraperResponse)
 
-      executeNewScraper(scraperResponse.id, scraperResponse.name, scraperData, {
-        db: fastify.db,
-        logger,
-        events,
-      }).catch(logger.error)
+      executeNewScraper(
+        scraperResponse.id,
+        scraperResponse.name,
+        scraperData,
+        iterator,
+        {
+          db: fastify.db,
+          logger,
+          events,
+        },
+      ).catch(logger.error)
 
       return reply.status(200).send({
         data: null,
@@ -428,7 +454,7 @@ export async function scrapersRoutes(
   )
 
   fastify.withTypeProvider<ZodTypeProvider>().get(
-    "/scrapers/:id/execution-infos",
+    "/scrapers/:id/executions",
     {
       schema: {
         params: paramsWithScraperIdSchema,
@@ -456,24 +482,20 @@ export async function scrapersRoutes(
       }
 
       const executionInfos = await fastify.db
-        .select({
-          executionId: scraperExecutionInfosTable.executionId,
-          iteration: scraperExecutionInfosTable.iteration,
-          executionInfo: scraperExecutionInfosTable.executionInfo,
-          createdAt: scraperExecutionInfosTable.createdAt,
-        })
-        .from(scraperExecutionInfosTable)
-        .where(eq(scraperExecutionInfosTable.scraperId, id))
-        .orderBy(desc(scraperExecutionInfosTable.createdAt))
+        .select()
+        .from(scraperExecutionsTable)
+        .where(eq(scraperExecutionsTable.scraperId, id))
+        .orderBy(desc(scraperExecutionsTable.createdAt))
         .limit(pageSize + 1)
         .offset(page * pageSize)
 
-      const data = executionInfos.slice(0, pageSize).map((info) => ({
-        executionId: info.executionId,
-        iteration: info.iteration,
-        executionInfo: info.executionInfo,
-        createdAt: info.createdAt.getTime(),
-      }))
+      const data = await Promise.all(
+        executionInfos.slice(0, pageSize).map(async (info) => ({
+          ...info,
+          createdAt: info.createdAt.getTime(),
+          iterations: await getExecutionIterations(info.id),
+        })),
+      )
 
       return reply.status(200).send({
         data,

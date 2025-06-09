@@ -39,6 +39,7 @@ type DataTableProps<TData, TValue> = {
   SubComponent?: (props: { row: Row<TData> }) => React.ReactNode
   onLoadMore?: () => void
   onRowClick?: (row: Row<TData>) => void
+  tableProps?: ComponentProps<"table">
 } & ComponentProps<"div">
 
 export function DataTable<TData, TValue>({
@@ -50,6 +51,7 @@ export function DataTable<TData, TValue>({
   SubComponent,
   onLoadMore,
   onRowClick,
+  tableProps,
   ...containerProps
 }: DataTableProps<TData, TValue>) {
   const [showBackToTop, setShowBackToTop] = useState(false)
@@ -127,10 +129,10 @@ export function DataTable<TData, TValue>({
       className={cn("relative w-full h-full", containerProps.className)}
     >
       <ScrollArea ref={containerRef} className="max-h-full grid grid-rows-1">
-        <Table ref={tableRef}>
+        <Table ref={tableRef} {...tableProps}>
           <TableHeader className="sticky top-0 z-10 bg-background">
             {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
+              <TableRow key={headerGroup.id} className="hover:bg-inherit">
                 {headerGroup.headers.map((header) => (
                   <TableHead key={header.id}>
                     {header.isPlaceholder
@@ -156,8 +158,9 @@ export function DataTable<TData, TValue>({
                       SubComponent &&
                         row.getIsExpanded() &&
                         "border-b-transparent",
-                      (onRowClick || expandable) &&
-                        "not-disabled:cursor-pointer",
+                      onRowClick || expandable
+                        ? "not-disabled:cursor-pointer"
+                        : "hover:bg-inherit",
                     )}
                   >
                     {row.getVisibleCells().map((cell) => (
@@ -171,7 +174,10 @@ export function DataTable<TData, TValue>({
                   </TableRow>
                   {SubComponent && row.getIsExpanded() && (
                     <TableRow className="cursor-default">
-                      <TableCell colSpan={row.getVisibleCells().length}>
+                      <TableCell
+                        colSpan={row.getVisibleCells().length}
+                        className="p-0"
+                      >
                         <SubComponent row={row} />
                       </TableCell>
                     </TableRow>

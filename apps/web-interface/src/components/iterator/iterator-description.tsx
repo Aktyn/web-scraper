@@ -2,17 +2,25 @@ import type { ExecutionIterator } from "@web-scraper/common"
 import { ExecutionIteratorType, whereSchemaToSql } from "@web-scraper/common"
 import type { PropsWithChildren } from "react"
 import { Code } from "@/components/common/code"
+import { cn } from "@/lib/utils"
 
 type IteratorDescriptionProps = PropsWithChildren<{
   iterator: ExecutionIterator | null
+  className?: string
 }>
 
 export function IteratorDescription({
   iterator,
   children,
+  className,
 }: IteratorDescriptionProps) {
   return (
-    <div className="w-full bg-card border p-3 rounded-xl flex flex-row items-center justify-between gap-3">
+    <div
+      className={cn(
+        "flex flex-row items-center justify-between gap-3",
+        className,
+      )}
+    >
       <Description iterator={iterator} />
       {children}
     </div>
@@ -55,7 +63,7 @@ function Description({ iterator }: { iterator: ExecutionIterator | null }) {
         return (
           <div>
             For single record of <b>{iterator.dataSourceName}</b> where{" "}
-            <pre className="inline whitespace-normal break-all">
+            <pre className="inline whitespace-normal break-words">
               <b>{iterator.identifier}</b> = <b>{iterator.range}</b>
             </pre>
           </div>

@@ -2,7 +2,7 @@ import {
   runUnsafe,
   ScraperEventType,
   SubscriptionMessageType,
-  uuid,
+  type ExecutionIterator,
   type ScraperType,
   type SimpleLogger,
 } from "@web-scraper/common"
@@ -10,8 +10,11 @@ import { Scraper } from "@web-scraper/core"
 import { type Logger } from "pino"
 import { DataBridge } from "../db/data-bridge"
 import { type DbModule } from "../db/db.module"
+import {
+  scraperExecutionsTable,
+  scraperExecutionIterationsTable,
+} from "../db/schema/scraper-executions.schema"
 import { type EventsModule } from "../events/events.module"
-import { scraperExecutionInfosTable } from "../db/schema/scraper-execution-infos.schema"
 
 type ScraperExecutorContext = {
   db: DbModule
@@ -23,6 +26,7 @@ export async function executeNewScraper(
   id: ScraperType["id"],
   name: ScraperType["name"],
   scraperData: ScraperType,
+  iterator: ExecutionIterator | null,
   context: ScraperExecutorContext,
 ) {
   const logger =
@@ -32,15 +36,7 @@ export async function executeNewScraper(
         })
       : context.logger
 
-  const dataBridge = new DataBridge(
-    context.db,
-    await DataBridge.buildDataBridgeSources(
-      context.db,
-      scraperData.dataSources,
-    ),
-  )
-
-  const scraper = new Scraper({
+  const scraper = new Scraper<{ iteration: number }>({
     id,
     name,
     logger,
@@ -87,13 +83,12 @@ export async function executeNewScraper(
       },
     })
   })
-  scraper.on("executionFinished", (executionInfo) => {
+  scraper.on("executionFinished", (executionInfo, { iteration }) => {
     context.db
-      .insert(scraperExecutionInfosTable)
+      .insert(scraperExecutionIterationsTable)
       .values({
-        executionId: uuid(),
-        iteration: 1,
-        scraperId: scraperData.id,
+        iteration,
+        executionId: executionRow.id,
         executionInfo: executionInfo.get(),
       })
       .execute()
@@ -112,25 +107,50 @@ export async function executeNewScraper(
       )
   })
 
-  try {
-    await scraper.execute(scraperData.instructions, dataBridge, {
-      leavePageOpen: false,
+  const executionRow = await context.db
+    .insert(scraperExecutionsTable)
+    .values({
+      scraperId: scraperData.id,
+      iterator,
     })
+    .returning()
+    .get()
 
-    logger.info("Scraper execution finished")
-  } catch (error) {
-    logger.error("Error executing scraper:", error)
+  const dataBridge = new DataBridge(
+    context.db,
+    iterator,
+    await DataBridge.buildDataBridgeSources(
+      context.db,
+      scraperData.dataSources,
+    ),
+  )
 
-    context.events.emit("broadcast", {
-      type: SubscriptionMessageType.ScraperEvent,
-      scraperId: scraper.options.id,
-      event: {
-        type: ScraperEventType.ExecutionError,
-        error: error instanceof Error ? error.message : String(error),
-        executionInfo: runUnsafe(() => scraper.executionInfo),
-      },
-    })
-  }
+  do {
+    try {
+      await scraper.execute(scraperData.instructions, dataBridge, {
+        leavePageOpen: false,
+        metadata: {
+          iteration: dataBridge.iteration,
+        },
+      })
+
+      logger.info("Scraper execution finished")
+    } catch (error) {
+      logger.error("Error executing scraper:", error)
+
+      context.events.emit("broadcast", {
+        type: SubscriptionMessageType.ScraperEvent,
+        scraperId: scraper.options.id,
+        event: {
+          type: ScraperEventType.ExecutionError,
+          error: error instanceof Error ? error.message : String(error),
+          executionInfo: runUnsafe(() => scraper.executionInfo),
+        },
+      })
+    }
+
+    await dataBridge.nextIteration()
+  } while (!(await dataBridge.isLastIteration()))
 
   if (!scraper.destroyed) {
     try {

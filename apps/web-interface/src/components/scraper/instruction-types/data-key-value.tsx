@@ -24,7 +24,7 @@ export function DataKeyValue({ dataKey, className }: DataKeyValueProps) {
   return (
     <pre
       className={cn(
-        "break-all whitespace-normal",
+        "break-words whitespace-normal",
         !isValid && "text-destructive",
         className,
       )}

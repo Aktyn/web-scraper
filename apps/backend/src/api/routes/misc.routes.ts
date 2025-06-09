@@ -14,13 +14,13 @@ export async function miscRoutes(
   fastify: FastifyInstance,
   { events }: ApiModuleContext,
 ) {
-  const subscribtions = new Map<
+  const subscriptions = new Map<
     string,
     (message: SubscriptionMessage) => void
   >()
 
   events.on("broadcast", (message) => {
-    for (const callback of subscribtions.values()) {
+    for (const callback of subscriptions.values()) {
       callback(message)
     }
   })
@@ -28,7 +28,7 @@ export async function miscRoutes(
   fastify.get("/subscribe", function (req, res) {
     const sessionId = uuid()
 
-    subscribtions.set(sessionId, (message) => {
+    subscriptions.set(sessionId, (message) => {
       res.sse({
         id: uuid(),
         event: "subscription-message",
@@ -46,7 +46,7 @@ export async function miscRoutes(
     })
 
     req.socket.on("close", () => {
-      subscribtions.delete(sessionId)
+      subscriptions.delete(sessionId)
     })
   })
 

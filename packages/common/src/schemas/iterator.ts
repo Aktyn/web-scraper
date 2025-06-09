@@ -30,8 +30,7 @@ export const executionIteratorSchema = z.discriminatedUnion("type", [
       .string()
       .describe(
         "It is used to determine the target on which the range will be based. For a database table, for example, this would be the name of the primary key column.",
-      )
-      .optional(),
+      ),
     range: z.union([executionRangeSchema, z.number()]),
   }),
 

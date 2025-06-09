@@ -1,35 +1,37 @@
 import {
-  type ScraperElementSelectors,
   ElementSelectorType,
+  type ScraperElementSelectors,
   type SerializableRegex,
 } from "@web-scraper/common"
-import type { ElementHandle, Page } from "rebrowser-puppeteer"
+import type { ElementHandle } from "rebrowser-puppeteer"
+import type { ScraperExecutionContext } from "./helpers"
+import { replaceSpecialStringsInSelectors } from "./data-helper"
 
 export async function getElementHandle(
-  page: Page,
+  context: ScraperExecutionContext,
   selector: ScraperElementSelectors,
 ): Promise<ElementHandle<Element> | null>
 export async function getElementHandle(
-  page: Page,
+  context: ScraperExecutionContext,
   selector: ScraperElementSelectors,
   required: false,
 ): Promise<ElementHandle<Element> | null>
 export async function getElementHandle(
-  page: Page,
+  context: ScraperExecutionContext,
   selector: ScraperElementSelectors,
   required: true,
 ): Promise<ElementHandle<Element>>
 
 /** Expects a single element to be selected. */
 export async function getElementHandle(
-  page: Page,
+  context: ScraperExecutionContext,
   selectors: ScraperElementSelectors,
   required = false,
 ) {
   // let elementHandle: ElementHandle<Element> | null = null
 
   const elementHandle = (
-    await page.evaluateHandle(
+    await context.page.evaluateHandle(
       (
         selectorsStringified: string,
         elementSelectorType: typeof ElementSelectorType,
@@ -142,7 +144,9 @@ export async function getElementHandle(
         }
         return elements.at(0) ?? null
       },
-      JSON.stringify(selectors),
+      JSON.stringify(
+        await replaceSpecialStringsInSelectors(selectors, context.dataBridge),
+      ),
       ElementSelectorType,
     )
   )?.asElement() as ElementHandle<Element> | null

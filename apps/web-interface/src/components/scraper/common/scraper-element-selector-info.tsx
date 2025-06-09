@@ -11,14 +11,14 @@ export function ScraperElementSelectorInfo({
   switch (selector.type) {
     case ElementSelectorType.Query:
       return (
-        <pre className="text-sm break-all whitespace-normal">
+        <pre className="text-sm break-words whitespace-normal">
           {selector.query}
         </pre>
       )
 
     case ElementSelectorType.TextContent:
       return (
-        <pre className="text-sm break-all whitespace-normal">
+        <pre className="text-sm break-words whitespace-normal">
           {typeof selector.text === "string"
             ? selector.text
             : `/${selector.text.source}/${selector.text.flags}`}
@@ -27,7 +27,7 @@ export function ScraperElementSelectorInfo({
 
     case ElementSelectorType.TagName:
       return (
-        <pre className="text-sm break-all whitespace-normal">
+        <pre className="text-sm break-words whitespace-normal">
           {selector.tagName}
         </pre>
       )
@@ -42,7 +42,7 @@ export function ScraperElementSelectorInfo({
             >
               <span>{key}</span>
               <span>=</span>
-              <pre className="break-all whitespace-normal text-foreground font-semibold">
+              <pre className="break-words whitespace-normal text-foreground font-semibold">
                 {typeof value === "string"
                   ? value
                   : `/${value.source}/${value.flags}`}

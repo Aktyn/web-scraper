@@ -13,6 +13,7 @@ import { ScraperInstructionsTree } from "../scraper-instructions-tree"
 import { ScraperSelector } from "./scraper-selector"
 import { ScraperValue } from "./scraper-value"
 import { LabeledValue } from "@/components/common/labeled-value"
+import { countInstructions } from "../common/helpers"
 
 type ConditionInstructionProps = {
   condition: ScraperCondition
@@ -51,7 +52,8 @@ export function ConditionInstruction({
           <AccordionItem value="then">
             <AccordionTrigger tabIndex={-1}>
               <div className="flex items-center gap-2 text-sm font-medium text-primary">
-                THEN ({pluralize(thenInstructions.length, "instruction")})
+                THEN (
+                {pluralize(countInstructions(thenInstructions), "instruction")})
               </div>
             </AccordionTrigger>
             <AccordionContent
@@ -69,7 +71,8 @@ export function ConditionInstruction({
           <AccordionItem value="else">
             <AccordionTrigger tabIndex={-1}>
               <div className="flex items-center gap-2 text-sm font-medium text-secondary">
-                ELSE ({pluralize(elseInstructions.length, "instruction")})
+                ELSE (
+                {pluralize(countInstructions(elseInstructions), "instruction")})
               </div>
             </AccordionTrigger>
             <AccordionContent
@@ -121,7 +124,7 @@ function ConditionDetails({ condition }: { condition: ScraperCondition }) {
             <span className="text-sm text-muted-foreground">
               Expected text:
             </span>
-            <span className="font-mono text-sm bg-muted px-2 py-1 rounded break-all">
+            <span className="font-mono text-sm bg-muted px-2 py-1 rounded break-words">
               {textValue}
             </span>
           </div>
