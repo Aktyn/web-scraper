@@ -137,7 +137,9 @@ export async function executeNewScraper(
 
       logger.info("Scraper execution finished")
     } catch (error) {
-      logger.error("Error executing scraper:", error)
+      logger.error(
+        `Error executing scraper: ${error instanceof Error ? error.message : String(error)}`,
+      )
 
       context.events.emit("broadcast", {
         type: SubscriptionMessageType.ScraperEvent,
@@ -149,9 +151,7 @@ export async function executeNewScraper(
         },
       })
     }
-
-    await dataBridge.nextIteration()
-  } while (!(await dataBridge.isLastIteration()))
+  } while (await dataBridge.nextIteration())
 
   if (!scraper.destroyed) {
     try {

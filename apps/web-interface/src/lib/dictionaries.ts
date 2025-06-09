@@ -22,6 +22,7 @@ export const instructionTypeLabels: {
 
 export const scraperValueTypeLabels: { [key in ScraperValueType]: string } = {
   [ScraperValueType.Literal]: "Literal value",
+  [ScraperValueType.Null]: "Null",
   [ScraperValueType.CurrentTimestamp]: "Current timestamp",
   [ScraperValueType.ExternalData]: "External data",
   [ScraperValueType.ElementTextContent]: "Element text content",
@@ -43,6 +44,7 @@ export const pageActionTypeLabels: { [key in PageActionType]: string } = {
   [PageActionType.Wait]: "Wait",
   [PageActionType.Click]: "Click",
   [PageActionType.Type]: "Type",
+  [PageActionType.ScrollToBottom]: "Scroll to bottom",
 }
 
 export const selectorTypeLabels: { [key in ElementSelectorType]: string } = {

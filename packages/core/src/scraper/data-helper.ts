@@ -29,9 +29,12 @@ export async function getScraperValue(
   switch (value.type) {
     case ScraperValueType.Literal:
       return await replaceSpecialStrings(value.value, context.dataBridge)
-    case ScraperValueType.CurrentTimestamp: {
+
+    case ScraperValueType.Null:
+      return null
+
+    case ScraperValueType.CurrentTimestamp:
       return Date.now().toString()
-    }
 
     case ScraperValueType.ExternalData: {
       const returnedValue = await context.dataBridge.get(value.dataKey)

@@ -129,9 +129,10 @@ export class DataBridge<
 
   async nextIteration() {
     if (await this.isLastIteration()) {
-      return
+      return false
     }
     this.currentIteration++
+    return true
   }
 
   private get cursor(): Cursor<SourcesType> | null {
@@ -243,6 +244,7 @@ export class DataBridge<
           ? sql` OFFSET ${cursor.offset}`
           : sql``
 
+      //NOTE: SQLITE_ENABLE_UPDATE_DELETE_LIMIT pragma must be enabled for sqlite (it should be enabled by default)
       const query = sql`UPDATE ${sql.identifier(source.name)} SET ${setClauses} WHERE ${sql.identifier("id")} IN (SELECT ${sql.identifier("id")} FROM ${sql.identifier(source.name)}${whereClause} LIMIT 1${offsetClause})`
 
       const response = await this.db.run(query).execute()
@@ -288,6 +290,7 @@ export class DataBridge<
     const offsetClause =
       typeof cursor.offset === "number" ? sql` OFFSET ${cursor.offset}` : sql``
 
+    //NOTE: SQLITE_ENABLE_UPDATE_DELETE_LIMIT pragma must be enabled for sqlite (it should be enabled by default)
     const query = sql`DELETE FROM ${sql.identifier(source.name)} WHERE ${sql.identifier("id")} IN (SELECT ${sql.identifier("id")} FROM ${sql.identifier(source.name)}${whereClause} LIMIT 1${offsetClause})`
 
     await this.db.run(query).execute()

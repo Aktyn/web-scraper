@@ -17,6 +17,8 @@ export const scraperDataKeySchema = z.custom<ScraperDataKey>(
 
 export enum ScraperValueType {
   Literal = "literal",
+
+  Null = "null",
   CurrentTimestamp = "currentTimestamp",
 
   ExternalData = "externalData",
@@ -31,6 +33,9 @@ export const scraperValueSchema = z.discriminatedUnion("type", [
     value: z.string(),
   }),
 
+  z.object({
+    type: z.literal(ScraperValueType.Null),
+  }),
   z.object({
     type: z.literal(ScraperValueType.CurrentTimestamp),
   }),

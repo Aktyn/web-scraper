@@ -31,7 +31,7 @@ export function PageActionForm({ control, fieldName }: PageActionFormProps) {
           name={`${fieldName}.url`}
           label="URL"
           placeholder="https://example.com"
-          description="The URL to navigate to."
+          description="The URL to navigate to"
         />
       )
 
@@ -43,7 +43,7 @@ export function PageActionForm({ control, fieldName }: PageActionFormProps) {
           label="Duration (ms)"
           type="number"
           placeholder="1000"
-          description="Wait duration in milliseconds."
+          description="Wait duration in milliseconds"
         />
       )
 
@@ -87,7 +87,7 @@ export function PageActionForm({ control, fieldName }: PageActionFormProps) {
                 <div className="space-y-0.5">
                   <FormLabel className="text-base">Clear Before Type</FormLabel>
                   <FormDescription>
-                    Whether to clear the input field before typing.
+                    Whether to clear the input field before typing
                   </FormDescription>
                 </div>
                 <FormControl>
@@ -102,5 +102,8 @@ export function PageActionForm({ control, fieldName }: PageActionFormProps) {
           />
         </div>
       )
+
+    case PageActionType.ScrollToBottom:
+      return null
   }
 }

@@ -342,6 +342,12 @@ const scrapCryptoPricesInstructions: ScraperInstructions = [
     },
   },
   {
+    type: ScraperInstructionType.PageAction,
+    action: {
+      type: PageActionType.ScrollToBottom,
+    },
+  },
+  {
     type: ScraperInstructionType.Condition,
     if: {
       type: ScraperConditionType.IsVisible,
@@ -392,9 +398,18 @@ const scrapCryptoPricesInstructions: ScraperInstructions = [
     ],
     else: [
       {
-        type: ScraperInstructionType.SaveData,
-        dataKey: "crypto.Price",
-        value: { type: ScraperValueType.Literal, value: "-1" },
+        type: ScraperInstructionType.SaveDataBatch,
+        dataSourceName: "crypto",
+        items: [
+          {
+            columnName: "Price",
+            value: { type: ScraperValueType.Null },
+          },
+          {
+            columnName: "Last update",
+            value: { type: ScraperValueType.CurrentTimestamp },
+          },
+        ],
       },
     ],
   },

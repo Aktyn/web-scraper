@@ -87,7 +87,7 @@ export function ScraperExecutionInfoItem({
         <ContainerLayout
           {...divProps}
           className={cn(
-            "border-success/50 min-w-48 max-w-64",
+            "border-success/50 min-w-56 max-w-64",
             divProps.className,
           )}
         >

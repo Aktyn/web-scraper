@@ -45,6 +45,7 @@ function ValueFormByType({ control, fieldName }: ScraperValueFormProps) {
   const valueType = useWatch({ control, name: `${fieldName}.type` })
 
   switch (valueType) {
+    case ScraperValueType.Null:
     case ScraperValueType.CurrentTimestamp:
       return null
 

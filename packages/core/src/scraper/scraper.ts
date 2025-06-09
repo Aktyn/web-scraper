@@ -29,6 +29,7 @@ import {
   replaceSpecialStrings,
 } from "./data-helper"
 import { type ScraperExecutionContext } from "./helpers"
+import { scrollToBottom } from "./page-actions"
 import { ScraperExecutionInfo } from "./scraper-execution-info"
 import { getElementHandle } from "./selectors"
 
@@ -80,6 +81,8 @@ export class Scraper<
   public static getInstance(identifier: `${number}-${string}`) {
     return Scraper.instances.get(identifier) ?? null
   }
+
+  private static emptyPageUrl = "about:blank"
 
   private readonly logger: SimpleLogger
 
@@ -268,7 +271,7 @@ export class Scraper<
     const firstPage = (await this.browser.pages()).at(0)
 
     const page =
-      firstPage && firstPage.url() === "about:blank"
+      firstPage && firstPage.url() === Scraper.emptyPageUrl
         ? firstPage
         : await this.browser.newPage()
     await page.evaluateOnNewDocument((lang) => {
@@ -382,7 +385,18 @@ export class Scraper<
     this.state = ScraperState.Idle
 
     if (!options?.leavePageOpen) {
-      await runUnsafe(async () => await page.close(), this.logger.error)
+      await runUnsafe(async () => {
+        if (!this.browser) {
+          return
+        }
+
+        const pages = await this.browser.pages()
+        if (pages.length > 1) {
+          await page.close()
+        } else {
+          await page.goto(Scraper.emptyPageUrl)
+        }
+      }, this.logger.error)
     }
 
     this.activeExecutionInfo = null
@@ -437,6 +451,15 @@ export class Scraper<
             action: instruction.action,
           })
           await this.performPageAction(context, instruction.action)
+
+          try {
+            await context.page.waitForNetworkIdle({
+              timeout: 30_000,
+              signal: this.abortController.signal,
+            })
+          } catch (error) {
+            this.logger.warn({ msg: "Network idle timeout", error })
+          }
           break
 
         case ScraperInstructionType.Condition:
@@ -588,15 +611,6 @@ export class Scraper<
           break
       }
 
-      try {
-        await context.page.waitForNetworkIdle({
-          timeout: 60_000,
-          signal: this.abortController.signal,
-        })
-      } catch (error) {
-        this.logger.warn({ msg: "Network idle timeout", error })
-      }
-
       lastInstructionInfo.duration = performance.now() - instructionStartTime
       if (lastInstructionInfo.url !== context.page.url()) {
         lastInstructionInfo.url = {
@@ -665,6 +679,9 @@ export class Scraper<
         }
         break
       }
+      case PageActionType.ScrollToBottom:
+        await scrollToBottom(context)
+        break
     }
   }
 

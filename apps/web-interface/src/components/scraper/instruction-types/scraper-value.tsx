@@ -25,6 +25,7 @@ export function ScraperValue({ value }: ScraperValueProps) {
 
 const iconsMap: { [key in ScraperValueType]: IconName } = {
   [ScraperValueType.Literal]: "code",
+  [ScraperValueType.Null]: "circle-slash",
   [ScraperValueType.CurrentTimestamp]: "clock",
   [ScraperValueType.ExternalData]: "database",
   [ScraperValueType.ElementTextContent]: "file-text",
@@ -40,6 +41,7 @@ function ValueDetails({ value }: { value: ScraperValue }) {
         </LabeledValue>
       )
 
+    case ScraperValueType.Null:
     case ScraperValueType.CurrentTimestamp:
       return null
 

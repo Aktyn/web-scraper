@@ -1,17 +1,17 @@
 import fastifyCors from "@fastify/cors"
+import type { SimpleLogger } from "@web-scraper/common"
 import Fastify, { type FastifyServerOptions } from "fastify"
 import fastifyPlugin from "fastify-plugin"
+import { FastifySSEPlugin } from "fastify-sse-v2"
 import {
   serializerCompiler,
   validatorCompiler,
 } from "fastify-type-provider-zod"
-import type { DbModule } from "../db/db.module"
-import * as routes from "./routes"
-import { FastifySSEPlugin } from "fastify-sse-v2"
-import type { Config } from "../config/config"
-import type { EventsModule } from "../events/events.module"
 import type { Logger } from "pino"
-import type { SimpleLogger } from "@web-scraper/common"
+import type { Config } from "../config/config"
+import type { DbModule } from "../db/db.module"
+import type { EventsModule } from "../events/events.module"
+import * as routes from "./routes"
 
 declare module "fastify" {
   interface FastifyInstance {
@@ -31,7 +31,7 @@ export async function getApiModule(
   fastifyOptions: FastifyServerOptions = {},
 ) {
   const fastify = Fastify({
-    logger: true,
+    loggerInstance: "silent" in context.logger ? context.logger : undefined,
     bodyLimit: 1024 * 1024 * 128, // 128MB
     ...fastifyOptions,
   })

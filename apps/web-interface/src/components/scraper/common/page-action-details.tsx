@@ -53,5 +53,8 @@ export function PageActionDetails({ action }: { action: PageAction }) {
           )}
         </div>
       )
+
+    case PageActionType.ScrollToBottom:
+      return null
   }
 }

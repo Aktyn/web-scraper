@@ -30,6 +30,12 @@ describe("scraperValueSchema", () => {
     expect(result.success).toBe(true)
   })
 
+  it("should parse null value", () => {
+    const value = { type: ScraperValueType.Null }
+    const result = scraperValueSchema.safeParse(value)
+    expect(result.success).toBe(true)
+  })
+
   it("should parse current timestamp value", () => {
     const value = { type: ScraperValueType.CurrentTimestamp }
     const result = scraperValueSchema.safeParse(value)

@@ -25,10 +25,10 @@ export default function App() {
               visibleToasts={16}
               expand
               richColors
-              style={{}}
+              style={{ zIndex: 99 }}
               swipeDirections={["top", "bottom"]}
               toastOptions={{
-                className: "backdrop-blur-sm shadow-md! z-200!",
+                className: "backdrop-blur-sm shadow-md!",
                 classNames: {
                   title: "font-semibold! text-sm!",
                   description: "font-normal text-sm",
