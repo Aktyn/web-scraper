@@ -1,0 +1,1 @@
+ALTER TABLE `preferences` ADD `description` text;

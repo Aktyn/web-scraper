@@ -1,17 +1,23 @@
 import "dotenv/config"
 
-import { getConfig } from "../../config/config"
-import { getDbModule } from "../db.module"
+import { assert, defaultPreferences } from "@web-scraper/common"
+import { type DbModule, getDbModule } from "../db.module"
 import { preferencesTable } from "../schema"
+import { seedScraperExecutions } from "./seed-scraper-executions"
 import { seedScrapersStores } from "./seed-scrapers"
 import { seedUserDataStores } from "./seed-user-data-stores"
-import { seedScraperExecutions } from "./seed-scraper-executions"
 
-export async function seed(db = getDbModule(getConfig())) {
-  await db.insert(preferencesTable).values({
-    key: "foo",
-    value: "bar",
-  })
+export async function seed(db?: DbModule) {
+  const dbUrl = process.env.DB_FILE_NAME
+  assert(!!dbUrl, "DB_FILE_NAME environment variable is not set")
+  db ??= getDbModule(dbUrl)
+
+  await db.insert(preferencesTable).values(
+    Object.entries(defaultPreferences).map(([key, { value }]) => ({
+      key: key as keyof typeof defaultPreferences,
+      value: value,
+    })),
+  )
 
   await seedUserDataStores(db)
   await seedScrapersStores(db)

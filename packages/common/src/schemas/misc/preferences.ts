@@ -1,10 +1,15 @@
 import { z } from "zod"
+import { defaultPreferences } from "../../config"
 
-export const preferencesSchema = z.array(
+type PreferenceKey = keyof typeof defaultPreferences
+
+export const userPreferencesSchema = z.array(
   z.object({
-    key: z.string(),
-    value: z.string(),
+    key: z.enum(
+      Object.keys(defaultPreferences) as [PreferenceKey, ...PreferenceKey[]],
+    ),
+    value: z.custom<Required<unknown>>((x) => x !== undefined),
   }),
 )
 
-export type Preferences = z.infer<typeof preferencesSchema>
+export type UserPreferences = z.infer<typeof userPreferencesSchema>

@@ -6,6 +6,7 @@ import { getConfig } from "./config/config"
 import { getDbModule } from "./db/db.module"
 import { getEventsModule } from "./events/events.module"
 import { getLogger } from "./logger"
+import { assert } from "@web-scraper/common"
 
 async function main() {
   const logger = getLogger()
@@ -14,9 +15,12 @@ async function main() {
 
   const events = getEventsModule()
 
-  const config = getConfig()
+  const dbUrl = process.env.DB_FILE_NAME
+  assert(!!dbUrl, "DB_FILE_NAME environment variable is not set")
 
-  const db = getDbModule(config)
+  const db = getDbModule(dbUrl)
+
+  const config = await getConfig(db)
 
   const api = await getApiModule({ db, config, logger, events })
 

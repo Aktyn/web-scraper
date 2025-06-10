@@ -4,12 +4,12 @@ import { Toaster } from "./components/shadcn/sonner"
 import { TooltipProvider } from "./components/shadcn/tooltip"
 import { Dashboard } from "./components/view/dashboard"
 import { DataStores } from "./components/view/data-stores"
-import { Preferences } from "./components/view/preferences"
 import { Scrapers } from "./components/view/scrapers"
 import { cn } from "./lib/utils"
 import { useView, ViewProvider } from "./providers/view.provider"
 import { PinnedDataStoresProvider } from "./providers/pinned-data-stores.provider"
 import { ServerEventsProvider } from "./providers/server-events.provider"
+import { Preferences } from "./components/view/preferences"
 
 export default function App() {
   return (

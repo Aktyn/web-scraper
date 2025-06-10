@@ -18,7 +18,7 @@ describe("Misc Routes", () => {
 
       expect(response.statusCode).toBe(200)
       expect(JSON.parse(response.payload)).toEqual({
-        data: [{ key: "foo", value: "bar" }],
+        data: [{ key: "headless", value: true }],
       })
     })
 
@@ -47,6 +47,45 @@ describe("Misc Routes", () => {
       })
 
       expect(response.statusCode).toBe(500)
+    })
+  })
+
+  describe("PUT /preferences/:key", () => {
+    it("should return 200 and the updated preference", async () => {
+      const response = await modules.api.inject({
+        method: "PUT",
+        url: "/preferences/headless",
+        payload: {
+          value: false,
+        },
+      })
+
+      expect(response.statusCode).toBe(200)
+      expect(JSON.parse(response.payload)).toEqual({
+        data: { key: "headless", value: false },
+      })
+    })
+
+    it("should return 400 if given key is not a valid preference key", async () => {
+      const response = await modules.api.inject({
+        method: "PUT",
+        url: "/preferences/non-existent-key",
+        payload: {
+          value: "some-value",
+        },
+      })
+
+      expect(response.statusCode).toBe(400)
+    })
+
+    it("should return 400 if the payload is invalid", async () => {
+      const response = await modules.api.inject({
+        method: "PUT",
+        url: "/preferences/headless",
+        payload: null as never,
+      })
+
+      expect(response.statusCode).toBe(400)
     })
   })
 })

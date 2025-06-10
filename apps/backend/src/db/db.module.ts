@@ -1,9 +1,8 @@
 import { drizzle } from "drizzle-orm/libsql"
-import type { Config } from "../config/config"
 import * as schema from "./schema"
 
-export function getDbModule(config: Config) {
-  const db = drizzle(config.dbUrl, { schema })
+export function getDbModule(dbUrl: string) {
+  const db = drizzle(dbUrl, { schema })
   return db
 }
 

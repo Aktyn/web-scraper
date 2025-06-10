@@ -7,19 +7,21 @@ import {
   type SimpleLogger,
 } from "@web-scraper/common"
 import { Scraper } from "@web-scraper/core"
-import { type Logger } from "pino"
+import type { Logger } from "pino"
+import type { Config } from "../config/config"
 import { DataBridge } from "../db/data-bridge"
-import { type DbModule } from "../db/db.module"
+import type { DbModule } from "../db/db.module"
 import {
-  scraperExecutionsTable,
   scraperExecutionIterationsTable,
+  scraperExecutionsTable,
 } from "../db/schema/scraper-executions.schema"
-import { type EventsModule } from "../events/events.module"
+import type { EventsModule } from "../events/events.module"
 
 type ScraperExecutorContext = {
   db: DbModule
   logger: Logger | SimpleLogger
   events: EventsModule
+  config: Config
 }
 
 export async function executeNewScraper(
@@ -41,6 +43,7 @@ export async function executeNewScraper(
     name,
     logger,
     userDataDir: scraperData.userDataDirectory ?? undefined,
+    headless: context.config.preferences.headless,
   })
 
   scraper.on("stateChange", (state, previousState) => {

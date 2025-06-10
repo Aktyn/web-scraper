@@ -1,6 +1,6 @@
 import type {
   ApiResponse,
-  Preferences,
+  UserPreferences,
   ApiPaginationQuery,
   ApiPaginatedResponse,
   UserDataStore,
@@ -133,7 +133,13 @@ export const api = {
 export type Routes = {
   preferences: {
     get: {
-      response: ApiResponse<Preferences>
+      response: ApiResponse<UserPreferences>
+    }
+  }
+  "preferences/:key": {
+    put: {
+      body: Pick<UserPreferences[number], "value">
+      response: ApiResponse<UserPreferences[number]>
     }
   }
 

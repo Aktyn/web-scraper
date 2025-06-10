@@ -1,19 +1,26 @@
-import type { SimpleLogger } from "@web-scraper/common"
+import { type SimpleLogger, defaultPreferences } from "@web-scraper/common"
 import { migrate } from "drizzle-orm/libsql/migrator"
+import { vi } from "vitest"
 import { getApiModule } from "../api/api.module"
 import type { Config } from "../config/config"
 import { type DbModule, getDbModule } from "../db/db.module"
 import { seed } from "../db/seed/seed"
-import { vi } from "vitest"
 import { getEventsModule } from "../events/events.module"
 
 const mockConfig: Config = {
-  dbUrl: ":memory:",
   apiPort: 3001,
+  preferences: Object.fromEntries(
+    Object.entries(defaultPreferences).map(([key, { value }]) => [key, value]),
+  ) as {
+    [key in keyof typeof defaultPreferences]: (typeof defaultPreferences)[key]["value"]
+  },
+  updatePreferences: (key, value) => {
+    mockConfig.preferences[key] = value
+  },
 }
 
 export async function setup() {
-  const db = getDbModule(mockConfig)
+  const db = getDbModule(":memory:")
 
   // Transactions are not supported in memory database, so we need to mock them
   vi.spyOn(db, "transaction").mockImplementation(

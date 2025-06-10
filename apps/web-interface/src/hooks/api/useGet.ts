@@ -4,8 +4,9 @@ import {
   type Routes,
   type RoutesWithMethod,
 } from "@/lib/api"
-import { useEffect, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import { toast } from "sonner"
+import { useMounted } from "../useMounted"
 
 export function useGet<RoutePath extends RoutesWithMethod<"get">>(
   route: `/${RoutePath}` | null,
@@ -16,13 +17,14 @@ export function useGet<RoutePath extends RoutesWithMethod<"get">>(
 ) {
   type ResponseType = Routes[RoutePath]["get"]["response"]
 
+  const mounted = useMounted()
+
   const [data, setData] = useState<ResponseType | null>(null)
   const [isLoading, setIsLoading] = useState(true)
 
   const stringifiedParams = params && JSON.stringify(params)
-  useEffect(() => {
-    let mounted = true
 
+  const fetch = useCallback(() => {
     if (!route) {
       setIsLoading(false)
       return
@@ -44,15 +46,15 @@ export function useGet<RoutePath extends RoutesWithMethod<"get">>(
         })
       })
       .finally(() => {
-        if (mounted) {
+        if (mounted.current) {
           setIsLoading(false)
         }
       })
+  }, [mounted, queryParams, route, stringifiedParams])
 
-    return () => {
-      mounted = false
-    }
-  }, [route, stringifiedParams, queryParams])
+  useEffect(() => {
+    fetch()
+  }, [fetch])
 
-  return { data, isLoading }
+  return { data, isLoading, refetch: fetch }
 }

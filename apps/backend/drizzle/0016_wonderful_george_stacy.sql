@@ -1,0 +1,1 @@
+ALTER TABLE `preferences` DROP COLUMN `description`;

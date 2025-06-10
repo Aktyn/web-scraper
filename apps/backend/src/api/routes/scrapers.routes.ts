@@ -29,7 +29,7 @@ import { type ApiModuleContext } from "../api.module"
 
 export async function scrapersRoutes(
   fastify: FastifyInstance,
-  { logger, events }: ApiModuleContext,
+  { logger, events, config }: ApiModuleContext,
 ) {
   async function joinScraperWithDataSources(
     scraper: Omit<ScraperType, "dataSources">,
@@ -402,6 +402,7 @@ export async function scrapersRoutes(
           db: fastify.db,
           logger,
           events,
+          config,
         },
       ).catch(logger.error)
 
