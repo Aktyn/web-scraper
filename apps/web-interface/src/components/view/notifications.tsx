@@ -1,15 +1,18 @@
 import { useInfiniteGet } from "@/hooks/api/useInfiniteGet"
 import { type Notification, NotificationType } from "@web-scraper/common"
-import { useMemo } from "react"
+import type { ComponentProps } from "react"
+import { useMemo, useState } from "react"
 import { DataTable } from "../common/table/data-table"
 import type { ColumnDef } from "@tanstack/react-table"
 import { RefreshButton } from "../common/table/refresh-button"
 import { Button } from "../shadcn/button"
-import { Check, CheckCheck, Trash } from "lucide-react"
+import { Check, CheckCheck, Loader2, Trash } from "lucide-react"
 import { usePatch } from "@/hooks/api/usePatch"
 import { useDelete } from "@/hooks/api/useDelete"
 import { Tooltip, TooltipContent, TooltipTrigger } from "../shadcn/tooltip"
 import { cn, formatDateTime } from "@/lib/utils"
+import { ScraperPanelDialog } from "../scraper/scraper-panel-dialog"
+import { useGet } from "@/hooks/api/useGet"
 
 export function Notifications() {
   const {
@@ -21,11 +24,9 @@ export function Notifications() {
     refresh,
   } = useInfiniteGet("/notifications")
 
-  const { patchItem: markAsRead } = usePatch("/notifications/:id/read")
   const { patchItem: markAllAsRead, isPatching: isMarkingAllAsRead } = usePatch(
     "/notifications/read-all",
   )
-  const { deleteItem } = useDelete("/notifications/:id")
 
   const hasUnread = useMemo(
     () => notifications.some((n) => !n.read),
@@ -43,11 +44,13 @@ export function Notifications() {
           switch (notification.type) {
             case NotificationType.ScraperFinished:
               content = (
-                // TODO: open scraper panel on click
-                <span>
+                <ScraperPanelTrigger
+                  scraperId={notification.scraperId}
+                  className="whitespace-normal"
+                >
                   Scraper <b>{notification.scraperName}</b> has finished after{" "}
                   {notification.iterations} iterations.
-                </span>
+                </ScraperPanelTrigger>
               )
               break
             default:
@@ -76,47 +79,15 @@ export function Notifications() {
       {
         id: "actions",
         cell: ({ row }) => (
-          <div className="flex items-center gap-1 max-w-32">
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  disabled={row.original.read}
-                  onClick={(event) => {
-                    event.stopPropagation()
-                    void markAsRead({}, { id: row.original.id }).then(() =>
-                      refresh(),
-                    )
-                  }}
-                >
-                  <Check />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>Mark as read</TooltipContent>
-            </Tooltip>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={(event) => {
-                    event.stopPropagation()
-                    void deleteItem({ id: row.original.id }).then(() =>
-                      refresh(),
-                    )
-                  }}
-                >
-                  <Trash />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>Delete notification</TooltipContent>
-            </Tooltip>
-          </div>
+          <NotificationActions
+            notification={row.original}
+            onMarkAsRead={refresh}
+            onDelete={refresh}
+          />
         ),
       },
     ],
-    [markAsRead, deleteItem, refresh],
+    [refresh],
   )
 
   return (
@@ -154,6 +125,112 @@ export function Notifications() {
         hasMore={hasMore}
         onLoadMore={loadMore}
       />
+    </div>
+  )
+}
+
+type ScraperPanelTriggerProps = {
+  scraperId: number
+} & ComponentProps<"div">
+
+function ScraperPanelTrigger({
+  scraperId,
+  children,
+  ...props
+}: ScraperPanelTriggerProps) {
+  const { data: scraperToView, isLoading: isLoadingScraperToView } =
+    useGet<"scrapers/:id">(scraperId ? "/scrapers/:id" : null, {
+      id: scraperId,
+    })
+
+  const [scraperViewOpen, setScraperViewOpen] = useState(false)
+
+  return (
+    <>
+      <div
+        {...props}
+        className={cn("hover:text-primary cursor-pointer", props.className)}
+        onClick={(event) => {
+          if (!isLoadingScraperToView) {
+            setScraperViewOpen(true)
+          }
+          props.onClick?.(event)
+        }}
+      >
+        {isLoadingScraperToView && <Loader2 className="size-4 animate-spin" />}
+        {children}
+      </div>
+      {scraperToView && (
+        <ScraperPanelDialog
+          scraper={scraperToView.data}
+          open={scraperViewOpen && scraperToView.data.id === scraperId}
+          onOpenChange={setScraperViewOpen}
+        />
+      )}
+    </>
+  )
+}
+
+type NotificationActionsProps = {
+  notification: Notification
+  onMarkAsRead: () => void
+  onDelete: () => void
+}
+
+function NotificationActions({
+  notification,
+  onMarkAsRead,
+  onDelete,
+}: NotificationActionsProps) {
+  const { patchItem: markAsRead, isPatching: isMarkingAsRead } = usePatch(
+    "/notifications/:id/read",
+  )
+  const { deleteItem, isDeleting } = useDelete("/notifications/:id")
+
+  return (
+    <div className="flex items-center gap-1 max-w-32">
+      <Tooltip disableHoverableContent>
+        <TooltipTrigger asChild>
+          <Button
+            variant="ghost"
+            size="icon"
+            disabled={notification.read || isMarkingAsRead}
+            onClick={(event) => {
+              event.stopPropagation()
+              void markAsRead({}, { id: notification.id }).then(() =>
+                onMarkAsRead(),
+              )
+            }}
+          >
+            {isMarkingAsRead ? (
+              <Loader2 className="size-4 animate-spin" />
+            ) : (
+              <Check />
+            )}
+          </Button>
+        </TooltipTrigger>
+        <TooltipContent>Mark as read</TooltipContent>
+      </Tooltip>
+      <Tooltip disableHoverableContent>
+        <TooltipTrigger asChild>
+          <Button
+            variant="ghost"
+            size="icon"
+            disabled={isDeleting}
+            onClick={(event) => {
+              event.stopPropagation()
+              void deleteItem({ id: notification.id }).then(() => onDelete())
+            }}
+          >
+            {isDeleting ? (
+              <Loader2 className="size-4 animate-spin" />
+            ) : (
+              <Trash />
+            )}
+          </Button>
+        </TooltipTrigger>
+        <TooltipContent>Delete notification</TooltipContent>
+      </Tooltip>
     </div>
   )
 }

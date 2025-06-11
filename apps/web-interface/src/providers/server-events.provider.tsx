@@ -1,6 +1,7 @@
 import { useStateToRef } from "@/hooks/useStateToRef"
 import { api } from "@/lib/api"
 import {
+  NotificationType,
   type SubscriptionMessage,
   subscriptionMessageSchema,
   SubscriptionMessageType,
@@ -14,6 +15,7 @@ import {
   useRef,
   useState,
 } from "react"
+import { toast } from "sonner"
 
 enum ConnectionStatus {
   Connecting = "connecting",
@@ -46,17 +48,18 @@ export function ServerEventsProvider({ children }: PropsWithChildren) {
         console.info("SSE connection initialized")
         break
       case SubscriptionMessageType.ScraperEvent:
-        // if (message.event.type === ScraperEventType.AllExecutionsFinished) {
-        //   //TODO: show toast about notification after implementing notification system
-        //   toast.info("Scraper finished all executions", {
-        //     description: `Number of iterations: ${message.event.iterations}`,
-        //   })
-        // }
-
-        // noop
         break
       case SubscriptionMessageType.Notification:
-        // TODO: show toast
+        switch (message.notification.type) {
+          case NotificationType.ScraperFinished:
+            toast.info(
+              `Scraper ${message.notification.scraperName} finished all executions`,
+              {
+                description: `Number of iterations: ${message.notification.iterations}`,
+              },
+            )
+            break
+        }
         break
       default:
         console.warn(
