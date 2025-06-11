@@ -18,6 +18,7 @@ import {
   SaveDataInstruction,
 } from "../instruction-types/data-instruction"
 import { PageActionInstruction } from "../instruction-types/page-action-instruction"
+import { SystemActionInstruction } from "../instruction-types/system-action-instruction"
 
 type ExternalDataOperationProps = {
   info: ScraperInstructionInfo
@@ -81,6 +82,12 @@ export function ScraperInstructionInfo({ info }: ExternalDataOperationProps) {
       return (
         <ContainerLayout>
           <JumpInstruction markerName={info.markerName} />
+        </ContainerLayout>
+      )
+    case ScraperInstructionType.SystemAction:
+      return (
+        <ContainerLayout>
+          <SystemActionInstruction systemAction={info.systemAction} />
         </ContainerLayout>
       )
     default:

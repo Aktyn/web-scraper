@@ -22,11 +22,12 @@ import { Fragment, useState } from "react"
 import { Button } from "@/components/shadcn/button"
 import { Input } from "@/components/shadcn/input"
 import { Label } from "@/components/shadcn/label"
-import { SelectorsSeparator } from "../../common/selectors-separator.js"
-import { mapToSelectOptions } from "../helpers.js"
-import type { ConditionInstructionFieldName } from "./condition-instruction-form.js"
-import type { PageActionFieldName } from "./page-action-form.js"
-import type { ScraperValueFieldName } from "./scraper-value-form.js"
+import { SelectorsSeparator } from "../../common/selectors-separator"
+import { mapToSelectOptions } from "../helpers"
+import type { ConditionInstructionFieldName } from "./condition-instruction-form"
+import type { PageActionFieldName } from "./page-action-form"
+import type { ScraperValueFieldName } from "./scraper-value-form"
+import { FormRegex } from "@/components/common/form/form-regex"
 
 const selectorTypeOptions = mapToSelectOptions(selectorTypeLabels)
 
@@ -165,15 +166,13 @@ function SelectorFormByType({ control, fieldName }: SelectorFormByTypeProps) {
 
     case ElementSelectorType.TextContent:
       return (
-        <div className="space-y-4">
-          <FormInput
-            control={control}
-            name={`${fieldName}.text`}
-            label={selectorTypeLabels[selectorType]}
-            placeholder="Button text or /regex/"
-            description="Text content to search for. Use /pattern/flags for regex."
-          />
-        </div>
+        <FormRegex
+          control={control}
+          name={`${fieldName}.text`}
+          label={selectorTypeLabels[selectorType]}
+          placeholder="Button text or /regex/"
+          description="Text content to search for. Use /pattern/flags for regex."
+        />
       )
     case ElementSelectorType.TagName:
       return (

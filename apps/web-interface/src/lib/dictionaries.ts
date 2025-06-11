@@ -6,6 +6,7 @@ import {
   ScraperInstructionType,
   ScraperValueType,
   SqliteConditionType,
+  SystemActionType,
 } from "@web-scraper/common"
 
 export const instructionTypeLabels: {
@@ -18,6 +19,7 @@ export const instructionTypeLabels: {
   [ScraperInstructionType.DeleteData]: "Delete data",
   [ScraperInstructionType.Marker]: "Marker",
   [ScraperInstructionType.Jump]: "Jump",
+  [ScraperInstructionType.SystemAction]: "System action",
 }
 
 export const scraperValueTypeLabels: { [key in ScraperValueType]: string } = {
@@ -79,4 +81,8 @@ export const conditionLabels: { [key in SqliteConditionType]: string } = {
   [SqliteConditionType.IsNotNull]: "Is Not Null",
   [SqliteConditionType.Between]: "Between",
   [SqliteConditionType.NotBetween]: "Not Between",
+}
+
+export const systemActionTypeLabels: { [key in SystemActionType]: string } = {
+  [SystemActionType.ShowNotification]: "Show notification",
 }

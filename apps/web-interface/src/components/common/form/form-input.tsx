@@ -10,7 +10,7 @@ import { Input } from "@/components/shadcn/input"
 import type { ComponentProps, ReactNode } from "react"
 import type { Control, FieldPath, FieldValues } from "react-hook-form"
 
-interface FormInputProps<
+export interface FormInputProps<
   TFieldValues extends FieldValues = FieldValues,
   TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
 > {

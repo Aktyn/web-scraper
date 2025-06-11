@@ -1,3 +1,4 @@
+import { cn } from "@/lib/utils"
 import { Slot } from "@radix-ui/react-slot"
 import {
   type ScraperInstructions,
@@ -16,7 +17,7 @@ import {
   SaveDataInstruction,
 } from "./instruction-types/data-instruction"
 import { PageActionInstruction } from "./instruction-types/page-action-instruction"
-import { cn } from "@/lib/utils"
+import { SystemActionInstruction } from "./instruction-types/system-action-instruction"
 
 type InstructionBlockProps = {
   instruction: ScraperInstructions[number]
@@ -79,6 +80,13 @@ export function InstructionBlock({ instruction }: InstructionBlockProps) {
       return (
         <BlockContainer asChild>
           <JumpInstruction markerName={instruction.markerName} />
+        </BlockContainer>
+      )
+
+    case ScraperInstructionType.SystemAction:
+      return (
+        <BlockContainer asChild>
+          <SystemActionInstruction systemAction={instruction.systemAction} />
         </BlockContainer>
       )
 

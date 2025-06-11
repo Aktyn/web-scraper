@@ -16,7 +16,9 @@
     "install:firefox": "npx rebrowser-puppeteer browsers install firefox"
   },
   "dependencies": {
+    "@types/node-notifier": "^8.0.5",
     "@web-scraper/common": "*",
+    "node-notifier": "^10.0.1",
     "rebrowser-puppeteer": "^24.8.1"
   },
   "devDependencies": {

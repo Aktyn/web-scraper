@@ -16,22 +16,32 @@ import { count, sql } from "drizzle-orm"
 import type { DbModule } from "./db.module"
 import { createTemporaryView, removeTemporaryView } from "./view-helpers"
 
-export enum DataBridgeSourceType {
+enum DataBridgeSourceType {
   Table = "table",
   TemporaryView = "temporaryView",
 }
 
-type SourceAlias = string
+type DataBridgeSource =
+  | {
+      type: DataBridgeSourceType.Table
+      name: string
+    }
+  | {
+      type: DataBridgeSourceType.TemporaryView
 
-type DataBridgeSource = {
-  type: DataBridgeSourceType
-  name: string
-}
+      /** Generated view name */
+      name: string
+
+      /** Original table name */
+      originalTableName: string
+    }
 
 type SourceTypeKey<SourcesType> =
   SourcesType extends Record<infer Key, DataBridgeSource>
     ? `${Key & string}.${string}`
     : never
+
+type SourceAlias = string
 
 type Cursor<SourcesType extends Record<SourceAlias, DataBridgeSource>> = {
   dataSourceName: keyof SourcesType
@@ -227,6 +237,11 @@ export class DataBridge<
     const source = this.dataSources[dataSourceName]
     const cursor = this.cursor
 
+    const originalIdentifier =
+      source.type === DataBridgeSourceType.TemporaryView
+        ? sql.identifier(source.originalTableName)
+        : sql.identifier(source.name)
+
     if (cursor && cursor.dataSourceName === dataSourceName) {
       const setClauses = sql.join(
         items.map(
@@ -245,7 +260,7 @@ export class DataBridge<
           : sql``
 
       //NOTE: SQLITE_ENABLE_UPDATE_DELETE_LIMIT pragma must be enabled for sqlite (it should be enabled by default)
-      const query = sql`UPDATE ${sql.identifier(source.name)} SET ${setClauses} WHERE ${sql.identifier("id")} IN (SELECT ${sql.identifier("id")} FROM ${sql.identifier(source.name)}${whereClause} LIMIT 1${offsetClause})`
+      const query = sql`UPDATE ${originalIdentifier} SET ${setClauses} WHERE ${sql.identifier("id")} IN (SELECT ${sql.identifier("id")} FROM ${sql.identifier(source.name)}${whereClause} LIMIT 1${offsetClause})`
 
       const response = await this.db.run(query).execute()
       if (!response.rowsAffected) {
@@ -261,7 +276,7 @@ export class DataBridge<
 
       await this.db
         .run(
-          sql`INSERT INTO ${sql.identifier(source.name)} (${sql.join(columns, sql`, `)}) VALUES (${sql.join(values, sql`, `)})`,
+          sql`INSERT INTO ${originalIdentifier} (${sql.join(columns, sql`, `)}) VALUES (${sql.join(values, sql`, `)})`,
         )
         .execute()
     }
@@ -284,6 +299,11 @@ export class DataBridge<
       return
     }
 
+    const originalIdentifier =
+      source.type === DataBridgeSourceType.TemporaryView
+        ? sql.identifier(source.originalTableName)
+        : sql.identifier(source.name)
+
     const whereClause = cursor.where
       ? sql` WHERE ${sql.raw(whereSchemaToSql(cursor.where))}`
       : sql``
@@ -291,7 +311,7 @@ export class DataBridge<
       typeof cursor.offset === "number" ? sql` OFFSET ${cursor.offset}` : sql``
 
     //NOTE: SQLITE_ENABLE_UPDATE_DELETE_LIMIT pragma must be enabled for sqlite (it should be enabled by default)
-    const query = sql`DELETE FROM ${sql.identifier(source.name)} WHERE ${sql.identifier("id")} IN (SELECT ${sql.identifier("id")} FROM ${sql.identifier(source.name)}${whereClause} LIMIT 1${offsetClause})`
+    const query = sql`DELETE FROM ${originalIdentifier} WHERE ${sql.identifier("id")} IN (SELECT ${sql.identifier("id")} FROM ${sql.identifier(source.name)}${whereClause} LIMIT 1${offsetClause})`
 
     await this.db.run(query).execute()
 
@@ -329,6 +349,7 @@ export class DataBridge<
               dataSource.dataStoreTableName,
               whereSchemaToSql(dataSource.whereSchema),
             ),
+            originalTableName: dataSource.dataStoreTableName,
           }
         : {
             type: DataBridgeSourceType.Table,

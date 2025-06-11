@@ -6,7 +6,11 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/shadcn/tooltip"
-import { instructionTypeLabels, pageActionTypeLabels } from "@/lib/dictionaries"
+import {
+  instructionTypeLabels,
+  pageActionTypeLabels,
+  systemActionTypeLabels,
+} from "@/lib/dictionaries"
 import { cn } from "@/lib/utils"
 import {
   PageActionType,
@@ -24,6 +28,7 @@ import {
   SaveDataBatchInstructionForm,
   SaveDataInstructionForm,
 } from "./instruction-types/save-data-instruction-form"
+import { SystemActionInstructionForm } from "./instruction-types/system-action-instruction-form"
 
 const instructionTypeOptions = mapToSelectOptions(instructionTypeLabels)
 
@@ -155,6 +160,7 @@ export function ScraperInstructionsForm({
 }
 
 const pageActionTypeOptions = mapToSelectOptions(pageActionTypeLabels)
+const systemActionTypeOptions = mapToSelectOptions(systemActionTypeLabels)
 
 type InstructionFormProps = {
   control: Control<CreateScraper>
@@ -172,7 +178,7 @@ function InstructionForm({ control, fieldName }: InstructionFormProps) {
             control={control}
             className="*:[button]:w-full"
             name={`${fieldName}.action.type`}
-            label="Action Type"
+            label="Action type"
             placeholder="Select action type"
             options={pageActionTypeOptions}
           />
@@ -202,7 +208,7 @@ function InstructionForm({ control, fieldName }: InstructionFormProps) {
         <FormInput
           control={control}
           name={`${fieldName}.name`}
-          label="Marker Name"
+          label="Marker name"
           placeholder="marker_name"
           description="A unique name for this marker."
         />
@@ -213,10 +219,28 @@ function InstructionForm({ control, fieldName }: InstructionFormProps) {
         <FormInput
           control={control}
           name={`${fieldName}.markerName`}
-          label="Target Marker"
+          label="Target marker"
           placeholder="marker_name"
           description="The name of the marker to jump to."
         />
+      )
+
+    case ScraperInstructionType.SystemAction:
+      return (
+        <div className="space-y-4">
+          <FormSelect
+            control={control}
+            className="*:[button]:w-full"
+            name={`${fieldName}.systemAction.type`}
+            label="System action type"
+            placeholder="Select system action type"
+            options={systemActionTypeOptions}
+          />
+          <SystemActionInstructionForm
+            control={control}
+            fieldName={`${fieldName}.systemAction`}
+          />
+        </div>
       )
   }
 }

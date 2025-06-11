@@ -34,7 +34,6 @@ export const executionIteratorSchema = z.discriminatedUnion("type", [
     range: z.union([executionRangeSchema, z.number()]),
   }),
 
-  //TODO: use limit and offset to iterate in select queries
   z.object({
     type: z.literal(ExecutionIteratorType.EntireSet),
     dataSourceName: dataSourceNameSchema,

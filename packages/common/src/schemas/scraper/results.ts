@@ -4,6 +4,7 @@ import { ScraperInstructionType } from "./instructions"
 import { pageActionSchema } from "./page-action"
 import { scraperDataKeySchema, scraperValueSchema } from "./value"
 import { executionIteratorSchema } from "../iterator"
+import { systemActionSchema } from "./system-action"
 
 const instructionInfoSchema = z.discriminatedUnion("type", [
   z.object({
@@ -44,6 +45,11 @@ const instructionInfoSchema = z.discriminatedUnion("type", [
   z.object({
     type: z.literal(ScraperInstructionType.Jump),
     markerName: z.string(),
+  }),
+
+  z.object({
+    type: z.literal(ScraperInstructionType.SystemAction),
+    systemAction: systemActionSchema,
   }),
 ])
 

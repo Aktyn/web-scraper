@@ -23,6 +23,7 @@ import puppeteer, {
   type LaunchOptions,
   type Page,
 } from "rebrowser-puppeteer"
+import { performSystemAction } from "../system-actions"
 import {
   type DataBridge,
   getScraperValue,
@@ -410,7 +411,7 @@ export class Scraper<
     instructions: ScraperInstructions,
     level = 0,
   ): Promise<ScraperInstructions[number] | null> {
-    assert(instructions.length > 0, "Instructions are empty")
+    assert(instructions.length > 0 || level > 0, "Instructions are empty")
     assert(
       level > 0 ||
         (instructions[0].type === ScraperInstructionType.PageAction &&
@@ -608,6 +609,19 @@ export class Scraper<
             type: instruction.type,
             markerName: instruction.markerName,
           })
+          break
+
+        case ScraperInstructionType.SystemAction:
+          context.logger.info("Performing system action", {
+            action: instruction.systemAction,
+          })
+
+          lastInstructionInfo = pushInstructionInfo({
+            type: instruction.type,
+            systemAction: instruction.systemAction,
+          })
+
+          await performSystemAction(instruction.systemAction)
           break
       }
 

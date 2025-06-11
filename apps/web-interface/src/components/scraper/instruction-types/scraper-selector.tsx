@@ -30,6 +30,12 @@ export function ScraperSelector({
             <DynamicIcon name={iconsMap[selector.type]} className="size-4" />
             <span className="text-sm font-medium leading-none">
               {selectorTypeLabels[selector.type]}
+              {selector.type === ElementSelectorType.TextContent &&
+                typeof selector.text !== "string" && (
+                  <span className="text-xs text-muted-foreground ml-1">
+                    (regex)
+                  </span>
+                )}
             </span>
           </div>
           <ScraperElementSelectorInfo selector={selector} />

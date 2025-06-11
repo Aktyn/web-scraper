@@ -2,6 +2,7 @@ import { z } from "zod"
 import { type ScraperCondition, scraperConditionSchema } from "./condition"
 import { dataSourceNameSchema } from "./data-source"
 import { type PageAction, pageActionSchema } from "./page-action"
+import { type SystemAction, systemActionSchema } from "./system-action"
 import {
   type ScraperDataKey,
   scraperDataKeySchema,
@@ -39,6 +40,9 @@ export enum ScraperInstructionType {
    * \* list of instructions in `then` and `else` branches of a condition instruction runs in next (level + 1) level of execution
    */
   Jump = "jump",
+
+  /** Used to perform system actions, like displaying a notification or executing a command */
+  SystemAction = "systemAction",
 }
 
 type ScraperInstructionRecursive =
@@ -65,9 +69,7 @@ type ScraperInstructionRecursive =
   | { type: ScraperInstructionType.DeleteData; dataSourceName: string }
   | { type: ScraperInstructionType.Marker; name: string }
   | { type: ScraperInstructionType.Jump; markerName: string }
-//TODO: add "show notification" instruction
-
-// type ScraperInstructionsRecursive = Array<ScraperInstructionRecursive>
+  | { type: ScraperInstructionType.SystemAction; systemAction: SystemAction }
 
 const scraperInstructionSchema: z.ZodType<ScraperInstructionRecursive> =
   z.discriminatedUnion("type", [
@@ -109,6 +111,11 @@ const scraperInstructionSchema: z.ZodType<ScraperInstructionRecursive> =
     z.object({
       type: z.literal(ScraperInstructionType.Jump),
       markerName: z.string().min(1, "Marker name must not be empty"),
+    }),
+
+    z.object({
+      type: z.literal(ScraperInstructionType.SystemAction),
+      systemAction: systemActionSchema,
     }),
   ])
 
