@@ -9,9 +9,11 @@ import { seedUserDataStores } from "./seed-user-data-stores"
 import { seedNotifications } from "./seed-notifications"
 
 export async function seed(db?: DbModule) {
-  const dbUrl = process.env.DB_FILE_NAME
-  assert(!!dbUrl, "DB_FILE_NAME environment variable is not set")
-  db ??= getDbModule(dbUrl)
+  if (!db) {
+    const dbUrl = process.env.DB_FILE_NAME
+    assert(!!dbUrl, "DB_FILE_NAME environment variable is not set")
+    db = getDbModule(dbUrl)
+  }
 
   await db.insert(preferencesTable).values(
     Object.entries(defaultPreferences).map(([key, { value }]) => ({
