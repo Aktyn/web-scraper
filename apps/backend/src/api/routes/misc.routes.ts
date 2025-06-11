@@ -58,6 +58,7 @@ export async function miscRoutes(
       schema: {
         response: {
           200: getApiResponseSchema(userPreferencesSchema),
+          400: apiErrorResponseSchema,
         },
       },
     },

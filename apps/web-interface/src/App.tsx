@@ -10,6 +10,7 @@ import { useView, ViewProvider } from "./providers/view.provider"
 import { PinnedDataStoresProvider } from "./providers/pinned-data-stores.provider"
 import { ServerEventsProvider } from "./providers/server-events.provider"
 import { Preferences } from "./components/view/preferences"
+import { Notifications } from "./components/view/notifications"
 
 export default function App() {
   return (
@@ -27,6 +28,7 @@ export default function App() {
               richColors
               style={{ zIndex: 99 }}
               swipeDirections={["top", "bottom"]}
+              className="pointer-events-auto z-99"
               toastOptions={{
                 className: "backdrop-blur-sm shadow-md!",
                 classNames: {
@@ -96,5 +98,6 @@ const viewsMap = {
   [useView.View.Dashboard]: Dashboard,
   [useView.View.Scrapers]: Scrapers,
   [useView.View.DataStores]: DataStores,
+  [useView.View.Notifications]: Notifications,
   [useView.View.Preferences]: Preferences,
 }

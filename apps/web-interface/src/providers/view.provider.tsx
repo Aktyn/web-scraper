@@ -4,6 +4,7 @@ enum View {
   Dashboard = "dashboard",
   Scrapers = "scrapers",
   DataStores = "data-stores",
+  Notifications = "notifications",
   Preferences = "preferences",
 }
 

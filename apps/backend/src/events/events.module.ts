@@ -1,8 +1,9 @@
-import type { SubscriptionMessage } from "@web-scraper/common"
+import type { NotificationData, SubscriptionMessage } from "@web-scraper/common"
 import EventEmitter from "node:events"
 
 type EventsMap = {
   broadcast: (message: SubscriptionMessage) => void
+  notification: (message: NotificationData) => void
 }
 
 class Emitter extends EventEmitter {

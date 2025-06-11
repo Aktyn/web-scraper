@@ -15,12 +15,13 @@ import type {
   ApiErrorResponse,
   ExecutingScraperInfo,
   ExecutionIterator,
+  Notification,
 } from "@web-scraper/common"
 import { apiErrorResponseSchema } from "@web-scraper/common"
 
 const baseUrl = import.meta.env.VITE_API_URL_BASE.replace(/\/$/, "")
 
-type Method = "get" | "post" | "put" | "delete"
+type Method = "get" | "post" | "put" | "delete" | "patch"
 
 export type RoutesWithMethod<MethodType extends Method> = {
   [key in keyof Routes]: Routes[key] extends { [method in MethodType]: object }
@@ -107,6 +108,24 @@ export const api = {
       `${baseUrl}${parametrizeRoute(route, params)}`,
       {
         method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(body),
+      },
+    )
+    return await assertResponseOk(response)
+  },
+
+  patch: async <RoutePath extends RoutesWithMethod<"patch">>(
+    route: `/${RoutePath}`,
+    body: Routes[RoutePath]["patch"]["body"],
+    params?: RouteParameters<RoutePath>,
+  ): Promise<Routes[RoutePath]["patch"]["response"]> => {
+    const response = await fetch(
+      `${baseUrl}${parametrizeRoute(route, params)}`,
+      {
+        method: "PATCH",
         headers: {
           "Content-Type": "application/json",
         },
@@ -234,6 +253,30 @@ export type Routes = {
     get: {
       querystring: Partial<ApiPaginationQuery>
       response: ApiPaginatedResponse<ScraperExecutionInfo>
+    }
+  }
+
+  notifications: {
+    get: {
+      querystring: Partial<ApiPaginationQuery>
+      response: ApiPaginatedResponse<Notification>
+    }
+  }
+  "notifications/read-all": {
+    patch: {
+      body: Record<string, never>
+      response: ApiResponse<null>
+    }
+  }
+  "notifications/:id/read": {
+    patch: {
+      body: Record<string, never>
+      response: ApiResponse<Notification>
+    }
+  }
+  "notifications/:id": {
+    delete: {
+      response: void
     }
   }
 }

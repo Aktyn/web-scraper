@@ -12,6 +12,7 @@ export * from "./scraper-data-sources.schema"
 export * from "./scraper-executions.schema"
 export * from "./scrapers.schema"
 export * from "./user-data-stores.schema"
+export * from "./notifications.schema"
 
 export const scrapersRelations = relations(scrapersTable, ({ many }) => ({
   dataSources: many(scraperDataSourcesTable),

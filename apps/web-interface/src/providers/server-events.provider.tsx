@@ -46,7 +46,17 @@ export function ServerEventsProvider({ children }: PropsWithChildren) {
         console.info("SSE connection initialized")
         break
       case SubscriptionMessageType.ScraperEvent:
+        // if (message.event.type === ScraperEventType.AllExecutionsFinished) {
+        //   //TODO: show toast about notification after implementing notification system
+        //   toast.info("Scraper finished all executions", {
+        //     description: `Number of iterations: ${message.event.iterations}`,
+        //   })
+        // }
+
         // noop
+        break
+      case SubscriptionMessageType.Notification:
+        // TODO: show toast
         break
       default:
         console.warn(

@@ -1,4 +1,5 @@
 import {
+  NotificationType,
   runUnsafe,
   ScraperEventType,
   SubscriptionMessageType,
@@ -155,6 +156,13 @@ export async function executeNewScraper(
       })
     }
   } while (await dataBridge.nextIteration())
+
+  context.events.emit("notification", {
+    type: NotificationType.ScraperFinished,
+    scraperId: id,
+    scraperName: name,
+    iterations: dataBridge.iteration,
+  })
 
   if (!scraper.destroyed) {
     try {
