@@ -50,7 +50,6 @@ export async function seedUserDataStores(db: DbModule) {
     name: "Example test of saving page content",
     description: "Example test of saving page content",
     columns: [
-      { name: "id", type: SqliteColumnType.INTEGER, notNull: true },
       {
         name: "Scraper text",
         type: SqliteColumnType.TEXT,
@@ -99,4 +98,17 @@ export async function seedUserDataStores(db: DbModule) {
       "Last update": new Date(0),
     },
   ])
+
+  const { table: dataMarkersTable } = await createUserDataStore(db, {
+    tableName: sanitizeTableName("Data markers"),
+    name: "Data markers",
+    columns: [
+      { name: "Name", type: SqliteColumnType.TEXT, notNull: true },
+      { name: "Content", type: SqliteColumnType.TEXT },
+    ],
+  })
+
+  await db
+    .insert(dataMarkersTable)
+    .values([{ Name: "Last pepper alert", Content: null }])
 }

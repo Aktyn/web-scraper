@@ -46,6 +46,8 @@ export function Notifications() {
               content = (
                 <ScraperPanelTrigger
                   scraperId={notification.scraperId}
+                  notificationId={notification.id}
+                  onMarkAsRead={refresh}
                   className="whitespace-normal"
                 >
                   Scraper <b>{notification.scraperName}</b> has finished after{" "}
@@ -131,19 +133,28 @@ export function Notifications() {
 
 type ScraperPanelTriggerProps = {
   scraperId: number
+  notificationId: number
+  onMarkAsRead: () => void
 } & ComponentProps<"div">
 
 function ScraperPanelTrigger({
   scraperId,
+  notificationId,
+  onMarkAsRead,
   children,
   ...props
 }: ScraperPanelTriggerProps) {
+  const [loadScraper, setLoadScraper] = useState(false)
+  const [scraperViewOpen, setScraperViewOpen] = useState(false)
+
   const { data: scraperToView, isLoading: isLoadingScraperToView } =
-    useGet<"scrapers/:id">(scraperId ? "/scrapers/:id" : null, {
+    useGet<"scrapers/:id">(scraperId && loadScraper ? "/scrapers/:id" : null, {
       id: scraperId,
     })
 
-  const [scraperViewOpen, setScraperViewOpen] = useState(false)
+  const { patchItem: markAsRead } = usePatch("/notifications/:id/read", {
+    successMessage: null,
+  })
 
   return (
     <>
@@ -152,12 +163,20 @@ function ScraperPanelTrigger({
         className={cn("hover:text-primary cursor-pointer", props.className)}
         onClick={(event) => {
           if (!isLoadingScraperToView) {
+            if (!loadScraper) {
+              setLoadScraper(true)
+              void markAsRead({}, { id: notificationId }).then(() => {
+                onMarkAsRead()
+              })
+            }
             setScraperViewOpen(true)
           }
           props.onClick?.(event)
         }}
       >
-        {isLoadingScraperToView && <Loader2 className="size-4 animate-spin" />}
+        {isLoadingScraperToView && (
+          <Loader2 className="size-4 animate-spin inline mr-2 opacity-100 starting:mr-0 starting:opacity-0 transition-[margin-right,opacity]" />
+        )}
         {children}
       </div>
       {scraperToView && (

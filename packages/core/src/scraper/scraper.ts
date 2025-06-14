@@ -17,22 +17,32 @@ import {
   type SimpleLogger,
   wait,
 } from "@web-scraper/common"
+import { createCursor } from "ghost-cursor"
 import EventEmitter from "node:events"
-import puppeteer, {
-  type Browser,
-  type LaunchOptions,
-  type Page,
+import puppeteer from "puppeteer-extra"
+import AdblockerPlugin from "puppeteer-extra-plugin-adblocker"
+import StealthPlugin from "puppeteer-extra-plugin-stealth"
+import type {
+  Browser,
+  LaunchOptions,
+  Page,
+  Viewport,
 } from "rebrowser-puppeteer"
 import { performSystemAction } from "../system-actions"
+import { detectAndSolveCaptcha } from "./captcha-solver"
 import {
   type DataBridge,
   getScraperValue,
   replaceSpecialStrings,
 } from "./data-helper"
-import { type ScraperExecutionContext } from "./helpers"
+import { saveScreenshot, type ScraperExecutionContext } from "./helpers"
 import { scrollToBottom } from "./page-actions"
 import { ScraperExecutionInfo } from "./scraper-execution-info"
 import { getElementHandle } from "./selectors"
+
+puppeteer.use(StealthPlugin()).use(AdblockerPlugin({ blockTrackers: true }))
+
+const defaultViewport: Viewport = { width: 1280, height: 720 }
 
 type ScraperOptions = Pick<ScraperType, "id" | "name"> & {
   logger?: SimpleLogger
@@ -132,30 +142,37 @@ export class Scraper<
       return this.initPromise
     }
 
+    const headless = options?.headless ?? false
+    const launchOptions = deepMerge(
+      {
+        downloadBehavior: { policy: "default" },
+        headless,
+        defaultViewport,
+        args: [
+          "--disable-infobars",
+          !headless && "--window-size=1284,848",
+          "--flag-switches-begin",
+          "--enable-unsafe-webgpu",
+          "--flag-switches-end",
+          "--lang=en-US",
+          "--accept-language=en-US",
+          process.env.CI ? "--no-sandbox" : undefined,
+          ...(options.args ?? []),
+        ].filter((arg) => typeof arg === "string"),
+        env: {
+          ...process.env,
+          LANGUAGE: "en-US",
+        },
+      },
+      options ?? {},
+    )
+
+    this.logger.info({ msg: "Launching browser with options", launchOptions })
+
     this.initPromise = new Promise<Browser>((resolve, reject) => {
       puppeteer
-        .launch(
-          deepMerge(
-            {
-              downloadBehavior: { policy: "default" },
-              headless: false,
-              defaultViewport: { width: 1280, height: 720 },
-              args: [
-                "--disable-infobars",
-                "--window-size=1284,848",
-                "--lang=en-US",
-                "--accept-language=en-US",
-                process.env.CI ? "--no-sandbox" : undefined,
-              ].filter((arg) => typeof arg === "string"),
-              env: {
-                ...process.env,
-                LANGUAGE: "en-US",
-              },
-            },
-            options ?? {},
-          ),
-        )
-        .then((browser) => {
+        .launch(launchOptions)
+        .then((browser: Browser) => {
           resolve(browser)
           if (this.destroyed) {
             void browser.close()
@@ -275,6 +292,22 @@ export class Scraper<
       firstPage && firstPage.url() === Scraper.emptyPageUrl
         ? firstPage
         : await this.browser.newPage()
+
+    try {
+      //TODO: handle different way or remove random-useragent package
+      // const userAgent = randomUserAgent.getRandom(function (ua) {
+      //   return ua.browserName === "Chrome"
+      // })
+      const userAgent =
+        "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36"
+      if (userAgent) {
+        this.logger.info(`Setting user agent to "${userAgent}"`)
+        await page.setUserAgent(userAgent)
+      }
+    } catch (error) {
+      this.logger.warn({ msg: "Failed to set user agent", error })
+    }
+
     await page.evaluateOnNewDocument((lang) => {
       Object.defineProperty(navigator, "language", {
         get: function () {
@@ -283,7 +316,16 @@ export class Scraper<
       })
     }, "en-US")
 
-    return page
+    const viewport = page.viewport() ?? defaultViewport
+
+    const cursor = createCursor(
+      page,
+      { x: randomInt(0, viewport.width), y: randomInt(0, viewport.height) },
+      true,
+    )
+    cursor.toggleRandomMove(true)
+
+    return { page, cursor }
   }
 
   async execute(
@@ -343,7 +385,7 @@ export class Scraper<
     }
 
     const startTime = performance.now()
-    const page = await this.getPage()
+    const { page, cursor } = await this.getPage()
     if (options?.pageMiddleware) {
       await options.pageMiddleware(page)
     }
@@ -352,7 +394,14 @@ export class Scraper<
 
     try {
       await this.executeInstructions(
-        { page, dataBridge, executionInfo, logger: this.logger },
+        {
+          page,
+          cursor,
+          dataBridge,
+          executionInfo,
+          logger: this.logger,
+          abortController: this.abortController,
+        },
         instructions,
         undefined,
       )
@@ -445,6 +494,13 @@ export class Scraper<
       this._currentlyExecutingInstruction = instruction
       this.emit("executingInstruction", instruction)
 
+      if (process.env.NODE_ENV === "development") {
+        await saveScreenshot(
+          context.page,
+          `${this.identifier}-${instruction.type}`,
+        )
+      }
+
       switch (instruction.type) {
         case ScraperInstructionType.PageAction:
           lastInstructionInfo = pushInstructionInfo({
@@ -452,15 +508,6 @@ export class Scraper<
             action: instruction.action,
           })
           await this.performPageAction(context, instruction.action)
-
-          try {
-            await context.page.waitForNetworkIdle({
-              timeout: 30_000,
-              signal: this.abortController.signal,
-            })
-          } catch (error) {
-            this.logger.warn({ msg: "Network idle timeout", error })
-          }
           break
 
         case ScraperInstructionType.Condition:
@@ -645,11 +692,16 @@ export class Scraper<
         )
 
         if (i === -1) {
-          this.logger.warn("Marker not found, returning to previous level")
+          context.logger.warn("Marker not found, returning to previous level")
           return instruction
         }
       }
     }
+
+    if (process.env.NODE_ENV === "development") {
+      await saveScreenshot(context.page, this.identifier)
+    }
+
     return null
   }
 
@@ -697,6 +749,23 @@ export class Scraper<
         await scrollToBottom(context)
         break
     }
+
+    if (action.type !== PageActionType.Wait) {
+      await this.waitForNetworkIdle(context)
+    }
+
+    await detectAndSolveCaptcha(context)
+  }
+
+  private async waitForNetworkIdle(context: ScraperExecutionContext) {
+    try {
+      await context.page.waitForNetworkIdle({
+        timeout: 30_000,
+        signal: context.abortController.signal,
+      })
+    } catch (error) {
+      context.logger.warn({ msg: "Network idle timeout", error })
+    }
   }
 
   private async checkCondition(
@@ -726,7 +795,7 @@ export class Scraper<
         }
       }
     } catch (error) {
-      this.logger.fatal(error)
+      context.logger.fatal(error)
       return false
     }
   }

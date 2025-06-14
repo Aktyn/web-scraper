@@ -6,15 +6,16 @@ import {
 } from "@/components/shadcn/popover"
 import { useGet } from "@/hooks/api/useGet"
 import { usePut } from "@/hooks/api/usePut"
-import { CheckIcon, EditIcon, XIcon } from "lucide-react"
+import { useMounted } from "@/hooks/useMounted"
 import type { ColumnDef } from "@tanstack/react-table"
 import { defaultPreferences } from "@web-scraper/common"
+import { CheckIcon, EditIcon, XIcon } from "lucide-react"
 import { useMemo, useState } from "react"
 import { NullBadge } from "../common/null-badge"
 import { DataTable } from "../common/table/data-table"
-import { Switch } from "../shadcn/switch"
+import { Input } from "../shadcn/input"
 import { Label } from "../shadcn/label"
-import { useMounted } from "@/hooks/useMounted"
+import { Switch } from "../shadcn/switch"
 
 export function Preferences() {
   const { data: userPreferences, isLoading, refetch } = useGet("/preferences")
@@ -104,7 +105,7 @@ function ValueCell({ preference, onValueChange }: ValueCellProps) {
   }
 
   return (
-    <div className="flex items-center gap-4">
+    <div className="flex items-center justify-between gap-4">
       {typeof value === "boolean" ? (
         <div className="flex items-center gap-1 font-medium">
           {value ? (
@@ -135,11 +136,56 @@ function ValueCell({ preference, onValueChange }: ValueCellProps) {
                 onCheckedChange={handleChange}
               />
             </div>
+          ) : typeof value === "string" ? (
+            <StringValueCell
+              valueKey={key}
+              value={value}
+              onValueChange={handleChange}
+            />
           ) : (
-            "Not supported"
+            <Label>Not supported</Label>
           )}
         </PopoverContent>
       </Popover>
+    </div>
+  )
+}
+
+type StringValueCellProps = {
+  valueKey: string
+  value: string
+  onValueChange: (newValue: string) => void
+}
+
+function StringValueCell({
+  valueKey,
+  value,
+  onValueChange,
+}: StringValueCellProps) {
+  const [inputValue, setInputValue] = useState(value)
+
+  return (
+    <div className="flex flex-col items-center gap-2">
+      <Label htmlFor={valueKey}>
+        Set <b>{valueKey}</b>
+      </Label>
+      <Input
+        id={valueKey}
+        value={inputValue}
+        onChange={(event) => setInputValue(event.target.value)}
+        onKeyDown={(event) => {
+          if (event.key === "Enter") {
+            onValueChange(inputValue)
+          }
+        }}
+      />
+      <Button
+        variant="default"
+        size="sm"
+        onClick={() => onValueChange(inputValue)}
+      >
+        Save
+      </Button>
     </div>
   )
 }

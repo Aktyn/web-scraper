@@ -2,17 +2,17 @@ import {
   ElementSelectorType,
   PageActionType,
   ScraperConditionType,
-  type ScraperElementSelectors,
   type ScraperInstructions,
   ScraperInstructionType,
   ScraperValueType,
   SqliteConditionType,
+  SystemActionType,
 } from "@web-scraper/common"
 import type { DbModule } from "../db.module"
 import { scraperDataSourcesTable, scrapersTable } from "../schema"
 import { sanitizeTableName } from "../schema/helpers"
 
-export async function seedScrapersStores(db: DbModule) {
+export async function seedScrapers(db: DbModule) {
   const personalCredentialsTableName = sanitizeTableName(
     "Personal credentials random string",
   )
@@ -20,42 +20,52 @@ export async function seedScrapersStores(db: DbModule) {
     "Example test of saving page content",
   )
   const cryptoPricesTableName = sanitizeTableName("Crypto prices")
+  const dataMarkersTableName = sanitizeTableName("Data markers")
 
   await db.transaction(async (tx) => {
-    const [scraper1, scraper2, scraper3, scraper4] = await tx
-      .insert(scrapersTable)
-      .values([
-        {
-          name: "Small example scraper",
-          instructions: [
-            {
-              type: ScraperInstructionType.PageAction,
-              action: {
-                type: PageActionType.Navigate,
-                url: "https://example.com",
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const [scraper1, scraper2, scraper3, scraper4, _captchaTesterScraper] =
+      await tx
+        .insert(scrapersTable)
+        .values([
+          {
+            name: "Small example scraper",
+            instructions: [
+              {
+                type: ScraperInstructionType.PageAction,
+                action: {
+                  type: PageActionType.Navigate,
+                  url: "https://example.com",
+                },
               },
-            },
-          ],
-          userDataDirectory: "/tmp/user-data-dir",
-        },
-        {
-          name: "New pepper alerts",
-          description:
-            "See if there are new pepper alerts and notify user if so",
-          instructions: checkNewPepperAlertsInstructions,
-        },
-        {
-          name: "Site content scraper",
-          description: "Saves site content to the database",
-          instructions: scrapExampleSiteInstructions,
-        },
-        {
-          name: "Update crypto prices",
-          description: "Saves or updates crypto prices from coinmarketcap.com",
-          instructions: scrapCryptoPricesInstructions,
-        },
-      ])
-      .returning()
+            ],
+            userDataDirectory: "/tmp/user-data-dir",
+          },
+          {
+            name: "New pepper alerts",
+            description:
+              "See if there are new pepper alerts and notify user if so",
+            instructions: checkNewPepperAlertsInstructions,
+          },
+          {
+            name: "Site content scraper",
+            description: "Saves site content to the database",
+            instructions: scrapExampleSiteInstructions,
+          },
+          {
+            name: "Update crypto prices",
+            description:
+              "Saves or updates crypto prices from coinmarketcap.com",
+            instructions: scrapCryptoPricesInstructions,
+          },
+          {
+            name: "Captcha tester",
+            description:
+              "Testing scraper bot detection and solving captchas capabilities",
+            instructions: captchaTesterInstructions,
+          },
+        ])
+        .returning()
 
     await tx.insert(scraperDataSourcesTable).values([
       {
@@ -88,6 +98,16 @@ export async function seedScrapersStores(db: DbModule) {
         },
       },
       {
+        scraperId: scraper2.id,
+        sourceAlias: "marker",
+        dataStoreTableName: dataMarkersTableName, //Note: it has to be already seeded
+        whereSchema: {
+          column: "Name",
+          condition: SqliteConditionType.ILike,
+          value: "Last pepper alert",
+        },
+      },
+      {
         scraperId: scraper3.id,
         sourceAlias: "Store",
         dataStoreTableName: exampleSiteContentTableName, //Note: it has to be already seeded
@@ -101,77 +121,64 @@ export async function seedScrapersStores(db: DbModule) {
   })
 }
 
-const acceptCookiesButtonSelector: ScraperElementSelectors = [
-  {
-    type: ElementSelectorType.TextContent,
-    text: { source: "akceptuj wszystkie", flags: "i" },
-  },
-  { type: ElementSelectorType.TagName, tagName: "button" },
-]
-
-const loginButtonSelector: ScraperElementSelectors = [
-  {
-    type: ElementSelectorType.TextContent,
-    text: { source: "zaloguj się", flags: "i" },
-  },
-  { type: ElementSelectorType.TagName, tagName: "button" },
-]
-
 const checkNewPepperAlertsInstructions: ScraperInstructions = [
   {
     type: ScraperInstructionType.PageAction,
-    action: {
-      type: PageActionType.Navigate,
-      url: "https://www.pepper.pl/",
-    },
+    action: { type: PageActionType.Navigate, url: "https://www.pepper.pl/" },
   },
-  {
-    type: ScraperInstructionType.PageAction,
-    action: {
-      type: PageActionType.Wait,
-      duration: 1_000,
-    },
-  },
-
-  //Accept cookies if banner is visible
   {
     type: ScraperInstructionType.Condition,
     if: {
       type: ScraperConditionType.IsVisible,
-      selectors: acceptCookiesButtonSelector,
+      selectors: [
+        {
+          type: ElementSelectorType.TextContent,
+          text: { source: "akceptuj wszystkie", flags: "i" },
+        },
+        { type: ElementSelectorType.TagName, tagName: "button" },
+      ],
     },
     then: [
       {
         type: ScraperInstructionType.PageAction,
         action: {
           type: PageActionType.Click,
-          selectors: acceptCookiesButtonSelector,
+          selectors: [
+            {
+              type: ElementSelectorType.TextContent,
+              text: { source: "akceptuj wszystkie", flags: "i" },
+            },
+            { type: ElementSelectorType.TagName, tagName: "button" },
+          ],
         },
       },
     ],
+    else: [],
   },
-
-  {
-    type: ScraperInstructionType.PageAction,
-    action: {
-      type: PageActionType.Wait,
-      duration: 1_000,
-    },
-  },
-
-  //Login if not already logged in
   {
     type: ScraperInstructionType.Condition,
     if: {
       type: ScraperConditionType.IsVisible,
-      selectors: loginButtonSelector,
+      selectors: [
+        {
+          type: ElementSelectorType.TextContent,
+          text: { source: "zaloguj się", flags: "i" },
+        },
+        { type: ElementSelectorType.TagName, tagName: "button" },
+      ],
     },
     then: [
       {
         type: ScraperInstructionType.PageAction,
         action: {
           type: PageActionType.Click,
-          selectors: loginButtonSelector,
+          selectors: [
+            {
+              type: ElementSelectorType.TextContent,
+              text: { source: "zaloguj się", flags: "i" },
+            },
+            { type: ElementSelectorType.TagName, tagName: "button" },
+          ],
         },
       },
       {
@@ -184,17 +191,7 @@ const checkNewPepperAlertsInstructions: ScraperInstructions = [
               query: "input[type='email'][name='identity']",
             },
           ],
-          value: {
-            type: ScraperValueType.ExternalData,
-            dataKey: "user.email",
-          },
-        },
-      },
-      {
-        type: ScraperInstructionType.PageAction,
-        action: {
-          type: PageActionType.Wait,
-          duration: 500,
+          value: { type: ScraperValueType.ExternalData, dataKey: "user.email" },
         },
       },
       {
@@ -209,18 +206,9 @@ const checkNewPepperAlertsInstructions: ScraperInstructions = [
             { type: ElementSelectorType.TagName, tagName: "button" },
             {
               type: ElementSelectorType.Attributes,
-              attributes: {
-                type: "submit",
-              },
+              attributes: { type: "submit" },
             },
           ],
-        },
-      },
-      {
-        type: ScraperInstructionType.PageAction,
-        action: {
-          type: PageActionType.Wait,
-          duration: 500,
         },
       },
       {
@@ -242,14 +230,6 @@ const checkNewPepperAlertsInstructions: ScraperInstructions = [
       {
         type: ScraperInstructionType.PageAction,
         action: {
-          type: PageActionType.Wait,
-          duration: 500,
-        },
-      },
-      //Click show password button
-      {
-        type: ScraperInstructionType.PageAction,
-        action: {
           type: PageActionType.Click,
           selectors: [
             {
@@ -262,15 +242,6 @@ const checkNewPepperAlertsInstructions: ScraperInstructions = [
       {
         type: ScraperInstructionType.PageAction,
         action: {
-          type: PageActionType.Wait,
-          duration: 500,
-        },
-      },
-
-      //Click login button
-      {
-        type: ScraperInstructionType.PageAction,
-        action: {
           type: PageActionType.Click,
           selectors: [
             {
@@ -280,23 +251,56 @@ const checkNewPepperAlertsInstructions: ScraperInstructions = [
             { type: ElementSelectorType.TagName, tagName: "button" },
             {
               type: ElementSelectorType.Attributes,
-              attributes: {
-                type: "submit",
-              },
+              attributes: { type: "submit" },
             },
           ],
         },
       },
     ],
+    else: [],
   },
-
-  //Navigate to alerts list
   {
     type: ScraperInstructionType.PageAction,
     action: {
       type: PageActionType.Navigate,
       url: "https://www.pepper.pl/alerts",
     },
+  },
+  {
+    type: ScraperInstructionType.Condition,
+    if: {
+      type: ScraperConditionType.IsVisible,
+      selectors: [
+        {
+          type: ElementSelectorType.Query,
+          query: "#tab-feed > article:first-of-type .thread-title > a",
+        },
+        { type: ElementSelectorType.TextContent, text: "{{marker.Content}}" },
+      ],
+    },
+    then: [],
+    else: [
+      {
+        type: ScraperInstructionType.SaveData,
+        dataKey: "marker.Content",
+        value: {
+          type: ScraperValueType.ElementTextContent,
+          selectors: [
+            {
+              type: ElementSelectorType.Query,
+              query: "#tab-feed > article:first-of-type .thread-title > a",
+            },
+          ],
+        },
+      },
+      {
+        type: ScraperInstructionType.SystemAction,
+        systemAction: {
+          type: SystemActionType.ShowNotification,
+          message: "New pepper alert!",
+        },
+      },
+    ],
   },
 ]
 
@@ -412,5 +416,74 @@ const scrapCryptoPricesInstructions: ScraperInstructions = [
         ],
       },
     ],
+  },
+]
+
+const captchaTesterInstructions: ScraperInstructions = [
+  {
+    type: ScraperInstructionType.PageAction,
+    action: {
+      type: PageActionType.Navigate,
+      url: "https://www.scrapingcourse.com/cloudflare-challenge",
+    },
+  },
+  {
+    type: ScraperInstructionType.Condition,
+    if: {
+      type: ScraperConditionType.IsVisible,
+      selectors: [
+        {
+          type: ElementSelectorType.TextContent,
+          text: "Verify you are human by completing the action below.",
+        },
+        { type: ElementSelectorType.TagName, tagName: "p" },
+      ],
+    },
+    then: [
+      {
+        type: ScraperInstructionType.SystemAction,
+        systemAction: {
+          type: SystemActionType.ShowNotification,
+          message: "Captcha not solved :(",
+        },
+      },
+    ],
+    else: [
+      {
+        type: ScraperInstructionType.SystemAction,
+        systemAction: {
+          type: SystemActionType.ShowNotification,
+          message: "Captcha has been solved!!!",
+        },
+      },
+      {
+        type: ScraperInstructionType.PageAction,
+        action: {
+          type: PageActionType.Wait,
+          duration: 5000,
+        },
+      },
+    ],
+  },
+  {
+    type: ScraperInstructionType.PageAction,
+    action: {
+      type: PageActionType.Navigate,
+      url: "https://bot.sannysoft.com/",
+    },
+  },
+  {
+    type: ScraperInstructionType.PageAction,
+    action: {
+      type: PageActionType.Navigate,
+      url: "https://fingerprint-scan.com/",
+    },
+  },
+  {
+    type: ScraperInstructionType.PageAction,
+    action: {
+      type: PageActionType.Navigate,
+      url: "https://arh.antoinevastel.com/bots/areyouheadless",
+    },
   },
 ]

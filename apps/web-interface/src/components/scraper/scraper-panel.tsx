@@ -1,7 +1,7 @@
 import { ScraperProvider } from "@/providers/scraper.provider"
 import type { ExecutionIterator } from "@web-scraper/common"
 import { type ScraperType } from "@web-scraper/common"
-import { useCallback, useRef } from "react"
+import { Fragment, useCallback, useRef } from "react"
 import { CopyButton } from "../common/button/copy-button"
 import { LabeledValue } from "../common/labeled-value"
 import {
@@ -54,7 +54,16 @@ export function ScraperPanel({ scraper, onEditSuccess }: ScraperPanelProps) {
             >
               <div className="flex flex-row items-center gap-2 overflow-hidden contain-inline-size">
                 <pre dir="rtl" className="truncate leading-none">
-                  {scraper.userDataDirectory}
+                  {scraper.userDataDirectory.split("/").map((part, index) => (
+                    <Fragment key={index}>
+                      {index > 0 && (
+                        <span className="text-muted-foreground mx-0.5">
+                          &lrm;/
+                        </span>
+                      )}
+                      {part}
+                    </Fragment>
+                  ))}
                 </pre>
                 <CopyButton value={scraper.userDataDirectory} />
               </div>

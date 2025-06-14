@@ -4,7 +4,7 @@ import { assert, defaultPreferences } from "@web-scraper/common"
 import { type DbModule, getDbModule } from "../db.module"
 import { preferencesTable } from "../schema"
 import { seedScraperExecutions } from "./seed-scraper-executions"
-import { seedScrapersStores } from "./seed-scrapers"
+import { seedScrapers } from "./seed-scrapers"
 import { seedUserDataStores } from "./seed-user-data-stores"
 import { seedNotifications } from "./seed-notifications"
 
@@ -23,7 +23,7 @@ export async function seed(db?: DbModule) {
   )
 
   await seedUserDataStores(db)
-  await seedScrapersStores(db)
+  await seedScrapers(db)
   await seedScraperExecutions(db)
   await seedNotifications(db)
 }

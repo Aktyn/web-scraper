@@ -132,7 +132,7 @@ export function ScraperExecutionPanel({
         </div>
       )}
 
-      {partialExecutionInfo.length > 0 && (
+      {(partialExecutionInfo.length > 0 || currentlyExecutingInstruction) && (
         <ScrollableScraperExecutionInfo
           className="-mx-6 -mb-3 contain-inline-size"
           autoScroll
@@ -348,7 +348,8 @@ function ExecutionConditionsMap({
         const nextInstructionIndex = executionInfo.findIndex(
           (nextInfo, index) =>
             index > i &&
-            (nextInfo.type ===
+            (nextInfo.type === ScraperInstructionsExecutionInfoType.Success ||
+              ScraperInstructionsExecutionInfoType.Error ||
               ScraperInstructionsExecutionInfoType.Instruction ||
               scraperInstructionsSchema.element.safeParse(nextInfo).success),
         )

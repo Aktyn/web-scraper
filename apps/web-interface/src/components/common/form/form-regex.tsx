@@ -41,7 +41,9 @@ export function FormRegex<
   })
 
   const stringValue =
-    typeof value === "string" ? value : `/${value.source}/${value.flags}`
+    typeof value === "string" || !value
+      ? value
+      : `/${value.source}/${value.flags}`
 
   const handleChange = (
     field: ControllerRenderProps<TFieldValues, TName>,
