@@ -106,18 +106,22 @@ function ValueCell({ preference, onValueChange }: ValueCellProps) {
 
   return (
     <div className="flex items-center justify-between gap-4">
-      {typeof value === "boolean" ? (
-        <div className="flex items-center gap-1 font-medium">
-          {value ? (
-            <CheckIcon className="size-4 text-success" />
-          ) : (
-            <XIcon className="size-4 text-destructive" />
-          )}
-          {value ? "True" : "False"}
-        </div>
-      ) : (
-        JSON.stringify(value)
-      )}
+      <div className="truncate">
+        {typeof value === "boolean" ? (
+          <span className="flex items-center gap-1 font-medium">
+            {value ? (
+              <CheckIcon className="size-4 text-success" />
+            ) : (
+              <XIcon className="size-4 text-destructive" />
+            )}
+            {value ? "True" : "False"}
+          </span>
+        ) : typeof value === "string" ? (
+          value || <NullBadge />
+        ) : (
+          JSON.stringify(value)
+        )}
+      </div>
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
           <Button size="icon" variant="ghost">

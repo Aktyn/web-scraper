@@ -1,6 +1,6 @@
 import { CopyButton } from "@/components/common/button/copy-button"
 import { ExternalLink } from "@/components/common/button/external-link"
-import { LabeledValue } from "@/components/common/labeled-value"
+import { LabeledValue } from "@/components/common/label/labeled-value"
 import { Badge } from "@/components/shadcn/badge"
 import {
   instructionTypeLabels,

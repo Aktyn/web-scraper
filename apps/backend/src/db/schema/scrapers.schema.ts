@@ -1,6 +1,6 @@
 import type { ScraperInstructions } from "@web-scraper/common"
 import { sqliteTable, text } from "drizzle-orm/sqlite-core"
-import { primaryKey } from "./helpers"
+import { primaryKey, timestamp } from "./helpers"
 
 export const scrapersTable = sqliteTable("scrapers", {
   id: primaryKey(),
@@ -10,4 +10,6 @@ export const scrapersTable = sqliteTable("scrapers", {
     .notNull()
     .$type<ScraperInstructions>(),
   userDataDirectory: text("user_data_directory"),
+  createdAt: timestamp("created_at"),
+  updatedAt: timestamp("updated_at"),
 })

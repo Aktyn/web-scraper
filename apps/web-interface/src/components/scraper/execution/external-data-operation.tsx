@@ -1,4 +1,4 @@
-import { LabeledValue } from "@/components/common/labeled-value"
+import { LabeledValue } from "@/components/common/label/labeled-value"
 import { Separator } from "@/components/shadcn/separator"
 import { cn } from "@/lib/utils"
 import type {

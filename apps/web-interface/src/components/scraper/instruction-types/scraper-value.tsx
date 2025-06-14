@@ -1,4 +1,4 @@
-import { LabeledValue } from "@/components/common/labeled-value"
+import { LabeledValue } from "@/components/common/label/labeled-value"
 import { scraperValueTypeLabels } from "@/lib/dictionaries"
 import { ScraperValueType, type ScraperValue } from "@web-scraper/common"
 import { DynamicIcon, type IconName } from "lucide-react/dynamic"

@@ -1,3 +1,4 @@
+import { TimestampValue } from "@/components/common/label/timestamp-value"
 import { NullBadge } from "@/components/common/null-badge"
 import { DataTable } from "@/components/common/table/data-table"
 import { IteratorDescription } from "@/components/iterator/iterator-description"
@@ -8,7 +9,7 @@ import {
   PopoverTrigger,
 } from "@/components/shadcn/popover"
 import { useInfiniteGet } from "@/hooks/api/useInfiniteGet"
-import { cn, formatDateTime, formatDuration } from "@/lib/utils"
+import { cn, formatDuration } from "@/lib/utils"
 import { ServerEventsProvider } from "@/providers/server-events.provider"
 import type { ColumnDef, Row } from "@tanstack/react-table"
 import type {
@@ -22,13 +23,7 @@ import {
   type ScraperExecutionInfo,
 } from "@web-scraper/common"
 import { Check, ExternalLink, SquareMousePointer, X } from "lucide-react"
-import {
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-  type ComponentProps,
-} from "react"
+import { useEffect, useMemo, useRef, type ComponentProps } from "react"
 import { ScrollableScraperExecutionInfo } from "./scraper-execution-panel"
 
 type ScraperExecutionHistoryProps = ComponentProps<"div"> & {
@@ -294,33 +289,3 @@ const iterationColumns: ColumnDef<
     },
   },
 ]
-
-function TimestampValue({ value }: { value: number }) {
-  const [isNew, setIsNew] = useState(isTimestampNew(value))
-
-  useEffect(() => {
-    if (!isNew) {
-      return
-    }
-
-    const timeout = setTimeout(
-      () => {
-        setIsNew(false)
-      },
-      NEW_TIMESTAMP_THRESHOLD - (Date.now() - value),
-    )
-
-    return () => clearTimeout(timeout)
-  }, [value, isNew])
-
-  return (
-    <span className={cn(isNew && "text-success-foreground-light")}>
-      {formatDateTime(value)}
-    </span>
-  )
-}
-
-const NEW_TIMESTAMP_THRESHOLD = 1000 * 60 * 15 // * 60 * 24 * 7
-function isTimestampNew(value: number) {
-  return Date.now() - value < NEW_TIMESTAMP_THRESHOLD
-}

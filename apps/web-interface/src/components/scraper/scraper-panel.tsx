@@ -3,7 +3,7 @@ import type { ExecutionIterator } from "@web-scraper/common"
 import { type ScraperType } from "@web-scraper/common"
 import { Fragment, useCallback, useRef } from "react"
 import { CopyButton } from "../common/button/copy-button"
-import { LabeledValue } from "../common/labeled-value"
+import { LabeledValue } from "../common/label/labeled-value"
 import {
   Accordion,
   AccordionContent,

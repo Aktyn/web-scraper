@@ -1,7 +1,7 @@
 import { Code } from "@/components/common/code"
 import { FormInput } from "@/components/common/form/form-input"
 import { FormSelect } from "@/components/common/form/form-select"
-import { LabeledValue } from "@/components/common/labeled-value"
+import { LabeledValue } from "@/components/common/label/labeled-value"
 import { Button } from "@/components/shadcn/button"
 import { conditionLabels } from "@/lib/dictionaries"
 import type { ExecutionIterator } from "@web-scraper/common"

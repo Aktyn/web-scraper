@@ -1,3 +1,4 @@
+import useProxy from "@lem0-packages/puppeteer-page-proxy"
 import {
   assert,
   deepMerge,
@@ -17,7 +18,11 @@ import {
   type SimpleLogger,
   wait,
 } from "@web-scraper/common"
-import { createCursor } from "ghost-cursor"
+import {
+  createCursor,
+  getRandomPagePoint,
+  installMouseHelper,
+} from "ghost-cursor"
 import EventEmitter from "node:events"
 import puppeteer from "puppeteer-extra"
 import AdblockerPlugin from "puppeteer-extra-plugin-adblocker"
@@ -40,7 +45,9 @@ import { scrollToBottom } from "./page-actions"
 import { ScraperExecutionInfo } from "./scraper-execution-info"
 import { getElementHandle } from "./selectors"
 
-puppeteer.use(StealthPlugin()).use(AdblockerPlugin({ blockTrackers: true }))
+const puppeteerExtra = puppeteer
+  .use(AdblockerPlugin({ blockTrackers: true }))
+  .use(StealthPlugin())
 
 const defaultViewport: Viewport = { width: 1280, height: 720 }
 
@@ -49,6 +56,8 @@ type ScraperOptions = Pick<ScraperType, "id" | "name"> & {
 
   /** Used for testing purposes */
   noInit?: boolean
+
+  proxy?: string
 } & Partial<LaunchOptions>
 
 type Metadata = Record<string, unknown>
@@ -96,6 +105,7 @@ export class Scraper<
   private static emptyPageUrl = "about:blank"
 
   private readonly logger: SimpleLogger
+  private readonly proxy: string | undefined
 
   private initPromise: Promise<Browser> | null = null
 
@@ -111,12 +121,14 @@ export class Scraper<
     super()
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { id, name, logger, ...browserOptions } = options
+    const { id, name, logger, proxy, ...browserOptions } = options
 
     this.logger = logger ?? {
       ...console,
       fatal: console.error,
     }
+
+    this.proxy = proxy
 
     assert(
       !Scraper.instances.has(this.identifier),
@@ -156,8 +168,8 @@ export class Scraper<
           "--flag-switches-end",
           "--lang=en-US",
           "--accept-language=en-US",
+          "--ignore-certificate-errors",
           process.env.CI ? "--no-sandbox" : undefined,
-          ...(options.args ?? []),
         ].filter((arg) => typeof arg === "string"),
         env: {
           ...process.env,
@@ -170,7 +182,7 @@ export class Scraper<
     this.logger.info({ msg: "Launching browser with options", launchOptions })
 
     this.initPromise = new Promise<Browser>((resolve, reject) => {
-      puppeteer
+      puppeteerExtra
         .launch(launchOptions)
         .then((browser: Browser) => {
           resolve(browser)
@@ -294,10 +306,6 @@ export class Scraper<
         : await this.browser.newPage()
 
     try {
-      //TODO: handle different way or remove random-useragent package
-      // const userAgent = randomUserAgent.getRandom(function (ua) {
-      //   return ua.browserName === "Chrome"
-      // })
       const userAgent =
         "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36"
       if (userAgent) {
@@ -316,14 +324,22 @@ export class Scraper<
       })
     }, "en-US")
 
-    const viewport = page.viewport() ?? defaultViewport
+    if (this.proxy) {
+      await useProxy(page, this.proxy)
 
-    const cursor = createCursor(
-      page,
-      { x: randomInt(0, viewport.width), y: randomInt(0, viewport.height) },
-      true,
-    )
+      // try {
+      //   const lookupData = await useProxy.lookup(page)
+      //   this.logger.info({ msg: "Proxy lookup", lookupData })
+      // } catch (error) {
+      //   this.logger.error({ msg: "Proxy lookup failed", error })
+      // }
+    }
+
+    const cursor = createCursor(page, await getRandomPagePoint(page), true)
     cursor.toggleRandomMove(true)
+    if (process.env.NODE_ENV === "development") {
+      await installMouseHelper(page)
+    }
 
     return { page, cursor }
   }
@@ -494,10 +510,10 @@ export class Scraper<
       this._currentlyExecutingInstruction = instruction
       this.emit("executingInstruction", instruction)
 
-      if (process.env.NODE_ENV === "development") {
+      if (process.env.NODE_ENV === "development" && i > 0) {
         await saveScreenshot(
           context.page,
-          `${this.identifier}-${instruction.type}`,
+          `${this.identifier}-before-${instruction.type}`,
         )
       }
 
@@ -715,10 +731,18 @@ export class Scraper<
         await wait(action.duration)
         break
       case PageActionType.Navigate:
-        await context.page.goto(
-          await replaceSpecialStrings(action.url, context.dataBridge),
-          { timeout: 60_000 },
-        )
+        try {
+          await context.page.goto(
+            await replaceSpecialStrings(action.url, context.dataBridge),
+            {
+              timeout: 30_000,
+              waitUntil: "networkidle0",
+              signal: context.abortController.signal,
+            },
+          )
+        } catch (error) {
+          context.logger.warn({ msg: "Navigation failed", error })
+        }
         break
       case PageActionType.Click: {
         const handle = await getElementHandle(context, action.selectors, true)
@@ -750,7 +774,10 @@ export class Scraper<
         break
     }
 
-    if (action.type !== PageActionType.Wait) {
+    if (
+      action.type !== PageActionType.Wait &&
+      action.type !== PageActionType.Navigate
+    ) {
       await this.waitForNetworkIdle(context)
     }
 

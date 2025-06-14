@@ -1,7 +1,7 @@
 import { type ScraperDataSource, whereSchemaToSql } from "@web-scraper/common"
 import { useMemo } from "react"
 import { Code } from "../common/code"
-import { LabeledValue } from "../common/labeled-value"
+import { LabeledValue } from "../common/label/labeled-value"
 import { DataSourceLabel } from "../common/data-source-label"
 import { InstructionBlockContainer } from "./instruction-block"
 

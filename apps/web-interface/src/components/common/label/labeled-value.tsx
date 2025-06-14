@@ -1,6 +1,6 @@
-import type { PropsWithChildren, ReactNode } from "react"
-import { Label } from "../shadcn/label"
+import { Label } from "@/components/shadcn/label"
 import { cn } from "@/lib/utils"
+import type { PropsWithChildren, ReactNode } from "react"
 
 type LabeledValueProps = PropsWithChildren<{
   label: ReactNode

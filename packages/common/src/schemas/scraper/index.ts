@@ -9,11 +9,17 @@ export const scraperSchema = z.object({
   instructions: scraperInstructionsSchema,
   userDataDirectory: z.string().nullable(),
   dataSources: z.array(scraperDataSourceSchema),
+  createdAt: z.number(),
+  updatedAt: z.number(),
 })
 
 export type ScraperType = z.infer<typeof scraperSchema>
 
-export const createScraperSchema = scraperSchema.omit({ id: true })
+export const createScraperSchema = scraperSchema.omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+})
 
 export type CreateScraper = z.infer<typeof createScraperSchema>
 

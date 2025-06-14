@@ -1,6 +1,6 @@
 import { CopyButton } from "@/components/common/button/copy-button"
 import { ExternalLink } from "@/components/common/button/external-link"
-import { LabeledValue } from "@/components/common/labeled-value"
+import { LabeledValue } from "@/components/common/label/labeled-value"
 import { formatDuration } from "@/lib/utils"
 import type { PageAction } from "@web-scraper/common"
 import { PageActionType } from "@web-scraper/common"

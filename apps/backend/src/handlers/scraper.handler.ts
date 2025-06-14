@@ -48,9 +48,7 @@ export async function executeNewScraper(
       context.config.preferences.chromeExecutablePath ||
       "/home/aktyn/.cache/puppeteer/chrome/linux-136.0.7103.49/chrome-linux64/chrome",
     headless: context.config.preferences.headless,
-    args: context.config.preferences.proxyURL
-      ? [`--proxy-server=${context.config.preferences.proxyURL}`]
-      : [],
+    proxy: context.config.preferences.proxyURL,
   })
 
   scraper.on("stateChange", (state, previousState) => {

@@ -1,4 +1,4 @@
-import { LabeledValue } from "@/components/common/labeled-value"
+import { LabeledValue } from "@/components/common/label/labeled-value"
 import { systemActionTypeLabels } from "@/lib/dictionaries"
 import type { SystemAction } from "@web-scraper/common"
 import { SystemActionType } from "@web-scraper/common"

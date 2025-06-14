@@ -1,17 +1,18 @@
-import { Copy, Edit, Plus, Trash } from "lucide-react"
-import { RefreshButton } from "../common/table/refresh-button"
-import { Button } from "../shadcn/button"
-import { type ColumnDef } from "@tanstack/react-table"
-import { type ScraperType } from "@web-scraper/common"
-import { useMemo, useState } from "react"
-import { Tooltip, TooltipContent, TooltipTrigger } from "../shadcn/tooltip"
-import { DataTable } from "../common/table/data-table"
 import { useDelete } from "@/hooks/api/useDelete"
 import { useInfiniteGet } from "@/hooks/api/useInfiniteGet"
-import { NullBadge } from "../common/null-badge"
+import { type ColumnDef } from "@tanstack/react-table"
+import { type ScraperType } from "@web-scraper/common"
+import { Copy, Edit, FileUp, Plus, Trash } from "lucide-react"
+import { useMemo, useState } from "react"
 import { ConfirmationDialog } from "../common/confirmation-dialog"
-import { ScraperPanelDialog } from "../scraper/scraper-panel-dialog"
+import { TimestampValue } from "../common/label/timestamp-value"
+import { NullBadge } from "../common/null-badge"
+import { DataTable } from "../common/table/data-table"
+import { RefreshButton } from "../common/table/refresh-button"
 import { ScraperFormDialog } from "../scraper/scraper-form-dialog"
+import { ScraperPanelDialog } from "../scraper/scraper-panel-dialog"
+import { Button } from "../shadcn/button"
+import { Tooltip, TooltipContent, TooltipTrigger } from "../shadcn/tooltip"
 
 export function Scrapers() {
   const {
@@ -67,6 +68,11 @@ export function Scrapers() {
         accessorKey: "description",
         header: "Description",
         cell: ({ row }) => row.original.description ?? <NullBadge />,
+      },
+      {
+        accessorKey: "createdAt",
+        header: "Created at",
+        cell: ({ row }) => <TimestampValue value={row.original.createdAt} />,
       },
       {
         id: "actions",
@@ -134,7 +140,7 @@ export function Scrapers() {
     <div className="size-full *:w-256 *:max-w-full">
       <div
         data-transition-direction="top"
-        className="view-transition p-2 flex flex-row items-center"
+        className="view-transition p-2 flex flex-row items-center gap-2"
       >
         <Button
           variant="outline"
@@ -145,6 +151,17 @@ export function Scrapers() {
         >
           <Plus />
           Add Scraper
+        </Button>
+        <Button
+          variant="outline"
+          onClick={() => {
+            // TODO: Implement import scraper
+            // setScraperToEdit(null)
+            // setUpsertDialogOpen(true)
+          }}
+        >
+          <FileUp />
+          Import Scraper
         </Button>
         <RefreshButton
           onClick={refresh}

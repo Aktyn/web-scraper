@@ -469,14 +469,14 @@ const captchaTesterInstructions: ScraperInstructions = [
     type: ScraperInstructionType.PageAction,
     action: {
       type: PageActionType.Navigate,
-      url: "https://bot.sannysoft.com/",
+      url: "https://bot.sannysoft.com",
     },
   },
   {
     type: ScraperInstructionType.PageAction,
     action: {
       type: PageActionType.Navigate,
-      url: "https://fingerprint-scan.com/",
+      url: "https://fingerprint-scan.com",
     },
   },
   {
@@ -484,6 +484,13 @@ const captchaTesterInstructions: ScraperInstructions = [
     action: {
       type: PageActionType.Navigate,
       url: "https://arh.antoinevastel.com/bots/areyouheadless",
+    },
+  },
+  {
+    type: ScraperInstructionType.PageAction,
+    action: {
+      type: PageActionType.Navigate,
+      url: "https://abrahamjuliot.github.io/creepjs",
     },
   },
 ]

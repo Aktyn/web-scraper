@@ -14,14 +14,14 @@ import {
   type ScraperType,
 } from "@web-scraper/common"
 import { Scraper } from "@web-scraper/core"
-import { asc, desc, eq } from "drizzle-orm"
+import { type InferSelectModel, asc, desc, eq, sql } from "drizzle-orm"
 import type { FastifyInstance } from "fastify"
 import type { ZodTypeProvider } from "fastify-type-provider-zod"
 import z from "zod"
 import {
   scraperDataSourcesTable,
-  scraperExecutionsTable,
   scraperExecutionIterationsTable,
+  scraperExecutionsTable,
   scrapersTable,
 } from "../../db/schema"
 import { executeNewScraper } from "../../handlers/scraper.handler"
@@ -32,8 +32,8 @@ export async function scrapersRoutes(
   { logger, events, config }: ApiModuleContext,
 ) {
   async function joinScraperWithDataSources(
-    scraper: Omit<ScraperType, "dataSources">,
-  ) {
+    scraper: InferSelectModel<typeof scrapersTable>,
+  ): Promise<ScraperType> {
     const dataSources = await fastify.db
       .select()
       .from(scraperDataSourcesTable)
@@ -41,6 +41,8 @@ export async function scrapersRoutes(
 
     return {
       ...scraper,
+      createdAt: scraper.createdAt.getTime(),
+      updatedAt: scraper.updatedAt.getTime(),
       dataSources,
     }
   }
@@ -73,13 +75,25 @@ export async function scrapersRoutes(
       const { page, pageSize } = request.query
 
       const scrapers = await fastify.db
-        .select()
+        .select({ scraper: scrapersTable })
         .from(scrapersTable)
+        .leftJoin(
+          scraperExecutionsTable,
+          eq(scrapersTable.id, scraperExecutionsTable.scraperId),
+        )
+        .orderBy(
+          desc(
+            sql`COALESCE(MAX(${scraperExecutionsTable.createdAt}), ${scrapersTable.updatedAt})`,
+          ),
+        )
+        .groupBy(scrapersTable.id)
         .limit(pageSize + 1)
         .offset(page * pageSize)
 
       const data = await Promise.all(
-        scrapers.slice(0, pageSize).map(joinScraperWithDataSources),
+        scrapers
+          .slice(0, pageSize)
+          .map(({ scraper }) => joinScraperWithDataSources(scraper)),
       )
 
       return reply.status(200).send({

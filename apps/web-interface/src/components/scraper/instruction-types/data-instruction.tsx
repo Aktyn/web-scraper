@@ -2,7 +2,7 @@ import type { ScraperDataKey, ScraperValue } from "@web-scraper/common"
 import { Save, Trash2 } from "lucide-react"
 import { ScraperValue as ScraperValueComponent } from "./scraper-value"
 import type { ComponentProps } from "react"
-import { LabeledValue } from "@/components/common/labeled-value"
+import { LabeledValue } from "@/components/common/label/labeled-value"
 import { DataKeyValue } from "./data-key-value"
 
 type SaveDataInstructionProps = {

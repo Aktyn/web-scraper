@@ -16,6 +16,7 @@
     "install:firefox": "npx rebrowser-puppeteer browsers install firefox"
   },
   "dependencies": {
+    "@lem0-packages/puppeteer-page-proxy": "^1.4.1",
     "@types/node-notifier": "^8.0.5",
     "@web-scraper/common": "*",
     "ghost-cursor": "^1.4.1",

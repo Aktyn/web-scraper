@@ -12,7 +12,7 @@ import type { ComponentProps, ReactNode } from "react"
 import { ScraperInstructionsTree } from "../scraper-instructions-tree"
 import { ScraperSelector } from "./scraper-selector"
 import { ScraperValue } from "./scraper-value"
-import { LabeledValue } from "@/components/common/labeled-value"
+import { LabeledValue } from "@/components/common/label/labeled-value"
 import { countInstructions } from "../common/helpers"
 
 type ConditionInstructionProps = {
