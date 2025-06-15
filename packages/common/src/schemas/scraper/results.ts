@@ -58,6 +58,7 @@ export type ScraperInstructionInfo = z.infer<typeof instructionInfoSchema>
 export enum ScraperInstructionsExecutionInfoType {
   Instruction = "instruction",
   ExternalDataOperation = "external-data-operation",
+  PagePortalOpened = "page-portal-opened",
   Success = "success",
   Error = "error",
 }
@@ -110,6 +111,12 @@ export const scraperInstructionsExecutionInfoSchema = z.array(
           dataSourceName: z.string(),
         }),
       ]),
+    }),
+
+    z.object({
+      type: z.literal(ScraperInstructionsExecutionInfoType.PagePortalOpened),
+      url: z.string(),
+      pageIndex: z.number(),
     }),
 
     z.object({

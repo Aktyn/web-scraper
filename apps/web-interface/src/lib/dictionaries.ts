@@ -37,6 +37,7 @@ export const scraperInstructionsExecutionInfoTypeLabels: {
   [ScraperInstructionsExecutionInfoType.Instruction]: "Instruction",
   [ScraperInstructionsExecutionInfoType.ExternalDataOperation]:
     "External data operation",
+  [ScraperInstructionsExecutionInfoType.PagePortalOpened]: "Page portal opened",
   [ScraperInstructionsExecutionInfoType.Success]: "Success",
   [ScraperInstructionsExecutionInfoType.Error]: "Error",
 }
@@ -46,6 +47,7 @@ export const pageActionTypeLabels: { [key in PageActionType]: string } = {
   [PageActionType.Wait]: "Wait",
   [PageActionType.Click]: "Click",
   [PageActionType.Type]: "Type",
+  [PageActionType.ScrollToTop]: "Scroll to top",
   [PageActionType.ScrollToBottom]: "Scroll to bottom",
 }
 

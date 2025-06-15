@@ -71,7 +71,7 @@ export function ScraperPanel({ scraper }: ScraperPanelProps) {
 
         <Accordion
           type="multiple"
-          defaultValue={["execution-history"]}
+          defaultValue={[]}
           className="w-full *:data-[slot=accordion-item]:border-b-0"
         >
           <AccordionItem

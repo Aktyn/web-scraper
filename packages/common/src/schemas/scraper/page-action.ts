@@ -7,6 +7,7 @@ export enum PageActionType {
   Navigate = "navigate",
   Click = "click",
   Type = "type",
+  ScrollToTop = "scroll-to-top",
   ScrollToBottom = "scroll-to-bottom",
 }
 
@@ -22,12 +23,16 @@ export const pageActionSchema = z.discriminatedUnion("type", [
   z.object({
     type: z.literal(PageActionType.Click),
     selectors: scraperElementSelectorsSchema,
+    useGhostCursor: z.boolean().optional(),
   }),
   z.object({
     type: z.literal(PageActionType.Type),
     selectors: scraperElementSelectorsSchema,
     clearBeforeType: z.boolean().optional(),
     value: scraperValueSchema,
+  }),
+  z.object({
+    type: z.literal(PageActionType.ScrollToTop),
   }),
   z.object({
     type: z.literal(PageActionType.ScrollToBottom),

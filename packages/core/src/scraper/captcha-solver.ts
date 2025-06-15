@@ -1,6 +1,6 @@
+import { wait } from "@web-scraper/common"
 import type { SerializedAXNode } from "rebrowser-puppeteer"
-import type { ScraperExecutionContext } from "./helpers"
-import { randomInt, wait } from "@web-scraper/common"
+import { getGhostClickOptions, type ScraperExecutionContext } from "./helpers"
 
 const MAX_ATTEMPTS = 5
 
@@ -74,12 +74,7 @@ async function solveCloudflareChallenge(context: ScraperExecutionContext) {
 
         if (handle) {
           context.logger.info("Clicking checkbox to solve captcha")
-          await context.cursor.click(handle, {
-            randomizeMoveDelay: true,
-            moveDelay: 3_000,
-            waitForClick: randomInt(10, 200),
-            hesitate: randomInt(10, 400),
-          })
+          await context.cursor.click(handle, getGhostClickOptions())
 
           try {
             await context.page.waitForNavigation({

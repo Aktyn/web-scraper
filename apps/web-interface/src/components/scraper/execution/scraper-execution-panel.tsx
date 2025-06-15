@@ -31,6 +31,7 @@ import {
   useState,
 } from "react"
 import { ScraperExecutionInfo } from "./scraper-execution-info"
+import { ScraperPagePortals } from "./scraper-page-portals"
 
 export type ScraperExecutionPanelRef = {
   applyIterator: (iterator: ExecutionIterator) => void
@@ -120,6 +121,10 @@ export function ScraperExecutionPanel({ ref }: ScraperExecutionPanelProps) {
           executionInfo={partialExecutionInfo}
           currentlyExecutingInstruction={currentlyExecutingInstruction}
         />
+      )}
+
+      {state === ScraperState.Executing && (
+        <ScraperPagePortals executionInfo={partialExecutionInfo} />
       )}
     </div>
   )

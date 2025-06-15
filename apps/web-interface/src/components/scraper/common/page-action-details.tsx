@@ -4,9 +4,10 @@ import { LabeledValue } from "@/components/common/label/labeled-value"
 import { formatDuration } from "@/lib/utils"
 import type { PageAction } from "@web-scraper/common"
 import { PageActionType } from "@web-scraper/common"
-import { Check } from "lucide-react"
+import { Check, MousePointerClick } from "lucide-react"
 import { ScraperSelector } from "../instruction-types/scraper-selector"
 import { ScraperValue } from "../instruction-types/scraper-value"
+import { Label } from "@/components/shadcn/label"
 
 export function PageActionDetails({ action }: { action: PageAction }) {
   switch (action.type) {
@@ -31,6 +32,12 @@ export function PageActionDetails({ action }: { action: PageAction }) {
       return (
         <LabeledValue label="Target:">
           <ScraperSelector selectors={action.selectors} />
+          {action.useGhostCursor && (
+            <Label className="flex flex-row items-center gap-2">
+              <MousePointerClick className="size-4 inline" />
+              <span>Ghost cursor</span>
+            </Label>
+          )}
         </LabeledValue>
       )
 
@@ -54,6 +61,7 @@ export function PageActionDetails({ action }: { action: PageAction }) {
         </div>
       )
 
+    case PageActionType.ScrollToTop:
     case PageActionType.ScrollToBottom:
       return null
   }

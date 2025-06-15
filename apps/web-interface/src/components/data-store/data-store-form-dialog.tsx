@@ -17,9 +17,9 @@ import {
 } from "@/components/shadcn/form"
 import { Input } from "@/components/shadcn/input"
 import { ScrollArea } from "@/components/shadcn/scroll-area"
-import { Switch } from "@/components/shadcn/switch"
 import { usePost } from "@/hooks/api/usePost"
 import { usePut } from "@/hooks/api/usePut"
+import { cn } from "@/lib/utils"
 import { zodResolver } from "@hookform/resolvers/zod"
 import {
   createUserDataStoreSchema,
@@ -32,7 +32,7 @@ import { useEffect } from "react"
 import { useFieldArray, useForm } from "react-hook-form"
 import { FormInput } from "../common/form/form-input"
 import { FormSelect } from "../common/form/form-select"
-import { cn } from "@/lib/utils"
+import { FormSwitch } from "../common/form/form-switch"
 
 const columnTypeOptions = [
   { value: SqliteColumnType.TEXT, label: "Text" },
@@ -257,27 +257,12 @@ export function DataStoreFormDialog({
                       </div>
 
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <FormField
+                        <FormSwitch
                           control={form.control}
                           name={`columns.${index}.notNull`}
-                          render={({ field }) => (
-                            <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3">
-                              <div className="space-y-0.5">
-                                <FormLabel className="text-base">
-                                  Required
-                                </FormLabel>
-                                <FormDescription>
-                                  This column cannot be empty
-                                </FormDescription>
-                              </div>
-                              <FormControl>
-                                <Switch
-                                  checked={field.value}
-                                  onCheckedChange={field.onChange}
-                                />
-                              </FormControl>
-                            </FormItem>
-                          )}
+                          label="Required"
+                          description="This column cannot be empty"
+                          className="flex-row flex-wrap items-center gap-2 rounded-lg border p-3 *:data-[slot=form-description]:w-full"
                         />
 
                         <FormField

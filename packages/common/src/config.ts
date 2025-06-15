@@ -9,6 +9,11 @@ export const defaultPreferences = {
     description:
       "Proxy URL to use for the browser. If not set, no proxy will be used.",
   },
+  portalURL: {
+    value: "http://localhost:3000",
+    description:
+      "URL for the portal feature to work. If not set, the portal will not be used.",
+  },
   chromeExecutablePath: {
     value: "",
     description:

@@ -65,6 +65,7 @@ export function ScraperExecutionInfoItem({
           <ScraperInstructionInfo info={executionInfo.instructionInfo} />
         </ContainerLayout>
       )
+
     case ScraperInstructionsExecutionInfoType.ExternalDataOperation:
       return (
         <ContainerLayout {...divProps}>
@@ -82,6 +83,24 @@ export function ScraperExecutionInfoItem({
           <ExternalDataOperation operation={executionInfo.operation} />
         </ContainerLayout>
       )
+
+    case ScraperInstructionsExecutionInfoType.PagePortalOpened:
+      return (
+        <ContainerLayout {...divProps}>
+          <HeaderLayout>
+            <Badge variant="secondary">
+              {scraperInstructionsExecutionInfoTypeLabels[executionInfo.type]}
+            </Badge>
+          </HeaderLayout>
+          <LabeledValue label="URL:">
+            <ExternalLink
+              url={executionInfo.url}
+              className="max-w-64 inline-block"
+            />
+          </LabeledValue>
+        </ContainerLayout>
+      )
+
     case ScraperInstructionsExecutionInfoType.Success:
       return (
         <ContainerLayout

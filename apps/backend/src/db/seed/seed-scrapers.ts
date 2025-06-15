@@ -354,6 +354,12 @@ const scrapCryptoPricesInstructions: ScraperInstructions = [
     },
   },
   {
+    type: ScraperInstructionType.PageAction,
+    action: {
+      type: PageActionType.ScrollToTop,
+    },
+  },
+  {
     type: ScraperInstructionType.Condition,
     if: {
       type: ScraperConditionType.IsVisible,

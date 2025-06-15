@@ -25,6 +25,10 @@ describe("Misc Routes", () => {
             value: "",
           },
           {
+            key: "portalURL",
+            value: "http://localhost:3000",
+          },
+          {
             key: "chromeExecutablePath",
             value: "",
           },

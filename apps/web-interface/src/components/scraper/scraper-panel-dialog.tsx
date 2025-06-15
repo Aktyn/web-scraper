@@ -60,11 +60,16 @@ export function ScraperPanelDialog({
                 variant="outline"
                 onClick={() => exportScraper(null, { id: scraper.id })}
                 disabled={exportingScraper}
+                tabIndex={-1}
               >
                 <FileDown />
                 Export Scraper
               </Button>
-              <Button variant="outline" onClick={() => setEditDialogOpen(true)}>
+              <Button
+                variant="outline"
+                onClick={() => setEditDialogOpen(true)}
+                tabIndex={-1}
+              >
                 <Edit />
                 Edit Scraper
               </Button>

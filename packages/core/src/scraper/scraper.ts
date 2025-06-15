@@ -18,9 +18,14 @@ import {
   type SimpleLogger,
   wait,
 } from "@web-scraper/common"
-import { createCursor, getRandomPagePoint } from "ghost-cursor"
+import {
+  createCursor,
+  getRandomPagePoint,
+  installMouseHelper,
+} from "ghost-cursor"
 import EventEmitter from "node:events"
 import AdblockerPlugin from "puppeteer-extra-plugin-adblocker"
+import PortalPlugin from "puppeteer-extra-plugin-portal"
 import StealthPlugin from "puppeteer-extra-plugin-stealth"
 import puppeteerRealBrowser from "puppeteer-real-browser"
 import puppeteer, {
@@ -36,8 +41,11 @@ import {
   getScraperValue,
   replaceSpecialStrings,
 } from "./data-helper"
-import { saveScreenshot, type ScraperExecutionContext } from "./helpers"
-import { scrollToBottom } from "./page-actions"
+import {
+  getGhostClickOptions,
+  saveScreenshot,
+  type ScraperExecutionContext,
+} from "./helpers"
 import { ScraperExecutionInfo } from "./scraper-execution-info"
 import { getElementHandle } from "./selectors"
 
@@ -50,6 +58,8 @@ type ScraperOptions = Pick<ScraperType, "id" | "name"> & {
   noInit?: boolean
 
   proxy?: string
+
+  portalUrl?: string
 } & Partial<LaunchOptions>
 
 type Metadata = Record<string, unknown>
@@ -97,7 +107,6 @@ export class Scraper<
   private static emptyPageUrl = "about:blank"
 
   private readonly logger: SimpleLogger
-  private readonly proxy: string | undefined
 
   private initPromise: Promise<Browser> | null = null
 
@@ -109,7 +118,7 @@ export class Scraper<
   private _currentlyExecutingInstruction: ScraperInstructions[number] | null =
     null
 
-  constructor(public readonly options: ScraperOptions) {
+  constructor(public readonly options: Readonly<ScraperOptions>) {
     super()
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -119,8 +128,6 @@ export class Scraper<
       ...console,
       fatal: console.error,
     }
-
-    this.proxy = proxy
 
     assert(
       !Scraper.instances.has(this.identifier),
@@ -193,7 +200,13 @@ export class Scraper<
                 plugins: [
                   AdblockerPlugin({ blockTrackers: true }),
                   StealthPlugin(),
-                ],
+                  this.options.portalUrl &&
+                    PortalPlugin({
+                      webPortalConfig: {
+                        baseUrl: this.options.portalUrl,
+                      },
+                    }),
+                ].filter((plugin) => !!plugin),
               })
               .then((result) => result.browser)
 
@@ -340,8 +353,8 @@ export class Scraper<
       })
     }, "en-US")
 
-    if (this.proxy) {
-      await useProxy(page, this.proxy)
+    if (this.options.proxy) {
+      await useProxy(page, this.options.proxy)
 
       // try {
       //   const lookupData = await useProxy.lookup(page)
@@ -351,13 +364,22 @@ export class Scraper<
       // }
     }
 
+    let pagePortalUrl: string | undefined = undefined
+    if (
+      this.options.portalUrl &&
+      "openPortal" in page &&
+      typeof page.openPortal === "function"
+    ) {
+      pagePortalUrl = await page.openPortal()
+    }
+
     const cursor = createCursor(page, await getRandomPagePoint(page), true)
     cursor.toggleRandomMove(true)
-    // if (process.env.NODE_ENV === "development") {
-    //   await installMouseHelper(page)
-    // }
+    if (process.env.NODE_ENV === "development") {
+      await installMouseHelper(page)
+    }
 
-    return { page, cursor }
+    return { page, cursor, pagePortalUrl }
   }
 
   async execute(
@@ -416,12 +438,25 @@ export class Scraper<
     }
 
     const startTime = performance.now()
-    const { page, cursor } = await this.getPage()
+    const { page, cursor, pagePortalUrl } = await this.getPage()
+
     if (options?.pageMiddleware) {
       await options.pageMiddleware(page)
     }
 
     executionInfo.on("update", (info) => this.emit("executionUpdate", info))
+
+    if (pagePortalUrl) {
+      executionInfo.push(
+        {
+          type: ScraperInstructionsExecutionInfoType.PagePortalOpened,
+          url: pagePortalUrl,
+          pageIndex: 0, //TODO: handle multiple pages during single scraper execution
+        },
+        false,
+      )
+      executionInfo.flush()
+    }
 
     try {
       await this.executeInstructions(
@@ -761,9 +796,22 @@ export class Scraper<
         break
       case PageActionType.Click: {
         const handle = await getElementHandle(context, action.selectors, true)
-        await handle.click({
-          delay: randomInt(1, 4),
-        })
+
+        if (action.useGhostCursor) {
+          context.cursor.toggleRandomMove(false)
+
+          await context.cursor.scrollIntoView(handle, {
+            scrollSpeed: 80,
+          })
+          await wait(1_000)
+          await context.cursor.click(handle, getGhostClickOptions())
+
+          context.cursor.toggleRandomMove(true)
+        } else {
+          await handle.click({
+            delay: randomInt(1, 4),
+          })
+        }
         break
       }
       case PageActionType.Type: {
@@ -784,14 +832,26 @@ export class Scraper<
         }
         break
       }
+      case PageActionType.ScrollToTop:
+        await context.cursor.scrollTo("top", {
+          scrollSpeed: 50,
+        })
+        break
       case PageActionType.ScrollToBottom:
-        await scrollToBottom(context)
+        // await scrollToBottom(context)
+        await context.cursor.scrollTo("bottom", {
+          scrollSpeed: 50,
+        })
         break
     }
 
     if (
-      action.type !== PageActionType.Wait &&
-      action.type !== PageActionType.Navigate
+      ![
+        PageActionType.Wait,
+        PageActionType.Navigate,
+        PageActionType.ScrollToTop,
+        PageActionType.ScrollToBottom,
+      ].includes(action.type)
     ) {
       await this.waitForNetworkIdle(context)
     }
@@ -802,7 +862,7 @@ export class Scraper<
   private async waitForNetworkIdle(context: ScraperExecutionContext) {
     try {
       await context.page.waitForNetworkIdle({
-        timeout: 30_000,
+        timeout: 20_000,
         signal: context.abortController.signal,
       })
     } catch (error) {

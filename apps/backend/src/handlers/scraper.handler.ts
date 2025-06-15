@@ -57,6 +57,7 @@ export async function executeNewScraper(
       ),
     headless: context.config.preferences.headless,
     proxy: context.config.preferences.proxyURL,
+    portalUrl: context.config.preferences.portalURL,
   })
 
   scraper.on("stateChange", (state, previousState) => {
