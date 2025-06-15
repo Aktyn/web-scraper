@@ -79,6 +79,7 @@ export async function seedScraperExecutions(db: DbModule) {
         .values({
           scraperId: scraper.id,
           iterator,
+          createdAt: new Date(new Date().getTime() - 60_000 * i),
         })
         .returning({ id: scraperExecutionsTable.id })
         .get()

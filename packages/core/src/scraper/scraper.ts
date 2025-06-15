@@ -23,11 +23,11 @@ import EventEmitter from "node:events"
 import AdblockerPlugin from "puppeteer-extra-plugin-adblocker"
 import StealthPlugin from "puppeteer-extra-plugin-stealth"
 import puppeteerRealBrowser from "puppeteer-real-browser"
-import type {
-  Browser,
-  LaunchOptions,
-  Page,
-  Viewport,
+import puppeteer, {
+  type Browser,
+  type LaunchOptions,
+  type Page,
+  type Viewport,
 } from "rebrowser-puppeteer"
 import { performSystemAction } from "../system-actions"
 import { detectAndSolveCaptcha } from "./captcha-solver"
@@ -40,10 +40,6 @@ import { saveScreenshot, type ScraperExecutionContext } from "./helpers"
 import { scrollToBottom } from "./page-actions"
 import { ScraperExecutionInfo } from "./scraper-execution-info"
 import { getElementHandle } from "./selectors"
-
-// const puppeteerExtra = puppeteer
-// .use(AdblockerPlugin({ blockTrackers: true }))
-// .use(StealthPlugin())
 
 const defaultViewport: Viewport = { width: 1280, height: 720 }
 
@@ -175,31 +171,42 @@ export class Scraper<
     this.logger.info({ msg: "Launching browser with options", launchOptions })
 
     this.initPromise = new Promise<Browser>((resolve, reject) => {
-      // puppeteerExtra
-      // .launch(launchOptions)
-      puppeteerRealBrowser
-        .connect({
-          args: launchOptions.args ?? [],
-          headless: !!launchOptions.headless,
-          customConfig: {
-            chromePath: launchOptions.executablePath,
-            userDataDir: launchOptions.userDataDir || false,
-            chromeFlags: ["--enable-unsafe-webgpu"],
-          },
-          connectOption: {
-            defaultViewport,
-            downloadBehavior: { policy: "default" },
-          },
-          turnstile: false,
-          plugins: [AdblockerPlugin({ blockTrackers: true }), StealthPlugin()],
-        })
-        .then(({ browser }) => {
+      const launchPromise =
+        process.env.TEST === "true" ||
+        process.env.VITEST === "true" ||
+        process.env.CI === "true"
+          ? puppeteer.launch(launchOptions)
+          : puppeteerRealBrowser
+              .connect({
+                args: launchOptions.args ?? [],
+                headless: !!launchOptions.headless,
+                customConfig: {
+                  chromePath: launchOptions.executablePath,
+                  userDataDir: launchOptions.userDataDir || false,
+                  chromeFlags: ["--enable-unsafe-webgpu"],
+                },
+                connectOption: {
+                  defaultViewport,
+                  downloadBehavior: { policy: "default" },
+                },
+                turnstile: false,
+                plugins: [
+                  AdblockerPlugin({ blockTrackers: true }),
+                  StealthPlugin(),
+                ],
+              })
+              .then((result) => result.browser)
+
+      launchPromise
+        .then((browser) => {
           resolve(browser as never)
           if (this.destroyed) {
             void browser.close()
           }
         })
-        .catch(reject)
+        .catch((error) => {
+          reject(error)
+        })
     })
 
     this.initPromise
@@ -393,8 +400,7 @@ export class Scraper<
       )
       executionInfo.push({
         type: ScraperInstructionsExecutionInfoType.Error,
-        errorMessage:
-          "Execution cancelled due to Scraper not being in idle state",
+        errorMessage: `Execution cancelled due to Scraper not being in idle or pending state. Current state: ${this.state}`,
         summary: {
           duration: 0,
         },

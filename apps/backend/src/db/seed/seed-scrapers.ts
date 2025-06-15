@@ -40,6 +40,8 @@ export async function seedScrapers(db: DbModule) {
               },
             ],
             userDataDirectory: "/tmp/user-data-dir",
+            createdAt: new Date(new Date().getTime() + 60_000),
+            updatedAt: new Date(new Date().getTime() + 60_000),
           },
           {
             name: "New pepper alerts",

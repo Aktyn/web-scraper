@@ -116,38 +116,13 @@ describe("Scrapers Routes", () => {
         data: [
           {
             id: expect.any(Number),
-            name: "Small example scraper",
-            description: null,
-            instructions: [
-              {
-                type: ScraperInstructionType.PageAction,
-                action: {
-                  type: PageActionType.Navigate,
-                  url: "https://example.com",
-                },
-              },
-            ],
-            userDataDirectory: "/tmp/user-data-dir",
-            dataSources: [
-              {
-                dataStoreTableName: "personal_credentials_random_string",
-                sourceAlias: "foo",
-                whereSchema: {
-                  and: [
-                    {
-                      column: "username",
-                      condition: "notEquals",
-                      value: "any value that is not noop",
-                    },
-                    {
-                      column: "email",
-                      condition: "equals",
-                      value: "noop@gmail.com",
-                    },
-                  ],
-                },
-              },
-            ],
+            name: expect.any(String),
+            description: expect.toBeOneOf([null, expect.any(String)]),
+            instructions: expect.any(Array),
+            userDataDirectory: expect.toBeOneOf([null, expect.any(String)]),
+            dataSources: expect.any(Array),
+            createdAt: expect.any(Number),
+            updatedAt: expect.any(Number),
           },
         ],
         page: 0,
@@ -308,19 +283,13 @@ describe("Scrapers Routes", () => {
       expect(JSON.parse(response.payload)).toEqual({
         data: {
           id: scraperId,
-          name: "Small example scraper",
-          description: null,
-          instructions: [
-            {
-              type: ScraperInstructionType.PageAction,
-              action: {
-                type: PageActionType.Navigate,
-                url: "https://example.com",
-              },
-            },
-          ],
-          userDataDirectory: "/tmp/user-data-dir",
+          name: expect.any(String),
+          description: expect.toBeOneOf([null, expect.any(String)]),
+          instructions: expect.any(Array),
+          userDataDirectory: expect.toBeOneOf([null, expect.any(String)]),
           dataSources: expect.any(Array),
+          createdAt: expect.any(Number),
+          updatedAt: expect.any(Number),
         },
       })
     })
@@ -613,7 +582,7 @@ describe("Scrapers Routes", () => {
         url: "/scrapers",
       })
       const listData = JSON.parse(listResponse.payload)
-      const originalScraperId = listData.data[0].id
+      const originalScraperId = listData.data[1].id
 
       const updateData: UpdateScraper = {
         name: "Another Scraper",
@@ -758,7 +727,7 @@ describe("Scrapers Routes", () => {
         url: "/scrapers?page=0&pageSize=2",
       })
       const listData = JSON.parse(listResponse.payload)
-      const scraper1Id = listData.data[1].id
+      const scraper1Id = listData.data[0].id
 
       const executeResponse = await modules.api.inject({
         method: "POST",

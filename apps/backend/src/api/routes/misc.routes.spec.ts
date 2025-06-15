@@ -18,7 +18,17 @@ describe("Misc Routes", () => {
 
       expect(response.statusCode).toBe(200)
       expect(JSON.parse(response.payload)).toEqual({
-        data: [{ key: "headless", value: true }],
+        data: [
+          { key: "headless", value: true },
+          {
+            key: "proxyURL",
+            value: "",
+          },
+          {
+            key: "chromeExecutablePath",
+            value: "",
+          },
+        ],
       })
     })
 

@@ -105,6 +105,28 @@ describe("User Data Stores Routes", () => {
               },
             ],
           },
+          {
+            columns: [
+              {
+                name: "id",
+                notNull: true,
+                type: SqliteColumnType.INTEGER,
+              },
+              {
+                name: "Name",
+                notNull: true,
+                type: SqliteColumnType.TEXT,
+              },
+              {
+                name: "Content",
+                type: SqliteColumnType.TEXT,
+              },
+            ],
+            description: null,
+            name: "Data markers",
+            recordsCount: 1,
+            tableName: "data_markers",
+          },
         ],
         page: 0,
         pageSize: 32,
@@ -463,7 +485,7 @@ describe("User Data Stores Routes", () => {
       const getData = JSON.parse(
         getResponse.payload,
       ) as ApiPaginatedResponse<object>
-      expect(getData.data.length).toBe(2)
+      expect(getData.data.length).toBe(3)
     })
 
     it("should return status 404 if the data store does not exist", async () => {
