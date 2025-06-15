@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest"
-import { deepMerge } from "./common"
+import { deepMerge, omit, pick } from "./common"
 
 describe(deepMerge.name, () => {
   it("should merge non-nested objects", () => {
@@ -56,5 +56,21 @@ describe(deepMerge.name, () => {
     const source = null
     const merged = deepMerge(target, source as never)
     expect(merged).toEqual(target)
+  })
+})
+
+describe(omit.name, () => {
+  it("should omit keys from object", () => {
+    const obj = { a: 1, b: 2, c: 3 }
+    const result = omit(obj, "b", "c")
+    expect(result).toStrictEqual({ a: 1 })
+  })
+})
+
+describe(pick.name, () => {
+  it("should pick keys from object", () => {
+    const obj = { a: 1, b: 2, c: 3 }
+    const result = pick(obj, "a", "c")
+    expect(result).toStrictEqual({ a: 1, c: 3 })
   })
 })

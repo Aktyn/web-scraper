@@ -1,4 +1,5 @@
 import {
+  type CreateScraper,
   apiErrorResponseSchema,
   apiPaginationQuerySchema,
   createScraperSchema,
@@ -6,6 +7,7 @@ import {
   executionIteratorSchema,
   getApiPaginatedResponseSchema,
   getApiResponseSchema,
+  omit,
   paramsWithScraperIdSchema,
   scraperExecutionInfoSchema,
   scraperExecutionStatusSchema,
@@ -14,9 +16,11 @@ import {
   type ScraperType,
 } from "@web-scraper/common"
 import { Scraper } from "@web-scraper/core"
-import { type InferSelectModel, asc, desc, eq, sql } from "drizzle-orm"
+import { asc, desc, eq, sql, type InferSelectModel } from "drizzle-orm"
 import type { FastifyInstance } from "fastify"
 import type { ZodTypeProvider } from "fastify-type-provider-zod"
+import fs from "node:fs"
+import path from "node:path"
 import z from "zod"
 import {
   scraperDataSourcesTable,
@@ -25,7 +29,9 @@ import {
   scrapersTable,
 } from "../../db/schema"
 import { executeNewScraper } from "../../handlers/scraper.handler"
-import { type ApiModuleContext } from "../api.module"
+import type { ApiModuleContext } from "../api.module"
+//@ts-expect-error No types for this package
+import dialog from "node-file-dialog"
 
 export async function scrapersRoutes(
   fastify: FastifyInstance,
@@ -45,6 +51,36 @@ export async function scrapersRoutes(
       updatedAt: scraper.updatedAt.getTime(),
       dataSources,
     }
+  }
+
+  function insertScraperWithDataSources(scraper: CreateScraper) {
+    return fastify.db.transaction(async (tx) => {
+      const [newScraper] = await tx
+        .insert(scrapersTable)
+        .values(scraper)
+        .returning()
+
+      for (const dataSource of scraper.dataSources) {
+        await tx
+          .insert(scraperDataSourcesTable)
+          .values({
+            scraperId: newScraper.id,
+            ...dataSource,
+          })
+          .onConflictDoUpdate({
+            target: [
+              scraperDataSourcesTable.scraperId,
+              scraperDataSourcesTable.dataStoreTableName,
+            ],
+            set: {
+              sourceAlias: dataSource.sourceAlias,
+              whereSchema: dataSource.whereSchema,
+            },
+          })
+      }
+
+      return newScraper
+    })
   }
 
   async function getExecutionIterations(executionId: number) {
@@ -200,37 +236,12 @@ export async function scrapersRoutes(
         })
       }
 
-      const scraper = await fastify.db.transaction(async (tx) => {
-        const [newScraper] = await tx
-          .insert(scrapersTable)
-          .values({
-            name,
-            description: description ?? null,
-            instructions,
-            userDataDirectory: userDataDirectory ?? null,
-          })
-          .returning()
-
-        for (const dataSource of dataSources) {
-          await tx
-            .insert(scraperDataSourcesTable)
-            .values({
-              scraperId: newScraper.id,
-              ...dataSource,
-            })
-            .onConflictDoUpdate({
-              target: [
-                scraperDataSourcesTable.scraperId,
-                scraperDataSourcesTable.dataStoreTableName,
-              ],
-              set: {
-                sourceAlias: dataSource.sourceAlias,
-                whereSchema: dataSource.whereSchema,
-              },
-            })
-        }
-
-        return newScraper
+      const scraper = await insertScraperWithDataSources({
+        name,
+        description: description ?? null,
+        instructions,
+        userDataDirectory: userDataDirectory ?? null,
+        dataSources,
       })
 
       return reply.status(201).send({
@@ -518,6 +529,91 @@ export async function scrapersRoutes(
         pageSize,
         hasMore: executionInfos.length > pageSize,
       })
+    },
+  )
+
+  fastify.withTypeProvider<ZodTypeProvider>().post(
+    "/scrapers/import",
+    {
+      schema: {
+        response: {
+          200: getApiResponseSchema(scraperSchema),
+          400: apiErrorResponseSchema,
+          404: apiErrorResponseSchema,
+          409: apiErrorResponseSchema,
+        },
+      },
+    },
+    async (_request, reply) => {
+      const [filePath] = await dialog({ type: "open-file" })
+
+      const fileContent = fs.readFileSync(filePath, "utf8")
+
+      const scraperData = scraperSchema.parse(JSON.parse(fileContent))
+
+      const existingScraper = await fastify.db
+        .select()
+        .from(scrapersTable)
+        .where(eq(scrapersTable.name, scraperData.name))
+        .get()
+
+      if (existingScraper) {
+        return reply.status(409).send({
+          error: "A scraper with this name already exists",
+        })
+      }
+
+      const scraper = await insertScraperWithDataSources(
+        omit(scraperData, "id", "createdAt", "updatedAt"),
+      )
+
+      const scraperWithDataSources = await joinScraperWithDataSources(scraper)
+
+      return reply.status(200).send({ data: scraperWithDataSources })
+    },
+  )
+
+  fastify.withTypeProvider<ZodTypeProvider>().post(
+    "/scrapers/:id/export",
+    {
+      schema: {
+        params: paramsWithScraperIdSchema,
+        response: {
+          200: getApiResponseSchema(z.null()),
+          404: apiErrorResponseSchema,
+        },
+      },
+    },
+    async (request, reply) => {
+      const { id } = request.params
+
+      const scraper = await fastify.db
+        .select()
+        .from(scrapersTable)
+        .where(eq(scrapersTable.id, id))
+        .get()
+
+      if (!scraper) {
+        return reply.status(404).send({
+          error: "Scraper not found",
+        })
+      }
+
+      const scraperData = await joinScraperWithDataSources(scraper)
+
+      const [directory] = await dialog({ type: "directory" })
+
+      if (!directory) {
+        return reply.status(400).send({
+          error: "No directory selected",
+        })
+      }
+
+      const fileName = path.join(directory, `${scraper.name}.json`)
+
+      fs.writeFileSync(fileName, JSON.stringify(scraperData, null, 2))
+
+      return reply.status(200).send({ data: null })
     },
   )
 }

@@ -255,6 +255,18 @@ export type Routes = {
       response: ApiPaginatedResponse<ScraperExecutionInfo>
     }
   }
+  "scrapers/import": {
+    post: {
+      body: null
+      response: ApiResponse<ScraperType>
+    }
+  }
+  "scrapers/:id/export": {
+    post: {
+      body: null
+      response: ApiResponse<null>
+    }
+  }
 
   notifications: {
     get: {

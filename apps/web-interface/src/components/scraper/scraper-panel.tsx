@@ -20,10 +20,9 @@ import { ScraperInstructionsTree } from "./scraper-instructions-tree"
 
 type ScraperPanelProps = {
   scraper: ScraperType
-  onEditSuccess?: (scraper: ScraperType) => void
 }
 
-export function ScraperPanel({ scraper, onEditSuccess }: ScraperPanelProps) {
+export function ScraperPanel({ scraper }: ScraperPanelProps) {
   const executionPanelRef = useRef<ScraperExecutionPanelRef>(null)
 
   const handleApplyIterator = useCallback(
@@ -35,10 +34,7 @@ export function ScraperPanel({ scraper, onEditSuccess }: ScraperPanelProps) {
   return (
     <ScraperProvider scraper={scraper}>
       <div className="flex flex-col gap-4">
-        <ScraperExecutionPanel
-          ref={executionPanelRef}
-          onEditSuccess={onEditSuccess}
-        />
+        <ScraperExecutionPanel ref={executionPanelRef} />
 
         {scraper.userDataDirectory && (
           <>

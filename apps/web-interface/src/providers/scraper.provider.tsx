@@ -106,11 +106,13 @@ export function ScraperProvider({
     }
   })
 
-  const { postItem: execute, isPosting } = usePost("/scrapers/:id/execute")
+  const { postItem: execute, isPosting } = usePost("/scrapers/:id/execute", {
+    successMessage: null,
+  })
 
   const handleExecute = useCallback(
     async (iterator: ExecutionIterator | null) => {
-      await execute({ iterator }, { id: scraper.id }, () => void 0)
+      await execute({ iterator }, { id: scraper.id })
     },
     [execute, scraper.id],
   )

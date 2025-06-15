@@ -7,12 +7,18 @@ export function primaryKey() {
     .notNull()
 }
 
-export function timestamp(name: string) {
-  return integer(name, { mode: "timestamp_ms" })
+export function timestamp(name: string, autoUpdate = false) {
+  const defaultExpression = sql`(cast(strftime('%s', 'now') || substr(strftime('%f', 'now'), 4) as integer))`
+
+  const column = integer(name, { mode: "timestamp_ms" })
     .notNull()
-    .default(
-      sql`(cast(strftime('%s', 'now') || substr(strftime('%f', 'now'), 4) as integer))`,
-    )
+    .default(defaultExpression)
+
+  if (autoUpdate) {
+    column.$onUpdate(() => new Date())
+  }
+
+  return column
 }
 
 export function sanitizeTableName(name: string) {

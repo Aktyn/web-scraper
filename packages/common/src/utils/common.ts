@@ -30,3 +30,21 @@ export function deepMerge<T extends object>(target: T, source: Partial<T>): T {
 function isObject(item: unknown): item is object {
   return typeof item === "object" && item !== null && !Array.isArray(item)
 }
+
+export function omit<T extends object, K extends keyof T>(
+  obj: T,
+  ...keys: K[]
+): Omit<T, K> {
+  return Object.fromEntries(
+    Object.entries(obj).filter(([key]) => !keys.includes(key as K)),
+  ) as Omit<T, K>
+}
+
+export function pick<T extends object, K extends keyof T>(
+  obj: T,
+  ...keys: K[]
+): Pick<T, K> {
+  return Object.fromEntries(
+    Object.entries(obj).filter(([key]) => keys.includes(key as K)),
+  ) as Pick<T, K>
+}

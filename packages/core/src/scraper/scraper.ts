@@ -18,15 +18,11 @@ import {
   type SimpleLogger,
   wait,
 } from "@web-scraper/common"
-import {
-  createCursor,
-  getRandomPagePoint,
-  installMouseHelper,
-} from "ghost-cursor"
+import { createCursor, getRandomPagePoint } from "ghost-cursor"
 import EventEmitter from "node:events"
-import puppeteer from "puppeteer-extra"
 import AdblockerPlugin from "puppeteer-extra-plugin-adblocker"
 import StealthPlugin from "puppeteer-extra-plugin-stealth"
+import puppeteerRealBrowser from "puppeteer-real-browser"
 import type {
   Browser,
   LaunchOptions,
@@ -45,9 +41,9 @@ import { scrollToBottom } from "./page-actions"
 import { ScraperExecutionInfo } from "./scraper-execution-info"
 import { getElementHandle } from "./selectors"
 
-const puppeteerExtra = puppeteer
-  .use(AdblockerPlugin({ blockTrackers: true }))
-  .use(StealthPlugin())
+// const puppeteerExtra = puppeteer
+// .use(AdblockerPlugin({ blockTrackers: true }))
+// .use(StealthPlugin())
 
 const defaultViewport: Viewport = { width: 1280, height: 720 }
 
@@ -162,10 +158,7 @@ export class Scraper<
         defaultViewport,
         args: [
           "--disable-infobars",
-          !headless && "--window-size=1284,848",
-          "--flag-switches-begin",
-          "--enable-unsafe-webgpu",
-          "--flag-switches-end",
+          "--window-size=1284,848",
           "--lang=en-US",
           "--accept-language=en-US",
           "--ignore-certificate-errors",
@@ -182,10 +175,26 @@ export class Scraper<
     this.logger.info({ msg: "Launching browser with options", launchOptions })
 
     this.initPromise = new Promise<Browser>((resolve, reject) => {
-      puppeteerExtra
-        .launch(launchOptions)
-        .then((browser: Browser) => {
-          resolve(browser)
+      // puppeteerExtra
+      // .launch(launchOptions)
+      puppeteerRealBrowser
+        .connect({
+          args: launchOptions.args ?? [],
+          headless: !!launchOptions.headless,
+          customConfig: {
+            chromePath: launchOptions.executablePath,
+            userDataDir: launchOptions.userDataDir || false,
+            chromeFlags: ["--enable-unsafe-webgpu"],
+          },
+          connectOption: {
+            defaultViewport,
+            downloadBehavior: { policy: "default" },
+          },
+          turnstile: false,
+          plugins: [AdblockerPlugin({ blockTrackers: true }), StealthPlugin()],
+        })
+        .then(({ browser }) => {
+          resolve(browser as never)
           if (this.destroyed) {
             void browser.close()
           }
@@ -337,9 +346,9 @@ export class Scraper<
 
     const cursor = createCursor(page, await getRandomPagePoint(page), true)
     cursor.toggleRandomMove(true)
-    if (process.env.NODE_ENV === "development") {
-      await installMouseHelper(page)
-    }
+    // if (process.env.NODE_ENV === "development") {
+    //   await installMouseHelper(page)
+    // }
 
     return { page, cursor }
   }

@@ -1,3 +1,5 @@
+import { IteratorDescription } from "@/components/iterator/iterator-description"
+import { IteratorFormDialog } from "@/components/iterator/iterator-form-dialog"
 import { Button } from "@/components/shadcn/button"
 import { ScrollArea, ScrollBar } from "@/components/shadcn/scroll-area"
 import { cn } from "@/lib/utils"
@@ -12,12 +14,10 @@ import {
   scraperInstructionsSchema,
   ScraperInstructionType,
   ScraperState,
-  type ScraperType,
 } from "@web-scraper/common"
 import {
   ChevronLeft,
   ChevronRight,
-  Edit,
   LoaderCircle,
   Play,
   Settings2,
@@ -30,24 +30,17 @@ import {
   useRef,
   useState,
 } from "react"
-import { ScraperFormDialog } from "../scraper-form-dialog"
 import { ScraperExecutionInfo } from "./scraper-execution-info"
-import { IteratorDescription } from "@/components/iterator/iterator-description"
-import { IteratorFormDialog } from "@/components/iterator/iterator-form-dialog"
 
 export type ScraperExecutionPanelRef = {
   applyIterator: (iterator: ExecutionIterator) => void
 }
 
 type ScraperExecutionPanelProps = {
-  onEditSuccess?: (scraper: ScraperType) => void
   ref?: Ref<ScraperExecutionPanelRef>
 }
 
-export function ScraperExecutionPanel({
-  onEditSuccess,
-  ref,
-}: ScraperExecutionPanelProps) {
+export function ScraperExecutionPanel({ ref }: ScraperExecutionPanelProps) {
   const {
     scraper,
     execute,
@@ -59,8 +52,6 @@ export function ScraperExecutionPanel({
 
   const [iterator, setIterator] = useState<ExecutionIterator | null>(null)
   const [iteratorDialogOpen, setIteratorDialogOpen] = useState(false)
-
-  const [editDialogOpen, setEditDialogOpen] = useState(false)
 
   useImperativeHandle(
     ref,
@@ -107,19 +98,9 @@ export function ScraperExecutionPanel({
               <Play />
               {sendingExecutionRequest ? "Executing..." : "Execute"}
             </Button>
-            <Button variant="outline" onClick={() => setEditDialogOpen(true)}>
-              <Edit />
-              Edit
-            </Button>
           </div>
         </>
       )}
-      <ScraperFormDialog
-        open={editDialogOpen}
-        onOpenChange={setEditDialogOpen}
-        onSuccess={onEditSuccess}
-        editScraper={scraper}
-      />
 
       {state && (
         <div className="flex flex-col items-stretch gap-1">

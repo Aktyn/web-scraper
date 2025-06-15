@@ -17,6 +17,7 @@ import {
   scraperExecutionsTable,
 } from "../db/schema/scraper-executions.schema"
 import type { EventsModule } from "../events/events.module"
+import path from "node:path"
 
 type ScraperExecutorContext = {
   db: DbModule
@@ -43,10 +44,17 @@ export async function executeNewScraper(
     id,
     name,
     logger,
-    userDataDir: scraperData.userDataDirectory || undefined,
     executablePath:
       context.config.preferences.chromeExecutablePath ||
-      "/home/aktyn/.cache/puppeteer/chrome/linux-136.0.7103.49/chrome-linux64/chrome",
+      "/usr/bin/chromium-browser",
+    // "/usr/bin/google-chrome",
+    userDataDir:
+      scraperData.userDataDirectory ||
+      path.resolve(
+        process.env.HOME || "~",
+        "snap/chromium/common/chromium/Default",
+        // ".config/google-chrome/Default"
+      ),
     headless: context.config.preferences.headless,
     proxy: context.config.preferences.proxyURL,
   })

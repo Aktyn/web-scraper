@@ -6,14 +6,11 @@ import {
 } from "@/lib/api"
 import { useState } from "react"
 import { toast } from "sonner"
-
-type PatchOptions = {
-  successMessage?: string | null
-}
+import { handleSuccessResponse, type CommonResponseOptions } from "./helpers"
 
 export function usePatch<RoutePath extends RoutesWithMethod<"patch">>(
   route: `/${RoutePath}`,
-  options?: PatchOptions,
+  options?: CommonResponseOptions,
 ) {
   const [isPatching, setIsPatching] = useState(false)
 
@@ -24,9 +21,7 @@ export function usePatch<RoutePath extends RoutesWithMethod<"patch">>(
     setIsPatching(true)
     try {
       const result = await api.patch<RoutePath>(route, body, params)
-      if (options?.successMessage !== "" && options?.successMessage !== null) {
-        toast.success(options?.successMessage ?? "Successfully updated")
-      }
+      handleSuccessResponse("Successfully updated", options)
       return result
     } catch (error: unknown) {
       console.error(error)

@@ -13,6 +13,8 @@ import { ScraperFormDialog } from "../scraper/scraper-form-dialog"
 import { ScraperPanelDialog } from "../scraper/scraper-panel-dialog"
 import { Button } from "../shadcn/button"
 import { Tooltip, TooltipContent, TooltipTrigger } from "../shadcn/tooltip"
+import { cn } from "@/lib/utils"
+import { usePost } from "@/hooks/api/usePost"
 
 export function Scrapers() {
   const {
@@ -25,6 +27,10 @@ export function Scrapers() {
   } = useInfiniteGet("/scrapers")
 
   const { deleteItem, isDeleting } = useDelete("/scrapers/:id")
+  const { postItem: importScraper, isPosting: importingScraper } = usePost(
+    "/scrapers/import",
+    { successMessage: "Scraper imported successfully" },
+  )
 
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
   const [scraperToDelete, setScraperToDelete] = useState<ScraperType | null>(
@@ -73,6 +79,19 @@ export function Scrapers() {
         accessorKey: "createdAt",
         header: "Created at",
         cell: ({ row }) => <TimestampValue value={row.original.createdAt} />,
+      },
+      {
+        accessorKey: "updatedAt",
+        header: "Updated at",
+        cell: ({ row }) => (
+          <TimestampValue
+            className={cn(
+              row.original.updatedAt === row.original.createdAt &&
+                "text-muted-foreground",
+            )}
+            value={row.original.updatedAt}
+          />
+        ),
       },
       {
         id: "actions",
@@ -154,11 +173,8 @@ export function Scrapers() {
         </Button>
         <Button
           variant="outline"
-          onClick={() => {
-            // TODO: Implement import scraper
-            // setScraperToEdit(null)
-            // setUpsertDialogOpen(true)
-          }}
+          onClick={() => importScraper(null).then(() => refresh())}
+          disabled={importingScraper}
         >
           <FileUp />
           Import Scraper

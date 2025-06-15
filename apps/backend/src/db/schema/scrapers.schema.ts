@@ -11,5 +11,5 @@ export const scrapersTable = sqliteTable("scrapers", {
     .$type<ScraperInstructions>(),
   userDataDirectory: text("user_data_directory"),
   createdAt: timestamp("created_at"),
-  updatedAt: timestamp("updated_at"),
+  updatedAt: timestamp("updated_at", true),
 })

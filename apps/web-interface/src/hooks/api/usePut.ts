@@ -6,9 +6,11 @@ import {
 } from "@/lib/api"
 import { useState } from "react"
 import { toast } from "sonner"
+import { handleSuccessResponse, type CommonResponseOptions } from "./helpers"
 
 export function usePut<RoutePath extends RoutesWithMethod<"put">>(
   route: `/${RoutePath}`,
+  options?: CommonResponseOptions,
 ) {
   const [isPutting, setIsPutting] = useState(false)
 
@@ -19,7 +21,7 @@ export function usePut<RoutePath extends RoutesWithMethod<"put">>(
     setIsPutting(true)
     try {
       const result = await api.put<RoutePath>(route, body, params)
-      toast.success("Request successful")
+      handleSuccessResponse("Request successful", options)
       return result
     } catch (error) {
       console.error(error)

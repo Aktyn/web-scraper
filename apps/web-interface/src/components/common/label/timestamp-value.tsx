@@ -1,7 +1,12 @@
 import { cn, formatDateTime } from "@/lib/utils"
+import type { ComponentProps } from "react"
 import { useEffect, useState } from "react"
 
-export function TimestampValue({ value }: { value: number }) {
+type TimestampValueProps = {
+  value: number
+} & ComponentProps<"span">
+
+export function TimestampValue({ value, ...props }: TimestampValueProps) {
   const [isNew, setIsNew] = useState(isTimestampNew(value))
 
   useEffect(() => {
@@ -20,7 +25,10 @@ export function TimestampValue({ value }: { value: number }) {
   }, [value, isNew])
 
   return (
-    <span className={cn(isNew && "text-success-foreground-light")}>
+    <span
+      {...props}
+      className={cn(isNew && "text-success-foreground-light", props.className)}
+    >
       {formatDateTime(value)}
     </span>
   )

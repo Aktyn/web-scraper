@@ -24,12 +24,11 @@ export async function detectAndSolveCaptcha(
         `Previous attempt of solving captcha failed. Retrying... (${attempt})`,
       )
     }
+  } else {
+    return
   }
 
   switch (captchaType) {
-    case "no-captcha":
-      return
-
     case "cloudflare-challenge":
       await solveCloudflareChallenge(context)
 
@@ -88,13 +87,6 @@ async function solveCloudflareChallenge(context: ScraperExecutionContext) {
               waitUntil: "networkidle0",
               signal: context.abortController.signal,
             })
-
-            await wait(10_000)
-
-            await context.page.waitForNetworkIdle({
-              timeout: 20_000,
-              signal: context.abortController.signal,
-            })
           } catch {
             // noop
           }
@@ -110,5 +102,20 @@ async function solveCloudflareChallenge(context: ScraperExecutionContext) {
   })
   if (snapshot) {
     await traverse([snapshot])
+  }
+
+  if (context.abortController.signal.aborted) {
+    return
+  }
+
+  await wait(15_000)
+
+  try {
+    await context.page.waitForNetworkIdle({
+      timeout: 20_000,
+      signal: context.abortController.signal,
+    })
+  } catch {
+    // noop
   }
 }
