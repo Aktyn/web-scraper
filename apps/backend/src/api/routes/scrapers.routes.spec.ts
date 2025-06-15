@@ -99,7 +99,7 @@ describe("Scrapers Routes", () => {
       }
       runUnsafe(() => scraperInstance.destroy())
     }
-    await wait(16)
+    await wait(32)
   })
 
   describe("GET /scrapers", () => {
@@ -724,10 +724,18 @@ describe("Scrapers Routes", () => {
     it("should execute the scraper and return status 200 with execution status object", async () => {
       const listResponse = await modules.api.inject({
         method: "GET",
-        url: "/scrapers?page=0&pageSize=2",
+        url: "/scrapers",
       })
       const listData = JSON.parse(listResponse.payload)
-      const scraper1Id = listData.data[0].id
+      const scraper1Id = listData.data[3].id
+
+      Scraper.getInstances().forEach((scraper) => {
+        if (scraper.destroyed) {
+          return
+        }
+        scraper.destroy()
+      })
+      await wait(100)
 
       const executeResponse = await modules.api.inject({
         method: "POST",
@@ -754,12 +762,20 @@ describe("Scrapers Routes", () => {
     })
 
     it("should return null if the scraper is not executing", async () => {
+      Scraper.getInstances().forEach((scraper) => {
+        if (scraper.destroyed) {
+          return
+        }
+        scraper.destroy()
+      })
+      await wait(100)
+
       const listResponse = await modules.api.inject({
         method: "GET",
-        url: "/scrapers?page=0&pageSize=3",
+        url: "/scrapers",
       })
       const listData = JSON.parse(listResponse.payload)
-      const scraper2Id = listData.data[2].id
+      const scraper2Id = listData.data[4].id
 
       const response = await modules.api.inject({
         method: "GET",
