@@ -2,6 +2,7 @@ import { z } from "zod"
 import { scraperInstructionsSchema } from "./instructions"
 import { scraperInstructionsExecutionInfoSchema } from "./results"
 import { ScraperState } from "./common"
+import { apiPaginationQuerySchema } from "../common"
 
 export enum ScraperEventType {
   StateChange = "stateChange",
@@ -58,3 +59,13 @@ export const executingScraperInfoSchema = z.object({
 })
 
 export type ExecutingScraperInfo = z.infer<typeof executingScraperInfoSchema>
+
+export const listScraperExecutionsQuerySchema = apiPaginationQuerySchema.extend(
+  {
+    id: z.coerce.number().optional(),
+  },
+)
+
+export type ListScraperExecutionsQuery = z.infer<
+  typeof listScraperExecutionsQuerySchema
+>

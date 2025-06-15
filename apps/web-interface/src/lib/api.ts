@@ -16,6 +16,7 @@ import type {
   ExecutingScraperInfo,
   ExecutionIterator,
   Notification,
+  ListScraperExecutionsQuery,
 } from "@web-scraper/common"
 import { apiErrorResponseSchema } from "@web-scraper/common"
 
@@ -66,7 +67,7 @@ export const api = {
       : undefined,
   ): Promise<Routes[RoutePath]["get"]["response"]> => {
     const queryString = queryParams
-      ? `?${new URLSearchParams(queryParams).toString()}`
+      ? `?${new URLSearchParams(clearUndefinedValues(queryParams)).toString()}`
       : ""
 
     const response = await fetch(
@@ -249,9 +250,9 @@ export type Routes = {
       response: ApiResponse<ScraperExecutionStatus>
     }
   }
-  "scrapers/:id/executions": {
+  "scrapers/executions": {
     get: {
-      querystring: Partial<ApiPaginationQuery>
+      querystring: Partial<ListScraperExecutionsQuery>
       response: ApiPaginatedResponse<ScraperExecutionInfo>
     }
   }
@@ -319,4 +320,10 @@ export class ApiError extends Error {
     this.code = error.code
     this.statusCode = error.statusCode
   }
+}
+
+function clearUndefinedValues<T extends Record<string, unknown>>(obj: T): T {
+  return Object.fromEntries(
+    Object.entries(obj).filter(([_, value]) => value !== undefined),
+  ) as T
 }

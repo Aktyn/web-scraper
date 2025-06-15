@@ -2,7 +2,7 @@ import { useDelete } from "@/hooks/api/useDelete"
 import { useInfiniteGet } from "@/hooks/api/useInfiniteGet"
 import { type ColumnDef } from "@tanstack/react-table"
 import { type ScraperType } from "@web-scraper/common"
-import { Copy, Edit, FileUp, Plus, Trash } from "lucide-react"
+import { Copy, Edit, FileUp, History, Plus, Trash } from "lucide-react"
 import { useMemo, useState } from "react"
 import { ConfirmationDialog } from "../common/confirmation-dialog"
 import { TimestampValue } from "../common/label/timestamp-value"
@@ -15,6 +15,13 @@ import { Button } from "../shadcn/button"
 import { Tooltip, TooltipContent, TooltipTrigger } from "../shadcn/tooltip"
 import { cn } from "@/lib/utils"
 import { usePost } from "@/hooks/api/usePost"
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "../shadcn/accordion"
+import { ScraperExecutionHistory } from "../scraper/execution/scraper-execution-history"
 
 export function Scrapers() {
   const {
@@ -42,6 +49,8 @@ export function Scrapers() {
 
   const [upsertDialogOpen, setUpsertDialogOpen] = useState(false)
   const [scraperToEdit, setScraperToEdit] = useState<ScraperType | null>(null)
+
+  const [showExecutionHistory, setShowExecutionHistory] = useState(false)
 
   const handleDeleteClick = (scraper: ScraperType) => {
     setScraperToDelete(scraper)
@@ -156,7 +165,7 @@ export function Scrapers() {
   )
 
   return (
-    <div className="size-full *:w-256 *:max-w-full">
+    <div className="size-full *:w-256 *:max-w-full grid grid-rows-[auto_1fr_auto] grid-cols-1">
       <div
         data-transition-direction="top"
         className="view-transition p-2 flex flex-row items-center gap-2"
@@ -184,9 +193,10 @@ export function Scrapers() {
           refreshing={isLoading || isLoadingMore}
         />
       </div>
+
       <DataTable
         data-transition-direction="left"
-        className="view-transition delay-100"
+        className="view-transition delay-100 h-auto overflow-hidden"
         columns={columns}
         data={scrapers}
         isLoading={isLoading || isLoadingMore}
@@ -197,6 +207,35 @@ export function Scrapers() {
           setScraperViewOpen(true)
         }}
       />
+
+      <Accordion
+        data-transition-direction="bottom"
+        className="view-transition w-full max-h-full grid grid-rows-1 overflow-hidden border-t [box-shadow:0_-0.5rem_1rem_#0006]"
+        type="single"
+        collapsible
+        value={showExecutionHistory ? "item-1" : ""}
+        onValueChange={(value) => {
+          setShowExecutionHistory(value === "item-1")
+        }}
+      >
+        <AccordionItem
+          value="item-1"
+          className="grid grid-rows-[auto_1fr] *:data-[slot=accordion-content]:flex"
+        >
+          <AccordionTrigger className="grid grid-cols-[1fr_auto_1fr] gap-2 *:[svg]:last:justify-self-end p-2">
+            <span />
+            <div className="flex flex-row items-center gap-2">
+              <History className="rotate-0! size-5" />
+              {showExecutionHistory
+                ? "Hide execution history"
+                : "Show execution history"}
+            </div>
+          </AccordionTrigger>
+          <AccordionContent className="pb-0 overflow-hidden grid grid-rows-1 w-full h-[max(50vh,20rem)] max-h-full">
+            <ScraperExecutionHistory className="overflow-hidden" />
+          </AccordionContent>
+        </AccordionItem>
+      </Accordion>
 
       <ConfirmationDialog
         className="**:data-[slot=dialog-title]:text-destructive"

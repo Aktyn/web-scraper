@@ -808,7 +808,7 @@ describe("Scrapers Routes", () => {
     })
   })
 
-  describe("GET /scrapers/:id/executions", () => {
+  describe("GET /scrapers/executions", () => {
     it("should return status 200 and paginated execution infos", async () => {
       const listResponse = await modules.api.inject({
         method: "GET",
@@ -819,7 +819,7 @@ describe("Scrapers Routes", () => {
 
       const response = await modules.api.inject({
         method: "GET",
-        url: `/scrapers/${scraperId}/executions?page=0&pageSize=2`,
+        url: `/scrapers/executions?page=0&pageSize=2&id=${scraperId}`,
       })
 
       expect(response.statusCode).toBe(200)
@@ -838,10 +838,24 @@ describe("Scrapers Routes", () => {
       })
     })
 
+    it("should return status 200 and paginated execution infos for all scrapers if no id is provided", async () => {
+      const response = await modules.api.inject({
+        method: "GET",
+        url: "/scrapers/executions?page=0&pageSize=5",
+      })
+
+      expect(response.statusCode).toBe(200)
+      const data = JSON.parse(response.payload)
+      expect(data.data.length).toBe(5)
+      expect(data.hasMore).toBe(true)
+      expect(data.page).toBe(0)
+      expect(data.pageSize).toBe(5)
+    })
+
     it("should return status 404 if scraper does not exist", async () => {
       const response = await modules.api.inject({
         method: "GET",
-        url: "/scrapers/999/executions",
+        url: "/scrapers/executions?id=999",
       })
 
       expect(response.statusCode).toBe(404)

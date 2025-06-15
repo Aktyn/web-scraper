@@ -14,6 +14,7 @@ import {
   scraperSchema,
   updateScraperSchema,
   type ScraperType,
+  listScraperExecutionsQuerySchema,
 } from "@web-scraper/common"
 import { Scraper } from "@web-scraper/core"
 import { asc, desc, eq, sql, type InferSelectModel } from "drizzle-orm"
@@ -480,11 +481,10 @@ export async function scrapersRoutes(
   )
 
   fastify.withTypeProvider<ZodTypeProvider>().get(
-    "/scrapers/:id/executions",
+    "/scrapers/executions",
     {
       schema: {
-        params: paramsWithScraperIdSchema,
-        querystring: apiPaginationQuerySchema,
+        querystring: listScraperExecutionsQuerySchema,
         response: {
           200: getApiPaginatedResponseSchema(scraperExecutionInfoSchema),
           404: apiErrorResponseSchema,
@@ -492,25 +492,26 @@ export async function scrapersRoutes(
       },
     },
     async (request, reply) => {
-      const { id } = request.params
-      const { page, pageSize } = request.query
+      const { page, pageSize, id } = request.query
 
-      const scraper = await fastify.db
-        .select({ id: scrapersTable.id })
-        .from(scrapersTable)
-        .where(eq(scrapersTable.id, id))
-        .get()
+      if (id) {
+        const scraper = await fastify.db
+          .select({ id: scrapersTable.id })
+          .from(scrapersTable)
+          .where(eq(scrapersTable.id, id))
+          .get()
 
-      if (!scraper) {
-        return reply.status(404).send({
-          error: "Scraper not found",
-        })
+        if (!scraper) {
+          return reply.status(404).send({
+            error: "Scraper not found",
+          })
+        }
       }
 
       const executionInfos = await fastify.db
         .select()
         .from(scraperExecutionsTable)
-        .where(eq(scraperExecutionsTable.scraperId, id))
+        .where(id ? eq(scraperExecutionsTable.scraperId, id) : undefined)
         .orderBy(desc(scraperExecutionsTable.createdAt))
         .limit(pageSize + 1)
         .offset(page * pageSize)

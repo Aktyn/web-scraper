@@ -27,7 +27,7 @@ import { useEffect, useMemo, useRef, type ComponentProps } from "react"
 import { ScrollableScraperExecutionInfo } from "./scraper-execution-panel"
 
 type ScraperExecutionHistoryProps = ComponentProps<"div"> & {
-  scraperId: number
+  scraperId?: number
   onApplyIterator?: (iterator: ExecutionIterator) => void
 }
 
@@ -43,7 +43,9 @@ export function ScraperExecutionHistory({
     hasMore,
     loadMore,
     refresh,
-  } = useInfiniteGet("/scrapers/:id/executions", { id: scraperId })
+  } = useInfiniteGet("/scrapers/executions", undefined, {
+    id: scraperId,
+  })
 
   ServerEventsProvider.useMessages(
     SubscriptionMessageType.ScraperEvent,
@@ -61,22 +63,8 @@ export function ScraperExecutionHistory({
     },
   )
 
-  const executionInfoColumns = useMemo<ColumnDef<ScraperExecutionInfo>[]>(
-    () => [
-      // {
-      //   accessorKey: "id",
-      //   header: "Execution ID",
-      //   // accessorFn: (row) => row.id,
-      //   cell: ({ row }) => (
-      //     <span data-darken={row.index % 2 === 1}>{row.original.id}</span>
-      //   ),
-      // },
-      // Show this column in table that lists execution history of all scrapers
-      // {
-      //   accessorKey: "scraperId",
-      //   header: "Scraper ID",
-      //   accessorFn: (row) => row.scraperId,
-      // },
+  const executionInfoColumns = useMemo(() => {
+    const columns: ColumnDef<ScraperExecutionInfo>[] = [
       {
         accessorKey: "iterations",
         header: "Number of iterations",
@@ -102,19 +90,21 @@ export function ScraperExecutionHistory({
                     iterator={row.original.iterator}
                     className="text-sm"
                   >
-                    <Button
-                      variant="secondary"
-                      size="sm"
-                      onClick={(event) => {
-                        event.stopPropagation()
-                        if (row.original.iterator) {
-                          onApplyIterator?.(row.original.iterator)
-                        }
-                      }}
-                    >
-                      <SquareMousePointer />
-                      Apply to new execution
-                    </Button>
+                    {onApplyIterator && (
+                      <Button
+                        variant="secondary"
+                        size="sm"
+                        onClick={(event) => {
+                          event.stopPropagation()
+                          if (row.original.iterator) {
+                            onApplyIterator(row.original.iterator)
+                          }
+                        }}
+                      >
+                        <SquareMousePointer />
+                        Apply to new execution
+                      </Button>
+                    )}
                   </IteratorDescription>
                 </PopoverContent>
               </Popover>
@@ -168,9 +158,18 @@ export function ScraperExecutionHistory({
           }
         },
       },
-    ],
-    [onApplyIterator],
-  )
+    ]
+
+    if (!scraperId) {
+      columns.unshift({
+        accessorKey: "scraperId",
+        header: "Scraper",
+        accessorFn: (row) => row.scraperId,
+      })
+    }
+
+    return columns
+  }, [onApplyIterator, scraperId])
 
   return (
     <div {...divProps} className={cn("flex flex-col", divProps.className)}>
