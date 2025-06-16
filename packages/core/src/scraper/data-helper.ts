@@ -7,8 +7,8 @@ import {
   type ScraperValue,
   ScraperValueType,
 } from "@web-scraper/common"
-import { type ScraperExecutionContext } from "./helpers"
-import { getElementHandle } from "./selectors"
+import { getElementHandle } from "./execution/selectors"
+import type { ScraperExecutionContext } from "./execution/helpers"
 
 export type DataBridgeValue = string | number | null
 

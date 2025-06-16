@@ -5,7 +5,7 @@ import {
 } from "@web-scraper/common"
 import type { ElementHandle } from "rebrowser-puppeteer"
 import type { ScraperExecutionContext } from "./helpers"
-import { replaceSpecialStringsInSelectors } from "./data-helper"
+import { replaceSpecialStringsInSelectors } from "../data-helper"
 
 export async function getElementHandle(
   context: ScraperExecutionContext,

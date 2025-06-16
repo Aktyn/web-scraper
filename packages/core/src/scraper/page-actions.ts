@@ -1,5 +1,5 @@
 import { wait } from "@web-scraper/common"
-import type { ScraperExecutionContext } from "./helpers"
+import type { ScraperExecutionContext } from "./execution/helpers"
 
 export async function scrollToBottom(context: ScraperExecutionContext) {
   try {

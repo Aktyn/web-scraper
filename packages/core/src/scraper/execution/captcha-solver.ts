@@ -63,10 +63,15 @@ function detectCaptcha(context: ScraperExecutionContext) {
 async function solveCloudflareChallenge(context: ScraperExecutionContext) {
   context.logger.info("Solving Cloudflare challenge")
 
-  const traverse = async (nodes: SerializedAXNode[], level = 0) => {
+  const traverse = async (
+    nodes: SerializedAXNode[],
+    level = 0,
+  ): Promise<boolean> => {
     if (!nodes.length) {
-      return
+      return false
     }
+
+    let clicked = false
 
     for (const node of nodes) {
       if (node.role === "checkbox" && node.name === "Verify you are human") {
@@ -74,7 +79,12 @@ async function solveCloudflareChallenge(context: ScraperExecutionContext) {
 
         if (handle) {
           context.logger.info("Clicking checkbox to solve captcha")
+
+          context.cursor.toggleRandomMove(false)
           await context.cursor.click(handle, getGhostClickOptions())
+          context.cursor.toggleRandomMove(true)
+
+          clicked = true
 
           try {
             await context.page.waitForNavigation({
@@ -88,15 +98,25 @@ async function solveCloudflareChallenge(context: ScraperExecutionContext) {
         }
       }
 
-      await traverse(node.children ?? [], level + 1)
+      clicked ||= await traverse(node.children ?? [], level + 1)
     }
+
+    return clicked
   }
 
   const snapshot = await context.page.accessibility.snapshot({
     includeIframes: true,
   })
   if (snapshot) {
-    await traverse([snapshot])
+    const clicked = await traverse([snapshot])
+
+    if (clicked) {
+      context.logger.info("Captcha checkbox has been clicked")
+    } else {
+      context.logger.info("Captcha checkbox has not been clicked")
+    }
+  } else {
+    context.logger.warn("No accessibility snapshot found")
   }
 
   if (context.abortController.signal.aborted) {

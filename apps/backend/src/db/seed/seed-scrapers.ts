@@ -383,6 +383,7 @@ const scrapCryptoPricesInstructions: ScraperInstructions = [
               text: "{{crypto.Cryptocurrency}}",
             },
           ],
+          waitForNavigation: true,
         },
       },
       {

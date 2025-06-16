@@ -48,7 +48,8 @@
 			"Radosław",
 			"shadcn",
 			"sonner",
-			"uuidv"
+			"uuidv",
+			"webgpu"
 		],
 		"tailwindCSS.classAttributes": [
 			"class",

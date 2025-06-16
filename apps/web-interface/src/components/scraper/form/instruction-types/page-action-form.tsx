@@ -1,14 +1,6 @@
 import { FormInput } from "@/components/common/form/form-input"
 import { FormSwitch } from "@/components/common/form/form-switch"
-import {
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/shadcn/form"
-import { Switch } from "@/components/shadcn/switch"
+import { FormField, FormItem } from "@/components/shadcn/form"
 import { cn } from "@/lib/utils"
 import { PageActionType, type CreateScraper } from "@web-scraper/common"
 import { useWatch, type Control } from "react-hook-form"
@@ -52,15 +44,21 @@ export function PageActionForm({ control, fieldName }: PageActionFormProps) {
     case PageActionType.Click:
       return (
         <div className="space-y-4">
+          <SelectorFields
+            control={control}
+            fieldName={`${fieldName}.selectors`}
+          />
+          <FormSwitch
+            control={control}
+            name={`${fieldName}.waitForNavigation`}
+            label="Wait for navigation"
+            description="Wait for navigation after clicking"
+          />
           <FormSwitch
             control={control}
             name={`${fieldName}.useGhostCursor`}
             label="Use ghost cursor"
             description="Use a ghost cursor to click the element in user-like way"
-          />
-          <SelectorFields
-            control={control}
-            fieldName={`${fieldName}.selectors`}
           />
         </div>
       )
@@ -81,26 +79,23 @@ export function PageActionForm({ control, fieldName }: PageActionFormProps) {
             />
           </div>
 
-          <FormField
+          <FormSwitch
             control={control}
             name={`${fieldName}.clearBeforeType`}
-            render={({ field }) => (
-              <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
-                <div className="space-y-0.5">
-                  <FormLabel className="text-base">Clear Before Type</FormLabel>
-                  <FormDescription>
-                    Whether to clear the input field before typing
-                  </FormDescription>
-                </div>
-                <FormControl>
-                  <Switch
-                    checked={field.value}
-                    onCheckedChange={field.onChange}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
+            label="Clear before typing"
+            description="Clear the input field before typing"
+          />
+          <FormSwitch
+            control={control}
+            name={`${fieldName}.pressEnter`}
+            label="Press enter"
+            description="Press enter after typing"
+          />
+          <FormSwitch
+            control={control}
+            name={`${fieldName}.waitForNavigation`}
+            label="Wait for navigation"
+            description="Wait for navigation after typing and pressing enter"
           />
         </div>
       )

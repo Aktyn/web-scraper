@@ -6,10 +6,14 @@ import {
 } from "@/components/shadcn/accordion"
 import { Button } from "@/components/shadcn/button"
 import { Label } from "@/components/shadcn/label"
+import { useGet } from "@/hooks/api/useGet"
 import type { ScraperInstructionsExecutionInfo } from "@web-scraper/common"
-import { ScraperInstructionsExecutionInfoType } from "@web-scraper/common"
+import {
+  defaultPreferences,
+  ScraperInstructionsExecutionInfoType,
+} from "@web-scraper/common"
 import { ExternalLinkIcon } from "lucide-react"
-import { useMemo } from "react"
+import { useEffect, useMemo, useRef } from "react"
 
 type ScraperPagePortalsProps = {
   executionInfo: ScraperInstructionsExecutionInfo
@@ -94,13 +98,56 @@ type PagePortalProps = {
 }
 
 function PagePortal({ url, pageIndex }: PagePortalProps) {
+  const containerRef = useRef<HTMLDivElement>(null)
+
+  const { data: userPreferences, isLoading } = useGet("/preferences")
+
+  const width =
+    (userPreferences?.data.find((p) => p.key === "viewportWidth")
+      ?.value as number) ?? defaultPreferences.viewportWidth.value
+  const height =
+    (userPreferences?.data.find((p) => p.key === "viewportHeight")
+      ?.value as number) ?? defaultPreferences.viewportHeight.value
+
+  useEffect(() => {
+    const container = containerRef.current
+    const iframe = container?.querySelector("iframe")
+
+    if (!container || !iframe || isLoading) {
+      return
+    }
+
+    const observer = new ResizeObserver((entries) => {
+      const entry = entries[0]
+      if (entry) {
+        const widthRatio = entry.contentRect.width / width
+        const heightRatio = entry.contentRect.height / height
+
+        iframe.style.transform = `scale(${widthRatio}, ${heightRatio})`
+      }
+    })
+
+    observer.observe(container)
+
+    return () => {
+      observer.disconnect()
+    }
+  }, [height, isLoading, width])
+
   return (
-    <div className="bg-background-darker border rounded-xl overflow-hidden w-full aspect-video flex items-stretch justify-stretch">
-      <iframe
-        src={url}
-        className="w-full h-full border-none"
-        title={`Page ${pageIndex}`}
-      />
+    <div
+      ref={containerRef}
+      className="bg-background-darker border rounded-xl overflow-hidden w-full aspect-video flex items-stretch justify-stretch relative"
+    >
+      {!isLoading && (
+        <iframe
+          src={url}
+          width={width}
+          height={height}
+          className="border-none absolute left-0 top-0 overflow-hidden origin-top-left"
+          title={`Page ${pageIndex}`}
+        />
+      )}
     </div>
   )
 }

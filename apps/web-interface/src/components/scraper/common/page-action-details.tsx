@@ -30,15 +30,22 @@ export function PageActionDetails({ action }: { action: PageAction }) {
 
     case PageActionType.Click:
       return (
-        <LabeledValue label="Target:">
-          <ScraperSelector selectors={action.selectors} />
+        <div className="flex flex-row flex-wrap gap-2 gap-x-4">
+          <LabeledValue label="Target:">
+            <ScraperSelector selectors={action.selectors} />
+          </LabeledValue>
+          {action.waitForNavigation && (
+            <LabeledValue label="Wait for navigation:">
+              <Check className="size-4 text-success" />
+            </LabeledValue>
+          )}
           {action.useGhostCursor && (
             <Label className="flex flex-row items-center gap-2">
               <MousePointerClick className="size-4 inline" />
               <span>Ghost cursor</span>
             </Label>
           )}
-        </LabeledValue>
+        </div>
       )
 
     case PageActionType.Type:
@@ -55,6 +62,16 @@ export function PageActionDetails({ action }: { action: PageAction }) {
               label="Clear before typing:"
               className="w-full flex-row items-center gap-x-2"
             >
+              <Check className="size-4 text-success" />
+            </LabeledValue>
+          )}
+          {action.pressEnter && (
+            <LabeledValue label="Press enter:">
+              <Check className="size-4 text-success" />
+            </LabeledValue>
+          )}
+          {action.waitForNavigation && (
+            <LabeledValue label="Wait for navigation:">
               <Check className="size-4 text-success" />
             </LabeledValue>
           )}

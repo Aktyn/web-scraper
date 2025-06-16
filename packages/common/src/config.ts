@@ -4,6 +4,11 @@ export const defaultPreferences = {
     description:
       "Starts the browser in headless mode. Set to false to see the browser window during scraper execution.",
   },
+  chromeExecutablePath: {
+    value: "",
+    description:
+      "Path to the Chrome executable. If not set, the default path will be used.",
+  },
   proxyURL: {
     value: "",
     description:
@@ -14,9 +19,14 @@ export const defaultPreferences = {
     description:
       "URL for the portal feature to work. If not set, the portal will not be used.",
   },
-  chromeExecutablePath: {
-    value: "",
+  viewportWidth: {
+    value: 1920,
     description:
-      "Path to the Chrome executable. If not set, the default path will be used.",
+      "Width of the viewport. This influences how the pages are rendered.",
+  },
+  viewportHeight: {
+    value: 1080,
+    description:
+      "Height of the viewport. This influences how the pages are rendered.",
   },
 } satisfies Record<string, { value: unknown; description: string | null }>

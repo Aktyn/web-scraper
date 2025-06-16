@@ -3,7 +3,7 @@ import type {
   ScraperInstructionsExecutionInfo,
 } from "@web-scraper/common"
 import { EventEmitter } from "node:stream"
-import type { DataBridge } from "./data-helper"
+import type { DataBridge } from "../data-helper"
 
 interface ScraperExecutionInfoEvents {
   update: (info: ScraperInstructionsExecutionInfo[number]) => void

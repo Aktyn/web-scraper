@@ -23,6 +23,7 @@ export const pageActionSchema = z.discriminatedUnion("type", [
   z.object({
     type: z.literal(PageActionType.Click),
     selectors: scraperElementSelectorsSchema,
+    waitForNavigation: z.boolean().optional(),
     useGhostCursor: z.boolean().optional(),
   }),
   z.object({
@@ -30,6 +31,8 @@ export const pageActionSchema = z.discriminatedUnion("type", [
     selectors: scraperElementSelectorsSchema,
     clearBeforeType: z.boolean().optional(),
     value: scraperValueSchema,
+    pressEnter: z.boolean().optional(),
+    waitForNavigation: z.boolean().optional(),
   }),
   z.object({
     type: z.literal(PageActionType.ScrollToTop),
@@ -37,6 +40,7 @@ export const pageActionSchema = z.discriminatedUnion("type", [
   z.object({
     type: z.literal(PageActionType.ScrollToBottom),
   }),
+  //TODO: scroll to element
 ])
 
 export type PageAction = z.infer<typeof pageActionSchema>

@@ -1,19 +1,7 @@
-import { randomInt, randomString, type SimpleLogger } from "@web-scraper/common"
+import { randomString } from "@web-scraper/common"
 import fs from "fs"
-import type { ClickOptions, GhostCursor } from "ghost-cursor"
 import path from "path"
 import type { Page } from "rebrowser-puppeteer"
-import type { DataBridge } from "./data-helper"
-import type { ScraperExecutionInfo } from "./scraper-execution-info"
-
-export type ScraperExecutionContext = {
-  page: Page
-  cursor: GhostCursor
-  dataBridge: DataBridge
-  executionInfo: ScraperExecutionInfo
-  logger: SimpleLogger
-  abortController: AbortController
-}
 
 export async function saveScreenshot(
   page: Page,
@@ -36,13 +24,4 @@ export async function saveScreenshot(
   )
 
   await fs.promises.writeFile(screenshotPath, screenshot)
-}
-
-export function getGhostClickOptions(): ClickOptions {
-  return {
-    randomizeMoveDelay: true,
-    moveDelay: 3_000,
-    waitForClick: randomInt(10, 200),
-    hesitate: randomInt(10, 400),
-  }
 }

@@ -21,6 +21,10 @@ describe("Misc Routes", () => {
         data: [
           { key: "headless", value: true },
           {
+            key: "chromeExecutablePath",
+            value: "",
+          },
+          {
             key: "proxyURL",
             value: "",
           },
@@ -29,8 +33,12 @@ describe("Misc Routes", () => {
             value: "http://localhost:3000",
           },
           {
-            key: "chromeExecutablePath",
-            value: "",
+            key: "viewportWidth",
+            value: 1920,
+          },
+          {
+            key: "viewportHeight",
+            value: 1080,
           },
         ],
       })

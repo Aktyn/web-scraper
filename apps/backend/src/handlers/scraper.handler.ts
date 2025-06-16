@@ -58,6 +58,10 @@ export async function executeNewScraper(
     headless: context.config.preferences.headless,
     proxy: context.config.preferences.proxyURL,
     portalUrl: context.config.preferences.portalURL,
+    viewport: {
+      width: context.config.preferences.viewportWidth,
+      height: context.config.preferences.viewportHeight,
+    },
   })
 
   scraper.on("stateChange", (state, previousState) => {

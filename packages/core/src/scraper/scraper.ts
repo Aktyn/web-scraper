@@ -2,21 +2,13 @@ import useProxy from "@lem0-packages/puppeteer-page-proxy"
 import {
   assert,
   deepMerge,
-  type PageAction,
-  PageActionType,
-  randomInt,
   runUnsafe,
-  type ScraperCondition,
-  ScraperConditionType,
-  type ScraperInstructionInfo,
   type ScraperInstructions,
   type ScraperInstructionsExecutionInfo,
   ScraperInstructionsExecutionInfoType,
-  ScraperInstructionType,
   ScraperState,
   type ScraperType,
   type SimpleLogger,
-  wait,
 } from "@web-scraper/common"
 import {
   createCursor,
@@ -34,22 +26,9 @@ import puppeteer, {
   type Page,
   type Viewport,
 } from "rebrowser-puppeteer"
-import { performSystemAction } from "../system-actions"
-import { detectAndSolveCaptcha } from "./captcha-solver"
-import {
-  type DataBridge,
-  getScraperValue,
-  replaceSpecialStrings,
-} from "./data-helper"
-import {
-  getGhostClickOptions,
-  saveScreenshot,
-  type ScraperExecutionContext,
-} from "./helpers"
-import { ScraperExecutionInfo } from "./scraper-execution-info"
-import { getElementHandle } from "./selectors"
-
-const defaultViewport: Viewport = { width: 1280, height: 720 }
+import { type DataBridge } from "./data-helper"
+import { executeInstructions } from "./execution/instructions"
+import { ScraperExecutionInfo } from "./execution/scraper-execution-info"
 
 type ScraperOptions = Pick<ScraperType, "id" | "name"> & {
   logger?: SimpleLogger
@@ -60,6 +39,8 @@ type ScraperOptions = Pick<ScraperType, "id" | "name"> & {
   proxy?: string
 
   portalUrl?: string
+
+  viewport?: Pick<Viewport, "width" | "height">
 } & Partial<LaunchOptions>
 
 type Metadata = Record<string, unknown>
@@ -107,6 +88,7 @@ export class Scraper<
   private static emptyPageUrl = "about:blank"
 
   private readonly logger: SimpleLogger
+  private readonly defaultViewport: Viewport
 
   private initPromise: Promise<Browser> | null = null
 
@@ -122,11 +104,20 @@ export class Scraper<
     super()
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { id, name, logger, proxy, ...browserOptions } = options
+    const { id, name, logger, proxy, viewport, ...browserOptions } = options
 
     this.logger = logger ?? {
       ...console,
       fatal: console.error,
+    }
+
+    this.defaultViewport = {
+      width: viewport?.width ?? 1920,
+      height: viewport?.height ?? 1080,
+      isMobile: false,
+      deviceScaleFactor: 1,
+      hasTouch: false,
+      isLandscape: false,
     }
 
     assert(
@@ -158,10 +149,10 @@ export class Scraper<
       {
         downloadBehavior: { policy: "default" },
         headless,
-        defaultViewport,
+        defaultViewport: this.defaultViewport,
         args: [
           "--disable-infobars",
-          "--window-size=1284,848",
+          "--window-size=1920,1080",
           "--lang=en-US",
           "--accept-language=en-US",
           "--ignore-certificate-errors",
@@ -193,10 +184,11 @@ export class Scraper<
                   chromeFlags: ["--enable-unsafe-webgpu"],
                 },
                 connectOption: {
-                  defaultViewport,
+                  defaultViewport: this.defaultViewport,
                   downloadBehavior: { policy: "default" },
                 },
-                turnstile: false,
+                disableXvfb: !launchOptions.headless,
+                turnstile: true,
                 plugins: [
                   AdblockerPlugin({ blockTrackers: true }),
                   StealthPlugin(),
@@ -334,6 +326,8 @@ export class Scraper<
         ? firstPage
         : await this.browser.newPage()
 
+    await page.setViewport(this.defaultViewport)
+
     try {
       const userAgent =
         "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36"
@@ -459,8 +453,9 @@ export class Scraper<
     }
 
     try {
-      await this.executeInstructions(
+      await executeInstructions(
         {
+          scraperIdentifier: this.identifier,
           page,
           cursor,
           dataBridge,
@@ -469,6 +464,10 @@ export class Scraper<
           abortController: this.abortController,
         },
         instructions,
+        (instruction) => {
+          this._currentlyExecutingInstruction = instruction
+          this.emit("executingInstruction", instruction)
+        },
         undefined,
       )
 
@@ -519,386 +518,5 @@ export class Scraper<
     this._currentlyExecutingInstruction = null
 
     return executionInfo
-  }
-
-  private async executeInstructions(
-    context: ScraperExecutionContext,
-    instructions: ScraperInstructions,
-    level = 0,
-  ): Promise<ScraperInstructions[number] | null> {
-    assert(instructions.length > 0 || level > 0, "Instructions are empty")
-    assert(
-      level > 0 ||
-        (instructions[0].type === ScraperInstructionType.PageAction &&
-          instructions[0].action.type === PageActionType.Navigate),
-      "First instruction must be a navigation action",
-    )
-
-    const pushInstructionInfo = <T extends ScraperInstructionInfo>(
-      instructionInfo: T,
-    ) => {
-      const info = {
-        type: ScraperInstructionsExecutionInfoType.Instruction,
-        instructionInfo,
-        url: context.page.url(),
-        duration: 0,
-      } satisfies ScraperInstructionsExecutionInfo[number] & {
-        instructionInfo: T
-      }
-      context.executionInfo.push(info)
-      return info
-    }
-
-    for (let i = 0; i < instructions.length; i++) {
-      let instruction = instructions[i]
-
-      const instructionStartUrl = context.page.url()
-      const instructionStartTime = performance.now()
-      let lastInstructionInfo: ScraperInstructionsExecutionInfo[number] | null =
-        null
-
-      this._currentlyExecutingInstruction = instruction
-      this.emit("executingInstruction", instruction)
-
-      if (process.env.NODE_ENV === "development" && i > 0) {
-        await saveScreenshot(
-          context.page,
-          `${this.identifier}-before-${instruction.type}`,
-        )
-      }
-
-      switch (instruction.type) {
-        case ScraperInstructionType.PageAction:
-          lastInstructionInfo = pushInstructionInfo({
-            type: instruction.type,
-            action: instruction.action,
-          })
-          await this.performPageAction(context, instruction.action)
-          break
-
-        case ScraperInstructionType.Condition:
-          {
-            context.logger.info({
-              msg: "Checking condition",
-              condition: instruction.if,
-            })
-
-            const info = pushInstructionInfo({
-              type: instruction.type,
-              condition: instruction.if,
-              isMet: false as boolean,
-            })
-            const isMet = await this.checkCondition(context, instruction.if)
-            info.instructionInfo.isMet = isMet
-            lastInstructionInfo = info
-
-            const conditionalInstructionsResult = isMet
-              ? await this.executeInstructions(
-                  context,
-                  instruction.then,
-                  level + 1,
-                )
-              : instruction.else
-                ? await this.executeInstructions(
-                    context,
-                    instruction.else,
-                    level + 1,
-                  )
-                : null
-
-            if (
-              conditionalInstructionsResult?.type ===
-              ScraperInstructionType.Jump
-            ) {
-              instruction = conditionalInstructionsResult
-              break
-            }
-          }
-          break
-
-        case ScraperInstructionType.SaveData:
-          {
-            context.logger.info("Saving data to data bridge", {
-              dataKey: instruction.dataKey,
-              value: instruction.value,
-            })
-
-            lastInstructionInfo = pushInstructionInfo({
-              type: instruction.type,
-              dataKey: instruction.dataKey,
-              value: instruction.value,
-            })
-            const scraperValue = await getScraperValue(
-              context,
-              instruction.value,
-            )
-            await context.dataBridge.set(instruction.dataKey, scraperValue)
-            context.executionInfo.push(
-              {
-                type: ScraperInstructionsExecutionInfoType.ExternalDataOperation,
-                operation: {
-                  type: "set",
-                  key: instruction.dataKey,
-                  value: scraperValue,
-                },
-              },
-              false,
-            )
-          }
-          break
-        case ScraperInstructionType.SaveDataBatch:
-          {
-            context.logger.info("Saving batch data to data bridge", {
-              dataSourceName: instruction.dataSourceName,
-              items: instruction.items,
-            })
-
-            lastInstructionInfo = pushInstructionInfo({
-              type: instruction.type,
-              dataSourceName: instruction.dataSourceName,
-              items: instruction.items,
-            })
-
-            const items = await Promise.all(
-              instruction.items.map(async (item) => ({
-                columnName: item.columnName,
-                value: await getScraperValue(context, item.value),
-              })),
-            )
-
-            await context.dataBridge.setMany(instruction.dataSourceName, items)
-            context.executionInfo.push(
-              {
-                type: ScraperInstructionsExecutionInfoType.ExternalDataOperation,
-                operation: {
-                  type: "setMany",
-                  dataSourceName: instruction.dataSourceName,
-                  items: items,
-                },
-              },
-              false,
-            )
-          }
-          break
-        case ScraperInstructionType.DeleteData:
-          context.logger.info("Deleting data from data bridge", {
-            dataSourceName: instruction.dataSourceName,
-          })
-
-          lastInstructionInfo = pushInstructionInfo({
-            type: instruction.type,
-            dataSourceName: instruction.dataSourceName,
-          })
-          await context.dataBridge.delete(instruction.dataSourceName)
-          context.executionInfo.push(
-            {
-              type: ScraperInstructionsExecutionInfoType.ExternalDataOperation,
-              operation: {
-                type: "delete",
-                dataSourceName: instruction.dataSourceName,
-              },
-            },
-            false,
-          )
-          break
-
-        case ScraperInstructionType.Marker:
-          context.logger.info("Marking position in scraper execution", {
-            markerName: instruction.name,
-          })
-
-          lastInstructionInfo = pushInstructionInfo({
-            type: instruction.type,
-            name: instruction.name,
-          })
-          context.executionInfo.flush()
-          continue
-        case ScraperInstructionType.Jump:
-          context.logger.info("Jumping to marker", {
-            markerName: instruction.markerName,
-          })
-
-          lastInstructionInfo = pushInstructionInfo({
-            type: instruction.type,
-            markerName: instruction.markerName,
-          })
-          break
-
-        case ScraperInstructionType.SystemAction:
-          context.logger.info("Performing system action", {
-            action: instruction.systemAction,
-          })
-
-          lastInstructionInfo = pushInstructionInfo({
-            type: instruction.type,
-            systemAction: instruction.systemAction,
-          })
-
-          await performSystemAction(instruction.systemAction)
-          break
-      }
-
-      lastInstructionInfo.duration = performance.now() - instructionStartTime
-      if (lastInstructionInfo.url !== context.page.url()) {
-        lastInstructionInfo.url = {
-          from: instructionStartUrl,
-          to: context.page.url(),
-        }
-      }
-
-      if (instruction.type === ScraperInstructionType.Jump) {
-        i = instructions.findIndex(
-          (marker) =>
-            marker.type === ScraperInstructionType.Marker &&
-            marker.name === instruction.markerName,
-        )
-        assert(
-          level > 0 || i !== -1,
-          `Marker "${instruction.markerName}" not found`,
-        )
-
-        if (i === -1) {
-          context.logger.warn("Marker not found, returning to previous level")
-          return instruction
-        }
-      }
-    }
-
-    if (process.env.NODE_ENV === "development") {
-      await saveScreenshot(context.page, this.identifier)
-    }
-
-    return null
-  }
-
-  private async performPageAction(
-    context: ScraperExecutionContext,
-    action: PageAction,
-  ) {
-    context.logger.info({ msg: "Performing action", action })
-    switch (action.type) {
-      case PageActionType.Wait:
-        await wait(action.duration)
-        break
-      case PageActionType.Navigate:
-        try {
-          await context.page.goto(
-            await replaceSpecialStrings(action.url, context.dataBridge),
-            {
-              timeout: 30_000,
-              waitUntil: "networkidle0",
-              signal: context.abortController.signal,
-            },
-          )
-        } catch (error) {
-          context.logger.warn({ msg: "Navigation failed", error })
-        }
-        break
-      case PageActionType.Click: {
-        const handle = await getElementHandle(context, action.selectors, true)
-
-        if (action.useGhostCursor) {
-          context.cursor.toggleRandomMove(false)
-
-          await context.cursor.scrollIntoView(handle, {
-            scrollSpeed: 80,
-          })
-          await wait(1_000)
-          await context.cursor.click(handle, getGhostClickOptions())
-
-          context.cursor.toggleRandomMove(true)
-        } else {
-          await handle.click({
-            delay: randomInt(1, 4),
-          })
-        }
-        break
-      }
-      case PageActionType.Type: {
-        const handle = await getElementHandle(context, action.selectors, true)
-        if (action.clearBeforeType) {
-          await handle.evaluate((el) => {
-            if (el instanceof HTMLInputElement) {
-              el.value = ""
-            }
-          })
-        }
-
-        const value = await getScraperValue(context, action.value)
-        if (value) {
-          await handle.type(value.toString(), {
-            delay: randomInt(1, 4),
-          })
-        }
-        break
-      }
-      case PageActionType.ScrollToTop:
-        await context.cursor.scrollTo("top", {
-          scrollSpeed: 50,
-        })
-        break
-      case PageActionType.ScrollToBottom:
-        // await scrollToBottom(context)
-        await context.cursor.scrollTo("bottom", {
-          scrollSpeed: 50,
-        })
-        break
-    }
-
-    if (
-      ![
-        PageActionType.Wait,
-        PageActionType.Navigate,
-        PageActionType.ScrollToTop,
-        PageActionType.ScrollToBottom,
-      ].includes(action.type)
-    ) {
-      await this.waitForNetworkIdle(context)
-    }
-
-    await detectAndSolveCaptcha(context)
-  }
-
-  private async waitForNetworkIdle(context: ScraperExecutionContext) {
-    try {
-      await context.page.waitForNetworkIdle({
-        timeout: 20_000,
-        signal: context.abortController.signal,
-      })
-    } catch (error) {
-      context.logger.warn({ msg: "Network idle timeout", error })
-    }
-  }
-
-  private async checkCondition(
-    context: ScraperExecutionContext,
-    condition: ScraperCondition,
-  ) {
-    try {
-      switch (condition.type) {
-        case ScraperConditionType.IsVisible: {
-          const handle = await getElementHandle(context, condition.selectors)
-          return !!(await handle?.isVisible())
-        }
-        case ScraperConditionType.TextEquals: {
-          const value = await getScraperValue(context, condition.valueSelector)
-          if (value === null || value === undefined) {
-            return false
-          }
-          if (typeof condition.text === "string") {
-            return (
-              value ===
-              (await replaceSpecialStrings(condition.text, context.dataBridge))
-            )
-          }
-          return new RegExp(condition.text.source, condition.text.flags).test(
-            value.toString(),
-          )
-        }
-      }
-    } catch (error) {
-      context.logger.fatal(error)
-      return false
-    }
   }
 }
