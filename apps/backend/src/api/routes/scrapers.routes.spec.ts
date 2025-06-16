@@ -10,8 +10,11 @@ import {
   ScraperState,
   runUnsafe,
 } from "@web-scraper/common"
-import { Scraper, type DataBridge } from "@web-scraper/core"
-import { ScraperExecutionInfo } from "@web-scraper/core/src/scraper/scraper-execution-info"
+import {
+  Scraper,
+  ScraperExecutionInfo,
+  type DataBridge,
+} from "@web-scraper/core"
 import { count } from "drizzle-orm"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 import {
