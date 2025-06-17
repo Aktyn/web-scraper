@@ -233,7 +233,12 @@ function AttributesForm({ control, fieldName }: AttributesFormProps) {
                 <FormInput
                   control={control}
                   name={`${attributesFieldName}.${key}`}
-                  label={key}
+                  label={
+                    <>
+                      <span>{key}</span>
+                      <span className="text-muted-foreground">=</span>
+                    </>
+                  }
                 />
               </div>
               <Tooltip>
@@ -260,7 +265,7 @@ function AttributesForm({ control, fieldName }: AttributesFormProps) {
       </div>
 
       <div className="flex flex-wrap items-end gap-2 pt-2">
-        <div className="flex-1">
+        <div className="flex-1 flex flex-col gap-1">
           <Label>Attribute name</Label>
           <Input
             value={newAttributeKey}
@@ -268,7 +273,7 @@ function AttributesForm({ control, fieldName }: AttributesFormProps) {
             placeholder="e.g. data-testid"
           />
         </div>
-        <div className="flex-1">
+        <div className="flex-1 flex flex-col gap-1">
           <Label>Attribute value</Label>
           <Input
             value={newAttributeValue}

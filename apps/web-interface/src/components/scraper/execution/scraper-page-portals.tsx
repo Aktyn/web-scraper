@@ -7,6 +7,7 @@ import {
 import { Button } from "@/components/shadcn/button"
 import { Label } from "@/components/shadcn/label"
 import { useGet } from "@/hooks/api/useGet"
+import { palette } from "@/lib/palette"
 import type { ScraperInstructionsExecutionInfo } from "@web-scraper/common"
 import {
   defaultPreferences,
@@ -19,26 +20,40 @@ type ScraperPagePortalsProps = {
   executionInfo: ScraperInstructionsExecutionInfo
 }
 
+type PageOpenedExecutionInfo = Required<
+  Extract<
+    ScraperInstructionsExecutionInfo[number],
+    { type: ScraperInstructionsExecutionInfoType.PageOpened }
+  >
+>
+
 export function ScraperPagePortals({ executionInfo }: ScraperPagePortalsProps) {
-  const pagePortals = useMemo(() => {
+  const pagesWithPortals = useMemo(() => {
     return executionInfo.filter(
       (info) =>
-        info.type === ScraperInstructionsExecutionInfoType.PagePortalOpened,
-    )
+        info.type === ScraperInstructionsExecutionInfoType.PageOpened &&
+        !!info.portalUrl,
+    ) as PageOpenedExecutionInfo[]
   }, [executionInfo])
 
-  if (!pagePortals.length) {
+  if (!pagesWithPortals.length) {
     return null
   }
 
   return (
-    <Accordion
-      type="multiple"
-      defaultValue={pagePortals.map((portal) => portal.pageIndex.toString())}
-    >
-      {pagePortals.map((portal) => (
-        <AccordionItem key={portal.url} value={portal.pageIndex.toString()}>
-          <AccordionTrigger className="gap-2 flex flex-row items-center justify-between gap-x-4">
+    <Accordion type="multiple">
+      {pagesWithPortals.map((portal) => (
+        <AccordionItem
+          key={`${portal.portalUrl}-${portal.pageIndex}`}
+          value={portal.pageIndex.toString()}
+        >
+          <AccordionTrigger className="gap-2 flex flex-row items-center justify-between gap-x-4 py-2">
+            <span
+              className="size-4 rounded-full"
+              style={{
+                backgroundColor: palette[portal.pageIndex % palette.length],
+              }}
+            />
             <Label>
               Page <b>{portal.pageIndex}</b> portal
             </Label>
@@ -47,49 +62,28 @@ export function ScraperPagePortals({ executionInfo }: ScraperPagePortalsProps) {
               variant="ghost"
               size="sm"
               className="mr-auto"
+              tabIndex={-1}
               onClick={(event) => {
                 event.stopPropagation()
               }}
             >
-              <a href={portal.url} target="_blank" rel="noopener noreferrer">
+              <a
+                href={portal.portalUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 <ExternalLinkIcon />
                 Open in new tab
               </a>
             </Button>
           </AccordionTrigger>
           <AccordionContent>
-            <PagePortal url={portal.url} pageIndex={portal.pageIndex} />
+            <PagePortal url={portal.portalUrl} pageIndex={portal.pageIndex} />
           </AccordionContent>
         </AccordionItem>
       ))}
     </Accordion>
   )
-
-  // if (pagePortals.length === 1) {
-  //   return (
-  //     <PagePortal
-  //       url={pagePortals[0].url}
-  //       pageIndex={pagePortals[0].pageIndex}
-  //     />
-  //   )
-  // }
-
-  // return (
-  //   <Tabs defaultValue="1">
-  //     <TabsList>
-  //       {pagePortals.map((portal) => (
-  //         <TabsTrigger key={portal.url} value={portal.pageIndex.toString()}>
-  //           Page {portal.pageIndex}
-  //         </TabsTrigger>
-  //       ))}
-  //     </TabsList>
-  //     {pagePortals.map((portal) => (
-  //       <TabsContent key={portal.url} value={portal.pageIndex.toString()}>
-  //         <PagePortal url={portal.url} pageIndex={portal.pageIndex} />
-  //       </TabsContent>
-  //     ))}
-  //   </Tabs>
-  // )
 }
 
 type PagePortalProps = {
@@ -137,7 +131,15 @@ function PagePortal({ url, pageIndex }: PagePortalProps) {
   return (
     <div
       ref={containerRef}
-      className="bg-background-darker border rounded-xl overflow-hidden w-full aspect-video flex items-stretch justify-stretch relative"
+      className="bg-background-darker border-2 rounded-xl overflow-hidden w-full aspect-video flex items-stretch justify-stretch relative"
+      style={
+        pageIndex > 0
+          ? {
+              borderColor: `${palette[pageIndex % palette.length]}`,
+              backgroundColor: `${palette[pageIndex % palette.length]}08`,
+            }
+          : undefined
+      }
     >
       {!isLoading && (
         <iframe

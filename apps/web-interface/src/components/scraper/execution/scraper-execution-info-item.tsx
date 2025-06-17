@@ -12,7 +12,6 @@ import {
   ScraperInstructionType,
   type ScraperInstructionsExecutionInfo,
 } from "@web-scraper/common"
-import { MoveRight } from "lucide-react"
 import { type ComponentProps, type PropsWithChildren } from "react"
 import { ExternalDataOperation } from "./external-data-operation"
 import { ScraperInstructionInfo } from "./scraper-instruction-info"
@@ -51,17 +50,6 @@ export function ScraperExecutionInfoItem({
               {formatDuration(executionInfo.duration, "second")}
             </span>
           </HeaderLayout>
-          <LabeledValue label="URL:" className="text-sm">
-            {typeof executionInfo.url === "string" ? (
-              <ExternalLink url={executionInfo.url} />
-            ) : (
-              <div className="flex flex-row flex-wrap items-center gap-1 contain-inline-size">
-                <ExternalLink url={executionInfo.url.from} />
-                <MoveRight className="size-5 inline text-muted-foreground" />
-                <ExternalLink url={executionInfo.url.to} />
-              </div>
-            )}
-          </LabeledValue>
           <ScraperInstructionInfo info={executionInfo.instructionInfo} />
         </ContainerLayout>
       )
@@ -84,7 +72,7 @@ export function ScraperExecutionInfoItem({
         </ContainerLayout>
       )
 
-    case ScraperInstructionsExecutionInfoType.PagePortalOpened:
+    case ScraperInstructionsExecutionInfoType.PageOpened:
       return (
         <ContainerLayout {...divProps}>
           <HeaderLayout>
@@ -92,12 +80,17 @@ export function ScraperExecutionInfoItem({
               {scraperInstructionsExecutionInfoTypeLabels[executionInfo.type]}
             </Badge>
           </HeaderLayout>
-          <LabeledValue label="URL:">
-            <ExternalLink
-              url={executionInfo.url}
-              className="max-w-64 inline-block"
-            />
+          <LabeledValue label="Page index:">
+            {executionInfo.pageIndex}
           </LabeledValue>
+          {executionInfo.portalUrl && (
+            <LabeledValue label="Portal URL:">
+              <ExternalLink
+                url={executionInfo.portalUrl}
+                className="max-w-64 inline-block"
+              />
+            </LabeledValue>
+          )}
         </ContainerLayout>
       )
 

@@ -5,6 +5,7 @@ import {
   type ScraperInstructions,
   ScraperInstructionType,
   ScraperValueType,
+  SpecialStringType,
   SqliteConditionType,
   SystemActionType,
 } from "@web-scraper/common"
@@ -277,7 +278,10 @@ const checkNewPepperAlertsInstructions: ScraperInstructions = [
           type: ElementSelectorType.Query,
           query: "#tab-feed > article:first-of-type .thread-title > a",
         },
-        { type: ElementSelectorType.TextContent, text: "{{marker.Content}}" },
+        {
+          type: ElementSelectorType.TextContent,
+          text: `{{${SpecialStringType.DataKey},marker.Content}}`,
+        },
       ],
     },
     then: [],
@@ -367,7 +371,7 @@ const scrapCryptoPricesInstructions: ScraperInstructions = [
         { type: ElementSelectorType.Query, query: "p.coin-item-name" },
         {
           type: ElementSelectorType.TextContent,
-          text: "{{crypto.Cryptocurrency}}",
+          text: `{{${SpecialStringType.DataKey},crypto.Cryptocurrency}}`,
         },
       ],
     },
@@ -380,7 +384,7 @@ const scrapCryptoPricesInstructions: ScraperInstructions = [
             { type: ElementSelectorType.Query, query: "p.coin-item-name" },
             {
               type: ElementSelectorType.TextContent,
-              text: "{{crypto.Cryptocurrency}}",
+              text: `{{${SpecialStringType.DataKey},crypto.Cryptocurrency}}`,
             },
           ],
           waitForNavigation: true,

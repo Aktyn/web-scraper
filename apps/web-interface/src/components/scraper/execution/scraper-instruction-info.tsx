@@ -29,7 +29,11 @@ export function ScraperInstructionInfo({ info }: ExternalDataOperationProps) {
     case ScraperInstructionType.PageAction:
       return (
         <ContainerLayout>
-          <PageActionInstruction action={info.action} />
+          <PageActionInstruction
+            pageIndex={info.pageIndex}
+            action={info.action}
+            pageUrl={info.pageUrl}
+          />
         </ContainerLayout>
       )
     case ScraperInstructionType.Condition:

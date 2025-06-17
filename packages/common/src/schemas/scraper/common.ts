@@ -1,3 +1,6 @@
+import { z } from "zod"
+import { TAG_NAMES } from "./helpers"
+
 export enum ScraperState {
   /** Pending initial execution */
   Pending = "pending",
@@ -13,3 +16,14 @@ export enum ScraperState {
 
   //TODO: awaiting user action, e.g. captcha
 }
+
+export const tagNameSchema = z.enum(TAG_NAMES)
+
+export const serializableRegex = z.object({
+  source: z.string(),
+  flags: z.string().regex(/^[dgimsuvy]*$/, "Invalid flags"),
+})
+
+export type SerializableRegex = z.infer<typeof serializableRegex>
+
+export const pageIndexSchema = z.number().min(0).max(255).optional()

@@ -178,18 +178,24 @@ describe(
         },
       ]
 
-      const mockExecutionInfo = [
+      const mockExecutionInfo: ScraperInstructionsExecutionInfo = [
+        {
+          type: ScraperInstructionsExecutionInfoType.PageOpened,
+          pageIndex: 0,
+          portalUrl: undefined,
+        },
         {
           type: ScraperInstructionsExecutionInfoType.Instruction,
           instructionInfo: {
             type: ScraperInstructionType.PageAction,
+            pageIndex: 0,
+            pageUrl: { from: "about:blank", to: "http://127.0.0.1:1337/api" },
             action: {
               type: PageActionType.Navigate,
               url: "http://127.0.0.1:1337/api",
             },
           },
-          url: { from: "about:blank", to: "http://127.0.0.1:1337/api" },
-          duration: expect.any(Number),
+          duration: expect.any(Number) as never,
         },
         {
           type: ScraperInstructionsExecutionInfoType.Instruction,
@@ -207,13 +213,14 @@ describe(
             },
             isMet: true,
           },
-          url: "http://127.0.0.1:1337/api",
-          duration: expect.any(Number),
+          duration: expect.any(Number) as never,
         },
         {
           type: ScraperInstructionsExecutionInfoType.Instruction,
           instructionInfo: {
             type: ScraperInstructionType.PageAction,
+            pageIndex: 0,
+            pageUrl: "http://127.0.0.1:1337/api",
             action: {
               type: PageActionType.Click,
               selectors: [
@@ -225,12 +232,13 @@ describe(
               ],
             },
           },
-          url: "http://127.0.0.1:1337/api",
-          duration: expect.any(Number),
+          duration: expect.any(Number) as never,
         },
         {
           type: ScraperInstructionsExecutionInfoType.Instruction,
           instructionInfo: {
+            pageIndex: 0,
+            pageUrl: "http://127.0.0.1:1337/api",
             action: {
               type: PageActionType.Click,
               selectors: [
@@ -243,8 +251,7 @@ describe(
             },
             type: ScraperInstructionType.PageAction,
           },
-          url: "http://127.0.0.1:1337/api",
-          duration: expect.any(Number),
+          duration: expect.any(Number) as never,
         },
         {
           type: ScraperInstructionsExecutionInfoType.Instruction,
@@ -262,13 +269,14 @@ describe(
             },
             isMet: true,
           },
-          url: "http://127.0.0.1:1337/api",
-          duration: expect.any(Number),
+          duration: expect.any(Number) as never,
         },
         {
           type: ScraperInstructionsExecutionInfoType.Instruction,
           instructionInfo: {
             type: ScraperInstructionType.PageAction,
+            pageIndex: 0,
+            pageUrl: "http://127.0.0.1:1337/api",
             action: {
               type: PageActionType.Click,
               selectors: [
@@ -280,111 +288,117 @@ describe(
               ],
             },
           },
-          url: "http://127.0.0.1:1337/api",
-          duration: expect.any(Number),
+          duration: expect.any(Number) as never,
         },
         {
           type: ScraperInstructionsExecutionInfoType.Success,
           summary: {
-            duration: expect.any(Number),
+            duration: expect.any(Number) as never,
           },
         },
       ]
 
-      const mockExecutionInfoWithoutCookiesBanner = [
-        {
-          type: ScraperInstructionsExecutionInfoType.Instruction,
-          instructionInfo: {
-            action: {
-              type: PageActionType.Navigate,
-              url: "http://127.0.0.1:1337/api",
+      const mockExecutionInfoWithoutCookiesBanner: ScraperInstructionsExecutionInfo =
+        [
+          {
+            type: ScraperInstructionsExecutionInfoType.PageOpened,
+            pageIndex: 0,
+            portalUrl: undefined,
+          },
+          {
+            type: ScraperInstructionsExecutionInfoType.Instruction,
+            instructionInfo: {
+              pageIndex: 0,
+              pageUrl: { from: "about:blank", to: "http://127.0.0.1:1337/api" },
+              action: {
+                type: PageActionType.Navigate,
+                url: "http://127.0.0.1:1337/api",
+              },
+              type: ScraperInstructionType.PageAction,
             },
-            type: ScraperInstructionType.PageAction,
+            duration: expect.any(Number) as never,
           },
-          url: { from: "about:blank", to: "http://127.0.0.1:1337/api" },
-          duration: expect.any(Number),
-        },
-        {
-          type: ScraperInstructionsExecutionInfoType.Instruction,
-          instructionInfo: {
-            condition: {
-              selectors: [
-                {
-                  type: ElementSelectorType.TextContent,
-                  text: { source: "accept cookies", flags: "i" },
-                },
-                { type: ElementSelectorType.TagName, tagName: "button" },
-              ],
-              type: ScraperConditionType.IsVisible,
+          {
+            type: ScraperInstructionsExecutionInfoType.Instruction,
+            instructionInfo: {
+              condition: {
+                selectors: [
+                  {
+                    type: ElementSelectorType.TextContent,
+                    text: { source: "accept cookies", flags: "i" },
+                  },
+                  { type: ElementSelectorType.TagName, tagName: "button" },
+                ],
+                type: ScraperConditionType.IsVisible,
+              },
+              isMet: false,
+              type: ScraperInstructionType.Condition,
             },
-            isMet: false,
-            type: ScraperInstructionType.Condition,
+            duration: expect.any(Number) as never,
           },
-          url: "http://127.0.0.1:1337/api",
-          duration: expect.any(Number),
-        },
-        {
-          type: ScraperInstructionsExecutionInfoType.Instruction,
-          instructionInfo: {
-            action: {
-              selectors: [
-                {
-                  type: ElementSelectorType.TextContent,
-                  text: { source: "login", flags: "i" },
-                },
-                { type: ElementSelectorType.TagName, tagName: "button" },
-              ],
-              type: PageActionType.Click,
+          {
+            type: ScraperInstructionsExecutionInfoType.Instruction,
+            instructionInfo: {
+              type: ScraperInstructionType.PageAction,
+              pageIndex: 0,
+              pageUrl: "http://127.0.0.1:1337/api",
+              action: {
+                selectors: [
+                  {
+                    type: ElementSelectorType.TextContent,
+                    text: { source: "login", flags: "i" },
+                  },
+                  { type: ElementSelectorType.TagName, tagName: "button" },
+                ],
+                type: PageActionType.Click,
+              },
             },
-            type: ScraperInstructionType.PageAction,
+            duration: expect.any(Number) as never,
           },
-          url: "http://127.0.0.1:1337/api",
-          duration: expect.any(Number),
-        },
-        {
-          type: ScraperInstructionsExecutionInfoType.Instruction,
-          instructionInfo: {
-            condition: {
-              selectors: [
-                {
-                  type: ElementSelectorType.TextContent,
-                  text: { source: "login", flags: "i" },
-                },
-                { type: ElementSelectorType.TagName, tagName: "button" },
-              ],
-              type: ScraperConditionType.IsVisible,
+          {
+            type: ScraperInstructionsExecutionInfoType.Instruction,
+            instructionInfo: {
+              condition: {
+                selectors: [
+                  {
+                    type: ElementSelectorType.TextContent,
+                    text: { source: "login", flags: "i" },
+                  },
+                  { type: ElementSelectorType.TagName, tagName: "button" },
+                ],
+                type: ScraperConditionType.IsVisible,
+              },
+              isMet: true,
+              type: ScraperInstructionType.Condition,
             },
-            isMet: true,
-            type: ScraperInstructionType.Condition,
+            duration: expect.any(Number) as never,
           },
-          url: "http://127.0.0.1:1337/api",
-          duration: expect.any(Number),
-        },
-        {
-          type: ScraperInstructionsExecutionInfoType.Instruction,
-          instructionInfo: {
-            action: {
-              selectors: [
-                {
-                  type: ElementSelectorType.TextContent,
-                  text: { source: "login", flags: "i" },
-                },
-                { type: ElementSelectorType.TagName, tagName: "button" },
-              ],
-              type: PageActionType.Click,
+          {
+            type: ScraperInstructionsExecutionInfoType.Instruction,
+            instructionInfo: {
+              type: ScraperInstructionType.PageAction,
+              pageIndex: 0,
+              pageUrl: "http://127.0.0.1:1337/api",
+              action: {
+                selectors: [
+                  {
+                    type: ElementSelectorType.TextContent,
+                    text: { source: "login", flags: "i" },
+                  },
+                  { type: ElementSelectorType.TagName, tagName: "button" },
+                ],
+                type: PageActionType.Click,
+              },
             },
-            type: ScraperInstructionType.PageAction,
+            duration: expect.any(Number) as never,
           },
-          url: "http://127.0.0.1:1337/api",
-          duration: expect.any(Number),
-        },
-        {
-          type: ScraperInstructionsExecutionInfoType.Success,
-          summary: {
-            duration: expect.any(Number),
+          {
+            type: ScraperInstructionsExecutionInfoType.Success,
+            summary: {
+              duration: expect.any(Number) as never,
+            },
           },
-        },
-      ]
+        ]
 
       it("should execute given instructions", async () => {
         const executionInfo = await scraper
@@ -519,23 +533,31 @@ describe(
         },
       ]
 
-      const mockExecutionInfo = [
+      const mockExecutionInfo: ScraperInstructionsExecutionInfo = [
         {
-          type: ScraperInstructionsExecutionInfoType.Instruction,
-          instructionInfo: {
-            action: {
-              type: PageActionType.Navigate,
-              url: "http://127.0.0.1:1337/api",
-            },
-            type: ScraperInstructionType.PageAction,
-          },
-          url: { from: "about:blank", to: "http://127.0.0.1:1337/api" },
-          duration: expect.any(Number),
+          type: ScraperInstructionsExecutionInfoType.PageOpened,
+          pageIndex: 0,
+          portalUrl: undefined,
         },
         {
           type: ScraperInstructionsExecutionInfoType.Instruction,
           instructionInfo: {
             type: ScraperInstructionType.PageAction,
+            pageIndex: 0,
+            pageUrl: { from: "about:blank", to: "http://127.0.0.1:1337/api" },
+            action: {
+              type: PageActionType.Navigate,
+              url: "http://127.0.0.1:1337/api",
+            },
+          },
+          duration: expect.any(Number) as never,
+        },
+        {
+          type: ScraperInstructionsExecutionInfoType.Instruction,
+          instructionInfo: {
+            type: ScraperInstructionType.PageAction,
+            pageIndex: 0,
+            pageUrl: "http://127.0.0.1:1337/api",
             action: {
               type: PageActionType.Type,
               selectors: [
@@ -550,8 +572,7 @@ describe(
               },
             },
           },
-          url: "http://127.0.0.1:1337/api",
-          duration: expect.any(Number),
+          duration: expect.any(Number) as never,
         },
         {
           type: ScraperInstructionsExecutionInfoType.ExternalDataOperation,
@@ -565,6 +586,8 @@ describe(
           type: ScraperInstructionsExecutionInfoType.Instruction,
           instructionInfo: {
             type: ScraperInstructionType.PageAction,
+            pageIndex: 0,
+            pageUrl: "http://127.0.0.1:1337/api",
             action: {
               type: PageActionType.Type,
               selectors: [
@@ -579,8 +602,7 @@ describe(
               },
             },
           },
-          url: "http://127.0.0.1:1337/api",
-          duration: expect.any(Number),
+          duration: expect.any(Number) as never,
         },
         {
           type: ScraperInstructionsExecutionInfoType.ExternalDataOperation,
@@ -593,7 +615,7 @@ describe(
         {
           type: ScraperInstructionsExecutionInfoType.Success,
           summary: {
-            duration: expect.any(Number),
+            duration: expect.any(Number) as never,
           },
         },
       ]
@@ -674,18 +696,24 @@ describe(
         },
       ]
 
-      const mockExecutionInfo = [
+      const mockExecutionInfo: ScraperInstructionsExecutionInfo = [
+        {
+          type: ScraperInstructionsExecutionInfoType.PageOpened,
+          pageIndex: 0,
+          portalUrl: undefined,
+        },
         {
           type: ScraperInstructionsExecutionInfoType.Instruction,
           instructionInfo: {
+            type: ScraperInstructionType.PageAction,
+            pageIndex: 0,
+            pageUrl: { from: "about:blank", to: "http://127.0.0.1:1337/api" },
             action: {
               type: PageActionType.Navigate,
               url: "http://127.0.0.1:1337/api",
             },
-            type: ScraperInstructionType.PageAction,
           },
-          url: { from: "about:blank", to: "http://127.0.0.1:1337/api" },
-          duration: expect.any(Number),
+          duration: expect.any(Number) as never,
         },
         {
           type: ScraperInstructionsExecutionInfoType.Instruction,
@@ -701,8 +729,7 @@ describe(
             },
             isMet: false,
           },
-          url: "http://127.0.0.1:1337/api",
-          duration: expect.any(Number),
+          duration: expect.any(Number) as never,
         },
         {
           type: ScraperInstructionsExecutionInfoType.ExternalDataOperation,
@@ -716,6 +743,8 @@ describe(
           type: ScraperInstructionsExecutionInfoType.Instruction,
           instructionInfo: {
             type: ScraperInstructionType.PageAction,
+            pageIndex: 0,
+            pageUrl: "http://127.0.0.1:1337/api",
             action: {
               type: PageActionType.Click,
               selectors: [
@@ -726,13 +755,12 @@ describe(
               ],
             },
           },
-          url: "http://127.0.0.1:1337/api",
-          duration: expect.any(Number),
+          duration: expect.any(Number) as never,
         },
         {
           type: ScraperInstructionsExecutionInfoType.Success,
           summary: {
-            duration: expect.any(Number),
+            duration: expect.any(Number) as never,
           },
         },
       ]
@@ -794,16 +822,22 @@ describe(
 
         expect(result).toEqual([
           {
+            type: ScraperInstructionsExecutionInfoType.PageOpened,
+            pageIndex: 0,
+            portalUrl: undefined,
+          },
+          {
             type: ScraperInstructionsExecutionInfoType.Instruction,
             instructionInfo: {
               type: ScraperInstructionType.PageAction,
+              pageIndex: 0,
+              pageUrl: { from: "about:blank", to: "http://127.0.0.1:1337/api" },
               action: {
                 type: PageActionType.Navigate,
                 url: "http://127.0.0.1:1337/api",
               },
             },
-            duration: expect.any(Number),
-            url: { from: "about:blank", to: "http://127.0.0.1:1337/api" },
+            duration: expect.any(Number) as never,
           },
           {
             type: ScraperInstructionsExecutionInfoType.Instruction,
@@ -815,8 +849,7 @@ describe(
                 value: "test-literal-value",
               },
             },
-            duration: expect.any(Number),
-            url: "http://127.0.0.1:1337/api",
+            duration: expect.any(Number) as never,
           },
           {
             type: ScraperInstructionsExecutionInfoType.ExternalDataOperation,
@@ -829,10 +862,10 @@ describe(
           {
             type: ScraperInstructionsExecutionInfoType.Success,
             summary: {
-              duration: expect.any(Number),
+              duration: expect.any(Number) as never,
             },
           },
-        ])
+        ] satisfies ScraperInstructionsExecutionInfo)
 
         expect(await mockDataBridge.get("test.literal")).toBe(
           "test-literal-value",
@@ -866,16 +899,22 @@ describe(
 
         expect(result).toEqual([
           {
+            type: ScraperInstructionsExecutionInfoType.PageOpened,
+            pageIndex: 0,
+            portalUrl: undefined,
+          },
+          {
             type: ScraperInstructionsExecutionInfoType.Instruction,
             instructionInfo: {
               type: ScraperInstructionType.PageAction,
+              pageIndex: 0,
+              pageUrl: { from: "about:blank", to: "http://127.0.0.1:1337/api" },
               action: {
                 type: PageActionType.Navigate,
                 url: "http://127.0.0.1:1337/api",
               },
             },
-            duration: expect.any(Number),
-            url: { from: "about:blank", to: "http://127.0.0.1:1337/api" },
+            duration: expect.any(Number) as never,
           },
           {
             type: ScraperInstructionsExecutionInfoType.Instruction,
@@ -887,8 +926,7 @@ describe(
                 dataKey: "user.name",
               },
             },
-            duration: expect.any(Number),
-            url: "http://127.0.0.1:1337/api",
+            duration: expect.any(Number) as never,
           },
           {
             type: ScraperInstructionsExecutionInfoType.ExternalDataOperation,
@@ -909,10 +947,10 @@ describe(
           {
             type: ScraperInstructionsExecutionInfoType.Success,
             summary: {
-              duration: expect.any(Number),
+              duration: expect.any(Number) as never,
             },
           },
-        ])
+        ] satisfies ScraperInstructionsExecutionInfo)
 
         expect(await mockDataBridge.get("test.external")).toBe("mock-user-name")
       }, 60_000)
@@ -947,16 +985,22 @@ describe(
 
         expect(result).toEqual([
           {
+            type: ScraperInstructionsExecutionInfoType.PageOpened,
+            pageIndex: 0,
+            portalUrl: undefined,
+          },
+          {
             type: ScraperInstructionsExecutionInfoType.Instruction,
             instructionInfo: {
               type: ScraperInstructionType.PageAction,
+              pageIndex: 0,
+              pageUrl: { from: "about:blank", to: "http://127.0.0.1:1337/api" },
               action: {
                 type: PageActionType.Navigate,
                 url: "http://127.0.0.1:1337/api",
               },
             },
-            duration: expect.any(Number),
-            url: { from: "about:blank", to: "http://127.0.0.1:1337/api" },
+            duration: expect.any(Number) as never,
           },
           {
             type: ScraperInstructionsExecutionInfoType.Instruction,
@@ -967,24 +1011,23 @@ describe(
                 type: ScraperValueType.CurrentTimestamp,
               },
             },
-            duration: expect.any(Number),
-            url: "http://127.0.0.1:1337/api",
+            duration: expect.any(Number) as never,
           },
           {
             type: ScraperInstructionsExecutionInfoType.ExternalDataOperation,
             operation: {
               type: "set",
               key: "test.timestamp",
-              value: expect.any(String),
+              value: expect.any(String) as never,
             },
           },
           {
             type: ScraperInstructionsExecutionInfoType.Success,
             summary: {
-              duration: expect.any(Number),
+              duration: expect.any(Number) as never,
             },
           },
-        ])
+        ] satisfies ScraperInstructionsExecutionInfo)
 
         const savedTimestamp = await mockDataBridge.get("test.timestamp")
         expect(savedTimestamp).toBeTruthy()
@@ -1025,16 +1068,22 @@ describe(
 
         expect(result).toEqual([
           {
+            type: ScraperInstructionsExecutionInfoType.PageOpened,
+            pageIndex: 0,
+            portalUrl: undefined,
+          },
+          {
             type: ScraperInstructionsExecutionInfoType.Instruction,
             instructionInfo: {
               type: ScraperInstructionType.PageAction,
+              pageIndex: 0,
+              pageUrl: { from: "about:blank", to: "http://127.0.0.1:1337/api" },
               action: {
                 type: PageActionType.Navigate,
                 url: "http://127.0.0.1:1337/api",
               },
             },
-            duration: expect.any(Number),
-            url: { from: "about:blank", to: "http://127.0.0.1:1337/api" },
+            duration: expect.any(Number) as never,
           },
           {
             type: ScraperInstructionsExecutionInfoType.Instruction,
@@ -1051,8 +1100,7 @@ describe(
                 ],
               },
             },
-            duration: expect.any(Number),
-            url: "http://127.0.0.1:1337/api",
+            duration: expect.any(Number) as never,
           },
           {
             type: ScraperInstructionsExecutionInfoType.ExternalDataOperation,
@@ -1065,10 +1113,10 @@ describe(
           {
             type: ScraperInstructionsExecutionInfoType.Success,
             summary: {
-              duration: expect.any(Number),
+              duration: expect.any(Number) as never,
             },
           },
-        ])
+        ] satisfies ScraperInstructionsExecutionInfo)
 
         const savedValue = await mockDataBridge.get("test.text")
         expect(savedValue).toBe("Sample Text")
@@ -1108,16 +1156,22 @@ describe(
 
         expect(result).toEqual([
           {
+            type: ScraperInstructionsExecutionInfoType.PageOpened,
+            pageIndex: 0,
+            portalUrl: undefined,
+          },
+          {
             type: ScraperInstructionsExecutionInfoType.Instruction,
             instructionInfo: {
               type: ScraperInstructionType.PageAction,
+              pageIndex: 0,
+              pageUrl: { from: "about:blank", to: "http://127.0.0.1:1337/api" },
               action: {
                 type: PageActionType.Navigate,
                 url: "http://127.0.0.1:1337/api",
               },
             },
-            duration: expect.any(Number),
-            url: { from: "about:blank", to: "http://127.0.0.1:1337/api" },
+            duration: expect.any(Number) as never,
           },
           {
             type: ScraperInstructionsExecutionInfoType.Instruction,
@@ -1136,8 +1190,7 @@ describe(
                 attributeName: "data-value",
               },
             },
-            duration: expect.any(Number),
-            url: "http://127.0.0.1:1337/api",
+            duration: expect.any(Number) as never,
           },
           {
             type: ScraperInstructionsExecutionInfoType.ExternalDataOperation,
@@ -1150,10 +1203,10 @@ describe(
           {
             type: ScraperInstructionsExecutionInfoType.Success,
             summary: {
-              duration: expect.any(Number),
+              duration: expect.any(Number) as never,
             },
           },
-        ])
+        ] satisfies ScraperInstructionsExecutionInfo)
 
         const savedValue = await mockDataBridge.get("test.attribute")
         expect(savedValue).toBe("test-attribute")
@@ -1185,16 +1238,22 @@ describe(
 
         expect(result).toEqual([
           {
+            type: ScraperInstructionsExecutionInfoType.PageOpened,
+            pageIndex: 0,
+            portalUrl: undefined,
+          },
+          {
             type: ScraperInstructionsExecutionInfoType.Instruction,
             instructionInfo: {
               type: ScraperInstructionType.PageAction,
+              pageIndex: 0,
+              pageUrl: { from: "about:blank", to: "http://127.0.0.1:1337/api" },
               action: {
                 type: PageActionType.Navigate,
                 url: "http://127.0.0.1:1337/api",
               },
             },
-            duration: expect.any(Number),
-            url: { from: "about:blank", to: "http://127.0.0.1:1337/api" },
+            duration: expect.any(Number) as never,
           },
           {
             type: ScraperInstructionsExecutionInfoType.Instruction,
@@ -1202,8 +1261,7 @@ describe(
               type: ScraperInstructionType.DeleteData,
               dataSourceName: "test",
             },
-            duration: expect.any(Number),
-            url: "http://127.0.0.1:1337/api",
+            duration: expect.any(Number) as never,
           },
           {
             type: ScraperInstructionsExecutionInfoType.ExternalDataOperation,
@@ -1215,10 +1273,10 @@ describe(
           {
             type: ScraperInstructionsExecutionInfoType.Success,
             summary: {
-              duration: expect.any(Number),
+              duration: expect.any(Number) as never,
             },
           },
-        ])
+        ] satisfies ScraperInstructionsExecutionInfo)
 
         expect(await mockDataBridge.get("test.delete")).toBeNull()
       }, 60_000)
@@ -1249,16 +1307,22 @@ describe(
 
         expect(result).toEqual([
           {
+            type: ScraperInstructionsExecutionInfoType.PageOpened,
+            pageIndex: 0,
+            portalUrl: undefined,
+          },
+          {
             type: ScraperInstructionsExecutionInfoType.Instruction,
             instructionInfo: {
               type: ScraperInstructionType.PageAction,
+              pageIndex: 0,
+              pageUrl: { from: "about:blank", to: "http://127.0.0.1:1337/api" },
               action: {
                 type: PageActionType.Navigate,
                 url: "http://127.0.0.1:1337/api",
               },
             },
-            duration: expect.any(Number),
-            url: { from: "about:blank", to: "http://127.0.0.1:1337/api" },
+            duration: expect.any(Number) as never,
           },
           {
             type: ScraperInstructionsExecutionInfoType.Instruction,
@@ -1266,8 +1330,7 @@ describe(
               type: ScraperInstructionType.DeleteData,
               dataSourceName: "nonexistent",
             },
-            duration: expect.any(Number),
-            url: "http://127.0.0.1:1337/api",
+            duration: expect.any(Number) as never,
           },
           {
             type: ScraperInstructionsExecutionInfoType.ExternalDataOperation,
@@ -1279,10 +1342,10 @@ describe(
           {
             type: ScraperInstructionsExecutionInfoType.Success,
             summary: {
-              duration: expect.any(Number),
+              duration: expect.any(Number) as never,
             },
           },
-        ])
+        ] satisfies ScraperInstructionsExecutionInfo)
 
         // Verify key still doesn't exist
         expect(await mockDataBridge.get("test.nonexistent")).toBeNull()
@@ -1319,16 +1382,22 @@ describe(
 
         expect(result).toEqual([
           {
+            type: ScraperInstructionsExecutionInfoType.PageOpened,
+            pageIndex: 0,
+            portalUrl: undefined,
+          },
+          {
             type: ScraperInstructionsExecutionInfoType.Instruction,
             instructionInfo: {
               type: ScraperInstructionType.PageAction,
+              pageIndex: 0,
+              pageUrl: { from: "about:blank", to: "http://127.0.0.1:1337/api" },
               action: {
                 type: PageActionType.Navigate,
                 url: "http://127.0.0.1:1337/api",
               },
             },
-            duration: expect.any(Number),
-            url: { from: "about:blank", to: "http://127.0.0.1:1337/api" },
+            duration: expect.any(Number) as never,
           },
           {
             type: ScraperInstructionsExecutionInfoType.Instruction,
@@ -1340,8 +1409,7 @@ describe(
                 value: "temp-value",
               },
             },
-            duration: expect.any(Number),
-            url: "http://127.0.0.1:1337/api",
+            duration: expect.any(Number) as never,
           },
           {
             type: ScraperInstructionsExecutionInfoType.ExternalDataOperation,
@@ -1357,8 +1425,7 @@ describe(
               type: ScraperInstructionType.DeleteData,
               dataSourceName: "test",
             },
-            duration: expect.any(Number),
-            url: "http://127.0.0.1:1337/api",
+            duration: expect.any(Number) as never,
           },
           {
             type: ScraperInstructionsExecutionInfoType.ExternalDataOperation,
@@ -1370,10 +1437,10 @@ describe(
           {
             type: ScraperInstructionsExecutionInfoType.Success,
             summary: {
-              duration: expect.any(Number),
+              duration: expect.any(Number) as never,
             },
           },
-        ])
+        ] satisfies ScraperInstructionsExecutionInfo)
 
         // Verify data was saved then deleted
         expect(await mockDataBridge.get("test.combined")).toBeNull()

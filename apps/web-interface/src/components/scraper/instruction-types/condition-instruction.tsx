@@ -14,6 +14,9 @@ import { ScraperSelector } from "./scraper-selector"
 import { ScraperValue } from "./scraper-value"
 import { LabeledValue } from "@/components/common/label/labeled-value"
 import { countInstructions } from "../common/helpers"
+import { palette } from "@/lib/palette"
+import { cn } from "@/lib/utils"
+import { Badge } from "@/components/shadcn/badge"
 
 type ConditionInstructionProps = {
   condition: ScraperCondition
@@ -29,12 +32,36 @@ export function ConditionInstruction({
   additionalHeaderContent,
   ...divProps
 }: ConditionInstructionProps) {
+  const pageIndex =
+    condition.type === ScraperConditionType.IsVisible
+      ? condition.pageIndex
+      : undefined
+  const tabColor = palette[(pageIndex ?? 0) % palette.length]
+
   return (
-    <div {...divProps}>
+    <div
+      {...divProps}
+      className={cn("relative overflow-hidden", divProps.className)}
+      style={
+        tabColor !== palette[0] ? { borderColor: `${tabColor}50` } : undefined
+      }
+    >
+      {!!pageIndex && (
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{ backgroundColor: `${tabColor}04` }}
+        />
+      )}
+
       <div className="flex items-center gap-2">
         <Split className="size-4" />
         <span className="font-medium leading-none">Condition</span>
         {additionalHeaderContent}
+        {!!pageIndex && (
+          <Badge variant="outline" className="text-muted-foreground">
+            page: {pageIndex}
+          </Badge>
+        )}
       </div>
 
       <div className="space-y-1 mt-2">
@@ -101,6 +128,8 @@ function ConditionDetails({ condition }: { condition: ScraperCondition }) {
   switch (condition.type) {
     case ScraperConditionType.IsVisible:
       return (
+        // TODO: finish handling page index
+        // xyz
         <LabeledValue label="Check if element is visible:">
           <ScraperSelector selectors={condition.selectors} />
         </LabeledValue>

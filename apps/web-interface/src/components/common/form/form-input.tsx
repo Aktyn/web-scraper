@@ -22,6 +22,7 @@ export interface FormInputProps<
   type?: string
   disabled?: boolean
   className?: string
+  startAdornment?: ReactNode
   endAdornment?: ReactNode
   inputProps?: Partial<ComponentProps<typeof Input>>
 }
@@ -38,6 +39,7 @@ export function FormInput<
   type = "text",
   disabled,
   className,
+  startAdornment,
   endAdornment,
   inputProps,
 }: FormInputProps<TFieldValues, TName>) {
@@ -73,6 +75,11 @@ export function FormInput<
                   }
                 }}
               />
+              {startAdornment && (
+                <div className="absolute left-0 top-0 bottom-0 flex items-center justify-center">
+                  {startAdornment}
+                </div>
+              )}
               {endAdornment && (
                 <div className="absolute right-0 top-0 bottom-0 flex items-center justify-center">
                   {endAdornment}

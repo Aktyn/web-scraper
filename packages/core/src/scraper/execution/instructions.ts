@@ -6,6 +6,7 @@ import {
   ScraperInstructionType,
   ScraperInstructionsExecutionInfoType,
   assert,
+  runUnsafe,
 } from "@web-scraper/common"
 import { performSystemAction } from "../../system-actions"
 import { getScraperValue } from "../data-helper"
@@ -13,6 +14,7 @@ import { saveScreenshot } from "../helpers"
 import { checkCondition } from "./conditions"
 import type { ScraperExecutionContext } from "./helpers"
 import { performPageAction } from "./page-actions"
+import { ExecutionPages } from "./execution-pages"
 
 /**
  * Executes instructions in a scraper execution context.
@@ -37,13 +39,6 @@ export async function executeInstructions(
   for (let i = 0; i < instructions.length; i++) {
     const instruction = instructions[i]
     onInstructionExecutionStart(instruction)
-
-    if (process.env.NODE_ENV === "development" && i > 0) {
-      await saveScreenshot(
-        context.page,
-        `${context.scraperIdentifier}-before-${instruction.type}`,
-      )
-    }
 
     await executeInstructionByType(
       instruction,
@@ -70,10 +65,6 @@ export async function executeInstructions(
     }
   }
 
-  if (process.env.NODE_ENV === "development") {
-    await saveScreenshot(context.page, context.scraperIdentifier)
-  }
-
   return null
 }
 
@@ -85,21 +76,57 @@ async function executeInstructionByType(
   ) => void,
   level: number,
 ) {
-  const instructionStartUrl = context.page.url()
   const instructionStartTime = performance.now()
   let lastInstructionInfo: ScraperInstructionsExecutionInfo[number] | null =
     null
 
   switch (instruction.type) {
     case ScraperInstructionType.PageAction:
-      lastInstructionInfo = pushInstructionInfo(
-        {
+      {
+        const pageIndex = instruction.pageIndex ?? 0
+        const pageContext = await context.pages.get(pageIndex)
+        const page = pageContext.page
+        const startUrl = page.url()
+
+        if (
+          process.env.NODE_ENV === "development" &&
+          startUrl !== ExecutionPages.emptyPageUrl
+        ) {
+          await runUnsafe(
+            async () =>
+              await saveScreenshot(
+                page,
+                `${context.scraperIdentifier}-before-${instruction.type}`,
+              ),
+            context.logger.error,
+          )
+        }
+
+        const info: ScraperInstructionInfo & {
+          type: ScraperInstructionType.PageAction
+        } = {
           type: instruction.type,
           action: instruction.action,
-        },
-        context,
-      )
-      await performPageAction(context, instruction.action)
+          pageUrl: startUrl,
+          pageIndex,
+        }
+        lastInstructionInfo = pushInstructionInfo(info, context)
+        await performPageAction(context, instruction.action, pageContext)
+
+        if (typeof info.pageUrl === "string" && info.pageUrl !== page.url()) {
+          info.pageUrl = {
+            from: info.pageUrl,
+            to: page.url(),
+          }
+        }
+
+        if (process.env.NODE_ENV === "development") {
+          await runUnsafe(
+            async () => await saveScreenshot(page, context.scraperIdentifier),
+            context.logger.error,
+          )
+        }
+      }
       break
 
     case ScraperInstructionType.Condition:
@@ -284,12 +311,6 @@ async function executeInstructionByType(
   }
 
   lastInstructionInfo.duration = performance.now() - instructionStartTime
-  if (lastInstructionInfo.url !== context.page.url()) {
-    lastInstructionInfo.url = {
-      from: instructionStartUrl,
-      to: context.page.url(),
-    }
-  }
 }
 
 function pushInstructionInfo<T extends ScraperInstructionInfo>(
@@ -299,7 +320,6 @@ function pushInstructionInfo<T extends ScraperInstructionInfo>(
   const info = {
     type: ScraperInstructionsExecutionInfoType.Instruction,
     instructionInfo,
-    url: context.page.url(),
     duration: 0,
   } satisfies ScraperInstructionsExecutionInfo[number] & {
     instructionInfo: T

@@ -57,7 +57,7 @@ export function PageActionDetails({ action }: { action: PageAction }) {
           <LabeledValue label="Value:">
             <ScraperValue value={action.value} />
           </LabeledValue>
-          {!action.clearBeforeType && (
+          {action.clearBeforeType && (
             <LabeledValue
               label="Clear before typing:"
               className="w-full flex-row items-center gap-x-2"

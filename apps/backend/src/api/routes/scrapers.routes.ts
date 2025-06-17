@@ -159,8 +159,8 @@ export async function scrapersRoutes(
       const instances = Scraper.getInstances()
       const data = instances
         .map((scraper) => ({
-          id: scraper.options.id,
-          name: scraper.options.name,
+          id: scraper.id,
+          name: scraper.name,
         }))
         .slice(page * pageSize, (page + 1) * pageSize)
 

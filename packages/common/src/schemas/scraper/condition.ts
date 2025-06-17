@@ -1,5 +1,5 @@
 import { z } from "zod"
-import { serializableRegex } from "./helpers"
+import { pageIndexSchema, serializableRegex } from "./common"
 import { scraperElementSelectorsSchema } from "./selectors"
 import { scraperValueSchema } from "./value"
 
@@ -13,6 +13,7 @@ export enum ScraperConditionType {
 export const scraperConditionSchema = z.discriminatedUnion("type", [
   z.object({
     type: z.literal(ScraperConditionType.IsVisible),
+    pageIndex: pageIndexSchema,
     selectors: scraperElementSelectorsSchema,
   }),
   z.object({

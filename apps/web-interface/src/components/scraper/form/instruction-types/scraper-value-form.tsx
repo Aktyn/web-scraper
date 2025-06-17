@@ -8,6 +8,9 @@ import { DataKeyField } from "./data-key-field"
 import type { PageActionFieldName } from "./page-action-form"
 import { ScraperSelectorsForm } from "./scraper-selectors-form"
 import { scraperValueTypeLabels } from "@/lib/dictionaries"
+import { PageIndexField } from "../common/page-index-field"
+import { cn } from "@/lib/utils"
+import { palette } from "@/lib/palette"
 
 const valueTypeOptions = mapToSelectOptions(scraperValueTypeLabels)
 
@@ -25,16 +28,52 @@ export function ScraperValueForm({
   control,
   fieldName,
 }: ScraperValueFormProps) {
+  const valueSelector = useWatch({ control, name: fieldName })
+
+  const canChoosePageIndex =
+    valueSelector?.type === ScraperValueType.ElementTextContent ||
+    valueSelector?.type === ScraperValueType.ElementAttribute
+
+  const tabColor = canChoosePageIndex
+    ? palette[(valueSelector.pageIndex ?? 0) % palette.length]
+    : palette[0]
+
   return (
-    <div className="space-y-4">
-      <FormSelect
-        control={control}
-        className="*:[button]:w-full"
-        name={`${fieldName}.type`}
-        label="Value Type"
-        placeholder="Select value type"
-        options={valueTypeOptions}
-      />
+    <div
+      className={cn(
+        "flex flex-col items-stretch gap-4 p-0 transition-[border-color,background-color,padding]",
+        tabColor !== palette[0] && "p-2 border rounded-md",
+      )}
+      style={
+        tabColor
+          ? {
+              borderColor: `${tabColor}50`,
+              backgroundColor: `${tabColor}04`,
+            }
+          : undefined
+      }
+    >
+      <div
+        className={cn(
+          "flex flex-row flex-wrap items-center",
+          canChoosePageIndex && "gap-2",
+        )}
+      >
+        <FormSelect
+          control={control}
+          className="*:[button]:w-full flex-1"
+          name={`${fieldName}.type`}
+          label="Value type"
+          placeholder="Select value type"
+          options={valueTypeOptions}
+        />
+        {canChoosePageIndex ? (
+          <PageIndexField
+            control={control}
+            fieldName={`${fieldName}.pageIndex`}
+          />
+        ) : null}
+      </div>
 
       <ValueFormByType control={control} fieldName={fieldName} />
     </div>
@@ -77,7 +116,7 @@ function ValueFormByType({ control, fieldName }: ScraperValueFormProps) {
     case ScraperValueType.ElementTextContent:
       return (
         <div>
-          <h6 className="font-medium mb-2">Element Selector</h6>
+          <h6 className="font-medium mb-2">Element selector</h6>
           <ScraperSelectorsForm
             control={control}
             fieldName={`${fieldName}.selectors`}
@@ -89,7 +128,7 @@ function ValueFormByType({ control, fieldName }: ScraperValueFormProps) {
       return (
         <div className="space-y-4">
           <div>
-            <h6 className="font-medium mb-2">Element Selector</h6>
+            <h6 className="font-medium mb-2">Element selector</h6>
             <ScraperSelectorsForm
               control={control}
               fieldName={`${fieldName}.selectors`}
@@ -98,7 +137,7 @@ function ValueFormByType({ control, fieldName }: ScraperValueFormProps) {
           <FormInput
             control={control}
             name={`${fieldName}.attributeName`}
-            label="Attribute Name"
+            label="Attribute name"
             placeholder="href, src, class, etc."
             description="The name of the HTML attribute to extract."
           />

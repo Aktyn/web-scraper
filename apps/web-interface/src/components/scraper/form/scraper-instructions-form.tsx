@@ -1,5 +1,6 @@
 import { FormInput } from "@/components/common/form/form-input"
 import { FormSelect } from "@/components/common/form/form-select"
+import { Badge } from "@/components/shadcn/badge"
 import { Button } from "@/components/shadcn/button"
 import {
   Tooltip,
@@ -11,15 +12,19 @@ import {
   pageActionTypeLabels,
   systemActionTypeLabels,
 } from "@/lib/dictionaries"
+import { palette } from "@/lib/palette"
 import { cn } from "@/lib/utils"
 import {
   PageActionType,
+  ScraperConditionType,
   ScraperInstructionType,
   type CreateScraper,
   type ScraperInstructions,
 } from "@web-scraper/common"
-import { ArrowDownFromLine, ArrowUpFromLine, Plus, Trash2 } from "lucide-react"
+import { Eye, EyeOff, MoveDown, MoveUp, Plus, Trash2 } from "lucide-react"
+import { useState } from "react"
 import { useFieldArray, useWatch, type Control } from "react-hook-form"
+import { PageIndexField } from "./common/page-index-field"
 import { mapToSelectOptions } from "./helpers"
 import { ConditionInstructionForm } from "./instruction-types/condition-instruction-form"
 import { DeleteDataInstructionForm } from "./instruction-types/delete-data-instruction-form"
@@ -68,78 +73,15 @@ export function ScraperInstructionsForm({
         const fieldName = `${name}.${index}` as `instructions.${number}`
 
         return (
-          <div
+          <InstructionField
             key={field.id}
-            className="border rounded-lg p-4 flex flex-col items-stretch gap-4"
-          >
-            <div className="flex items-center justify-between">
-              <h4 className="font-medium">Instruction {index + 1}</h4>
-              <div className="flex items-center gap-1">
-                {fields.length > 1 && (
-                  <>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => move(index, index - 1)}
-                          disabled={index === 0}
-                          className="text-muted-foreground"
-                          aria-label="Move up"
-                        >
-                          <ArrowUpFromLine />
-                        </Button>
-                      </TooltipTrigger>
-                      <TooltipContent>Move up</TooltipContent>
-                    </Tooltip>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => move(index, index + 1)}
-                          disabled={index === fields.length - 1}
-                          className="text-muted-foreground"
-                          aria-label="Move down"
-                        >
-                          <ArrowDownFromLine />
-                        </Button>
-                      </TooltipTrigger>
-                      <TooltipContent>Move down</TooltipContent>
-                    </Tooltip>
-                  </>
-                )}
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => remove(index)}
-                      className="text-destructive hover:text-destructive"
-                      aria-label="Delete"
-                    >
-                      <Trash2 />
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>Delete</TooltipContent>
-                </Tooltip>
-              </div>
-            </div>
-
-            <FormSelect
-              control={control}
-              className="*:[button]:w-full"
-              name={`${fieldName}.type`}
-              label="Instruction type"
-              placeholder="Select instruction type"
-              options={instructionTypeOptions}
-            />
-
-            <InstructionForm control={control} fieldName={fieldName} />
-          </div>
+            control={control}
+            fieldName={fieldName}
+            index={index}
+            fieldsCount={fields.length}
+            move={move}
+            remove={remove}
+          />
         )
       })}
 
@@ -155,6 +97,167 @@ export function ScraperInstructionsForm({
         <Plus />
         Add {condition && `${condition} `}instruction
       </Button>
+    </div>
+  )
+}
+
+type InstructionFieldProps = {
+  control: Control<CreateScraper>
+  fieldName: `instructions.${number}`
+  index: number
+  fieldsCount: number
+  move: (index: number, newIndex: number) => void
+  remove: (index: number) => void
+}
+
+function InstructionField({
+  control,
+  fieldName,
+  index,
+  fieldsCount,
+  move,
+  remove,
+}: InstructionFieldProps) {
+  const instruction = useWatch({ control, name: fieldName })
+
+  const [visible, setVisible] = useState(true)
+
+  const tabColor =
+    instruction?.type === ScraperInstructionType.PageAction
+      ? palette[(instruction.pageIndex ?? 0) % palette.length]
+      : instruction?.type === ScraperInstructionType.Condition &&
+          instruction.if?.type === ScraperConditionType.IsVisible
+        ? palette[(instruction.if.pageIndex ?? 0) % palette.length]
+        : palette[0]
+
+  return (
+    <div
+      className="border rounded-lg p-4 flex flex-col items-stretch gap-4 transition-colors"
+      style={
+        tabColor
+          ? {
+              borderColor:
+                tabColor !== palette[0] ? `${tabColor}50` : undefined,
+              backgroundColor: `${tabColor}04`,
+            }
+          : undefined
+      }
+    >
+      <div className="flex items-center justify-between">
+        <h4 className="font-medium flex flex-row items-center gap-2">
+          {/* TODO: allow custom instruction name for improved UX */}
+          <span>
+            Instruction <b>{index + 1}</b>
+          </span>
+          <Badge
+            variant="outline"
+            className={cn(
+              "starting:opacity-0 transition-opacity text-muted-foreground border-none",
+              visible ? "opacity-0" : "opacity-100",
+            )}
+          >
+            {instructionTypeLabels[instruction.type]}
+            {instruction.type === ScraperInstructionType.PageAction
+              ? `${instruction.pageIndex ? ` (page: ${instruction.pageIndex})` : ""} -> ${instruction.action.type ? pageActionTypeLabels[instruction.action.type] : "Unknown action type"}`
+              : ""}
+          </Badge>
+        </h4>
+        <div className="flex items-center gap-1">
+          {fieldsCount > 1 && (
+            <>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => move(index, index - 1)}
+                    disabled={index === 0}
+                    className="text-muted-foreground"
+                    aria-label="Move up"
+                  >
+                    <MoveUp />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>Move up</TooltipContent>
+              </Tooltip>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => move(index, index + 1)}
+                    disabled={index === fieldsCount - 1}
+                    className="text-muted-foreground"
+                    aria-label="Move down"
+                  >
+                    <MoveDown />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>Move down</TooltipContent>
+              </Tooltip>
+            </>
+          )}
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                aria-label="Toggle visibility"
+                onClick={() => setVisible(!visible)}
+              >
+                {visible ? <EyeOff /> : <Eye />}
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>Toggle visibility</TooltipContent>
+          </Tooltip>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                onClick={() => remove(index)}
+                className="text-destructive hover:text-destructive"
+                aria-label="Delete"
+              >
+                <Trash2 />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>Delete</TooltipContent>
+          </Tooltip>
+        </div>
+      </div>
+
+      <div
+        className={cn(
+          "grid transition-[grid-template-rows]",
+          visible ? "grid-rows-[1fr]" : "grid-rows-[0fr]",
+        )}
+      >
+        <div className="flex flex-col items-stretch gap-4 overflow-hidden">
+          <div className="flex flex-row flex-wrap items-center gap-2">
+            <FormSelect
+              control={control}
+              className="*:[button]:w-full flex-1"
+              name={`${fieldName}.type`}
+              label="Instruction type"
+              placeholder="Select instruction type"
+              options={instructionTypeOptions}
+            />
+            {instruction.type === ScraperInstructionType.PageAction && (
+              <PageIndexField
+                control={control}
+                fieldName={`${fieldName}.pageIndex`}
+              />
+            )}
+          </div>
+
+          <InstructionForm control={control} fieldName={fieldName} />
+        </div>
+      </div>
     </div>
   )
 }

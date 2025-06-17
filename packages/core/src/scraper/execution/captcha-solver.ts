@@ -1,14 +1,16 @@
 import { wait } from "@web-scraper/common"
 import type { SerializedAXNode } from "rebrowser-puppeteer"
 import { getGhostClickOptions, type ScraperExecutionContext } from "./helpers"
+import type { ScraperPageContext } from "./execution-pages"
 
 const MAX_ATTEMPTS = 5
 
 export async function detectAndSolveCaptcha(
   context: ScraperExecutionContext,
+  pageContext: ScraperPageContext,
   attempt = 1,
 ) {
-  const captchaType = await detectCaptcha(context)
+  const captchaType = await detectCaptcha(pageContext)
 
   if (captchaType !== "no-captcha") {
     if (attempt >= MAX_ATTEMPTS) {
@@ -30,17 +32,17 @@ export async function detectAndSolveCaptcha(
 
   switch (captchaType) {
     case "cloudflare-challenge":
-      await solveCloudflareChallenge(context)
+      await solveCloudflareChallenge(context, pageContext)
 
       if (attempt <= MAX_ATTEMPTS) {
-        await detectAndSolveCaptcha(context, attempt + 1)
+        await detectAndSolveCaptcha(context, pageContext, attempt + 1)
       }
       break
   }
 }
 
-function detectCaptcha(context: ScraperExecutionContext) {
-  return context.page.evaluate(() => {
+function detectCaptcha(pageContext: ScraperPageContext) {
+  return pageContext.page.evaluate(() => {
     const paragraph = document.querySelector(
       ".main-wrapper > .main-content > p:first-of-type",
     )
@@ -60,7 +62,10 @@ function detectCaptcha(context: ScraperExecutionContext) {
   })
 }
 
-async function solveCloudflareChallenge(context: ScraperExecutionContext) {
+async function solveCloudflareChallenge(
+  context: ScraperExecutionContext,
+  pageContext: ScraperPageContext,
+) {
   context.logger.info("Solving Cloudflare challenge")
 
   const traverse = async (
@@ -80,14 +85,14 @@ async function solveCloudflareChallenge(context: ScraperExecutionContext) {
         if (handle) {
           context.logger.info("Clicking checkbox to solve captcha")
 
-          context.cursor.toggleRandomMove(false)
-          await context.cursor.click(handle, getGhostClickOptions())
-          context.cursor.toggleRandomMove(true)
+          pageContext.cursor.toggleRandomMove(false)
+          await pageContext.cursor.click(handle, getGhostClickOptions())
+          pageContext.cursor.toggleRandomMove(true)
 
           clicked = true
 
           try {
-            await context.page.waitForNavigation({
+            await pageContext.page.waitForNavigation({
               timeout: 20_000,
               waitUntil: "networkidle0",
               signal: context.abortController.signal,
@@ -104,7 +109,7 @@ async function solveCloudflareChallenge(context: ScraperExecutionContext) {
     return clicked
   }
 
-  const snapshot = await context.page.accessibility.snapshot({
+  const snapshot = await pageContext.page.accessibility.snapshot({
     includeIframes: true,
   })
   if (snapshot) {
@@ -126,7 +131,7 @@ async function solveCloudflareChallenge(context: ScraperExecutionContext) {
   await wait(15_000)
 
   try {
-    await context.page.waitForNetworkIdle({
+    await pageContext.page.waitForNetworkIdle({
       timeout: 20_000,
       signal: context.abortController.signal,
     })

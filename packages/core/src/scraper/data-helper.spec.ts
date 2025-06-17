@@ -1,12 +1,12 @@
 import {
   ElementSelectorType,
+  replaceSpecialStrings,
   type ScraperElementSelectors,
 } from "@web-scraper/common"
 import { describe, expect, it } from "vitest"
 import {
   type DataBridge,
   type DataBridgeValue,
-  replaceSpecialStrings,
   replaceSpecialStringsInSelectors,
 } from "./data-helper"
 
@@ -18,7 +18,7 @@ const mockStore = new Map<string, DataBridgeValue>([
   ["product.price", 99.99],
   ["product.attribute", "data-testid"],
   ["product.attributeValue", "product-price-id"],
-  ["user.greeting", "Hello {{user.name}}"],
+  ["user.greeting", "Hello {{DataKey,user.name}}"],
 ])
 
 const mockDataBridge: DataBridge = {
@@ -46,40 +46,53 @@ describe("data-helper", () => {
   describe(replaceSpecialStrings.name, () => {
     it("should return the same string if no special strings are present", async () => {
       const input = "This is a simple string."
-      const result = await replaceSpecialStrings(input, mockDataBridge)
+      const result = await replaceSpecialStrings(input, (key) =>
+        mockDataBridge.get(key),
+      )
       expect(result).toBe(input)
     })
 
     it("should replace a single special string with its value from the data bridge", async () => {
-      const input = "Welcome, {{user.name}}!"
-      const result = await replaceSpecialStrings(input, mockDataBridge)
+      const input = "Welcome, {{DataKey,user.name}}!"
+      const result = await replaceSpecialStrings(input, (key) =>
+        mockDataBridge.get(key),
+      )
       expect(result).toBe("Welcome, test-user!")
     })
 
     it("should replace multiple special strings", async () => {
       const input =
-        "Product: {{product.name}}, Price: ${{product.price}}, User: {{user.name}}"
-      const result = await replaceSpecialStrings(input, mockDataBridge)
+        "Product: {{DataKey,product.name}}, Price: ${{DataKey,product.price}}, User: {{DataKey,user.name}}"
+      const result = await replaceSpecialStrings(input, (key) =>
+        mockDataBridge.get(key),
+      )
       expect(result).toBe(
         "Product: Super Product, Price: $99.99, User: test-user",
       )
     })
 
     it("should replace a special string with an empty string if the key is not in the data bridge", async () => {
-      const input = "This key {{nonexistent.key}} does not exist."
-      const result = await replaceSpecialStrings(input, mockDataBridge)
+      const input = "This key {{DataKey,nonexistent.key}} does not exist."
+      const result = await replaceSpecialStrings(input, (key) =>
+        mockDataBridge.get(key),
+      )
       expect(result).toBe("This key  does not exist.")
     })
 
     it("should handle a mix of existing and non-existing keys", async () => {
-      const input = "User: {{user.name}}, Status: {{user.status}}"
-      const result = await replaceSpecialStrings(input, mockDataBridge)
+      const input =
+        "User: {{DataKey,user.name}}, Status: {{DataKey,user.status}}"
+      const result = await replaceSpecialStrings(input, (key) =>
+        mockDataBridge.get(key),
+      )
       expect(result).toBe("User: test-user, Status: ")
     })
 
     it("should handle recursive replacement", async () => {
-      const input = "Greeting: {{user.greeting}}"
-      const result = await replaceSpecialStrings(input, mockDataBridge)
+      const input = "Greeting: {{DataKey,user.greeting}}"
+      const result = await replaceSpecialStrings(input, (key) =>
+        mockDataBridge.get(key),
+      )
       expect(result).toBe("Greeting: Hello test-user")
     })
   })
@@ -89,11 +102,11 @@ describe("data-helper", () => {
       const selectors: ScraperElementSelectors = [
         {
           type: ElementSelectorType.Query,
-          query: "button[id='{{button.next}}']",
+          query: "button[id='{{DataKey,button.next}}']",
         },
         {
           type: ElementSelectorType.TextContent,
-          text: "{{product.name}}",
+          text: "{{DataKey,product.name}}",
         },
         {
           type: ElementSelectorType.TagName,
@@ -102,9 +115,10 @@ describe("data-helper", () => {
         {
           type: ElementSelectorType.Attributes,
           attributes: {
-            "{{product.attribute}}": "{{product.attributeValue}}",
-            "static-attr": "Welcome, {{user.name}}",
-            "non-existent": "{{non.existent}}",
+            "{{DataKey,product.attribute}}":
+              "{{DataKey,product.attributeValue}}",
+            "static-attr": "Welcome, {{DataKey,user.name}}",
+            "non-existent": "{{DataKey,non.existent}}",
           },
         },
       ]
@@ -142,12 +156,12 @@ describe("data-helper", () => {
       const selectors: ScraperElementSelectors = [
         {
           type: ElementSelectorType.TextContent,
-          text: { source: "{{user.name}}", flags: "i" },
+          text: { source: "{{DataKey,user.name}}", flags: "i" },
         },
         {
           type: ElementSelectorType.Attributes,
           attributes: {
-            "data-regex": { source: "{{product.name}}", flags: "g" },
+            "data-regex": { source: "{{DataKey,product.name}}", flags: "g" },
           },
         },
       ]
@@ -160,12 +174,12 @@ describe("data-helper", () => {
       expect(result).toEqual([
         {
           type: ElementSelectorType.TextContent,
-          text: { source: "{{user.name}}", flags: "i" },
+          text: { source: "{{DataKey,user.name}}", flags: "i" },
         },
         {
           type: ElementSelectorType.Attributes,
           attributes: {
-            "data-regex": { source: "{{product.name}}", flags: "g" },
+            "data-regex": { source: "{{DataKey,product.name}}", flags: "g" },
           },
         },
       ])

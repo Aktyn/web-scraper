@@ -37,7 +37,7 @@ export const scraperInstructionsExecutionInfoTypeLabels: {
   [ScraperInstructionsExecutionInfoType.Instruction]: "Instruction",
   [ScraperInstructionsExecutionInfoType.ExternalDataOperation]:
     "External data operation",
-  [ScraperInstructionsExecutionInfoType.PagePortalOpened]: "Page portal opened",
+  [ScraperInstructionsExecutionInfoType.PageOpened]: "Page opened",
   [ScraperInstructionsExecutionInfoType.Success]: "Success",
   [ScraperInstructionsExecutionInfoType.Error]: "Error",
 }

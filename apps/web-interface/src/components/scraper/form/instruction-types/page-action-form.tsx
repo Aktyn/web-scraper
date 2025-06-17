@@ -72,7 +72,7 @@ export function PageActionForm({ control, fieldName }: PageActionFormProps) {
           />
 
           <div>
-            <h5 className="font-medium mb-2">Value to Type</h5>
+            <h5 className="font-medium mb-2">Value to type</h5>
             <ScraperValueForm
               control={control}
               fieldName={`${fieldName}.value`}

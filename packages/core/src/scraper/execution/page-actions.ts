@@ -1,13 +1,20 @@
-import { type PageAction, PageActionType, wait } from "@web-scraper/common"
+import {
+  type PageAction,
+  PageActionType,
+  replaceSpecialStrings,
+  wait,
+} from "@web-scraper/common"
 import { randomInt } from "crypto"
-import { getScraperValue, replaceSpecialStrings } from "../data-helper"
+import { getScraperValue } from "../data-helper"
 import { detectAndSolveCaptcha } from "./captcha-solver"
+import type { ScraperPageContext } from "./execution-pages"
 import { type ScraperExecutionContext, getGhostClickOptions } from "./helpers"
 import { getElementHandle } from "./selectors"
 
 export async function performPageAction(
   context: ScraperExecutionContext,
   action: PageAction,
+  pageContext: ScraperPageContext,
 ) {
   context.logger.info({ msg: "Performing action", action })
   switch (action.type) {
@@ -16,8 +23,10 @@ export async function performPageAction(
       break
     case PageActionType.Navigate:
       try {
-        await context.page.goto(
-          await replaceSpecialStrings(action.url, context.dataBridge),
+        await pageContext.page.goto(
+          await replaceSpecialStrings(action.url, (key) =>
+            context.dataBridge.get(key),
+          ),
           {
             timeout: 30_000,
             waitUntil: "networkidle0",
@@ -29,18 +38,23 @@ export async function performPageAction(
       }
       break
     case PageActionType.Click: {
-      const handle = await getElementHandle(context, action.selectors, true)
+      const handle = await getElementHandle(
+        context,
+        action.selectors,
+        pageContext.index,
+        true,
+      )
 
       if (action.useGhostCursor) {
-        context.cursor.toggleRandomMove(false)
+        pageContext.cursor.toggleRandomMove(false)
 
-        await context.cursor.scrollIntoView(handle, {
+        await pageContext.cursor.scrollIntoView(handle, {
           scrollSpeed: 80,
         })
         await wait(1_000)
-        await context.cursor.click(handle, getGhostClickOptions())
+        await pageContext.cursor.click(handle, getGhostClickOptions())
 
-        context.cursor.toggleRandomMove(true)
+        pageContext.cursor.toggleRandomMove(true)
       } else {
         await handle.click({
           delay: randomInt(1, 4),
@@ -48,7 +62,7 @@ export async function performPageAction(
       }
 
       if (action.waitForNavigation) {
-        await context.page.waitForNavigation({
+        await pageContext.page.waitForNavigation({
           waitUntil: "networkidle0",
           signal: context.abortController.signal,
           timeout: 20_000,
@@ -57,7 +71,12 @@ export async function performPageAction(
       break
     }
     case PageActionType.Type: {
-      const handle = await getElementHandle(context, action.selectors, true)
+      const handle = await getElementHandle(
+        context,
+        action.selectors,
+        pageContext.index,
+        true,
+      )
       if (action.clearBeforeType) {
         await handle.evaluate((el) => {
           if (el instanceof HTMLInputElement) {
@@ -78,7 +97,7 @@ export async function performPageAction(
       }
 
       if (action.waitForNavigation) {
-        await context.page.waitForNavigation({
+        await pageContext.page.waitForNavigation({
           waitUntil: "networkidle0",
           signal: context.abortController.signal,
           timeout: 20_000,
@@ -87,12 +106,12 @@ export async function performPageAction(
       break
     }
     case PageActionType.ScrollToTop:
-      await context.cursor.scrollTo("top", {
+      await pageContext.cursor.scrollTo("top", {
         scrollSpeed: 50,
       })
       break
     case PageActionType.ScrollToBottom:
-      await context.cursor.scrollTo("bottom", {
+      await pageContext.cursor.scrollTo("bottom", {
         scrollSpeed: 50,
       })
       break
@@ -100,16 +119,9 @@ export async function performPageAction(
 
   await wait(randomInt(1_000, 2_000))
 
-  // if (
-  //   ![
-  //     PageActionType.Wait,
-  //     PageActionType.Navigate,
-  //     PageActionType.ScrollToTop,
-  //     PageActionType.ScrollToBottom,
-  //   ].includes(action.type)
-  // ) {
-  //   await waitForNetworkIdle(context)
-  // }
-
-  await detectAndSolveCaptcha(context)
+  try {
+    await detectAndSolveCaptcha(context, pageContext)
+  } catch (error) {
+    context.logger.error({ msg: "Captcha detection failed", error })
+  }
 }

@@ -250,9 +250,10 @@ export function DataStoreFormDialog({
                         <FormSelect
                           control={form.control}
                           name={`columns.${index}.type`}
-                          label="Data Type"
+                          label="Data type"
                           placeholder="Select data type"
                           options={columnTypeOptions}
+                          className="*:[button]:w-full"
                         />
                       </div>
 

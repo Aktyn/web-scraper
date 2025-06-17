@@ -1,8 +1,7 @@
-import useProxy from "@lem0-packages/puppeteer-page-proxy"
 import {
   assert,
   deepMerge,
-  runUnsafe,
+  pick,
   type ScraperInstructions,
   type ScraperInstructionsExecutionInfo,
   ScraperInstructionsExecutionInfoType,
@@ -10,11 +9,6 @@ import {
   type ScraperType,
   type SimpleLogger,
 } from "@web-scraper/common"
-import {
-  createCursor,
-  getRandomPagePoint,
-  installMouseHelper,
-} from "ghost-cursor"
 import EventEmitter from "node:events"
 import AdblockerPlugin from "puppeteer-extra-plugin-adblocker"
 import PortalPlugin from "puppeteer-extra-plugin-portal"
@@ -27,6 +21,7 @@ import puppeteer, {
   type Viewport,
 } from "rebrowser-puppeteer"
 import { type DataBridge } from "./data-helper"
+import { ExecutionPages } from "./execution/execution-pages"
 import { executeInstructions } from "./execution/instructions"
 import { ScraperExecutionInfo } from "./execution/scraper-execution-info"
 
@@ -85,8 +80,6 @@ export class Scraper<
     return Scraper.instances.get(identifier) ?? null
   }
 
-  private static emptyPageUrl = "about:blank"
-
   private readonly logger: SimpleLogger
   private readonly defaultViewport: Viewport
 
@@ -100,7 +93,7 @@ export class Scraper<
   private _currentlyExecutingInstruction: ScraperInstructions[number] | null =
     null
 
-  constructor(public readonly options: Readonly<ScraperOptions>) {
+  constructor(private readonly options: Readonly<ScraperOptions>) {
     super()
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -241,8 +234,15 @@ export class Scraper<
     return this.initPromise === null && this.browser !== null
   }
 
+  get id() {
+    return this.options.id
+  }
+  get name() {
+    return this.options.name
+  }
+
   private get identifier() {
-    return `${this.options.id}-${this.options.name}` as const
+    return `${this.id}-${this.name}` as const
   }
 
   get destroyed() {
@@ -316,66 +316,6 @@ export class Scraper<
     return this._currentlyExecutingInstruction
   }
 
-  private async getPage() {
-    assert(!!this.browser, "Browser not initialized")
-
-    const firstPage = (await this.browser.pages()).at(0)
-
-    const page =
-      firstPage && firstPage.url() === Scraper.emptyPageUrl
-        ? firstPage
-        : await this.browser.newPage()
-
-    await page.setViewport(this.defaultViewport)
-
-    try {
-      const userAgent =
-        "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36"
-      if (userAgent) {
-        this.logger.info(`Setting user agent to "${userAgent}"`)
-        await page.setUserAgent(userAgent)
-      }
-    } catch (error) {
-      this.logger.warn({ msg: "Failed to set user agent", error })
-    }
-
-    await page.evaluateOnNewDocument((lang) => {
-      Object.defineProperty(navigator, "language", {
-        get: function () {
-          return lang
-        },
-      })
-    }, "en-US")
-
-    if (this.options.proxy) {
-      await useProxy(page, this.options.proxy)
-
-      // try {
-      //   const lookupData = await useProxy.lookup(page)
-      //   this.logger.info({ msg: "Proxy lookup", lookupData })
-      // } catch (error) {
-      //   this.logger.error({ msg: "Proxy lookup failed", error })
-      // }
-    }
-
-    let pagePortalUrl: string | undefined = undefined
-    if (
-      this.options.portalUrl &&
-      "openPortal" in page &&
-      typeof page.openPortal === "function"
-    ) {
-      pagePortalUrl = await page.openPortal()
-    }
-
-    const cursor = createCursor(page, await getRandomPagePoint(page), true)
-    cursor.toggleRandomMove(true)
-    if (process.env.NODE_ENV === "development") {
-      await installMouseHelper(page)
-    }
-
-    return { page, cursor, pagePortalUrl }
-  }
-
   async execute(
     instructions: ScraperInstructions,
     dataBridge: DataBridge,
@@ -383,13 +323,11 @@ export class Scraper<
       ?
           | {
               pageMiddleware?: (page: Page) => void | Promise<void>
-              leavePageOpen?: boolean
               metadata?: MetadataType
             }
           | undefined
       : {
           pageMiddleware?: (page: Page) => void | Promise<void>
-          leavePageOpen?: boolean
           metadata: MetadataType
         },
   ): Promise<ScraperExecutionInfo>
@@ -399,7 +337,6 @@ export class Scraper<
     dataBridge: DataBridge,
     options: {
       pageMiddleware?: (page: Page) => void | Promise<void>
-      leavePageOpen?: boolean
       metadata?: MetadataType
     } = {},
   ) {
@@ -432,32 +369,22 @@ export class Scraper<
     }
 
     const startTime = performance.now()
-    const { page, cursor, pagePortalUrl } = await this.getPage()
 
-    if (options?.pageMiddleware) {
-      await options.pageMiddleware(page)
-    }
+    const pages = new ExecutionPages(this.browser, {
+      ...pick(this.options, "proxy", "portalUrl"),
+      viewport: this.defaultViewport,
+      logger: this.logger,
+      executionInfo,
+      pageMiddleware: options?.pageMiddleware,
+    })
 
     executionInfo.on("update", (info) => this.emit("executionUpdate", info))
-
-    if (pagePortalUrl) {
-      executionInfo.push(
-        {
-          type: ScraperInstructionsExecutionInfoType.PagePortalOpened,
-          url: pagePortalUrl,
-          pageIndex: 0, //TODO: handle multiple pages during single scraper execution
-        },
-        false,
-      )
-      executionInfo.flush()
-    }
 
     try {
       await executeInstructions(
         {
           scraperIdentifier: this.identifier,
-          page,
-          cursor,
+          pages,
           dataBridge,
           executionInfo,
           logger: this.logger,
@@ -499,20 +426,21 @@ export class Scraper<
     )
     this.state = ScraperState.Idle
 
-    if (!options?.leavePageOpen) {
-      await runUnsafe(async () => {
-        if (!this.browser) {
-          return
-        }
+    // if (!options?.leavePageOpen) {
+    await pages.closeAll()
+    //   await runUnsafe(async () => {
+    //     if (!this.browser) {
+    //       return
+    //     }
 
-        const pages = await this.browser.pages()
-        if (pages.length > 1) {
-          await page.close()
-        } else {
-          await page.goto(Scraper.emptyPageUrl)
-        }
-      }, this.logger.error)
-    }
+    //     const pages = await this.browser.pages()
+    //     if (pages.length > 1) {
+    //       await page.close()
+    //     } else {
+    //       await page.goto(ExecutionPages.emptyPageUrl)
+    //     }
+    //   }, this.logger.error)
+    // }
 
     this.activeExecutionInfo = null
     this._currentlyExecutingInstruction = null

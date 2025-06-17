@@ -9,6 +9,7 @@ import {
   type ScraperValue,
   scraperValueSchema,
 } from "./value"
+import { pageIndexSchema } from "./common"
 
 export enum ScraperInstructionType {
   /** Used to interact with the page */
@@ -46,7 +47,11 @@ export enum ScraperInstructionType {
 }
 
 type ScraperInstructionRecursive =
-  | { type: ScraperInstructionType.PageAction; action: PageAction }
+  | {
+      type: ScraperInstructionType.PageAction
+      pageIndex?: number
+      action: PageAction
+    }
   | {
       type: ScraperInstructionType.Condition
       if: ScraperCondition
@@ -75,6 +80,7 @@ const scraperInstructionSchema: z.ZodType<ScraperInstructionRecursive> =
   z.discriminatedUnion("type", [
     z.object({
       type: z.literal(ScraperInstructionType.PageAction),
+      pageIndex: pageIndexSchema,
       action: pageActionSchema,
     }),
     z.object({

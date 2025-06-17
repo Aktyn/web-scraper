@@ -1,5 +1,3 @@
-import { z } from "zod"
-
 export const TAG_NAMES = [
   "a",
   "abbr",
@@ -126,11 +124,3 @@ export const TAG_NAMES = [
   "var",
   "video",
 ] as const
-export const tagNameSchema = z.enum(TAG_NAMES)
-
-export const serializableRegex = z.object({
-  source: z.string(),
-  flags: z.string().regex(/^[dgimsuvy]*$/, "Invalid flags"),
-})
-
-export type SerializableRegex = z.infer<typeof serializableRegex>

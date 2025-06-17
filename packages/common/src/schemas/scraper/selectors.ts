@@ -1,6 +1,6 @@
 import { z } from "zod"
 import { unique } from "../../utils"
-import { serializableRegex, tagNameSchema } from "./helpers"
+import { serializableRegex, tagNameSchema } from "./common"
 
 export enum ElementSelectorType {
   Query = "query",

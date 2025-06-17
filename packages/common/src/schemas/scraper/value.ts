@@ -1,5 +1,6 @@
 import z from "zod"
 import { scraperElementSelectorsSchema } from "./selectors"
+import { pageIndexSchema } from "./common"
 
 /** DataSourceName.ColumnName where data source name refers to table or view name or its alias */
 export type ScraperDataKey = `${string}.${string}`
@@ -48,10 +49,12 @@ export const scraperValueSchema = z.discriminatedUnion("type", [
 
   z.object({
     type: z.literal(ScraperValueType.ElementTextContent),
+    pageIndex: pageIndexSchema,
     selectors: scraperElementSelectorsSchema,
   }),
   z.object({
     type: z.literal(ScraperValueType.ElementAttribute),
+    pageIndex: pageIndexSchema,
     selectors: scraperElementSelectorsSchema,
     attributeName: z.string().min(1, "Attribute name must not be empty"),
   }),

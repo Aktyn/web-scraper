@@ -1,14 +1,19 @@
 import { z } from "zod"
+import { executionIteratorSchema } from "../iterator"
 import { scraperConditionSchema } from "./condition"
 import { ScraperInstructionType } from "./instructions"
 import { pageActionSchema } from "./page-action"
-import { scraperDataKeySchema, scraperValueSchema } from "./value"
-import { executionIteratorSchema } from "../iterator"
 import { systemActionSchema } from "./system-action"
+import { scraperDataKeySchema, scraperValueSchema } from "./value"
 
 const instructionInfoSchema = z.discriminatedUnion("type", [
   z.object({
     type: z.literal(ScraperInstructionType.PageAction),
+    pageIndex: z.number(),
+    pageUrl: z.union([
+      z.string(),
+      z.object({ from: z.string(), to: z.string() }),
+    ]),
     action: pageActionSchema,
   }),
 
@@ -58,7 +63,8 @@ export type ScraperInstructionInfo = z.infer<typeof instructionInfoSchema>
 export enum ScraperInstructionsExecutionInfoType {
   Instruction = "instruction",
   ExternalDataOperation = "external-data-operation",
-  PagePortalOpened = "page-portal-opened",
+  PageOpened = "page-opened",
+  //TODO: allow user to close pages to reduce clutter and improve performance
   Success = "success",
   Error = "error",
 }
@@ -74,10 +80,6 @@ export const scraperInstructionsExecutionInfoSchema = z.array(
     z.object({
       type: z.literal(ScraperInstructionsExecutionInfoType.Instruction),
       instructionInfo: instructionInfoSchema,
-      url: z.union([
-        z.string(),
-        z.object({ from: z.string(), to: z.string() }),
-      ]),
       duration: z.number(),
     }),
 
@@ -114,9 +116,9 @@ export const scraperInstructionsExecutionInfoSchema = z.array(
     }),
 
     z.object({
-      type: z.literal(ScraperInstructionsExecutionInfoType.PagePortalOpened),
-      url: z.string(),
+      type: z.literal(ScraperInstructionsExecutionInfoType.PageOpened),
       pageIndex: z.number(),
+      portalUrl: z.string().optional(),
     }),
 
     z.object({

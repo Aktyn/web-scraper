@@ -126,6 +126,20 @@ export function ScraperExecutionPanel({ ref }: ScraperExecutionPanelProps) {
       {state === ScraperState.Executing && (
         <ScraperPagePortals executionInfo={partialExecutionInfo} />
       )}
+      <ScraperPagePortals
+        executionInfo={[
+          {
+            type: ScraperInstructionsExecutionInfoType.PageOpened,
+            pageIndex: 0,
+            portalUrl: "https://example.com",
+          },
+          {
+            type: ScraperInstructionsExecutionInfoType.PageOpened,
+            pageIndex: 1,
+            portalUrl: "https://example.com",
+          },
+        ]}
+      />
     </div>
   )
 }

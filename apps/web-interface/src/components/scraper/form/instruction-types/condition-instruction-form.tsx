@@ -1,17 +1,18 @@
-import { FormSelect } from "@/components/common/form/form-select"
 import { FormInput } from "@/components/common/form/form-input"
-import { ScraperConditionType, type CreateScraper } from "@web-scraper/common"
-import { type Control, useWatch } from "react-hook-form"
-import { ScraperSelectorsForm } from "./scraper-selectors-form"
-import { ScraperValueForm } from "./scraper-value-form"
-import { ScraperInstructionsForm } from "../scraper-instructions-form"
-import { mapToSelectOptions } from "../helpers"
+import { FormSelect } from "@/components/common/form/form-select"
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
 } from "@/components/shadcn/accordion"
+import { ScraperConditionType, type CreateScraper } from "@web-scraper/common"
+import { useWatch, type Control } from "react-hook-form"
+import { PageIndexField } from "../common/page-index-field"
+import { mapToSelectOptions } from "../helpers"
+import { ScraperInstructionsForm } from "../scraper-instructions-form"
+import { ScraperSelectorsForm } from "./scraper-selectors-form"
+import { ScraperValueForm } from "./scraper-value-form"
 
 const conditionTypeLabels: { [key in ScraperConditionType]: string } = {
   [ScraperConditionType.IsVisible]: "Element is visible",
@@ -31,19 +32,27 @@ export function ConditionInstructionForm({
   control,
   fieldName,
 }: ConditionInstructionFormProps) {
+  const conditionType = useWatch({ control, name: `${fieldName}.if.type` })
+
   return (
     <div className="space-y-6">
       <div className="space-y-4">
-        <h5 className="font-medium">Condition</h5>
-
-        <FormSelect
-          control={control}
-          className="*:[button]:w-full"
-          name={`${fieldName}.if.type`}
-          label="Condition Type"
-          placeholder="Select condition type"
-          options={conditionTypeOptions}
-        />
+        <div className="flex flex-row flex-wrap items-center gap-2">
+          <FormSelect
+            control={control}
+            className="*:[button]:w-full flex-1"
+            name={`${fieldName}.if.type`}
+            label="Condition type"
+            placeholder="Select condition type"
+            options={conditionTypeOptions}
+          />
+          {conditionType === ScraperConditionType.IsVisible && (
+            <PageIndexField
+              control={control}
+              fieldName={`${fieldName}.if.pageIndex`}
+            />
+          )}
+        </div>
 
         <ConditionFormByType control={control} fieldName={fieldName} />
       </div>

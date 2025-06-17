@@ -1,13 +1,12 @@
 import { randomInt, type SimpleLogger } from "@web-scraper/common"
-import type { ClickOptions, GhostCursor } from "ghost-cursor"
-import type { Page } from "rebrowser-puppeteer"
+import type { ClickOptions } from "ghost-cursor"
 import type { DataBridge } from "../data-helper"
+import type { ExecutionPages } from "./execution-pages"
 import type { ScraperExecutionInfo } from "./scraper-execution-info"
 
 export type ScraperExecutionContext = {
   scraperIdentifier: `${number}-${string}`
-  page: Page
-  cursor: GhostCursor
+  pages: ExecutionPages
   dataBridge: DataBridge
   executionInfo: ScraperExecutionInfo
   logger: SimpleLogger
@@ -23,13 +22,14 @@ export function getGhostClickOptions(): ClickOptions {
   }
 }
 
-export async function waitForNetworkIdle(context: ScraperExecutionContext) {
-  try {
-    await context.page.waitForNetworkIdle({
-      timeout: 20_000,
-      signal: context.abortController.signal,
-    })
-  } catch (error) {
-    context.logger.warn({ msg: "Network idle timeout", error })
-  }
-}
+//TODO: remove if not needed
+// export async function waitForNetworkIdle(context: ScraperExecutionContext) {
+//   try {
+//     await context.page.waitForNetworkIdle({
+//       timeout: 20_000,
+//       signal: context.abortController.signal,
+//     })
+//   } catch (error) {
+//     context.logger.warn({ msg: "Network idle timeout", error })
+//   }
+// }

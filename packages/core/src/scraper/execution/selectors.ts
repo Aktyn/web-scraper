@@ -10,15 +10,18 @@ import { replaceSpecialStringsInSelectors } from "../data-helper"
 export async function getElementHandle(
   context: ScraperExecutionContext,
   selector: ScraperElementSelectors,
+  pageIndex: number,
 ): Promise<ElementHandle<Element> | null>
 export async function getElementHandle(
   context: ScraperExecutionContext,
   selector: ScraperElementSelectors,
+  pageIndex: number,
   required: false,
 ): Promise<ElementHandle<Element> | null>
 export async function getElementHandle(
   context: ScraperExecutionContext,
   selector: ScraperElementSelectors,
+  pageIndex: number,
   required: true,
 ): Promise<ElementHandle<Element>>
 
@@ -26,12 +29,13 @@ export async function getElementHandle(
 export async function getElementHandle(
   context: ScraperExecutionContext,
   selectors: ScraperElementSelectors,
+  pageIndex: number,
   required = false,
 ) {
-  // let elementHandle: ElementHandle<Element> | null = null
+  const page = await context.pages.getPage(pageIndex)
 
   const elementHandle = (
-    await context.page.evaluateHandle(
+    await page.evaluateHandle(
       (
         selectorsStringified: string,
         elementSelectorType: typeof ElementSelectorType,

@@ -20,12 +20,13 @@ function generateRandomExecutionInfo(): ScraperInstructionsExecutionInfo {
       type: ScraperInstructionsExecutionInfoType.Instruction,
       instructionInfo: {
         type: ScraperInstructionType.PageAction,
+        pageIndex: 0,
+        pageUrl: "https://example.com",
         action: {
           type: PageActionType.Wait,
           duration: Math.floor(Math.random() * 1000),
         },
       },
-      url: "https://example.com",
       duration: Math.floor(Math.random() * 500),
     },
   ]

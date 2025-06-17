@@ -4,19 +4,49 @@ import { ScraperValueType, type ScraperValue } from "@web-scraper/common"
 import { DynamicIcon, type IconName } from "lucide-react/dynamic"
 import { DataKeyValue } from "./data-key-value"
 import { ScraperSelector } from "./scraper-selector"
+import { Badge } from "@/components/shadcn/badge"
+import { cn } from "@/lib/utils"
+import { palette } from "@/lib/palette"
 
 type ScraperValueProps = {
   value: ScraperValue
 }
 
 export function ScraperValue({ value }: ScraperValueProps) {
+  const pageIndex =
+    value.type === ScraperValueType.ElementTextContent ||
+    value.type === ScraperValueType.ElementAttribute
+      ? value.pageIndex
+      : undefined
+
+  const tabColor = palette[(pageIndex ?? 0) % palette.length]
+
   return (
-    <div className="border-2 border-dashed border-primary/30 rounded-sm p-2 flex flex-col gap-2 bg-background-lighter">
+    <div
+      className={cn(
+        "border-2 border-dashed rounded-sm p-2 flex flex-col gap-2",
+        pageIndex ? "relative" : "border-primary/30 bg-background-lighter",
+      )}
+      style={
+        tabColor !== palette[0] ? { borderColor: `${tabColor}50` } : undefined
+      }
+    >
+      {!!pageIndex && (
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{ backgroundColor: `${tabColor}04` }}
+        />
+      )}
       <div className="flex items-center gap-2">
         <DynamicIcon name={iconsMap[value.type]} className="size-4" />
         <span className="text-sm font-medium leading-none">
           {scraperValueTypeLabels[value.type]}
         </span>
+        {!!pageIndex && (
+          <Badge variant="outline" className="text-muted-foreground">
+            page: {pageIndex}
+          </Badge>
+        )}
       </div>
       <ValueDetails value={value} />
     </div>

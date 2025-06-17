@@ -67,7 +67,7 @@ export async function executeNewScraper(
   scraper.on("stateChange", (state, previousState) => {
     context.events.emit("broadcast", {
       type: SubscriptionMessageType.ScraperEvent,
-      scraperId: scraper.options.id,
+      scraperId: scraper.id,
       event: {
         type: ScraperEventType.StateChange,
         state,
@@ -78,7 +78,7 @@ export async function executeNewScraper(
   scraper.on("executionStarted", () => {
     context.events.emit("broadcast", {
       type: SubscriptionMessageType.ScraperEvent,
-      scraperId: scraper.options.id,
+      scraperId: scraper.id,
       event: {
         type: ScraperEventType.ExecutionStarted,
       },
@@ -87,7 +87,7 @@ export async function executeNewScraper(
   scraper.on("executionUpdate", (update) => {
     context.events.emit("broadcast", {
       type: SubscriptionMessageType.ScraperEvent,
-      scraperId: scraper.options.id,
+      scraperId: scraper.id,
       event: {
         type: ScraperEventType.ExecutionUpdate,
         update,
@@ -97,7 +97,7 @@ export async function executeNewScraper(
   scraper.on("executingInstruction", (instruction) => {
     context.events.emit("broadcast", {
       type: SubscriptionMessageType.ScraperEvent,
-      scraperId: scraper.options.id,
+      scraperId: scraper.id,
       event: {
         type: ScraperEventType.ExecutingInstruction,
         instruction,
@@ -119,7 +119,7 @@ export async function executeNewScraper(
       .finally(() =>
         context.events.emit("broadcast", {
           type: SubscriptionMessageType.ScraperEvent,
-          scraperId: scraper.options.id,
+          scraperId: scraper.id,
           event: {
             type: ScraperEventType.ExecutionFinished,
             executionInfo: executionInfo.get(),
@@ -150,7 +150,6 @@ export async function executeNewScraper(
   do {
     try {
       await scraper.execute(scraperData.instructions, dataBridge, {
-        leavePageOpen: false,
         metadata: {
           iteration: dataBridge.iteration,
         },
@@ -164,7 +163,7 @@ export async function executeNewScraper(
 
       context.events.emit("broadcast", {
         type: SubscriptionMessageType.ScraperEvent,
-        scraperId: scraper.options.id,
+        scraperId: scraper.id,
         event: {
           type: ScraperEventType.ExecutionError,
           error: error instanceof Error ? error.message : String(error),

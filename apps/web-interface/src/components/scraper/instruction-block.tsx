@@ -28,7 +28,10 @@ export function InstructionBlock({ instruction }: InstructionBlockProps) {
     case ScraperInstructionType.PageAction:
       return (
         <BlockContainer asChild>
-          <PageActionInstruction action={instruction.action} />
+          <PageActionInstruction
+            pageIndex={instruction.pageIndex}
+            action={instruction.action}
+          />
         </BlockContainer>
       )
 

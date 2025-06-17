@@ -6,6 +6,7 @@ import {
   ScraperInstructionsExecutionInfoType,
   type ScraperValue,
   ScraperValueType,
+  replaceSpecialStrings,
 } from "@web-scraper/common"
 import { getElementHandle } from "./execution/selectors"
 import type { ScraperExecutionContext } from "./execution/helpers"
@@ -28,7 +29,9 @@ export async function getScraperValue(
 ) {
   switch (value.type) {
     case ScraperValueType.Literal:
-      return await replaceSpecialStrings(value.value, context.dataBridge)
+      return await replaceSpecialStrings(value.value, (key) =>
+        context.dataBridge.get(key),
+      )
 
     case ScraperValueType.Null:
       return null
@@ -55,7 +58,11 @@ export async function getScraperValue(
     }
 
     case ScraperValueType.ElementTextContent: {
-      const handle = await getElementHandle(context, value.selectors)
+      const handle = await getElementHandle(
+        context,
+        value.selectors,
+        value.pageIndex ?? 0,
+      )
       if (!handle) {
         context.logger.warn(
           `Cannot get text content; element not found: ${JSON.stringify(value.selectors)}`,
@@ -65,7 +72,11 @@ export async function getScraperValue(
       return await handle?.evaluate((el) => el.textContent)
     }
     case ScraperValueType.ElementAttribute: {
-      const handle = await getElementHandle(context, value.selectors)
+      const handle = await getElementHandle(
+        context,
+        value.selectors,
+        value.pageIndex ?? 0,
+      )
       if (!handle) {
         context.logger.warn(
           `Cannot get attribute; element not found: ${JSON.stringify(value.selectors)}`,
@@ -74,29 +85,12 @@ export async function getScraperValue(
       }
       return await handle?.evaluate(
         (el, attributeName) => el.getAttribute(attributeName),
-        await replaceSpecialStrings(value.attributeName, context.dataBridge),
+        await replaceSpecialStrings(value.attributeName, (key) =>
+          context.dataBridge.get(key),
+        ),
       )
     }
   }
-}
-
-export async function replaceSpecialStrings(
-  text: string,
-  dataBridge: DataBridge,
-): Promise<string> {
-  let match: RegExpMatchArray | null = null
-
-  //Search and replace all special strings of ScraperDataKey in the text
-  while ((match = text.match(/\{\{([^.}]+\.[^}]+)\}\}/))) {
-    if (match.length < 2) {
-      break
-    }
-    const scraperDataKey = match[1] as ScraperDataKey
-    const value = await dataBridge.get(scraperDataKey)
-    text = text.replace(match[0], value?.toString() ?? "")
-  }
-
-  return text
 }
 
 /** Replaces special strings (e.g. "{{dataSourceName.columnName}}") in ScraperElementSelectors with actual data from the data bridge. */
@@ -110,14 +104,18 @@ export async function replaceSpecialStringsInSelectors(
         case ElementSelectorType.Query:
           return {
             ...selector,
-            query: await replaceSpecialStrings(selector.query, dataBridge),
+            query: await replaceSpecialStrings(selector.query, (key) =>
+              dataBridge.get(key),
+            ),
           }
         case ElementSelectorType.TextContent:
           return {
             ...selector,
             text:
               typeof selector.text === "string"
-                ? await replaceSpecialStrings(selector.text, dataBridge)
+                ? await replaceSpecialStrings(selector.text, (key) =>
+                    dataBridge.get(key),
+                  )
                 : selector.text,
           }
         case ElementSelectorType.TagName:
@@ -129,9 +127,13 @@ export async function replaceSpecialStringsInSelectors(
               await Promise.all(
                 Object.entries(selector.attributes).map(
                   async ([attributeName, value]) => [
-                    await replaceSpecialStrings(attributeName, dataBridge),
+                    await replaceSpecialStrings(attributeName, (key) =>
+                      dataBridge.get(key),
+                    ),
                     typeof value === "string"
-                      ? await replaceSpecialStrings(value, dataBridge)
+                      ? await replaceSpecialStrings(value, (key) =>
+                          dataBridge.get(key),
+                        )
                       : value,
                   ],
                 ),

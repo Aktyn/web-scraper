@@ -1,7 +1,7 @@
 import { cn, formatDateTime, formatDuration } from "./utils"
 import { describe, it, expect } from "vitest"
 
-describe("cn", () => {
+describe(cn.name, () => {
   it("merges class names and removes duplicates", () => {
     expect(cn("text-foreground", "bar", "text-foreground")).toBe(
       "bar text-foreground",

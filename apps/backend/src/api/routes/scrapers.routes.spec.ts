@@ -63,13 +63,14 @@ vi.mock("@web-scraper/core", async (importActual) => {
         executionInfo.push({
           type: ScraperInstructionsExecutionInfoType.Instruction,
           instructionInfo: {
+            pageIndex: 0,
+            pageUrl: { from: "about:blank", to: "http://127.0.0.1:1337/api" },
             action: {
               type: PageActionType.Navigate,
               url: "http://127.0.0.1:1337/api",
             },
             type: ScraperInstructionType.PageAction,
           },
-          url: { from: "about:blank", to: "http://127.0.0.1:1337/api" },
           duration: 3000,
         })
         executionInfo.push({
