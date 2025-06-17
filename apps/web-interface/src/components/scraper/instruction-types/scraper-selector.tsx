@@ -20,7 +20,7 @@ export function ScraperSelector({
     <div
       {...divProps}
       className={cn(
-        "border-2 border-dashed border-secondary/30 rounded-sm p-2 flex flex-row justify-start flex-wrap gap-4 bg-background-lighter",
+        "border-2 border-dashed rounded-sm p-2 flex flex-row justify-start flex-wrap gap-4 bg-background-lighter",
         divProps.className,
       )}
     >

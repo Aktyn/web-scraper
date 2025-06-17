@@ -3,10 +3,7 @@ import fs from "fs"
 import path from "path"
 import type { Page } from "rebrowser-puppeteer"
 
-export async function saveScreenshot(
-  page: Page,
-  scraperIdentifier: `${number}-${string}`,
-) {
+export async function saveScreenshot(page: Page, fileNamePrefix: string) {
   const screenshot = await page.screenshot({
     type: "jpeg",
     quality: 80,
@@ -20,7 +17,7 @@ export async function saveScreenshot(
 
   const screenshotPath = path.join(
     screenshotDir,
-    `${scraperIdentifier}-${randomString(10)}.jpeg`,
+    `${fileNamePrefix}-${randomString(8)}.jpeg`,
   )
 
   await fs.promises.writeFile(screenshotPath, screenshot)

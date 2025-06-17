@@ -126,20 +126,6 @@ export function ScraperExecutionPanel({ ref }: ScraperExecutionPanelProps) {
       {state === ScraperState.Executing && (
         <ScraperPagePortals executionInfo={partialExecutionInfo} />
       )}
-      <ScraperPagePortals
-        executionInfo={[
-          {
-            type: ScraperInstructionsExecutionInfoType.PageOpened,
-            pageIndex: 0,
-            portalUrl: "https://example.com",
-          },
-          {
-            type: ScraperInstructionsExecutionInfoType.PageOpened,
-            pageIndex: 1,
-            portalUrl: "https://example.com",
-          },
-        ]}
-      />
     </div>
   )
 }
@@ -271,7 +257,7 @@ export function ScrollableScraperExecutionInfo({
     >
       <Button
         variant="ghost"
-        className="absolute inset-y-0 left-0 w-6 h-full bg-gradient-to-r from-background to-transparent"
+        className="z-20 absolute inset-y-0 left-0 w-6 h-full bg-gradient-to-r from-background to-transparent"
         onClick={() => scrollHorizontal("left")}
       >
         <ChevronLeft />
@@ -289,7 +275,7 @@ export function ScrollableScraperExecutionInfo({
       />
       <Button
         variant="ghost"
-        className="absolute inset-y-0 right-0 w-6 h-full bg-gradient-to-l from-background to-transparent"
+        className="z-20 absolute inset-y-0 right-0 w-6 h-full bg-gradient-to-l from-background to-transparent"
         onClick={() => scrollHorizontal("right")}
       >
         <ChevronRight />

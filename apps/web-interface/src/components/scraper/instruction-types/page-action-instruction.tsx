@@ -59,7 +59,6 @@ export function PageActionInstruction({
         )}
       </div>
 
-      {/* TODO: verify how this looks */}
       {pageUrl && (
         <LabeledValue label="URL:" className="text-sm">
           {typeof pageUrl === "string" ? (

@@ -26,7 +26,7 @@ export function ScraperExecutionInfo({
     <div
       {...divProps}
       className={cn(
-        "flex flex-row items-stretch gap-2 px-6 pb-3",
+        "flex flex-row items-start gap-2 px-6 pb-3",
         divProps.className,
       )}
     >

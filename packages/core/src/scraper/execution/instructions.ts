@@ -96,7 +96,7 @@ async function executeInstructionByType(
             async () =>
               await saveScreenshot(
                 page,
-                `${context.scraperIdentifier}-before-${instruction.type}`,
+                `${context.scraperIdentifier}-page-${pageIndex}-before-${instruction.type}`,
               ),
             context.logger.error,
           )
@@ -122,7 +122,11 @@ async function executeInstructionByType(
 
         if (process.env.NODE_ENV === "development") {
           await runUnsafe(
-            async () => await saveScreenshot(page, context.scraperIdentifier),
+            async () =>
+              await saveScreenshot(
+                page,
+                `${context.scraperIdentifier}-page-${pageIndex}-after-${instruction.type}`,
+              ),
             context.logger.error,
           )
         }

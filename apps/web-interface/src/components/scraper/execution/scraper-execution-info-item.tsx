@@ -15,6 +15,7 @@ import {
 import { type ComponentProps, type PropsWithChildren } from "react"
 import { ExternalDataOperation } from "./external-data-operation"
 import { ScraperInstructionInfo } from "./scraper-instruction-info"
+import { palette } from "@/lib/palette"
 
 type ScraperExecutionInfoItemProps = {
   executionInfo: ScraperInstructionsExecutionInfo[number]
@@ -74,7 +75,17 @@ export function ScraperExecutionInfoItem({
 
     case ScraperInstructionsExecutionInfoType.PageOpened:
       return (
-        <ContainerLayout {...divProps}>
+        <ContainerLayout
+          {...divProps}
+          style={
+            executionInfo.pageIndex
+              ? {
+                  borderColor: `${palette[executionInfo.pageIndex % palette.length]}50`,
+                  backgroundColor: `${palette[executionInfo.pageIndex % palette.length]}04`,
+                }
+              : undefined
+          }
+        >
           <HeaderLayout>
             <Badge variant="secondary">
               {scraperInstructionsExecutionInfoTypeLabels[executionInfo.type]}
@@ -157,7 +168,7 @@ function ContainerLayout(props: ComponentProps<"div">) {
     <div
       {...props}
       className={cn(
-        "rounded border border-[color:var(--color-card)] bg-[color:var(--color-card)] p-3 flex flex-col gap-3",
+        "rounded border border-background-lighter bg-card p-3 flex flex-col gap-3",
         props.className,
       )}
     />

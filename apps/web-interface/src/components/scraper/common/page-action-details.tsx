@@ -20,7 +20,7 @@ export function PageActionDetails({ action }: { action: PageAction }) {
 
     case PageActionType.Navigate:
       return (
-        <LabeledValue label="URL">
+        <LabeledValue label="To:">
           <div className="flex flex-row items-center gap-2">
             <ExternalLink url={action.url} />
             <CopyButton value={action.url} className="size-6" />

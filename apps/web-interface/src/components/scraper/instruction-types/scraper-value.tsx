@@ -25,7 +25,7 @@ export function ScraperValue({ value }: ScraperValueProps) {
     <div
       className={cn(
         "border-2 border-dashed rounded-sm p-2 flex flex-col gap-2",
-        pageIndex ? "relative" : "border-primary/30 bg-background-lighter",
+        pageIndex ? "relative" : "bg-background-lighter",
       )}
       style={
         tabColor !== palette[0] ? { borderColor: `${tabColor}50` } : undefined
