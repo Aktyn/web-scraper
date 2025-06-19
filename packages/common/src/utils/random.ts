@@ -4,12 +4,17 @@ export function uuid() {
   return uuidv4()
 }
 
+function randomElement<T>(array: T[]) {
+  return array[Math.floor(Math.random() * array.length)]
+}
+
+const characters =
+  "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789".split("")
 export function randomString(length: number) {
   let result = ""
-  const characters =
-    "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+
   for (let i = 0; i < length; i++) {
-    result += characters.charAt(Math.floor(Math.random() * characters.length))
+    result += randomElement(characters)
   }
   return result
 }

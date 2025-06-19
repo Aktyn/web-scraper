@@ -1,19 +1,19 @@
 import {
-  type SimpleLogger,
-  type ScraperInstructions,
   type CreateScraper,
   PageActionType,
+  runUnsafeAsync,
+  type ScraperInstructions,
   ScraperInstructionsExecutionInfoType,
   ScraperInstructionType,
+  ScraperState,
+  type SimpleLogger,
   type UpdateScraper,
   wait,
-  ScraperState,
-  runUnsafe,
 } from "@web-scraper/common"
 import {
+  type DataBridge,
   Scraper,
   ScraperExecutionInfo,
-  type DataBridge,
 } from "@web-scraper/core"
 import { count } from "drizzle-orm"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
@@ -44,6 +44,10 @@ vi.mock("@web-scraper/core", async (importActual) => {
   return {
     ...actual,
     Scraper: class MockScraper extends actual.Scraper {
+      public static forceCleanUp() {
+        this.instances.clear()
+      }
+
       constructor(options: object) {
         super({
           id: 1,
@@ -58,7 +62,7 @@ vi.mock("@web-scraper/core", async (importActual) => {
         instructions: ScraperInstructions,
         dataBridge: DataBridge,
       ) {
-        await wait(100)
+        await wait(1_000)
         const executionInfo = new ScraperExecutionInfo(instructions, dataBridge)
         executionInfo.push({
           type: ScraperInstructionsExecutionInfoType.Instruction,
@@ -81,6 +85,7 @@ vi.mock("@web-scraper/core", async (importActual) => {
         })
         return executionInfo
       }
+
       get currentlyExecutingInstruction() {
         return null
       }
@@ -88,22 +93,99 @@ vi.mock("@web-scraper/core", async (importActual) => {
   }
 })
 
-describe("Scrapers Routes", () => {
+describe.sequential("Scrapers Routes", () => {
   let modules: TestModules
 
   beforeEach(async () => {
     modules = await setup()
+    //@ts-expect-error - mocked method
+    Scraper.forceCleanUp()
   })
 
   afterEach(async () => {
     const scraperInstances = Scraper.getInstances()
     for (const scraperInstance of scraperInstances) {
-      if (scraperInstance.destroyed) {
-        continue
-      }
-      runUnsafe(() => scraperInstance.destroy())
+      await runUnsafeAsync(
+        () => scraperInstance.destroy(),
+        () => void 0,
+      )
     }
     await wait(32)
+  })
+
+  describe("POST /scrapers/:id/terminate", () => {
+    it("should terminate a running scraper and return 200", async () => {
+      const listResponse = await modules.api.inject({
+        method: "GET",
+        url: "/scrapers",
+      })
+      const listData = JSON.parse(listResponse.payload)
+      const scraperToExecute = listData.data[0]
+
+      expect(Scraper.getInstances().length).toBe(0)
+
+      const executeResponse = await modules.api.inject({
+        method: "POST",
+        url: `/scrapers/${scraperToExecute.id}/execute`,
+        body: {
+          iterator: null,
+        },
+      })
+
+      expect(executeResponse.statusCode).toBe(200)
+      expect(Scraper.getInstances().length).toBe(1)
+
+      const terminateResponse = await modules.api.inject({
+        method: "POST",
+        url: `/scrapers/${scraperToExecute.id}/terminate`,
+      })
+
+      expect(terminateResponse.statusCode).toBe(200)
+      expect(JSON.parse(terminateResponse.payload)).toEqual({ data: null })
+      expect(Scraper.getInstances().length).toBe(0)
+    })
+
+    it("should return 404 if scraper does not exist", async () => {
+      const response = await modules.api.inject({
+        method: "POST",
+        url: "/scrapers/9999/terminate",
+      })
+
+      expect(response.statusCode).toBe(404)
+      expect(JSON.parse(response.payload)).toEqual({
+        error: "Scraper not found",
+      })
+    })
+
+    it("should return 400 if scraper is not running", async () => {
+      const listResponse = await modules.api.inject({
+        method: "GET",
+        url: "/scrapers",
+      })
+      const listData = JSON.parse(listResponse.payload)
+      const scraperId = listData.data[0].id
+
+      // Ensure scraper is not running
+      await Promise.all(
+        Scraper.getInstances().map((scraper) => {
+          return runUnsafeAsync(
+            () => scraper.destroy(),
+            () => void 0,
+          )
+        }),
+      )
+      await wait(100)
+
+      const response = await modules.api.inject({
+        method: "POST",
+        url: `/scrapers/${scraperId}/terminate`,
+      })
+
+      expect(response.statusCode).toBe(400)
+      expect(JSON.parse(response.payload)).toEqual({
+        error: "Scraper is not running",
+      })
+    })
   })
 
   describe("GET /scrapers", () => {
@@ -733,12 +815,14 @@ describe("Scrapers Routes", () => {
       const listData = JSON.parse(listResponse.payload)
       const scraper1Id = listData.data[3].id
 
-      Scraper.getInstances().forEach((scraper) => {
-        if (scraper.destroyed) {
-          return
-        }
-        scraper.destroy()
-      })
+      await Promise.all(
+        Scraper.getInstances().map((scraper) => {
+          return runUnsafeAsync(
+            () => scraper.destroy(),
+            () => void 0,
+          )
+        }),
+      )
       await wait(100)
 
       const executeResponse = await modules.api.inject({
@@ -766,12 +850,14 @@ describe("Scrapers Routes", () => {
     })
 
     it("should return null if the scraper is not executing", async () => {
-      Scraper.getInstances().forEach((scraper) => {
-        if (scraper.destroyed) {
-          return
-        }
-        scraper.destroy()
-      })
+      await Promise.all(
+        Scraper.getInstances().map((scraper) => {
+          return runUnsafeAsync(
+            () => scraper.destroy(),
+            () => void 0,
+          )
+        }),
+      )
       await wait(100)
 
       const listResponse = await modules.api.inject({

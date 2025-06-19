@@ -15,3 +15,15 @@ export function runUnsafe<T>(
     return null
   }
 }
+
+export async function runUnsafeAsync<T>(
+  callback: () => Promise<T>,
+  onError = console.error,
+): Promise<T | null> {
+  try {
+    return await callback()
+  } catch (error) {
+    onError(error instanceof Error ? error.message : String(error))
+    return null
+  }
+}

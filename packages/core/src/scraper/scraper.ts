@@ -57,14 +57,14 @@ interface ScraperEvents<MetadataType extends Metadata | undefined = undefined> {
 export class Scraper<
   MetadataType extends Metadata | undefined = undefined,
 > extends EventEmitter {
-  private static instances = new Map<
+  protected static instances = new Map<
     `${number}-${string}`,
     Scraper<Metadata | undefined>
   >()
 
   public static destroyAll() {
     for (const instance of Scraper.instances.values()) {
-      instance.destroy()
+      void instance.destroy()
     }
     assert(
       Scraper.instances.size === 0,
@@ -123,7 +123,7 @@ export class Scraper<
     if (!options.noInit) {
       this.init(browserOptions).catch((error) => {
         this.logger.error(error)
-        this.destroy()
+        void this.destroy()
       })
     }
   }
@@ -219,7 +219,7 @@ export class Scraper<
           this.logger.error(
             `Browser disconnected unexpectedly, destroying scraper ${this.identifier}`,
           )
-          this.destroy()
+          void this.destroy()
         })
       })
       .catch(this.logger.error)
@@ -256,9 +256,11 @@ export class Scraper<
 
     this.abortController.abort("Scraper instance destroyed")
 
+    let promise = Promise.resolve()
+
     if (this.browser) {
       this.browser.removeAllListeners()
-      void this.browser
+      promise = this.browser
         .close()
         .then(() => this.logger.info("Browser closed"))
         .catch(this.logger.error)
@@ -268,6 +270,8 @@ export class Scraper<
     this.state = ScraperState.Exited
 
     this.emit("destroy")
+
+    return promise
   }
 
   override emit<E extends keyof ScraperEvents<MetadataType>>(
@@ -405,6 +409,8 @@ export class Scraper<
             duration: performance.now() - startTime,
           },
         })
+      } else {
+        return executionInfo
       }
     } catch (error) {
       this.logger.error(error)

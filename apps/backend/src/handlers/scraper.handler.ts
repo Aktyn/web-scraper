@@ -182,7 +182,7 @@ export async function executeNewScraper(
 
   if (!scraper.destroyed) {
     try {
-      scraper.destroy()
+      await scraper.destroy()
     } catch (error) {
       logger.error("Error destroying scraper:", error)
     }

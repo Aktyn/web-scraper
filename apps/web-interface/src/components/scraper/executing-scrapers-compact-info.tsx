@@ -29,7 +29,8 @@ export function ExecutingScrapersCompactInfo() {
       if (
         message.event.type === ScraperEventType.ExecutionFinished ||
         message.event.type === ScraperEventType.ExecutionError ||
-        message.event.type === ScraperEventType.ExecutionStarted
+        message.event.type === ScraperEventType.ExecutionStarted ||
+        message.event.type === ScraperEventType.StateChange
       ) {
         if (refreshTimeout.current) {
           clearTimeout(refreshTimeout.current)

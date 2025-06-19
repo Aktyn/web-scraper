@@ -80,9 +80,9 @@ describe(
       })
     })
 
-    afterEach(() => {
+    afterEach(async () => {
       try {
-        scraper.destroy()
+        await scraper.destroy()
       } catch {
         //noop
       }

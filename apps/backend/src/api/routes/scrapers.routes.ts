@@ -15,6 +15,7 @@ import {
   updateScraperSchema,
   type ScraperType,
   listScraperExecutionsQuerySchema,
+  assert,
 } from "@web-scraper/common"
 import { Scraper } from "@web-scraper/core"
 import { asc, desc, eq, sql, type InferSelectModel } from "drizzle-orm"
@@ -476,6 +477,55 @@ export async function scrapersRoutes(
                 scraper.currentlyExecutingInstruction,
             }
           : null,
+      })
+    },
+  )
+
+  fastify.withTypeProvider<ZodTypeProvider>().post(
+    "/scrapers/:id/terminate",
+    {
+      schema: {
+        params: paramsWithScraperIdSchema,
+        response: {
+          200: getApiResponseSchema(z.null()),
+          400: apiErrorResponseSchema,
+          404: apiErrorResponseSchema,
+        },
+      },
+    },
+    async (request, reply) => {
+      const { id } = request.params
+      const scraperResponse = await fastify.db
+        .select()
+        .from(scrapersTable)
+        .where(eq(scrapersTable.id, id))
+        .get()
+
+      if (!scraperResponse) {
+        return reply.status(404).send({
+          error: "Scraper not found",
+        })
+      }
+
+      const scraperIdentifier =
+        `${scraperResponse.id}-${scraperResponse.name}` as const
+      const scraper = Scraper.getInstance(scraperIdentifier)
+
+      if (!scraper) {
+        return reply.status(400).send({
+          error: "Scraper is not running",
+        })
+      }
+
+      await scraper.destroy()
+
+      assert(
+        Scraper.getInstance(scraperIdentifier) === null,
+        "Scraper not destroyed",
+      )
+
+      return reply.status(200).send({
+        data: null,
       })
     },
   )

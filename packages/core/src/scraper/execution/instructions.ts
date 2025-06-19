@@ -6,15 +6,15 @@ import {
   ScraperInstructionType,
   ScraperInstructionsExecutionInfoType,
   assert,
-  runUnsafe,
+  runUnsafeAsync,
 } from "@web-scraper/common"
 import { performSystemAction } from "../../system-actions"
 import { getScraperValue } from "../data-helper"
 import { saveScreenshot } from "../helpers"
 import { checkCondition } from "./conditions"
+import { ExecutionPages } from "./execution-pages"
 import type { ScraperExecutionContext } from "./helpers"
 import { performPageAction } from "./page-actions"
-import { ExecutionPages } from "./execution-pages"
 
 /**
  * Executes instructions in a scraper execution context.
@@ -63,6 +63,10 @@ export async function executeInstructions(
         return instruction
       }
     }
+
+    if (context.abortController.signal.aborted) {
+      break
+    }
   }
 
   return null
@@ -92,9 +96,9 @@ async function executeInstructionByType(
           process.env.NODE_ENV === "development" &&
           startUrl !== ExecutionPages.emptyPageUrl
         ) {
-          await runUnsafe(
-            async () =>
-              await saveScreenshot(
+          await runUnsafeAsync(
+            () =>
+              saveScreenshot(
                 page,
                 `${context.scraperIdentifier}-page-${pageIndex}-before-${instruction.type}`,
               ),
@@ -121,9 +125,9 @@ async function executeInstructionByType(
         }
 
         if (process.env.NODE_ENV === "development") {
-          await runUnsafe(
-            async () =>
-              await saveScreenshot(
+          await runUnsafeAsync(
+            () =>
+              saveScreenshot(
                 page,
                 `${context.scraperIdentifier}-page-${pageIndex}-after-${instruction.type}`,
               ),

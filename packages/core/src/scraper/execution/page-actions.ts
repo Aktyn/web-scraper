@@ -119,6 +119,10 @@ export async function performPageAction(
 
   await wait(randomInt(1_000, 2_000))
 
+  if (context.abortController.signal.aborted) {
+    return
+  }
+
   try {
     await detectAndSolveCaptcha(context, pageContext)
   } catch (error) {

@@ -3,8 +3,8 @@ import { usePost } from "@/hooks/api/usePost"
 import type {
   ExecutionIterator,
   ScraperInstructions,
-  ScraperState,
 } from "@web-scraper/common"
+import { ScraperState } from "@web-scraper/common"
 import {
   ScraperEventType,
   SubscriptionMessageType,
@@ -67,6 +67,9 @@ export function ScraperProvider({
     switch (message.event.type) {
       case ScraperEventType.StateChange:
         setState(message.event.state)
+        if (message.event.state !== ScraperState.Executing) {
+          setCurrentlyExecutingInstruction(null)
+        }
         break
       case ScraperEventType.ExecutionStarted:
         toast.info("Scraper execution started", {

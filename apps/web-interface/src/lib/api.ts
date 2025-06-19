@@ -250,6 +250,12 @@ export type Routes = {
       response: ApiResponse<ScraperExecutionStatus>
     }
   }
+  "scrapers/:id/terminate": {
+    post: {
+      body: null
+      response: ApiResponse<null>
+    }
+  }
   "scrapers/executions": {
     get: {
       querystring: Partial<ListScraperExecutionsQuery>

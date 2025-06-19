@@ -2,6 +2,7 @@ import { IteratorDescription } from "@/components/iterator/iterator-description"
 import { IteratorFormDialog } from "@/components/iterator/iterator-form-dialog"
 import { Button } from "@/components/shadcn/button"
 import { ScrollArea, ScrollBar } from "@/components/shadcn/scroll-area"
+import { usePost } from "@/hooks/api/usePost"
 import { cn } from "@/lib/utils"
 import { ScraperProvider } from "@/providers/scraper.provider"
 import type {
@@ -19,6 +20,7 @@ import {
   ChevronLeft,
   ChevronRight,
   LoaderCircle,
+  MonitorX,
   Play,
   Settings2,
 } from "lucide-react"
@@ -107,6 +109,7 @@ export function ScraperExecutionPanel({ ref }: ScraperExecutionPanelProps) {
         <div className="flex flex-col items-stretch gap-1">
           <h4 className="text-center">
             <ScraperStateWidget
+              scraperId={scraper.id}
               state={state}
               result={partialExecutionInfo.at(-1)?.type}
             />
@@ -131,11 +134,24 @@ export function ScraperExecutionPanel({ ref }: ScraperExecutionPanelProps) {
 }
 
 type ScraperStateWidgetProps = {
+  scraperId: number
   state: ScraperState
   result?: ScraperInstructionsExecutionInfoType
 }
 
-function ScraperStateWidget({ state, result }: ScraperStateWidgetProps) {
+function ScraperStateWidget({
+  scraperId,
+  state,
+  result,
+}: ScraperStateWidgetProps) {
+  const { postItem: terminate, isPosting: terminating } = usePost(
+    "/scrapers/:id/terminate",
+    {
+      successMessage: "Scraper terminated",
+      errorMessage: "Failed to terminate scraper",
+    },
+  )
+
   switch (state) {
     case ScraperState.Pending:
     case ScraperState.Idle:
@@ -143,12 +159,26 @@ function ScraperStateWidget({ state, result }: ScraperStateWidgetProps) {
 
     case ScraperState.Executing:
       return (
-        <div className="grid grid-cols-[1fr_auto_1fr] grid-rows-1 items-center gap-2">
-          <AnimatedLine />
-          <span className="text-primary font-semibold text-shadow-[0_0_0.5rem] text-shadow-primary/50">
-            Executing
-          </span>
-          <AnimatedLine reverse />
+        <div className="grid grid-cols-[8rem_auto_8rem] grid-rows-1 items-center justify-stretch gap-2">
+          <div className="col-start-2 grid grid-cols-[1fr_auto_1fr] grid-rows-1 items-center gap-2">
+            <AnimatedLine />
+            <span className="text-primary font-semibold text-shadow-[0_0_0.5rem] text-shadow-primary/50">
+              Executing
+            </span>
+            <AnimatedLine reverse />
+          </div>
+          <Button
+            variant="ghost"
+            size="sm"
+            className="justify-self-end"
+            disabled={terminating}
+            onClick={() =>
+              terminate(null, { id: scraperId }).catch(console.error)
+            }
+          >
+            <MonitorX />
+            Terminate
+          </Button>
         </div>
       )
 

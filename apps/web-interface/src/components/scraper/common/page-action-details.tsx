@@ -1,13 +1,18 @@
 import { CopyButton } from "@/components/common/button/copy-button"
 import { ExternalLink } from "@/components/common/button/external-link"
 import { LabeledValue } from "@/components/common/label/labeled-value"
+import { Label } from "@/components/shadcn/label"
 import { formatDuration } from "@/lib/utils"
 import type { PageAction } from "@web-scraper/common"
 import { PageActionType } from "@web-scraper/common"
-import { Check, MousePointerClick } from "lucide-react"
+import {
+  CornerDownLeft,
+  Delete,
+  Hourglass,
+  MousePointerClick,
+} from "lucide-react"
 import { ScraperSelector } from "../instruction-types/scraper-selector"
 import { ScraperValue } from "../instruction-types/scraper-value"
-import { Label } from "@/components/shadcn/label"
 
 export function PageActionDetails({ action }: { action: PageAction }) {
   switch (action.type) {
@@ -34,16 +39,21 @@ export function PageActionDetails({ action }: { action: PageAction }) {
           <LabeledValue label="Target:">
             <ScraperSelector selectors={action.selectors} />
           </LabeledValue>
-          {action.waitForNavigation && (
-            <LabeledValue label="Wait for navigation:">
-              <Check className="size-4 text-success" />
-            </LabeledValue>
-          )}
-          {action.useGhostCursor && (
-            <Label className="flex flex-row items-center gap-2">
-              <MousePointerClick className="size-4 inline" />
-              <span>Ghost cursor</span>
-            </Label>
+          {(action.waitForNavigation || action.useGhostCursor) && (
+            <div className="flex flex-col gap-2">
+              {action.waitForNavigation && (
+                <Label className="flex flex-row items-center gap-2">
+                  <Hourglass className="size-4 inline" />
+                  <span>Wait for navigation</span>
+                </Label>
+              )}
+              {action.useGhostCursor && (
+                <Label className="flex flex-row items-center gap-2 pointer-events-auto">
+                  <MousePointerClick className="size-4 inline" />
+                  <span>Ghost cursor</span>
+                </Label>
+              )}
+            </div>
           )}
         </div>
       )
@@ -57,23 +67,29 @@ export function PageActionDetails({ action }: { action: PageAction }) {
           <LabeledValue label="Value:">
             <ScraperValue value={action.value} />
           </LabeledValue>
-          {action.clearBeforeType && (
-            <LabeledValue
-              label="Clear before typing:"
-              className="w-full flex-row items-center gap-x-2"
-            >
-              <Check className="size-4 text-success" />
-            </LabeledValue>
-          )}
-          {action.pressEnter && (
-            <LabeledValue label="Press enter:">
-              <Check className="size-4 text-success" />
-            </LabeledValue>
-          )}
-          {action.waitForNavigation && (
-            <LabeledValue label="Wait for navigation:">
-              <Check className="size-4 text-success" />
-            </LabeledValue>
+          {(action.clearBeforeType ||
+            action.pressEnter ||
+            action.waitForNavigation) && (
+            <div className="flex flex-col gap-2">
+              {action.clearBeforeType && (
+                <Label className="flex flex-row items-center gap-2">
+                  <Delete className="size-4 inline" />
+                  <span>Clear before typing</span>
+                </Label>
+              )}
+              {action.pressEnter && (
+                <Label className="flex flex-row items-center gap-2">
+                  <CornerDownLeft className="size-4 inline" />
+                  <span>Press enter</span>
+                </Label>
+              )}
+              {action.waitForNavigation && (
+                <Label className="flex flex-row items-center gap-2">
+                  <Hourglass className="size-4 inline" />
+                  <span>Wait for navigation</span>
+                </Label>
+              )}
+            </div>
           )}
         </div>
       )
