@@ -30,7 +30,7 @@
     "apps/*"
   ],
   "devDependencies": {
-    "@tsconfig/recommended": "^1.0.8",
+    "@tsconfig/recommended": "^1.0.10",
     "prettier": "^3.5.3",
     "turbo": "^2.5.4"
   },
