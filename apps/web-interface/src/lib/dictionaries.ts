@@ -14,6 +14,7 @@ export const instructionTypeLabels: {
 } = {
   [ScraperInstructionType.PageAction]: "Page action",
   [ScraperInstructionType.Condition]: "Condition",
+  [ScraperInstructionType.DeleteCookies]: "Delete cookies",
   [ScraperInstructionType.SaveData]: "Save data",
   [ScraperInstructionType.SaveDataBatch]: "Save data batch",
   [ScraperInstructionType.DeleteData]: "Delete data",
@@ -49,6 +50,7 @@ export const pageActionTypeLabels: { [key in PageActionType]: string } = {
   [PageActionType.Type]: "Type",
   [PageActionType.ScrollToTop]: "Scroll to top",
   [PageActionType.ScrollToBottom]: "Scroll to bottom",
+  [PageActionType.Evaluate]: "Evaluate",
 }
 
 export const selectorTypeLabels: { [key in ElementSelectorType]: string } = {

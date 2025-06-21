@@ -19,11 +19,11 @@ export enum ScraperState {
 
 export const tagNameSchema = z.enum(TAG_NAMES)
 
-export const serializableRegex = z.object({
+export const serializableRegexSchema = z.object({
   source: z.string(),
   flags: z.string().regex(/^[dgimsuvy]*$/, "Invalid flags"),
 })
 
-export type SerializableRegex = z.infer<typeof serializableRegex>
+export type SerializableRegex = z.infer<typeof serializableRegexSchema>
 
 export const pageIndexSchema = z.number().min(0).max(255).optional()

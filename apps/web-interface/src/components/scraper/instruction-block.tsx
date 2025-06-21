@@ -18,6 +18,7 @@ import {
 } from "./instruction-types/data-instruction"
 import { PageActionInstruction } from "./instruction-types/page-action-instruction"
 import { SystemActionInstruction } from "./instruction-types/system-action-instruction"
+import { DeleteCookiesInstruction } from "./instruction-types/delete-cookies-instruction"
 
 type InstructionBlockProps = {
   instruction: ScraperInstructions[number]
@@ -43,6 +44,13 @@ export function InstructionBlock({ instruction }: InstructionBlockProps) {
             thenInstructions={instruction.then}
             elseInstructions={instruction.else}
           />
+        </BlockContainer>
+      )
+
+    case ScraperInstructionType.DeleteCookies:
+      return (
+        <BlockContainer asChild>
+          <DeleteCookiesInstruction domain={instruction.domain} />
         </BlockContainer>
       )
 

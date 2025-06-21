@@ -19,6 +19,7 @@ import {
 } from "../instruction-types/data-instruction"
 import { PageActionInstruction } from "../instruction-types/page-action-instruction"
 import { SystemActionInstruction } from "../instruction-types/system-action-instruction"
+import { DeleteCookiesInstruction } from "../instruction-types/delete-cookies-instruction"
 
 type ExternalDataOperationProps = {
   info: ScraperInstructionInfo
@@ -52,6 +53,15 @@ export function ScraperInstructionInfo({ info }: ExternalDataOperationProps) {
                 )}
               </div>
             }
+          />
+        </ContainerLayout>
+      )
+    case ScraperInstructionType.DeleteCookies:
+      return (
+        <ContainerLayout>
+          <DeleteCookiesInstruction
+            domain={info.domain}
+            deletedCookies={info.deletedCookies}
           />
         </ContainerLayout>
       )

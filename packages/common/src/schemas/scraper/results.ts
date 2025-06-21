@@ -5,6 +5,7 @@ import { ScraperInstructionType } from "./instructions"
 import { pageActionSchema } from "./page-action"
 import { systemActionSchema } from "./system-action"
 import { scraperDataKeySchema, scraperValueSchema } from "./value"
+import { serializableRegexSchema } from "./common"
 
 const instructionInfoSchema = z.discriminatedUnion("type", [
   z.object({
@@ -21,6 +22,12 @@ const instructionInfoSchema = z.discriminatedUnion("type", [
     type: z.literal(ScraperInstructionType.Condition),
     condition: scraperConditionSchema,
     isMet: z.boolean(),
+  }),
+
+  z.object({
+    type: z.literal(ScraperInstructionType.DeleteCookies),
+    domain: z.union([z.string(), serializableRegexSchema]),
+    deletedCookies: z.number().min(0),
   }),
 
   z.object({

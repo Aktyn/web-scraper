@@ -17,6 +17,7 @@ export async function performPageAction(
   pageContext: ScraperPageContext,
 ) {
   context.logger.info({ msg: "Performing action", action })
+
   switch (action.type) {
     case PageActionType.Wait:
       await wait(action.duration)
@@ -114,6 +115,20 @@ export async function performPageAction(
       await pageContext.cursor.scrollTo("bottom", {
         scrollSpeed: 50,
       })
+      break
+    case PageActionType.Evaluate:
+      {
+        const evaluationArguments = await Promise.all(
+          action.evaluator.arguments?.map((scraperValue) =>
+            getScraperValue(context, scraperValue),
+          ) ?? [],
+        )
+
+        await pageContext.page.evaluate(
+          action.evaluator.code,
+          ...evaluationArguments,
+        )
+      }
       break
   }
 

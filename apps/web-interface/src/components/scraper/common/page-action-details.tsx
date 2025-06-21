@@ -8,11 +8,19 @@ import { PageActionType } from "@web-scraper/common"
 import {
   CornerDownLeft,
   Delete,
+  Eye,
   Hourglass,
   MousePointerClick,
 } from "lucide-react"
 import { ScraperSelector } from "../instruction-types/scraper-selector"
-import { ScraperValue } from "../instruction-types/scraper-value"
+import { ScraperValue } from "./scraper-value"
+import { Code } from "@/components/common/code"
+import { Button } from "@/components/shadcn/button"
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/shadcn/popover"
 
 export function PageActionDetails({ action }: { action: PageAction }) {
   switch (action.type) {
@@ -97,5 +105,38 @@ export function PageActionDetails({ action }: { action: PageAction }) {
     case PageActionType.ScrollToTop:
     case PageActionType.ScrollToBottom:
       return null
+
+    case PageActionType.Evaluate:
+      return (
+        <div className="flex flex-row flex-wrap items-start gap-2 gap-x-4">
+          <LabeledValue label="Code:">
+            <Code className="overflow-hidden max-h-32">
+              {action.evaluator.code}
+            </Code>
+            <div className="flex flex-row flex-wrap items-center gap-2">
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button variant="ghost" size="sm">
+                    <Eye /> Show full code
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto max-w-2xl" align="start">
+                  <Code>{action.evaluator.code}</Code>
+                </PopoverContent>
+              </Popover>
+              <CopyButton value={action.evaluator.code} />
+            </div>
+          </LabeledValue>
+          {!!action.evaluator.arguments?.length && (
+            <LabeledValue label="Arguments:">
+              <div className="flex flex-row flex-wrap items-start gap-2 gap-x-4">
+                {action.evaluator.arguments?.map((value, index) => (
+                  <ScraperValue key={index} value={value} />
+                ))}
+              </div>
+            </LabeledValue>
+          )}
+        </div>
+      )
   }
 }

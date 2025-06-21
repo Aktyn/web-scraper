@@ -237,7 +237,7 @@
     @apply not-disabled:cursor-pointer;
   }
 
-  [data-slot="textarea"], [data-slot="input"], [data-slot="select-trigger"] {
+  [data-slot="textarea"], textarea[data-slot="form-control"], [data-slot="input"], [data-slot="select-trigger"] {
     @apply focus-visible:ring-0! not-disabled:focus-visible:border-primary! not-disabled:hover:border-primary/50! transition-colors!;
   }
 

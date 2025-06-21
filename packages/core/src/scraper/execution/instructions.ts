@@ -1,4 +1,5 @@
 import {
+  type SerializableRegex,
   type ScraperInstructionInfo,
   type ScraperInstructions,
   type ScraperInstructionsExecutionInfo,
@@ -15,6 +16,7 @@ import { checkCondition } from "./conditions"
 import { ExecutionPages } from "./execution-pages"
 import type { ScraperExecutionContext } from "./helpers"
 import { performPageAction } from "./page-actions"
+import type { Cookie } from "rebrowser-puppeteer"
 
 /**
  * Executes instructions in a scraper execution context.
@@ -31,9 +33,10 @@ export async function executeInstructions(
   assert(instructions.length > 0 || level > 0, "Instructions are empty")
   assert(
     level > 0 ||
+      instructions[0].type === ScraperInstructionType.DeleteCookies ||
       (instructions[0].type === ScraperInstructionType.PageAction &&
         instructions[0].action.type === PageActionType.Navigate),
-    "First instruction must be a navigation action",
+    "First instruction must be a navigation action or delete cookies",
   )
 
   for (let i = 0; i < instructions.length; i++) {
@@ -178,6 +181,30 @@ async function executeInstructionByType(
           instruction = conditionalInstructionsResult
           break
         }
+      }
+      break
+
+    case ScraperInstructionType.DeleteCookies:
+      {
+        context.logger.info({
+          msg: "Deleting cookies",
+          domain: instruction.domain,
+        })
+
+        const cookies = await context.pages.browser.cookies()
+
+        const domainCookies = filterCookiesByDomain(cookies, instruction.domain)
+
+        await context.pages.browser.deleteCookie(...domainCookies)
+
+        lastInstructionInfo = pushInstructionInfo(
+          {
+            type: instruction.type,
+            domain: instruction.domain,
+            deletedCookies: domainCookies.length,
+          },
+          context,
+        )
       }
       break
 
@@ -334,4 +361,27 @@ function pushInstructionInfo<T extends ScraperInstructionInfo>(
   }
   context.executionInfo.push(info)
   return info
+}
+
+function filterCookiesByDomain(
+  cookies: Cookie[],
+  domain: string | SerializableRegex,
+) {
+  if (typeof domain === "string") {
+    const url = new URL(domain)
+    const matchResult = url.hostname.match(
+      /^(?:.*?\.)?([a-zA-Z0-9\-_]{3,}\.(?:\w{2,8}|\w{2,4}\.\w{2,4}))$/,
+    )
+
+    const cleanDomain =
+      matchResult && matchResult.length >= 2 ? matchResult[1] : url.hostname
+
+    return cookies.filter(
+      (cookie) =>
+        cookie.domain === cleanDomain || cookie.domain === `.${cleanDomain}`,
+    )
+  }
+
+  const regex = new RegExp(domain.source, domain.flags)
+  return cookies.filter((cookie) => regex.test(cookie.domain))
 }

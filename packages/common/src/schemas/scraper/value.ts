@@ -26,6 +26,8 @@ export enum ScraperValueType {
 
   ElementTextContent = "elementTextContent",
   ElementAttribute = "elementAttribute",
+
+  //TODO: Evaluate which returns value from executing js code in page context
 }
 
 export const scraperValueSchema = z.discriminatedUnion("type", [
@@ -61,3 +63,13 @@ export const scraperValueSchema = z.discriminatedUnion("type", [
 ])
 
 export type ScraperValue = z.infer<typeof scraperValueSchema>
+
+export const evaluatorSchema: z.ZodType<Evaluator> = z.object({
+  code: z.string(),
+  arguments: z.lazy(() => z.array(scraperValueSchema).optional()),
+})
+
+export type Evaluator = {
+  code: string
+  arguments?: ScraperValue[]
+}

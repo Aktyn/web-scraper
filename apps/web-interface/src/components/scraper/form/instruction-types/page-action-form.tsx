@@ -4,6 +4,7 @@ import { FormField, FormItem } from "@/components/shadcn/form"
 import { cn } from "@/lib/utils"
 import { PageActionType, type CreateScraper } from "@web-scraper/common"
 import { useWatch, type Control } from "react-hook-form"
+import { EvaluatorField } from "../common/evaluator-field"
 import { ScraperSelectorsForm } from "./scraper-selectors-form"
 import { ScraperValueForm } from "./scraper-value-form"
 
@@ -103,6 +104,14 @@ export function PageActionForm({ control, fieldName }: PageActionFormProps) {
     case PageActionType.ScrollToTop:
     case PageActionType.ScrollToBottom:
       return null
+
+    case PageActionType.Evaluate:
+      return (
+        <EvaluatorField
+          control={control}
+          fieldName={`${fieldName}.evaluator`}
+        />
+      )
   }
 }
 

@@ -17,6 +17,7 @@ const valueTypeOptions = mapToSelectOptions(scraperValueTypeLabels)
 export type ScraperValueFieldName =
   | `instructions.${number}.value`
   | `${PageActionFieldName}.value`
+  | `${PageActionFieldName}.evaluator.arguments.${number}`
   | `${ConditionInstructionFieldName}.if.valueSelector`
 
 interface ScraperValueFormProps {

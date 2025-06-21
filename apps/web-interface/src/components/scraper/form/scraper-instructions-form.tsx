@@ -1,4 +1,5 @@
 import { FormInput } from "@/components/common/form/form-input"
+import { FormRegex } from "@/components/common/form/form-regex"
 import { FormSelect } from "@/components/common/form/form-select"
 import { Badge } from "@/components/shadcn/badge"
 import { Button } from "@/components/shadcn/button"
@@ -21,7 +22,14 @@ import {
   type CreateScraper,
   type ScraperInstructions,
 } from "@web-scraper/common"
-import { Eye, EyeOff, MoveDown, MoveUp, Plus, Trash2 } from "lucide-react"
+import {
+  FoldVertical,
+  MoveDown,
+  MoveUp,
+  Plus,
+  Trash2,
+  UnfoldVertical,
+} from "lucide-react"
 import { useState } from "react"
 import { useFieldArray, useWatch, type Control } from "react-hook-form"
 import { PageIndexField } from "./common/page-index-field"
@@ -37,6 +45,14 @@ import { SystemActionInstructionForm } from "./instruction-types/system-action-i
 
 const instructionTypeOptions = mapToSelectOptions(instructionTypeLabels)
 
+const defaultInstruction = {
+  type: ScraperInstructionType.PageAction,
+  action: {
+    type: PageActionType.Navigate,
+    url: "",
+  },
+} as const satisfies ScraperInstructions[number]
+
 interface ScraperInstructionsFormProps {
   control: Control<CreateScraper>
   name?: string
@@ -48,23 +64,13 @@ export function ScraperInstructionsForm({
   name = "instructions",
   condition,
 }: ScraperInstructionsFormProps) {
-  const { fields, append, remove, move } = useFieldArray<
-    CreateScraper,
-    "instructions"
-  >({
+  const { fields, append, remove, move } = useFieldArray<CreateScraper, never>({
     control,
     name: name as never,
   })
 
   const addInstruction = () => {
-    const newInstruction: ScraperInstructions[number] = {
-      type: ScraperInstructionType.PageAction,
-      action: {
-        type: PageActionType.Navigate,
-        url: "",
-      },
-    }
-    append(newInstruction)
+    append({ ...defaultInstruction })
   }
 
   return (
@@ -120,7 +126,13 @@ function InstructionField({
 }: InstructionFieldProps) {
   const instruction = useWatch({ control, name: fieldName })
 
-  const [visible, setVisible] = useState(true)
+  const [collapsed, setCollapsed] = useState(
+    !(
+      instruction.type === defaultInstruction.type &&
+      instruction.action.type === defaultInstruction.action.type &&
+      instruction.action.url === ""
+    ),
+  )
 
   const tabColor =
     instruction?.type === ScraperInstructionType.PageAction
@@ -143,7 +155,13 @@ function InstructionField({
           : undefined
       }
     >
-      <div className="flex items-center justify-between">
+      <div
+        className={cn(
+          "flex items-center justify-between rounded-md transition-[background-color,padding,margin]",
+          collapsed && "cursor-pointer hover:bg-primary/10 p-2 -m-2",
+        )}
+        onClick={() => collapsed && setCollapsed(false)}
+      >
         <h4 className="font-medium flex flex-row items-center gap-2">
           {/* TODO: allow custom instruction name for improved UX */}
           <span>
@@ -153,7 +171,7 @@ function InstructionField({
             variant="outline"
             className={cn(
               "starting:opacity-0 transition-opacity text-muted-foreground border-none",
-              visible ? "opacity-0" : "opacity-100",
+              !collapsed ? "opacity-0" : "opacity-100",
             )}
           >
             {instructionTypeLabels[instruction.type]}
@@ -171,7 +189,11 @@ function InstructionField({
                     type="button"
                     variant="ghost"
                     size="sm"
-                    onClick={() => move(index, index - 1)}
+                    onClick={(event) => {
+                      event.preventDefault()
+                      event.stopPropagation()
+                      move(index, index - 1)
+                    }}
                     disabled={index === 0}
                     className="text-muted-foreground"
                     aria-label="Move up"
@@ -187,7 +209,11 @@ function InstructionField({
                     type="button"
                     variant="ghost"
                     size="sm"
-                    onClick={() => move(index, index + 1)}
+                    onClick={(event) => {
+                      event.preventDefault()
+                      event.stopPropagation()
+                      move(index, index + 1)
+                    }}
                     disabled={index === fieldsCount - 1}
                     className="text-muted-foreground"
                     aria-label="Move down"
@@ -205,13 +231,16 @@ function InstructionField({
                 type="button"
                 variant="ghost"
                 size="sm"
-                aria-label="Toggle visibility"
-                onClick={() => setVisible(!visible)}
+                aria-label="Toggle collapsed state"
+                onClick={(event) => {
+                  event.preventDefault()
+                  setCollapsed(!collapsed)
+                }}
               >
-                {visible ? <EyeOff /> : <Eye />}
+                {collapsed ? <UnfoldVertical /> : <FoldVertical />}
               </Button>
             </TooltipTrigger>
-            <TooltipContent>Toggle visibility</TooltipContent>
+            <TooltipContent>{collapsed ? "Expand" : "Collapse"}</TooltipContent>
           </Tooltip>
           <Tooltip>
             <TooltipTrigger asChild>
@@ -219,7 +248,10 @@ function InstructionField({
                 type="button"
                 variant="ghost"
                 size="sm"
-                onClick={() => remove(index)}
+                onClick={(event) => {
+                  event.preventDefault()
+                  remove(index)
+                }}
                 className="text-destructive hover:text-destructive"
                 aria-label="Delete"
               >
@@ -234,7 +266,7 @@ function InstructionField({
       <div
         className={cn(
           "grid transition-[grid-template-rows]",
-          visible ? "grid-rows-[1fr]" : "grid-rows-[0fr]",
+          collapsed ? "grid-rows-[0fr]" : "grid-rows-[1fr]",
         )}
       >
         <div className="flex flex-col items-stretch gap-4 overflow-hidden">
@@ -292,6 +324,17 @@ function InstructionForm({ control, fieldName }: InstructionFormProps) {
     case ScraperInstructionType.Condition:
       return (
         <ConditionInstructionForm control={control} fieldName={fieldName} />
+      )
+
+    case ScraperInstructionType.DeleteCookies:
+      return (
+        <FormRegex
+          control={control}
+          name={`${fieldName}.domain`}
+          label="Domain"
+          placeholder="example.com or /regex/"
+          description="The domain to delete cookies from. Can be a string or a regular expression."
+        />
       )
 
     case ScraperInstructionType.SaveData:

@@ -13,6 +13,7 @@ type PageIndexFieldProps = {
     | `instructions.${number}.pageIndex`
     | `instructions.${number}.value.pageIndex`
     | `${PageActionFieldName}.value.pageIndex`
+    | `${PageActionFieldName}.evaluator.arguments.${number}.pageIndex`
     | `${ConditionInstructionFieldName}.if.pageIndex`
     | `${ConditionInstructionFieldName}.if.valueSelector.pageIndex`
 }

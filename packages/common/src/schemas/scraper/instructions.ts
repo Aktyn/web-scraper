@@ -1,4 +1,9 @@
 import { z } from "zod"
+import {
+  type SerializableRegex,
+  pageIndexSchema,
+  serializableRegexSchema,
+} from "./common"
 import { type ScraperCondition, scraperConditionSchema } from "./condition"
 import { dataSourceNameSchema } from "./data-source"
 import { type PageAction, pageActionSchema } from "./page-action"
@@ -9,7 +14,6 @@ import {
   type ScraperValue,
   scraperValueSchema,
 } from "./value"
-import { pageIndexSchema } from "./common"
 
 export enum ScraperInstructionType {
   /** Used to interact with the page */
@@ -17,6 +21,9 @@ export enum ScraperInstructionType {
 
   /** Used to decide whether to perform scraper instructions based on a condition */
   Condition = "condition",
+
+  /** Used to delete browser cookies */
+  DeleteCookies = "deleteCookies",
 
   /** Used to save data to the data bridge */
   SaveData = "saveData",
@@ -59,6 +66,10 @@ type ScraperInstructionRecursive =
       else?: Array<ScraperInstructionRecursive>
     }
   | {
+      type: ScraperInstructionType.DeleteCookies
+      domain: string | SerializableRegex
+    }
+  | {
       type: ScraperInstructionType.SaveData
       dataKey: ScraperDataKey
       value: ScraperValue
@@ -88,6 +99,11 @@ const scraperInstructionSchema: z.ZodType<ScraperInstructionRecursive> =
       if: scraperConditionSchema,
       then: z.lazy(() => scraperInstructionsSchema),
       else: z.lazy(() => scraperInstructionsSchema).optional(),
+    }),
+
+    z.object({
+      type: z.literal(ScraperInstructionType.DeleteCookies),
+      domain: z.union([z.string(), serializableRegexSchema]),
     }),
 
     z.object({

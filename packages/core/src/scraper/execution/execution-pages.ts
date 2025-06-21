@@ -35,7 +35,7 @@ export class ExecutionPages {
   private pages = new Map<number, ScraperPageContext>()
 
   constructor(
-    private readonly browser: Browser,
+    public readonly browser: Browser,
     private readonly options: ExecutionPagesOptions,
   ) {}
 

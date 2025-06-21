@@ -8,22 +8,30 @@ export enum SubscriptionMessageType {
   Notification = "notification",
 }
 
+const subscriptionInitialized = z.object({
+  type: z.literal(SubscriptionMessageType.SubscriptionInitialized),
+  sessionId: z.string(),
+})
+
+const scraperEvent = z.object<{
+  type: z.ZodLiteral<SubscriptionMessageType.ScraperEvent>
+  scraperId: z.ZodNumber
+  event: typeof scraperEventSchema
+}>({
+  type: z.literal(SubscriptionMessageType.ScraperEvent),
+  scraperId: z.number(),
+  event: scraperEventSchema,
+})
+
+const notification = z.object({
+  type: z.literal(SubscriptionMessageType.Notification),
+  notification: notificationSchema,
+})
+
 export const subscriptionMessageSchema = z.discriminatedUnion("type", [
-  z.object({
-    type: z.literal(SubscriptionMessageType.SubscriptionInitialized),
-    sessionId: z.string(),
-  }),
-
-  z.object({
-    type: z.literal(SubscriptionMessageType.ScraperEvent),
-    scraperId: z.number(),
-    event: scraperEventSchema,
-  }),
-
-  z.object({
-    type: z.literal(SubscriptionMessageType.Notification),
-    notification: notificationSchema,
-  }),
+  subscriptionInitialized,
+  scraperEvent,
+  notification,
 ])
 
 export type SubscriptionMessage = z.infer<typeof subscriptionMessageSchema>

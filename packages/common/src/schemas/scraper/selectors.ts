@@ -1,6 +1,6 @@
 import { z } from "zod"
 import { unique } from "../../utils"
-import { serializableRegex, tagNameSchema } from "./common"
+import { serializableRegexSchema, tagNameSchema } from "./common"
 
 export enum ElementSelectorType {
   Query = "query",
@@ -18,7 +18,7 @@ export const scraperElementSelectorsSchema = z
       }),
       z.object({
         type: z.literal(ElementSelectorType.TextContent),
-        text: z.union([z.string(), serializableRegex]),
+        text: z.union([z.string(), serializableRegexSchema]),
       }),
       z.object({
         type: z.literal(ElementSelectorType.TagName),
@@ -27,7 +27,7 @@ export const scraperElementSelectorsSchema = z
       z.object({
         type: z.literal(ElementSelectorType.Attributes),
         attributes: z
-          .record(z.string(), z.union([z.string(), serializableRegex]))
+          .record(z.string(), z.union([z.string(), serializableRegexSchema]))
           .refine(
             (val) => Object.keys(val).length > 0,
             "At least one attribute is required",

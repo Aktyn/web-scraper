@@ -15,12 +15,14 @@ export const notificationDataSchema = z.discriminatedUnion("type", [
 
 export type NotificationData = z.infer<typeof notificationDataSchema>
 
+const notificationBaseSchema = z.object({
+  id: z.number(),
+  createdAt: z.number(),
+  read: z.boolean().default(false),
+})
+
 export const notificationSchema = notificationDataSchema.and(
-  z.object({
-    id: z.number(),
-    createdAt: z.number(),
-    read: z.boolean().default(false),
-  }),
+  notificationBaseSchema,
 )
 
 export type Notification = z.infer<typeof notificationSchema>

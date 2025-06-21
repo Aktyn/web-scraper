@@ -1,5 +1,5 @@
 import { z } from "zod"
-import { pageIndexSchema, serializableRegex } from "./common"
+import { pageIndexSchema, serializableRegexSchema } from "./common"
 import { scraperElementSelectorsSchema } from "./selectors"
 import { scraperValueSchema } from "./value"
 
@@ -19,7 +19,7 @@ export const scraperConditionSchema = z.discriminatedUnion("type", [
   z.object({
     type: z.literal(ScraperConditionType.TextEquals),
     valueSelector: scraperValueSchema,
-    text: z.union([z.string(), serializableRegex]),
+    text: z.union([z.string(), serializableRegexSchema]),
   }),
 ])
 

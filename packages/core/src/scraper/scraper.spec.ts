@@ -463,7 +463,8 @@ describe(
         ).resolves.toEqual([
           {
             type: ScraperInstructionsExecutionInfoType.Error,
-            errorMessage: "First instruction must be a navigation action",
+            errorMessage:
+              "First instruction must be a navigation action or delete cookies",
             summary: {
               duration: expect.any(Number) as never,
             },

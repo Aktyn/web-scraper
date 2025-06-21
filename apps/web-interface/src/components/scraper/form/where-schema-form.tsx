@@ -155,9 +155,9 @@ function LogicalGroupForm({
   const groupType = isLogicalGroup ? ("and" in group ? "and" : "or") : "and"
   const items = isLogicalGroup ? ("and" in group ? group.and : group.or) : []
 
-  const { fields, append, remove } = useFieldArray({
+  const { fields, append, remove } = useFieldArray<CreateScraper, never>({
     control,
-    name: `${name}.${groupType}`,
+    name: `${name}.${groupType}` as never,
   })
 
   const addRoot = (type?: "and" | "or") => {
