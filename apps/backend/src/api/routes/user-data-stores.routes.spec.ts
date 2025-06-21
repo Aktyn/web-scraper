@@ -106,6 +106,10 @@ describe("User Data Stores Routes", () => {
             ],
           },
           {
+            name: "Data markers",
+            tableName: "data_markers",
+            description: null,
+            recordsCount: 1,
             columns: [
               {
                 name: "id",
@@ -122,10 +126,29 @@ describe("User Data Stores Routes", () => {
                 type: SqliteColumnType.TEXT,
               },
             ],
+          },
+          {
+            name: "Brain FM accounts",
+            tableName: "brain_fm_accounts",
             description: null,
-            name: "Data markers",
-            recordsCount: 1,
-            tableName: "data_markers",
+            recordsCount: 0,
+            columns: [
+              { name: "id", type: SqliteColumnType.INTEGER, notNull: true },
+              {
+                name: "Name",
+                type: SqliteColumnType.TEXT,
+              },
+              {
+                name: "Email",
+                type: SqliteColumnType.TEXT,
+                notNull: true,
+              },
+              {
+                name: "Password",
+                type: SqliteColumnType.TEXT,
+                notNull: true,
+              },
+            ],
           },
         ],
         page: 0,
@@ -485,7 +508,7 @@ describe("User Data Stores Routes", () => {
       const getData = JSON.parse(
         getResponse.payload,
       ) as ApiPaginatedResponse<object>
-      expect(getData.data.length).toBe(3)
+      expect(getData.data.length).toBe(4)
     })
 
     it("should return status 404 if the data store does not exist", async () => {

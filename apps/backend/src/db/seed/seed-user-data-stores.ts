@@ -111,4 +111,14 @@ export async function seedUserDataStores(db: DbModule) {
   await db
     .insert(dataMarkersTable)
     .values([{ Name: "Last pepper alert", Content: null }])
+
+  await createUserDataStore(db, {
+    tableName: sanitizeTableName("Brain fm accounts"),
+    name: "Brain FM accounts",
+    columns: [
+      { name: "Name", type: SqliteColumnType.TEXT },
+      { name: "Email", type: SqliteColumnType.TEXT, notNull: true },
+      { name: "Password", type: SqliteColumnType.TEXT, notNull: true },
+    ],
+  })
 }

@@ -1,4 +1,5 @@
 import {
+  type Evaluator,
   ElementSelectorType,
   PageActionType,
   ScraperConditionType,
@@ -22,53 +23,65 @@ export async function seedScrapers(db: DbModule) {
   )
   const cryptoPricesTableName = sanitizeTableName("Crypto prices")
   const dataMarkersTableName = sanitizeTableName("Data markers")
+  const brainFmAccountsTableName = sanitizeTableName("Brain FM accounts")
 
   await db.transaction(async (tx) => {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const [scraper1, scraper2, scraper3, scraper4, _captchaTesterScraper] =
-      await tx
-        .insert(scrapersTable)
-        .values([
-          {
-            name: "Small example scraper",
-            instructions: [
-              {
-                type: ScraperInstructionType.PageAction,
-                action: {
-                  type: PageActionType.Navigate,
-                  url: "https://example.com",
-                },
+    const [
+      scraper1,
+      scraper2,
+      scraper3,
+      scraper4,
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      _captchaTesterScraper,
+      brainFmRegisterScraper,
+    ] = await tx
+      .insert(scrapersTable)
+      .values([
+        {
+          name: "Small example scraper",
+          instructions: [
+            {
+              type: ScraperInstructionType.PageAction,
+              action: {
+                type: PageActionType.Navigate,
+                url: "https://example.com",
               },
-            ],
-            userDataDirectory: "/tmp/user-data-dir",
-            createdAt: new Date(new Date().getTime() + 60_000),
-            updatedAt: new Date(new Date().getTime() + 60_000),
-          },
-          {
-            name: "New pepper alerts",
-            description:
-              "See if there are new pepper alerts and notify user if so",
-            instructions: checkNewPepperAlertsInstructions,
-          },
-          {
-            name: "Site content scraper",
-            description: "Saves site content to the database",
-            instructions: scrapExampleSiteInstructions,
-          },
-          {
-            name: "Update crypto prices",
-            description:
-              "Saves or updates crypto prices from coinmarketcap.com",
-            instructions: scrapCryptoPricesInstructions,
-          },
-          {
-            name: "Captcha tester",
-            description:
-              "Testing scraper bot detection and solving captchas capabilities",
-            instructions: captchaTesterInstructions,
-          },
-        ])
-        .returning()
+            },
+          ],
+          userDataDirectory: "/tmp/user-data-dir",
+          createdAt: new Date(new Date().getTime() + 60_000),
+          updatedAt: new Date(new Date().getTime() + 60_000),
+        },
+        {
+          name: "New pepper alerts",
+          description:
+            "See if there are new pepper alerts and notify user if so",
+          instructions: checkNewPepperAlertsInstructions,
+        },
+        {
+          name: "Site content scraper",
+          description: "Saves site content to the database",
+          instructions: scrapExampleSiteInstructions,
+        },
+        {
+          name: "Update crypto prices",
+          description: "Saves or updates crypto prices from coinmarketcap.com",
+          instructions: scrapCryptoPricesInstructions,
+        },
+        {
+          name: "Captcha tester",
+          description:
+            "Testing scraper bot detection and solving captchas capabilities",
+          instructions: captchaTesterInstructions,
+        },
+        {
+          name: "Brain.fm registration",
+          description:
+            "Registering a new account at brain.fm. Should execute without any cursor configuration.",
+          instructions: brainFmRegisterInstructions,
+        },
+      ])
+      .returning()
 
     await tx.insert(scraperDataSourcesTable).values([
       {
@@ -119,6 +132,11 @@ export async function seedScrapers(db: DbModule) {
         scraperId: scraper4.id,
         sourceAlias: "crypto",
         dataStoreTableName: cryptoPricesTableName, //Note: it has to be already seeded
+      },
+      {
+        scraperId: brainFmRegisterScraper.id,
+        sourceAlias: "Accounts",
+        dataStoreTableName: brainFmAccountsTableName, //Note: it has to be already seeded
       },
     ])
   })
@@ -505,5 +523,142 @@ const captchaTesterInstructions: ScraperInstructions = [
       type: PageActionType.Navigate,
       url: "https://abrahamjuliot.github.io/creepjs",
     },
+  },
+]
+
+const clearSiteDataEvaluator: Evaluator = {
+  code: "sessionStorage.clear()\nlocalStorage.clear()\n\ntry {\n  cookieStore.getAll().then(cookies => cookies.forEach(cookie => {\n    cookieStore.delete(cookie);\n  }));\n} catch(error) {\n  console.error(error);\n}\n\ntry {\n  navigator.serviceWorker.getRegistrations()\n  .then(registrations => {\n    registrations.forEach(registration => {\n      registration.unregister()\n    }) \n  })\n} catch(error) {\n  console.error(error);\n}\n\nlocation.reload()",
+  arguments: [],
+}
+
+const brainFmRegisterInstructions: ScraperInstructions = [
+  {
+    type: ScraperInstructionType.PageAction,
+    action: { type: PageActionType.Navigate, url: "https://my.brain.fm/" },
+  },
+  {
+    type: ScraperInstructionType.PageAction,
+    action: {
+      type: PageActionType.Evaluate,
+      evaluator: clearSiteDataEvaluator,
+    },
+  },
+  {
+    type: ScraperInstructionType.PageAction,
+    action: { type: PageActionType.Wait, duration: 10000 },
+  },
+  {
+    type: ScraperInstructionType.PageAction,
+    action: {
+      type: PageActionType.Type,
+      selectors: [
+        { type: ElementSelectorType.Query, query: "form input#name" },
+        {
+          type: ElementSelectorType.Attributes,
+          attributes: { name: "name", type: "text" },
+        },
+      ],
+      clearBeforeType: true,
+      value: {
+        type: ScraperValueType.Literal,
+        value: "Scraper_{{RandomString,8}}",
+      },
+      pressEnter: false,
+      waitForNavigation: false,
+    },
+  },
+  {
+    type: ScraperInstructionType.PageAction,
+    pageIndex: 1,
+    action: { type: PageActionType.Navigate, url: "https://tempail.com/" },
+  },
+  {
+    type: ScraperInstructionType.PageAction,
+    pageIndex: 1,
+    action: {
+      type: PageActionType.Evaluate,
+      evaluator: clearSiteDataEvaluator,
+    },
+  },
+  {
+    type: ScraperInstructionType.PageAction,
+    pageIndex: 1,
+    action: { type: PageActionType.Wait, duration: 10000 },
+  },
+  {
+    type: ScraperInstructionType.PageAction,
+    action: {
+      type: PageActionType.Type,
+      selectors: [
+        { type: ElementSelectorType.Query, query: "form input#email" },
+        { type: ElementSelectorType.Attributes, attributes: { name: "email" } },
+      ],
+      clearBeforeType: true,
+      value: {
+        type: ScraperValueType.ElementAttribute,
+        pageIndex: 1,
+        selectors: [
+          {
+            type: ElementSelectorType.Query,
+            query: "section div input[readonly]",
+          },
+          {
+            type: ElementSelectorType.Attributes,
+            attributes: { type: "text" },
+          },
+        ],
+        attributeName: "value",
+      },
+    },
+  },
+  {
+    type: ScraperInstructionType.PageAction,
+    action: {
+      type: PageActionType.Type,
+      selectors: [
+        { type: ElementSelectorType.Query, query: "form input#password" },
+        {
+          type: ElementSelectorType.Attributes,
+          attributes: { name: "password", type: "password" },
+        },
+      ],
+      clearBeforeType: true,
+      value: { type: ScraperValueType.Literal, value: "Scraper123@" },
+      pressEnter: true,
+      waitForNavigation: false,
+    },
+  },
+  {
+    type: ScraperInstructionType.SaveDataBatch,
+    dataSourceName: "Accounts",
+    items: [
+      { columnName: "Name", value: { type: ScraperValueType.Null } },
+      {
+        columnName: "Email",
+        value: {
+          type: ScraperValueType.ElementAttribute,
+          pageIndex: 1,
+          selectors: [
+            {
+              type: ElementSelectorType.Query,
+              query: "section div input[readonly]",
+            },
+            {
+              type: ElementSelectorType.Attributes,
+              attributes: { type: "text" },
+            },
+          ],
+          attributeName: "value",
+        },
+      },
+      {
+        columnName: "Password",
+        value: { type: ScraperValueType.Literal, value: "Scraper123@" },
+      },
+    ],
+  },
+  {
+    type: ScraperInstructionType.PageAction,
+    action: { type: PageActionType.Wait, duration: 5000 },
   },
 ]
