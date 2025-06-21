@@ -155,6 +155,8 @@ function LogicalGroupForm({
   const groupType = isLogicalGroup ? ("and" in group ? "and" : "or") : "and"
   const items = isLogicalGroup ? ("and" in group ? group.and : group.or) : []
 
+  //eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  //@ts-ignore
   const { fields, append, remove } = useFieldArray<CreateScraper, never>({
     control,
     name: `${name}.${groupType}` as never,
