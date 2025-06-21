@@ -6,6 +6,8 @@ import type { Config } from "../config/config"
 import { type DbModule, getDbModule } from "../db/db.module"
 import { seed } from "../db/seed/seed"
 import { getEventsModule } from "../events/events.module"
+import { cwd } from "../cwd"
+import path from "path"
 
 const mockConfig: Config = {
   apiPort: 3001,
@@ -30,7 +32,7 @@ export async function setup() {
     },
   )
 
-  await migrate(db, { migrationsFolder: `${__dirname}/../../drizzle` })
+  await migrate(db, { migrationsFolder: path.join(cwd(), "drizzle") })
   await seed(db)
 
   const logger: SimpleLogger = {

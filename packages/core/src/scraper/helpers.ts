@@ -10,7 +10,7 @@ export async function saveScreenshot(page: Page, fileNamePrefix: string) {
     fullPage: true,
   })
 
-  const screenshotDir = path.join(__dirname, "..", "..", "screenshots")
+  const screenshotDir = path.join(process.cwd(), "screenshots")
   if (!fs.existsSync(screenshotDir)) {
     fs.mkdirSync(screenshotDir, { recursive: true })
   }

@@ -1,9 +1,10 @@
 import pino from "pino"
 import fs from "fs"
 import path from "path"
+import { cwd } from "./cwd"
 
 export function getLogger() {
-  const logsDirectory = path.join(__dirname, "..", "logs")
+  const logsDirectory = path.join(cwd(), "logs")
   if (!fs.existsSync(logsDirectory)) {
     fs.mkdirSync(logsDirectory, { recursive: true })
   }

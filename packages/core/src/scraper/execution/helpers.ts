@@ -21,15 +21,3 @@ export function getGhostClickOptions(): ClickOptions {
     hesitate: randomInt(10, 400),
   }
 }
-
-//TODO: remove if not needed
-// export async function waitForNetworkIdle(context: ScraperExecutionContext) {
-//   try {
-//     await context.page.waitForNetworkIdle({
-//       timeout: 20_000,
-//       signal: context.abortController.signal,
-//     })
-//   } catch (error) {
-//     context.logger.warn({ msg: "Network idle timeout", error })
-//   }
-// }
