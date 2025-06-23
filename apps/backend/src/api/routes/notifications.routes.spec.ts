@@ -1,5 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest"
 import { setup, type TestModules } from "../../test/setup"
+import { eq } from "drizzle-orm"
+import { notificationsTable } from "../../db/schema"
 
 describe("Notifications Routes", () => {
   let modules: TestModules
@@ -77,10 +79,11 @@ describe("Notifications Routes", () => {
       expect(payload.id).toBe(1)
       expect(payload.read).toBe(true)
 
-      const notificationInDb =
-        await modules.db.query.notificationsTable.findFirst({
-          where: (n, { eq }) => eq(n.id, 1),
-        })
+      const notificationInDb = await modules.db
+        .select()
+        .from(notificationsTable)
+        .where(eq(notificationsTable.id, 1))
+        .get()
       expect(notificationInDb).toBeDefined()
       expect(notificationInDb).toHaveProperty("read", true)
     })
@@ -109,10 +112,11 @@ describe("Notifications Routes", () => {
 
   describe("PATCH /notifications/read-all", () => {
     it("should return status 204 and mark all notifications as read", async () => {
-      const unreadNotificationsBefore =
-        await modules.db.query.notificationsTable.findMany({
-          where: (n, { eq }) => eq(n.read, false),
-        })
+      const unreadNotificationsBefore = await modules.db
+        .select()
+        .from(notificationsTable)
+        .where(eq(notificationsTable.read, false))
+        .all()
       expect(unreadNotificationsBefore.length).toBeGreaterThan(0)
 
       const response = await modules.api.inject({
@@ -122,10 +126,11 @@ describe("Notifications Routes", () => {
 
       expect(response.statusCode).toBe(204)
 
-      const unreadNotificationsAfter =
-        await modules.db.query.notificationsTable.findMany({
-          where: (n, { eq }) => eq(n.read, false),
-        })
+      const unreadNotificationsAfter = await modules.db
+        .select()
+        .from(notificationsTable)
+        .where(eq(notificationsTable.read, false))
+        .all()
       expect(unreadNotificationsAfter.length).toBe(0)
 
       const allNotifications =
@@ -158,10 +163,11 @@ describe("Notifications Routes", () => {
 
       expect(response.statusCode).toBe(204)
 
-      const notificationInDb =
-        await modules.db.query.notificationsTable.findFirst({
-          where: (n, { eq }) => eq(n.id, 2),
-        })
+      const notificationInDb = await modules.db
+        .select()
+        .from(notificationsTable)
+        .where(eq(notificationsTable.id, 2))
+        .get()
       expect(notificationInDb).toBeUndefined()
     })
 
