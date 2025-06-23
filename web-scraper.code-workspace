@@ -42,6 +42,8 @@
 			"networkidle",
 			"notnull",
 			"ostring",
+			"pino",
+			"postject",
 			"pptr",
 			"pultetista",
 			"pushstate",

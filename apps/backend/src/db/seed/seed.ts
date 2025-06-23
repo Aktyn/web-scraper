@@ -12,7 +12,7 @@ export async function seed(db?: DbModule) {
   if (!db) {
     const dbUrl = process.env.DB_FILE_NAME
     assert(!!dbUrl, "DB_FILE_NAME environment variable is not set")
-    db = getDbModule(dbUrl)
+    db = await getDbModule(dbUrl)
   }
 
   await db.insert(preferencesTable).values(

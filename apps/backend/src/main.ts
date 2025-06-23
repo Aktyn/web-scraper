@@ -6,7 +6,6 @@ import { getConfig } from "./config/config"
 import { getDbModule } from "./db/db.module"
 import { getEventsModule } from "./events/events.module"
 import { getLogger } from "./logger"
-import { assert } from "@web-scraper/common"
 
 async function main() {
   const logger = getLogger()
@@ -15,10 +14,9 @@ async function main() {
 
   const events = getEventsModule()
 
-  const dbUrl = process.env.DB_FILE_NAME
-  assert(!!dbUrl, "DB_FILE_NAME environment variable is not set")
+  const dbUrl = process.env.DB_FILE_NAME || "file:data.db"
 
-  const db = getDbModule(dbUrl)
+  const db = await getDbModule(dbUrl, logger)
 
   const config = await getConfig(db)
 
@@ -37,9 +35,9 @@ async function main() {
   return { config, db, api, logger }
 }
 
-const cleanup = async () => {
+const cleanup: NodeJS.SignalsListener = (signal) => {
   Scraper.destroyAll()
-  process.exit(0)
+  process.exit(signal ?? 0)
 }
 
 process.addListener("SIGINT", cleanup)
@@ -51,8 +49,7 @@ main()
     // await testRun(_modules.db, _modules.logger)
   })
   .catch((error) => {
-    void cleanup()
-
     console.error(error)
-    process.exit(1)
+
+    cleanup("SIGQUIT")
   })

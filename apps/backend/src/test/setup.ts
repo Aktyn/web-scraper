@@ -22,7 +22,12 @@ const mockConfig: Config = {
 }
 
 export async function setup() {
-  const db = getDbModule(":memory:")
+  const logger: SimpleLogger = {
+    ...console,
+    fatal: console.error,
+  }
+
+  const db = await getDbModule(":memory:", logger)
 
   // Transactions are not supported in memory database, so we need to mock them
   vi.spyOn(db, "transaction").mockImplementation(
@@ -34,11 +39,6 @@ export async function setup() {
 
   await migrate(db, { migrationsFolder: path.join(cwd(), "drizzle") })
   await seed(db)
-
-  const logger: SimpleLogger = {
-    ...console,
-    fatal: console.error,
-  }
 
   const events = getEventsModule()
 

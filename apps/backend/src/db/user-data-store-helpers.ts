@@ -15,16 +15,13 @@ import {
   text,
 } from "drizzle-orm/sqlite-core"
 import type { DbModule } from "./db.module"
+import { getDrizzleKitApi } from "./helpers"
 import { userDataStoresTable } from "./schema"
 import { primaryKey, sanitizeTableName } from "./schema/helpers"
 
-import { createRequire } from "node:module"
-//@ts-expect-error temporary fix for drizzle-kit/api
-const require = createRequire(import.meta.url)
 // eslint-disable-next-line @typescript-eslint/naming-convention
 const { generateSQLiteDrizzleJson, generateSQLiteMigration } =
-  // eslint-disable-next-line @typescript-eslint/consistent-type-imports
-  require("drizzle-kit/api") as typeof import("drizzle-kit/api")
+  getDrizzleKitApi()
 
 export async function createUserDataStore(
   db: DbModule,

@@ -13,3 +13,7 @@ npm-debug.log*
 
 *.db
 *.db-journal
+
+sea-prep.blob
+sea/
+logs/

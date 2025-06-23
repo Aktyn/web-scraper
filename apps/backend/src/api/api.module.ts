@@ -7,11 +7,16 @@ import {
   serializerCompiler,
   validatorCompiler,
 } from "fastify-type-provider-zod"
+import fastifyStatic from "@fastify/static"
 import type { Logger } from "pino"
 import type { Config } from "../config/config"
 import type { DbModule } from "../db/db.module"
 import type { EventsModule } from "../events/events.module"
+import fs from "fs"
+import path from "path"
 import * as routes from "./routes"
+import { cwd } from "../cwd"
+import { exec } from "child_process"
 
 declare module "fastify" {
   interface FastifyInstance {
@@ -57,6 +62,20 @@ export async function getApiModule(
 
   for (const route of Object.values(routes)) {
     fastify.register(route, context)
+  }
+
+  const webPath = path.join(cwd(), "web")
+
+  if (fs.existsSync(webPath)) {
+    fastify.register(fastifyStatic, {
+      root: webPath,
+    })
+
+    try {
+      exec(`open http://localhost:${context.config.apiPort}`)
+    } catch (error) {
+      context.logger.error(error)
+    }
   }
 
   return fastify

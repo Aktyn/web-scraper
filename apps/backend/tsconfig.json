@@ -3,9 +3,7 @@
   "compilerOptions": {
     "outDir": "dist",
     "rootDir": "src",
-    "moduleResolution": "node",
-    "esModuleInterop": true,
-    "module": "CommonJS"
+    "esModuleInterop": true
   },
   "include": [
     "src/**/*"

@@ -2,6 +2,7 @@
   "name": "web-scraper",
   "version": "3.0.0",
   "private": true,
+  "type": "module",
   "author": "Radosław Krajewski (Aktyn) <aktyn3@gmail.com>",
   "description": "A highly configurable web scraping tool",
   "license": "GPL-3.0-only",
@@ -15,6 +16,7 @@
   "homepage": "https://github.com/Aktyn/web-scrapers#readme",
   "scripts": {
     "build": "turbo run build",
+    "build:sea": "turbo run build && turbo run build:standalone && ./build-sea.sh",
     "dev": "turbo run dev",
     "start": "turbo run start",
     "test": "turbo run test",

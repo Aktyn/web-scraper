@@ -12,6 +12,15 @@
         "!**/node_modules/**"
       ]
     },
+    "build:standalone": {
+      "cache": false,
+      "dependsOn": [
+        "^build"
+      ],
+      "outputs": [
+        "dist/standalone.js"
+      ]
+    },
     "start": {
       "dependsOn": [
         "^build",
