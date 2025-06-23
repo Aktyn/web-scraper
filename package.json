@@ -33,7 +33,7 @@
   ],
   "devDependencies": {
     "@tsconfig/recommended": "^1.0.10",
-    "prettier": "^3.5.3",
+    "prettier": "^3.6.0",
     "turbo": "^2.5.4"
   },
   "packageManager": "npm@10.9.2"
