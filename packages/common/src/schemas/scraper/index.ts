@@ -3,7 +3,7 @@ import { scraperDataSourceSchema } from "./data-source"
 import { scraperInstructionsSchema } from "./instructions"
 
 export const scraperSchema = z.object({
-  id: z.number(),
+  id: z.number().int().min(1),
   name: z.string().min(1, "Scraper name is required"),
   description: z.string().nullable(),
   instructions: scraperInstructionsSchema,
@@ -28,7 +28,7 @@ export const updateScraperSchema = createScraperSchema
 export type UpdateScraper = z.infer<typeof updateScraperSchema>
 
 export const paramsWithScraperIdSchema = z.object({
-  id: z.coerce.number(),
+  id: z.coerce.number().int().min(1),
 })
 
 export * from "./common"

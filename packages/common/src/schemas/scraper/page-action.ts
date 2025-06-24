@@ -1,6 +1,7 @@
 import z from "zod"
 import { scraperElementSelectorsSchema } from "./selectors"
 import { evaluatorSchema, scraperValueSchema } from "./value"
+import { durationSchema } from "./common"
 
 export enum PageActionType {
   Wait = "wait", //TODO: wait should be moved to instruction level since it's not a page dependent
@@ -19,7 +20,7 @@ export enum PageActionType {
 export const pageActionSchema = z.discriminatedUnion("type", [
   z.object({
     type: z.literal(PageActionType.Wait),
-    duration: z.number(),
+    duration: durationSchema,
   }),
   z.object({
     type: z.literal(PageActionType.Navigate),

@@ -1,16 +1,16 @@
 import { z } from "zod"
 import { executionIteratorSchema } from "../iterator"
+import { durationSchema, serializableRegexSchema } from "./common"
 import { scraperConditionSchema } from "./condition"
 import { ScraperInstructionType } from "./instructions"
 import { pageActionSchema } from "./page-action"
 import { systemActionSchema } from "./system-action"
 import { scraperDataKeySchema, scraperValueSchema } from "./value"
-import { serializableRegexSchema } from "./common"
 
 const instructionInfoSchema = z.discriminatedUnion("type", [
   z.object({
     type: z.literal(ScraperInstructionType.PageAction),
-    pageIndex: z.number(),
+    pageIndex: z.number().int().min(0).max(255),
     pageUrl: z.union([
       z.string(),
       z.object({ from: z.string(), to: z.string() }),
@@ -27,7 +27,7 @@ const instructionInfoSchema = z.discriminatedUnion("type", [
   z.object({
     type: z.literal(ScraperInstructionType.DeleteCookies),
     domain: z.union([z.string(), serializableRegexSchema]),
-    deletedCookies: z.number().min(0),
+    deletedCookies: z.number().int().min(0),
   }),
 
   z.object({
@@ -79,7 +79,7 @@ export enum ScraperInstructionsExecutionInfoType {
 const valueSchema = z.union([z.string(), z.number(), z.null()])
 
 const summarySchema = z.object({
-  duration: z.number(),
+  duration: durationSchema,
 })
 
 export const scraperInstructionsExecutionInfoSchema = z.array(
@@ -87,7 +87,7 @@ export const scraperInstructionsExecutionInfoSchema = z.array(
     z.object({
       type: z.literal(ScraperInstructionsExecutionInfoType.Instruction),
       instructionInfo: instructionInfoSchema,
-      duration: z.number(),
+      duration: durationSchema,
     }),
 
     z.object({
@@ -124,7 +124,7 @@ export const scraperInstructionsExecutionInfoSchema = z.array(
 
     z.object({
       type: z.literal(ScraperInstructionsExecutionInfoType.PageOpened),
-      pageIndex: z.number(),
+      pageIndex: z.number().int().min(0).max(255),
       portalUrl: z.string().optional(),
     }),
 
@@ -146,15 +146,15 @@ export type ScraperInstructionsExecutionInfo = z.infer<
 >
 
 export const scraperExecutionInfoSchema = z.object({
-  id: z.number(),
-  scraperId: z.number(),
+  id: z.number().int().min(1),
+  scraperId: z.number().int().min(1),
   iterator: executionIteratorSchema
     ? executionIteratorSchema.nullable()
     : executionIteratorSchema,
   createdAt: z.number(),
   iterations: z.array(
     z.object({
-      iteration: z.number().min(1),
+      iteration: z.number().int().min(1),
       executionInfo: scraperInstructionsExecutionInfoSchema,
       finishedAt: z.number(),
     }),

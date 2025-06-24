@@ -54,7 +54,7 @@ export type ScraperExecutionStatus = z.infer<
 >
 
 export const executingScraperInfoSchema = z.object({
-  id: z.number(),
+  id: z.number().int().min(1),
   name: z.string(),
 })
 
@@ -62,7 +62,7 @@ export type ExecutingScraperInfo = z.infer<typeof executingScraperInfoSchema>
 
 export const listScraperExecutionsQuerySchema = apiPaginationQuerySchema.extend(
   {
-    id: z.coerce.number().optional(),
+    id: z.coerce.number().int().min(1).optional(),
   },
 )
 

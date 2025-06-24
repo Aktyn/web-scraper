@@ -23,9 +23,9 @@ echo "Building SEA bundle..."
 node --experimental-sea-config sea-config.json
 echo "... done building SEA bundle"
 
-# echo "Removing copy of bundled backend code..."
-# rm -rf ./apps/backend/dist/standalone-copy.js
-# echo "... done removing copy of bundled backend code"
+echo "Removing copy of bundled backend code..."
+rm -rf ./apps/backend/dist/standalone-copy.js
+echo "... done removing copy of bundled backend code"
 
 echo ""
 echo "Preparing executable..."

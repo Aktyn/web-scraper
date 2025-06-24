@@ -19,7 +19,7 @@ const scraperEvent = z.object<{
   event: typeof scraperEventSchema
 }>({
   type: z.literal(SubscriptionMessageType.ScraperEvent),
-  scraperId: z.number(),
+  scraperId: z.number().int().min(1),
   event: scraperEventSchema,
 })
 

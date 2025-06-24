@@ -25,7 +25,7 @@ export const userDataStoreSchema = z.object({
   tableName: z.string(),
   name: z.string().min(1, "Table name is required"),
   description: z.string().nullable(),
-  recordsCount: z.number(),
+  recordsCount: z.number().int().min(0),
   columns: z.array(columnSchema),
 })
 

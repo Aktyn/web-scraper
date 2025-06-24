@@ -11,8 +11,8 @@ export function getApiResponseSchema<T extends z.ZodType>(zodSchema: T) {
 }
 
 const paginationSchema = z.object({
-  page: z.number(),
-  pageSize: z.number(),
+  page: z.number().int().min(0),
+  pageSize: z.number().int().min(1),
   hasMore: z.boolean(),
 })
 
@@ -29,14 +29,14 @@ export function getApiPaginatedResponseSchema<T extends z.ZodType<object>>(
 }
 
 export const apiPaginationQuerySchema = z.object({
-  page: z.coerce.number().min(0).default(0),
-  pageSize: z.coerce.number().min(1).max(1024).optional().default(64),
+  page: z.coerce.number().int().min(0).default(0),
+  pageSize: z.coerce.number().int().min(1).max(1024).optional().default(64),
 })
 
 export type ApiPaginationQuery = z.infer<typeof apiPaginationQuerySchema>
 
 export const apiErrorResponseSchema = z.object({
-  statusCode: z.number().optional(),
+  statusCode: z.number().int().optional(),
   code: z.string().optional(),
   error: z.string(),
   message: z.string().optional(),
