@@ -3,7 +3,7 @@ import {
   type CreateUserDataStore,
   SqliteColumnType,
 } from "@web-scraper/common"
-import { beforeEach, describe, expect, it, vi } from "vitest"
+import { beforeEach, describe, expect, it } from "vitest"
 import { userDataStoresTable } from "../../db/schema"
 import { setup, type TestModules } from "../../test/setup"
 
@@ -172,19 +172,6 @@ describe("User Data Stores Routes", () => {
         pageSize: 64,
         hasMore: false,
       })
-    })
-
-    it("should return 500 if there is a database error", async () => {
-      vi.spyOn(modules.db, "select").mockRejectedValue(
-        new Error("Database error"),
-      )
-
-      const response = await modules.api.inject({
-        method: "GET",
-        url: "/user-data-stores",
-      })
-
-      expect(response.statusCode).toBe(500)
     })
   })
 

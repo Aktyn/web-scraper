@@ -372,7 +372,7 @@ export class Scraper<
       this.browser = await this.init(this.options)
     }
 
-    const startTime = performance.now()
+    const startTime = Date.now()
 
     const pages = new ExecutionPages(this.browser, {
       ...pick(this.options, "proxy", "portalUrl"),
@@ -406,7 +406,7 @@ export class Scraper<
         executionInfo.push({
           type: ScraperInstructionsExecutionInfoType.Success,
           summary: {
-            duration: performance.now() - startTime,
+            duration: Date.now() - startTime,
           },
         })
       } else {
@@ -418,7 +418,7 @@ export class Scraper<
         type: ScraperInstructionsExecutionInfoType.Error,
         errorMessage: error instanceof Error ? error.message : String(error),
         summary: {
-          duration: performance.now() - startTime,
+          duration: Date.now() - startTime,
         },
       })
     }

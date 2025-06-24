@@ -20,8 +20,6 @@ export async function getDbModule(dbUrl: string, logger?: SimpleLogger) {
       logger?.error("Error pushing schema", error)
       throw error
     }
-  } else {
-    logger?.info("Database file is ready, skipping schema push")
   }
 
   return db

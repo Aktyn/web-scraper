@@ -14,7 +14,7 @@ export async function seedNotifications(db: DbModule) {
         scraperName: `Scraper ${i + 1}`,
         iterations: Math.floor(Math.random() * 100),
       },
-      read: false,
+      read: i >= 25,
     })
   }
 

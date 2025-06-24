@@ -1,9 +1,9 @@
 import {
   type Notification,
   apiErrorResponseSchema,
-  apiPaginationQuerySchema,
   getApiPaginatedResponseSchema,
   getApiResponseSchema,
+  notificationQuerySchema,
   notificationSchema,
   SubscriptionMessageType,
 } from "@web-scraper/common"
@@ -43,7 +43,7 @@ export async function notificationsRoutes(
     "/notifications",
     {
       schema: {
-        querystring: apiPaginationQuerySchema,
+        querystring: notificationQuerySchema,
         response: {
           200: getApiPaginatedResponseSchema(notificationSchema),
           400: apiErrorResponseSchema,
@@ -51,11 +51,16 @@ export async function notificationsRoutes(
       },
     },
     async (request, reply) => {
-      const { page, pageSize } = request.query
+      const { page, pageSize, read } = request.query
 
       const response = await fastify.db
         .select()
         .from(notificationsTable)
+        .where(
+          typeof read === "boolean"
+            ? eq(notificationsTable.read, read)
+            : undefined,
+        )
         .orderBy(desc(notificationsTable.createdAt))
         .limit(pageSize + 1)
         .offset(page * pageSize)

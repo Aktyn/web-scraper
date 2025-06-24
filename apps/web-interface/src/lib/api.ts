@@ -17,6 +17,7 @@ import type {
   ExecutionIterator,
   Notification,
   ListScraperExecutionsQuery,
+  NotificationQuery,
 } from "@web-scraper/common"
 import { apiErrorResponseSchema } from "@web-scraper/common"
 
@@ -277,7 +278,7 @@ export type Routes = {
 
   notifications: {
     get: {
-      querystring: Partial<ApiPaginationQuery>
+      querystring: Partial<NotificationQuery>
       response: ApiPaginatedResponse<Notification>
     }
   }

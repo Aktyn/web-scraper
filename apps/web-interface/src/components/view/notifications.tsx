@@ -1,6 +1,6 @@
 import { useInfiniteGet } from "@/hooks/api/useInfiniteGet"
 import { type Notification, NotificationType } from "@web-scraper/common"
-import type { ComponentProps } from "react"
+import type { ComponentProps, ReactNode } from "react"
 import { useMemo, useState } from "react"
 import { DataTable } from "../common/table/data-table"
 import type { ColumnDef } from "@tanstack/react-table"
@@ -40,7 +40,7 @@ export function Notifications() {
         header: "Notification",
         cell: ({ row }) => {
           const notification = row.original
-          let content: React.ReactNode
+          let content: ReactNode
           switch (notification.type) {
             case NotificationType.ScraperFinished:
               content = (
@@ -93,7 +93,7 @@ export function Notifications() {
   )
 
   return (
-    <div className="size-full *:w-256 *:max-w-full">
+    <div className="size-full *:w-256 *:max-w-full flex flex-col">
       <div
         data-transition-direction="top"
         className="view-transition p-2 flex flex-row items-center gap-2"
@@ -120,7 +120,7 @@ export function Notifications() {
       </div>
       <DataTable
         data-transition-direction="left"
-        className="view-transition delay-100"
+        className="view-transition delay-100 h-auto overflow-hidden"
         columns={columns}
         data={notifications}
         isLoading={isLoading || isLoadingMore}
@@ -137,7 +137,7 @@ type ScraperPanelTriggerProps = {
   onMarkAsRead: () => void
 } & ComponentProps<"div">
 
-function ScraperPanelTrigger({
+export function ScraperPanelTrigger({
   scraperId,
   notificationId,
   onMarkAsRead,

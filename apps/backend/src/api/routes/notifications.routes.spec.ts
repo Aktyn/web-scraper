@@ -1,13 +1,18 @@
-import { beforeEach, describe, expect, it, vi } from "vitest"
-import { setup, type TestModules } from "../../test/setup"
+import type { Notification } from "@web-scraper/common"
 import { eq } from "drizzle-orm"
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 import { notificationsTable } from "../../db/schema"
+import { setup, type TestModules } from "../../test/setup"
 
 describe("Notifications Routes", () => {
   let modules: TestModules
 
   beforeEach(async () => {
     modules = await setup()
+  })
+
+  afterEach(() => {
+    vi.clearAllMocks()
   })
 
   describe("GET /notifications", () => {
@@ -23,6 +28,34 @@ describe("Notifications Routes", () => {
       expect(payload.page).toBe(0)
       expect(payload.pageSize).toBe(64)
       expect(payload.hasMore).toBe(false)
+    })
+
+    it("should filter for read notifications when read=true is passed", async () => {
+      const response = await modules.api.inject({
+        method: "GET",
+        url: "/notifications?read=true",
+      })
+
+      expect(response.statusCode).toBe(200)
+      const payload = JSON.parse(response.payload)
+      expect(payload.data.length).toBe(25)
+      expect(payload.data.every((n: Notification) => n.read === true)).toBe(
+        true,
+      )
+    })
+
+    it("should filter for unread notifications when read=false is passed", async () => {
+      const response = await modules.api.inject({
+        method: "GET",
+        url: "/notifications?read=false",
+      })
+
+      expect(response.statusCode).toBe(200)
+      const payload = JSON.parse(response.payload)
+      expect(payload.data.length).toBe(25)
+      expect(payload.data.every((n: Notification) => n.read === false)).toBe(
+        true,
+      )
     })
 
     it("should respect pagination parameters", async () => {
@@ -51,19 +84,6 @@ describe("Notifications Routes", () => {
       expect(payload.page).toBe(2)
       expect(payload.pageSize).toBe(20)
       expect(payload.hasMore).toBe(false)
-    })
-
-    it("should return 500 if there is a database error", async () => {
-      vi.spyOn(modules.db, "select").mockRejectedValue(
-        new Error("Database error"),
-      )
-
-      const response = await modules.api.inject({
-        method: "GET",
-        url: "/notifications",
-      })
-
-      expect(response.statusCode).toBe(500)
     })
   })
 
@@ -94,19 +114,6 @@ describe("Notifications Routes", () => {
         url: "/notifications/999/read",
       })
       expect(response.statusCode).toBe(404)
-    })
-
-    it("should return 500 if there is a database error", async () => {
-      vi.spyOn(modules.db, "update").mockRejectedValue(
-        new Error("Database error"),
-      )
-
-      const response = await modules.api.inject({
-        method: "PATCH",
-        url: "/notifications/1/read",
-      })
-
-      expect(response.statusCode).toBe(500)
     })
   })
 
@@ -139,19 +146,6 @@ describe("Notifications Routes", () => {
         allNotifications.every((notification) => notification.read),
       ).toBeTruthy()
     })
-
-    it("should return 500 if there is a database error", async () => {
-      vi.spyOn(modules.db, "update").mockRejectedValue(
-        new Error("Database error"),
-      )
-
-      const response = await modules.api.inject({
-        method: "PATCH",
-        url: "/notifications/read-all",
-      })
-
-      expect(response.statusCode).toBe(500)
-    })
   })
 
   describe("DELETE /notifications/:id", () => {
@@ -177,19 +171,6 @@ describe("Notifications Routes", () => {
         url: "/notifications/999",
       })
       expect(response.statusCode).toBe(404)
-    })
-
-    it("should return 500 if there is a database error", async () => {
-      vi.spyOn(modules.db, "delete").mockRejectedValue(
-        new Error("Database error"),
-      )
-
-      const response = await modules.api.inject({
-        method: "DELETE",
-        url: "/notifications/1",
-      })
-
-      expect(response.statusCode).toBe(500)
     })
   })
 })

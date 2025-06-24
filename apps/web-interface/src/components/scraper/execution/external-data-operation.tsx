@@ -53,7 +53,7 @@ export function ExternalDataOperation({
           <LabeledValue label="Data source name">
             <pre>{operation.dataSourceName}</pre>
           </LabeledValue>
-          <div className="flex flex-col gap-1 max-w-54 contain-size h-full min-h-32 overflow-auto">
+          <div className="flex flex-col gap-1 max-w-54 max-h-120 min-h-32 overflow-auto">
             {operation.items.map((item, idx) => (
               <Fragment key={idx}>
                 {idx > 0 && <Separator className="opacity-50 my-1" />}

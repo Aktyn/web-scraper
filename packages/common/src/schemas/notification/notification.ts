@@ -1,4 +1,5 @@
 import { z } from "zod"
+import { apiPaginationQuerySchema } from "../common"
 
 export enum NotificationType {
   ScraperFinished = "scraperFinished",
@@ -26,3 +27,9 @@ export const notificationSchema = notificationDataSchema.and(
 )
 
 export type Notification = z.infer<typeof notificationSchema>
+
+export const notificationQuerySchema = apiPaginationQuerySchema.extend({
+  read: z.boolean().optional(),
+})
+
+export type NotificationQuery = z.infer<typeof notificationQuerySchema>

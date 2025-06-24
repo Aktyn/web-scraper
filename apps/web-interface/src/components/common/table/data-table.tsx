@@ -20,6 +20,7 @@ import {
   useReactTable,
 } from "@tanstack/react-table"
 import { ChevronUp } from "lucide-react"
+import type { ReactNode } from "react"
 import {
   type ComponentProps,
   Fragment,
@@ -36,7 +37,7 @@ type DataTableProps<TData, TValue> = {
   isLoading?: boolean
   hasMore?: boolean
   getRowCanExpand?: (row: Row<TData>) => boolean
-  SubComponent?: (props: { row: Row<TData> }) => React.ReactNode
+  SubComponent?: (props: { row: Row<TData> }) => ReactNode
   onLoadMore?: () => void
   onRowClick?: (row: Row<TData>) => void
   tableProps?: ComponentProps<"table">
@@ -56,7 +57,8 @@ export function DataTable<TData, TValue>({
 }: DataTableProps<TData, TValue>) {
   const [showBackToTop, setShowBackToTop] = useState(false)
   const [expanded, setExpanded] = useState<ExpandedState>({})
-  const containerRef = useRef<HTMLDivElement>(null)
+  const scrollAreaRef = useRef<HTMLDivElement>(null)
+  const viewportRef = useRef<HTMLDivElement>(null)
   const tableRef = useRef<HTMLTableElement>(null)
   const scrollPositionRef = useRef(0)
 
@@ -75,9 +77,9 @@ export function DataTable<TData, TValue>({
   })
 
   const handleScroll = useCallback(() => {
-    if (!containerRef.current) return
+    if (!viewportRef.current) return
 
-    const container = containerRef.current
+    const container = viewportRef.current
     const scrollTop = container.scrollTop
     const scrollHeight = container.scrollHeight
     const clientHeight = container.clientHeight
@@ -97,18 +99,40 @@ export function DataTable<TData, TValue>({
   }, [hasMore, isLoading, onLoadMore])
 
   const scrollToTop = useCallback(() => {
-    if (containerRef.current) {
-      containerRef.current.scrollTo({ top: 0, behavior: "smooth" })
+    if (viewportRef.current) {
+      viewportRef.current.scrollTo({ top: 0, behavior: "smooth" })
     }
   }, [])
 
   useEffect(() => {
-    const container = containerRef.current
-    if (!container) return
+    const scrollArea = scrollAreaRef.current
+    if (!scrollArea) return
 
-    container.addEventListener("scroll", handleScroll, { passive: true })
-    return () => container.removeEventListener("scroll", handleScroll)
+    const viewport = scrollArea.querySelector<HTMLDivElement>(
+      '[data-slot="scroll-area-viewport"]',
+    )
+    if (!viewport) return
+
+    viewportRef.current = viewport
+    viewport.addEventListener("scroll", handleScroll, { passive: true })
+    return () => viewport.removeEventListener("scroll", handleScroll)
   }, [handleScroll])
+
+  useEffect(() => {
+    if (!hasMore || isLoading || !onLoadMore) return
+
+    const viewport = viewportRef.current
+    if (!viewport) return
+
+    // A small delay to allow the DOM to update with the new data
+    const timeoutId = setTimeout(() => {
+      if (viewport.scrollHeight <= viewport.clientHeight) {
+        onLoadMore()
+      }
+    }, 50)
+
+    return () => clearTimeout(timeoutId)
+  }, [data, hasMore, isLoading, onLoadMore])
 
   const handleRowClick = useCallback(
     (row: Row<TData>) => {
@@ -128,7 +152,7 @@ export function DataTable<TData, TValue>({
       {...containerProps}
       className={cn("relative w-full h-full", containerProps.className)}
     >
-      <ScrollArea ref={containerRef} className="max-h-full grid grid-rows-1">
+      <ScrollArea ref={scrollAreaRef} className="max-h-full grid grid-rows-1">
         <Table ref={tableRef} {...tableProps}>
           <TableHeader className="sticky top-0 z-10 bg-background">
             {table.getHeaderGroups().map((headerGroup) => (
@@ -198,7 +222,7 @@ export function DataTable<TData, TValue>({
               <TableRow className="animate-in fade-in">
                 <TableCell
                   colSpan={columns.length}
-                  className="h-16 text-center"
+                  className="h-16 text-center text-muted-foreground"
                 >
                   Loading more...
                 </TableCell>
@@ -212,7 +236,7 @@ export function DataTable<TData, TValue>({
       {showBackToTop && (
         <Button
           onClick={scrollToTop}
-          className="absolute bottom-4 right-4 z-20 rounded-full pr-4!"
+          className="absolute bottom-4 right-4 z-20 rounded-full pr-4! backdrop-blur-sm"
           size="sm"
           variant="outline"
         >

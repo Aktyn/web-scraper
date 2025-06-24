@@ -83,7 +83,7 @@ async function executeInstructionByType(
   ) => void,
   level: number,
 ) {
-  const instructionStartTime = performance.now()
+  const instructionStartTime = Date.now()
   let lastInstructionInfo: ScraperInstructionsExecutionInfo[number] | null =
     null
 
@@ -345,7 +345,7 @@ async function executeInstructionByType(
       break
   }
 
-  lastInstructionInfo.duration = performance.now() - instructionStartTime
+  lastInstructionInfo.duration = Date.now() - instructionStartTime
 }
 
 function pushInstructionInfo<T extends ScraperInstructionInfo>(

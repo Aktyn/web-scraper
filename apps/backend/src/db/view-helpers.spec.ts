@@ -12,6 +12,7 @@ describe("view-helpers", () => {
   })
 
   afterEach(async () => {
+    vi.restoreAllMocks()
     vi.clearAllMocks()
   })
 

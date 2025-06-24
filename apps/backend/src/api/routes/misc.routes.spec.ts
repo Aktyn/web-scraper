@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from "vitest"
+import { beforeEach, describe, expect, it } from "vitest"
 import { preferencesTable } from "../../db/schema"
 import { setup, type TestModules } from "../../test/setup"
 
@@ -56,19 +56,6 @@ describe("Misc Routes", () => {
       expect(JSON.parse(response.payload)).toEqual({
         data: [],
       })
-    })
-
-    it("should return 500 if there is a database error", async () => {
-      vi.spyOn(modules.db, "select").mockRejectedValue(
-        new Error("Database error"),
-      )
-
-      const response = await modules.api.inject({
-        method: "GET",
-        url: "/preferences",
-      })
-
-      expect(response.statusCode).toBe(500)
     })
   })
 

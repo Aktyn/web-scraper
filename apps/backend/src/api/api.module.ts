@@ -17,6 +17,7 @@ import path from "path"
 import * as routes from "./routes"
 import { cwd } from "../cwd"
 import { exec } from "child_process"
+import fastifyZodQueryCoercion from "fastify-zod-query-coercion"
 
 declare module "fastify" {
   interface FastifyInstance {
@@ -57,6 +58,8 @@ export async function getApiModule(
 
   fastify.setValidatorCompiler(validatorCompiler)
   fastify.setSerializerCompiler(serializerCompiler)
+
+  await fastify.register(fastifyZodQueryCoercion)
 
   fastify.register(FastifySSEPlugin)
 

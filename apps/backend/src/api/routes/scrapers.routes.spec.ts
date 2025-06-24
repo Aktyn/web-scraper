@@ -103,6 +103,9 @@ describe.sequential("Scrapers Routes", () => {
   })
 
   afterEach(async () => {
+    vi.restoreAllMocks()
+    vi.clearAllMocks()
+
     const scraperInstances = Scraper.getInstances()
     for (const scraperInstance of scraperInstances) {
       await runUnsafeAsync(
