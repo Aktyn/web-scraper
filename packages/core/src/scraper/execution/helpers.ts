@@ -3,6 +3,7 @@ import type { ClickOptions } from "ghost-cursor"
 import type { DataBridge } from "../data-helper"
 import type { ExecutionPages } from "./execution-pages"
 import type { ScraperExecutionInfo } from "./scraper-execution-info"
+import type { SmartLocalization } from "../ai/smart-localization"
 
 export type ScraperExecutionContext = {
   scraperIdentifier: `${number}-${string}`
@@ -11,6 +12,9 @@ export type ScraperExecutionContext = {
   executionInfo: ScraperExecutionInfo
   logger: SimpleLogger
   abortController: AbortController
+  ai: {
+    localization: SmartLocalization
+  }
 }
 
 export function getGhostClickOptions(): ClickOptions {

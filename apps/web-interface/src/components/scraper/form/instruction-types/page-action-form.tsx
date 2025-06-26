@@ -49,18 +49,20 @@ export function PageActionForm({ control, fieldName }: PageActionFormProps) {
             control={control}
             fieldName={`${fieldName}.selectors`}
           />
-          <FormSwitch
+          <ClickActionSwitches control={control} fieldName={fieldName} />
+        </div>
+      )
+
+    case PageActionType.SmartClick:
+      return (
+        <div className="space-y-4">
+          <FormInput
             control={control}
-            name={`${fieldName}.waitForNavigation`}
-            label="Wait for navigation"
-            description="Wait for navigation after clicking"
+            name={`${fieldName}.aiPrompt`}
+            label="AI prompt"
+            description="Prompt to the AI to localize the element to click on"
           />
-          <FormSwitch
-            control={control}
-            name={`${fieldName}.useGhostCursor`}
-            label="Use ghost cursor"
-            description="Use a ghost cursor to click the element in user-like way"
-          />
+          <ClickActionSwitches control={control} fieldName={fieldName} />
         </div>
       )
 
@@ -152,5 +154,29 @@ function SelectorFields({ control, fieldName }: SelectorFieldsProps) {
         </FormItem>
       )}
     />
+  )
+}
+
+type ClickActionSwitchesProps = {
+  control: Control<CreateScraper>
+  fieldName: PageActionFieldName
+}
+
+function ClickActionSwitches({ control, fieldName }: ClickActionSwitchesProps) {
+  return (
+    <>
+      <FormSwitch
+        control={control}
+        name={`${fieldName}.waitForNavigation`}
+        label="Wait for navigation"
+        description="Wait for navigation after clicking"
+      />
+      <FormSwitch
+        control={control}
+        name={`${fieldName}.useGhostCursor`}
+        label="Use ghost cursor"
+        description="Use a ghost cursor to click the element in user-like way"
+      />
+    </>
   )
 }

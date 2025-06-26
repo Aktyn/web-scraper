@@ -8,6 +8,8 @@ import {
   SqliteConditionType,
   SystemActionType,
 } from "@web-scraper/common"
+import { Brain } from "lucide-react"
+import type { ReactNode } from "react"
 
 export const instructionTypeLabels: {
   [key in ScraperInstructionType]: string
@@ -43,10 +45,18 @@ export const scraperInstructionsExecutionInfoTypeLabels: {
   [ScraperInstructionsExecutionInfoType.Error]: "Error",
 }
 
-export const pageActionTypeLabels: { [key in PageActionType]: string } = {
+export const pageActionTypeLabels: { [key in PageActionType]: ReactNode } = {
   [PageActionType.Navigate]: "Navigate",
   [PageActionType.Wait]: "Wait",
   [PageActionType.Click]: "Click",
+  [PageActionType.SmartClick]: (
+    <div className="flex flex-row items-center gap-1">
+      <span>Smart click</span>
+      <span className="text-muted-foreground text-xs leading-none">
+        (<Brain className="size-3.5 inline" /> AI feature)
+      </span>
+    </div>
+  ),
   [PageActionType.Type]: "Type",
   [PageActionType.ScrollToBottom]: "Scroll to bottom",
   [PageActionType.ScrollToTop]: "Scroll to top",

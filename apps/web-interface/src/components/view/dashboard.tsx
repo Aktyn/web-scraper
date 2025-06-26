@@ -27,6 +27,7 @@ import { Label } from "../shadcn/label"
 import { Separator } from "../shadcn/separator"
 import { Skeleton } from "../shadcn/skeleton"
 import { ScraperPanelTrigger } from "./notifications"
+import { ScrollArea } from "../shadcn/scroll-area"
 
 export function Dashboard() {
   return (
@@ -82,7 +83,10 @@ function RecentlyExecutedScrapers() {
 
   return (
     <>
-      <div data-transition-direction="left" className="view-transition">
+      <div
+        data-transition-direction="left"
+        className="view-transition grid grid-rows-[auto_1fr]"
+      >
         <div className="flex flex-row items-center justify-between gap-2 p-2">
           <Label className="text-muted-foreground font-semibold text-lg">
             Recent scrapers
@@ -98,19 +102,21 @@ function RecentlyExecutedScrapers() {
         {isLoading && !scrapers?.data ? (
           <Loader2 className="size-4 animate-spin mx-2" />
         ) : scrapers?.data.length ? (
-          <div className="p-3 gap-3 grid grid-cols-[repeat(auto-fill,minmax(calc(var(--spacing)*96),1fr))]">
-            {scrapers.data.map((scraper) => (
-              <ScraperProvider key={scraper.id} scraper={scraper}>
-                <ScraperCard
-                  key={scraper.id}
-                  onClick={() => {
-                    setScraperToView(scraper)
-                    setScraperViewOpen(true)
-                  }}
-                />
-              </ScraperProvider>
-            ))}
-          </div>
+          <ScrollArea className="overflow-hidden">
+            <div className="p-3 gap-3 grid grid-cols-[repeat(auto-fill,minmax(calc(var(--spacing)*96),1fr))]">
+              {scrapers.data.map((scraper) => (
+                <ScraperProvider key={scraper.id} scraper={scraper}>
+                  <ScraperCard
+                    key={scraper.id}
+                    onClick={() => {
+                      setScraperToView(scraper)
+                      setScraperViewOpen(true)
+                    }}
+                  />
+                </ScraperProvider>
+              ))}
+            </div>
+          </ScrollArea>
         ) : (
           <div className="text-muted-foreground px-2">No scrapers found</div>
         )}

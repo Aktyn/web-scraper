@@ -82,6 +82,7 @@ const iconsMap: { [key in PageActionType]: IconName } = {
   [PageActionType.Wait]: "clock",
   [PageActionType.Navigate]: "navigation",
   [PageActionType.Click]: "mouse-pointer-click",
+  [PageActionType.SmartClick]: "mouse-pointer-click",
   [PageActionType.Type]: "type",
   [PageActionType.ScrollToBottom]: "monitor-down",
   [PageActionType.ScrollToTop]: "monitor-up",

@@ -65,7 +65,7 @@ export function ScraperInstructionsForm({
   condition,
 }: ScraperInstructionsFormProps) {
   const { fields, append, remove, move } = useFieldArray<CreateScraper, never>({
-    control,
+    control: control as never,
     name: name as never,
   })
 
@@ -175,9 +175,19 @@ function InstructionField({
             )}
           >
             {instructionTypeLabels[instruction.type]}
-            {instruction.type === ScraperInstructionType.PageAction
-              ? `${instruction.pageIndex ? ` (page: ${instruction.pageIndex})` : ""} -> ${instruction.action.type ? pageActionTypeLabels[instruction.action.type] : "Unknown action type"}`
-              : ""}
+            {instruction.type === ScraperInstructionType.PageAction && (
+              <>
+                {!!instruction.pageIndex && (
+                  <span> (page: {instruction.pageIndex})</span>
+                )}
+                <span> -&gt; </span>
+                {instruction.action.type ? (
+                  <span>{pageActionTypeLabels[instruction.action.type]}</span>
+                ) : (
+                  <span className="text-warning">Unknown action type</span>
+                )}
+              </>
+            )}
           </Badge>
         </h4>
         <div className="flex items-center gap-1">

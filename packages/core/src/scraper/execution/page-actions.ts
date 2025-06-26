@@ -72,6 +72,48 @@ export async function performPageAction(
       }
       break
     }
+    case PageActionType.SmartClick: {
+      const coordinates = await context.ai.localization.localize(
+        action.aiPrompt,
+        await pageContext.page.screenshot({
+          type: "jpeg",
+          quality: 80,
+          fullPage: false,
+        }),
+      )
+
+      if (!coordinates) {
+        context.logger.warn({
+          msg: "Localization failed; no coordinates were returned",
+        })
+        break
+      }
+
+      context.logger.info({ msg: "Localization result", coordinates })
+
+      if (action.useGhostCursor) {
+        pageContext.cursor.toggleRandomMove(false)
+        await pageContext.cursor.moveTo(coordinates, {
+          randomizeMoveDelay: true,
+          moveDelay: 3_000,
+        })
+        await pageContext.cursor.click(undefined, getGhostClickOptions())
+        pageContext.cursor.toggleRandomMove(true)
+      } else {
+        await pageContext.page.mouse.click(coordinates.x, coordinates.y, {
+          delay: randomInt(1, 4),
+        })
+      }
+
+      if (action.waitForNavigation) {
+        await pageContext.page.waitForNavigation({
+          waitUntil: "networkidle0",
+          signal: context.abortController.signal,
+          timeout: 20_000,
+        })
+      }
+      break
+    }
     case PageActionType.Type: {
       const handle = await getElementHandle(
         context,

@@ -20,6 +20,7 @@ import puppeteer, {
   type Page,
   type Viewport,
 } from "rebrowser-puppeteer"
+import { SmartLocalization } from "./ai/smart-localization"
 import { type DataBridge } from "./data-helper"
 import { ExecutionPages } from "./execution/execution-pages"
 import { executeInstructions } from "./execution/instructions"
@@ -82,6 +83,7 @@ export class Scraper<
 
   private readonly logger: SimpleLogger
   private readonly defaultViewport: Viewport
+  private readonly localization: SmartLocalization
 
   private initPromise: Promise<Browser> | null = null
 
@@ -112,6 +114,8 @@ export class Scraper<
       hasTouch: false,
       isLandscape: false,
     }
+
+    this.localization = new SmartLocalization(this.logger)
 
     assert(
       !Scraper.instances.has(this.identifier),
@@ -393,6 +397,9 @@ export class Scraper<
           executionInfo,
           logger: this.logger,
           abortController: this.abortController,
+          ai: {
+            localization: this.localization,
+          },
         },
         instructions,
         (instruction) => {

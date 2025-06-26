@@ -47,22 +47,15 @@ export function PageActionDetails({ action }: { action: PageAction }) {
           <LabeledValue label="Target:">
             <ScraperSelector selectors={action.selectors} />
           </LabeledValue>
-          {(action.waitForNavigation || action.useGhostCursor) && (
-            <div className="flex flex-col gap-2">
-              {action.waitForNavigation && (
-                <Label className="flex flex-row items-center gap-2">
-                  <Hourglass className="size-4 inline" />
-                  <span>Wait for navigation</span>
-                </Label>
-              )}
-              {action.useGhostCursor && (
-                <Label className="flex flex-row items-center gap-2 pointer-events-auto">
-                  <MousePointerClick className="size-4 inline" />
-                  <span>Ghost cursor</span>
-                </Label>
-              )}
-            </div>
-          )}
+          <ClickActionFlags action={action} />
+        </div>
+      )
+
+    case PageActionType.SmartClick:
+      return (
+        <div className="flex flex-row flex-wrap gap-2 gap-x-4">
+          <LabeledValue label="Prompt:">{action.aiPrompt}</LabeledValue>
+          <ClickActionFlags action={action} />
         </div>
       )
 
@@ -146,4 +139,32 @@ export function PageActionDetails({ action }: { action: PageAction }) {
         </div>
       )
   }
+}
+
+type ClickActionFlagsProps = {
+  action: Extract<
+    PageAction,
+    { type: PageActionType.Click | PageActionType.SmartClick }
+  >
+}
+
+function ClickActionFlags({ action }: ClickActionFlagsProps) {
+  return (
+    (action.waitForNavigation || action.useGhostCursor) && (
+      <div className="flex flex-col gap-2">
+        {action.waitForNavigation && (
+          <Label className="flex flex-row items-center gap-2">
+            <Hourglass className="size-4 inline" />
+            <span>Wait for navigation</span>
+          </Label>
+        )}
+        {action.useGhostCursor && (
+          <Label className="flex flex-row items-center gap-2 pointer-events-auto">
+            <MousePointerClick className="size-4 inline" />
+            <span>Ghost cursor</span>
+          </Label>
+        )}
+      </div>
+    )
+  )
 }
