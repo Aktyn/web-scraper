@@ -281,6 +281,10 @@ function UnreadNotifications() {
     "/notifications/read-all",
   )
 
+  ServerEventsProvider.useMessages(SubscriptionMessageType.Notification, () =>
+    refresh(),
+  )
+
   const notificationsColumns = useMemo<ColumnDef<Notification>[]>(
     () => [
       {

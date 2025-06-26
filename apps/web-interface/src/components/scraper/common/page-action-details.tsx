@@ -106,6 +106,13 @@ export function PageActionDetails({ action }: { action: PageAction }) {
     case PageActionType.ScrollToBottom:
       return null
 
+    case PageActionType.ScrollToElement:
+      return (
+        <LabeledValue label="Target:">
+          <ScraperSelector selectors={action.selectors} />
+        </LabeledValue>
+      )
+
     case PageActionType.Evaluate:
       return (
         <div className="flex flex-row flex-wrap items-start gap-2 gap-x-4">

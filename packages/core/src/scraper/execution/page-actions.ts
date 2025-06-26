@@ -38,6 +38,7 @@ export async function performPageAction(
         context.logger.warn({ msg: "Navigation failed", error })
       }
       break
+
     case PageActionType.Click: {
       const handle = await getElementHandle(
         context,
@@ -106,6 +107,7 @@ export async function performPageAction(
       }
       break
     }
+
     case PageActionType.ScrollToTop:
       await pageContext.cursor.scrollTo("top", {
         scrollSpeed: 50,
@@ -116,6 +118,21 @@ export async function performPageAction(
         scrollSpeed: 50,
       })
       break
+    case PageActionType.ScrollToElement: {
+      const handle = await getElementHandle(
+        context,
+        action.selectors,
+        pageContext.index,
+        true,
+      )
+
+      await pageContext.cursor.scrollIntoView(handle, {
+        scrollSpeed: 50,
+      })
+
+      break
+    }
+
     case PageActionType.Evaluate:
       {
         const evaluationArguments = await Promise.all(

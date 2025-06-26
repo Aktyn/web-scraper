@@ -10,9 +10,9 @@ export enum PageActionType {
   Click = "click",
   Type = "type",
 
-  ScrollToTop = "scroll-to-top",
   ScrollToBottom = "scroll-to-bottom",
-  //TODO: scroll to element
+  ScrollToTop = "scroll-to-top",
+  ScrollToElement = "scroll-to-element",
 
   Evaluate = "evaluate",
 }
@@ -43,10 +43,14 @@ export const pageActionSchema = z.discriminatedUnion("type", [
   }),
 
   z.object({
+    type: z.literal(PageActionType.ScrollToBottom),
+  }),
+  z.object({
     type: z.literal(PageActionType.ScrollToTop),
   }),
   z.object({
-    type: z.literal(PageActionType.ScrollToBottom),
+    type: z.literal(PageActionType.ScrollToElement),
+    selectors: scraperElementSelectorsSchema,
   }),
 
   z.object({

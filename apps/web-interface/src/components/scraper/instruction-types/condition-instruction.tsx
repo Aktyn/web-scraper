@@ -128,8 +128,6 @@ function ConditionDetails({ condition }: { condition: ScraperCondition }) {
   switch (condition.type) {
     case ScraperConditionType.IsVisible:
       return (
-        // TODO: finish handling page index
-        // xyz
         <LabeledValue label="Check if element is visible:">
           <ScraperSelector selectors={condition.selectors} />
         </LabeledValue>

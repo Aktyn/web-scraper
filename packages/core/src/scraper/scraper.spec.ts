@@ -173,7 +173,6 @@ describe(
                 selectors: loginButtonSelector,
               },
             },
-            //TODO: fill login form and finish login process
           ],
         },
       ]

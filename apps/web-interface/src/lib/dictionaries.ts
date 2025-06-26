@@ -48,8 +48,9 @@ export const pageActionTypeLabels: { [key in PageActionType]: string } = {
   [PageActionType.Wait]: "Wait",
   [PageActionType.Click]: "Click",
   [PageActionType.Type]: "Type",
-  [PageActionType.ScrollToTop]: "Scroll to top",
   [PageActionType.ScrollToBottom]: "Scroll to bottom",
+  [PageActionType.ScrollToTop]: "Scroll to top",
+  [PageActionType.ScrollToElement]: "Scroll to element",
   [PageActionType.Evaluate]: "Evaluate",
 }
 

@@ -105,6 +105,14 @@ export function PageActionForm({ control, fieldName }: PageActionFormProps) {
     case PageActionType.ScrollToBottom:
       return null
 
+    case PageActionType.ScrollToElement:
+      return (
+        <SelectorFields
+          control={control}
+          fieldName={`${fieldName}.selectors`}
+        />
+      )
+
     case PageActionType.Evaluate:
       return (
         <EvaluatorField

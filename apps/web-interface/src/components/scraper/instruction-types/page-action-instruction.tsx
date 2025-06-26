@@ -83,7 +83,8 @@ const iconsMap: { [key in PageActionType]: IconName } = {
   [PageActionType.Navigate]: "navigation",
   [PageActionType.Click]: "mouse-pointer-click",
   [PageActionType.Type]: "type",
-  [PageActionType.ScrollToTop]: "monitor-up",
   [PageActionType.ScrollToBottom]: "monitor-down",
+  [PageActionType.ScrollToTop]: "monitor-up",
+  [PageActionType.ScrollToElement]: "mouse-pointer-click",
   [PageActionType.Evaluate]: "file-code",
 }

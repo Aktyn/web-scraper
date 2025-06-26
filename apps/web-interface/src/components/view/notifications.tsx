@@ -1,5 +1,9 @@
 import { useInfiniteGet } from "@/hooks/api/useInfiniteGet"
-import { type Notification, NotificationType } from "@web-scraper/common"
+import {
+  type Notification,
+  NotificationType,
+  SubscriptionMessageType,
+} from "@web-scraper/common"
 import type { ComponentProps, ReactNode } from "react"
 import { useMemo, useState } from "react"
 import { DataTable } from "../common/table/data-table"
@@ -13,6 +17,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "../shadcn/tooltip"
 import { cn, formatDateTime } from "@/lib/utils"
 import { ScraperPanelDialog } from "../scraper/scraper-panel-dialog"
 import { useGet } from "@/hooks/api/useGet"
+import { ServerEventsProvider } from "@/providers/server-events.provider"
 
 export function Notifications() {
   const {
@@ -26,6 +31,10 @@ export function Notifications() {
 
   const { patchItem: markAllAsRead, isPatching: isMarkingAllAsRead } = usePatch(
     "/notifications/read-all",
+  )
+
+  ServerEventsProvider.useMessages(SubscriptionMessageType.Notification, () =>
+    refresh(),
   )
 
   const hasUnread = useMemo(
