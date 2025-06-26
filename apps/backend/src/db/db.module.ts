@@ -1,14 +1,17 @@
 import type { SimpleLogger } from "@web-scraper/common"
 import { drizzle } from "drizzle-orm/libsql"
 import fs from "fs"
-import * as schema from "./schema"
 import { getDrizzleKitApi } from "./helpers"
+import * as schema from "./schema"
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
 const { pushSQLiteSchema } = getDrizzleKitApi()
 
 export async function getDbModule(dbUrl: string, logger?: SimpleLogger) {
-  const db = drizzle(dbUrl, { schema })
+  const db = drizzle(dbUrl, {
+    schema,
+    logger: undefined, // new DefaultLogger()
+  })
 
   if (dbUrl.startsWith("file:") && !isDatabaseFileReady(dbUrl)) {
     logger?.info("Database file is not ready, pushing schema")

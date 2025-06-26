@@ -37,7 +37,7 @@ async function main() {
 
 const cleanup: NodeJS.SignalsListener = (signal) => {
   Scraper.destroyAll()
-  process.exit(signal ?? 0)
+  process.exit(signal === "SIGTERM" ? 0 : 1)
 }
 
 process.addListener("SIGINT", cleanup)

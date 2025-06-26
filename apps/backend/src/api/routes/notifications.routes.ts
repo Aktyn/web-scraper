@@ -117,7 +117,7 @@ export async function notificationsRoutes(
     {
       schema: {
         response: {
-          204: getApiResponseSchema(z.null()),
+          200: getApiResponseSchema(z.null()),
         },
       },
     },
@@ -127,7 +127,7 @@ export async function notificationsRoutes(
         .set({ read: true })
         .where(eq(notificationsTable.read, false))
 
-      return reply.status(204).send({ data: null })
+      return reply.status(200).send({ data: null })
     },
   )
 

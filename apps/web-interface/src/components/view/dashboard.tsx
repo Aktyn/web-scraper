@@ -241,7 +241,9 @@ function ScraperCard({ onClick }: ScraperCardProps) {
           event.stopPropagation()
           event.preventDefault()
 
-          execute(lastExecution?.iterator ?? null).catch(console.error)
+          if (!state || state === ScraperState.Exited) {
+            execute(lastExecution?.iterator ?? null).catch(console.error)
+          }
         }}
       >
         <div className="hover:text-primary w-full mt-auto">

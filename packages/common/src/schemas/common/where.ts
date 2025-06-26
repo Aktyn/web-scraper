@@ -76,7 +76,6 @@ const conditionSchema = z.discriminatedUnion("condition", [
   nullConditionSchema,
 ])
 
-//TODO: allow conditions between multiple columns of different tables
 type Condition = z.infer<typeof conditionSchema>
 
 type AndConditions = {

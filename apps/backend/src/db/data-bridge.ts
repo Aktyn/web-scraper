@@ -264,7 +264,7 @@ export class DataBridge<
 
       const response = await this.db.run(query).execute()
       if (!response.rowsAffected) {
-        this.logger.warn(`No rows were updated for ${source.name}`)
+        this.logger.warn(`No rows were updated for "${source.name}"`)
       }
     } else {
       const columns = items.map((item) => sql.identifier(item.columnName))
