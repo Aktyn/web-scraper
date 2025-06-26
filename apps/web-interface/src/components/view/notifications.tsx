@@ -134,7 +134,7 @@ export function Notifications() {
 type ScraperPanelTriggerProps = {
   scraperId: number
   notificationId: number
-  onMarkAsRead: () => void
+  onMarkAsRead?: () => void
 } & ComponentProps<"div">
 
 export function ScraperPanelTrigger({
@@ -165,9 +165,11 @@ export function ScraperPanelTrigger({
           if (!isLoadingScraperToView) {
             if (!loadScraper) {
               setLoadScraper(true)
-              void markAsRead({}, { id: notificationId }).then(() => {
-                onMarkAsRead()
-              })
+              if (onMarkAsRead) {
+                void markAsRead({}, { id: notificationId }).then(() => {
+                  onMarkAsRead()
+                })
+              }
             }
             setScraperViewOpen(true)
           }

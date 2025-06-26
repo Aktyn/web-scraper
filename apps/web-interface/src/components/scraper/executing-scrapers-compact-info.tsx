@@ -27,10 +27,12 @@ export function ExecutingScrapersCompactInfo() {
     SubscriptionMessageType.ScraperEvent,
     (message) => {
       if (
-        message.event.type === ScraperEventType.ExecutionFinished ||
-        message.event.type === ScraperEventType.ExecutionError ||
-        message.event.type === ScraperEventType.ExecutionStarted ||
-        message.event.type === ScraperEventType.StateChange
+        [
+          ScraperEventType.ExecutionFinished,
+          ScraperEventType.ExecutionError,
+          ScraperEventType.ExecutionStarted,
+          ScraperEventType.StateChange,
+        ].includes(message.event.type)
       ) {
         if (refreshTimeout.current) {
           clearTimeout(refreshTimeout.current)
@@ -39,7 +41,7 @@ export function ExecutingScrapersCompactInfo() {
         refreshTimeout.current = setTimeout(() => {
           refresh()
           refreshTimeout.current = null
-        }, 2_000)
+        }, 200)
       }
     },
   )

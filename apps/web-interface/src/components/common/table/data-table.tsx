@@ -2,7 +2,6 @@
 
 import { Button } from "@/components/shadcn/button"
 import {
-  Table,
   TableBody,
   TableCell,
   TableHead,
@@ -41,6 +40,7 @@ type DataTableProps<TData, TValue> = {
   onLoadMore?: () => void
   onRowClick?: (row: Row<TData>) => void
   tableProps?: ComponentProps<"table">
+  noDataMessage?: ReactNode
 } & ComponentProps<"div">
 
 export function DataTable<TData, TValue>({
@@ -53,13 +53,13 @@ export function DataTable<TData, TValue>({
   onLoadMore,
   onRowClick,
   tableProps,
+  noDataMessage = "No results",
   ...containerProps
 }: DataTableProps<TData, TValue>) {
   const [showBackToTop, setShowBackToTop] = useState(false)
   const [expanded, setExpanded] = useState<ExpandedState>({})
   const scrollAreaRef = useRef<HTMLDivElement>(null)
   const viewportRef = useRef<HTMLDivElement>(null)
-  const tableRef = useRef<HTMLTableElement>(null)
   const scrollPositionRef = useRef(0)
 
   const expandable = !!SubComponent
@@ -124,7 +124,6 @@ export function DataTable<TData, TValue>({
     const viewport = viewportRef.current
     if (!viewport) return
 
-    // A small delay to allow the DOM to update with the new data
     const timeoutId = setTimeout(() => {
       if (viewport.scrollHeight <= viewport.clientHeight) {
         onLoadMore()
@@ -153,7 +152,7 @@ export function DataTable<TData, TValue>({
       className={cn("relative w-full h-full", containerProps.className)}
     >
       <ScrollArea ref={scrollAreaRef} className="max-h-full grid grid-rows-1">
-        <Table ref={tableRef} {...tableProps}>
+        <table {...tableProps}>
           <TableHeader className="sticky top-0 z-10 bg-background">
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id} className="hover:bg-inherit">
@@ -214,7 +213,7 @@ export function DataTable<TData, TValue>({
                   colSpan={columns.length}
                   className="p-4 text-center font-bold text-muted-foreground pointer-events-none"
                 >
-                  {isLoading ? "Loading..." : "No results"}
+                  {isLoading ? "Loading..." : noDataMessage}
                 </TableCell>
               </TableRow>
             )}
@@ -229,7 +228,7 @@ export function DataTable<TData, TValue>({
               </TableRow>
             )}
           </TableBody>
-        </Table>
+        </table>
         <ScrollBar orientation="horizontal" />
       </ScrollArea>
 

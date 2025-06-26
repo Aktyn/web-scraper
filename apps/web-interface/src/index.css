@@ -212,6 +212,11 @@
     @apply border-border focus-visible:outline-hidden;
   }
 
+  html {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-muted) var(--color-background-darker);
+  }
+
   body {
     @apply bg-background text-foreground;
     @apply h-screen w-screen grid grid-cols-[auto_1fr] grid-rows-1 items-stretch overflow-hidden;
@@ -303,9 +308,9 @@
   ::-webkit-scrollbar-corner {
     background: var(--color-background-darker);
   }
-  html {
-    scrollbar-width: thin;
-    scrollbar-color: var(--color-muted) var(--color-background-darker);
+
+  table {
+    @apply w-full caption-bottom text-sm;
   }
 }
 

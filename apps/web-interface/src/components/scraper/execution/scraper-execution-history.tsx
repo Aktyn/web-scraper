@@ -1,29 +1,19 @@
 import { TimestampValue } from "@/components/common/label/timestamp-value"
-import { NullBadge } from "@/components/common/null-badge"
 import { DataTable } from "@/components/common/table/data-table"
-import { IteratorDescription } from "@/components/iterator/iterator-description"
-import { Button } from "@/components/shadcn/button"
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/shadcn/popover"
 import { useInfiniteGet } from "@/hooks/api/useInfiniteGet"
 import { cn, formatDuration } from "@/lib/utils"
 import { ServerEventsProvider } from "@/providers/server-events.provider"
 import type { ColumnDef, Row } from "@tanstack/react-table"
-import type {
-  ExecutionIterator,
-  ScraperInstructionsExecutionInfo,
-} from "@web-scraper/common"
+import type { ExecutionIterator } from "@web-scraper/common"
 import {
   ScraperEventType,
-  ScraperInstructionsExecutionInfoType,
   SubscriptionMessageType,
   type ScraperExecutionInfo,
 } from "@web-scraper/common"
-import { Check, ExternalLink, SquareMousePointer, X } from "lucide-react"
 import { useEffect, useMemo, useRef, type ComponentProps } from "react"
+import { ExecutionResultInfo } from "./execution-result-info"
+import { getExecutionInfoDuration } from "./helpers"
+import { IteratorBadge } from "./iterator-badge"
 import { ScrollableScraperExecutionInfo } from "./scraper-execution-panel"
 
 type ScraperExecutionHistoryProps = ComponentProps<"div"> & {
@@ -68,49 +58,13 @@ export function ScraperExecutionHistory({
       {
         accessorKey: "iterations",
         header: "Number of iterations",
-        //TODO: show button to open iterator dialog and option to reuse it for new scraper execution
         cell: ({ row }) => (
           <div className="flex flex-row items-center gap-2">
             <span>{row.original.iterations.length}</span>
-            {row.original.iterator ? (
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="h-auto"
-                    onClick={(event) => event.stopPropagation()}
-                  >
-                    Iterator
-                    <ExternalLink />
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto max-w-xl">
-                  <IteratorDescription
-                    iterator={row.original.iterator}
-                    className="text-sm"
-                  >
-                    {onApplyIterator && (
-                      <Button
-                        variant="secondary"
-                        size="sm"
-                        onClick={(event) => {
-                          event.stopPropagation()
-                          if (row.original.iterator) {
-                            onApplyIterator(row.original.iterator)
-                          }
-                        }}
-                      >
-                        <SquareMousePointer />
-                        Apply to new execution
-                      </Button>
-                    )}
-                  </IteratorDescription>
-                </PopoverContent>
-              </Popover>
-            ) : (
-              <NullBadge>No iterator</NullBadge>
-            )}
+            <IteratorBadge
+              iterator={row.original.iterator}
+              onApplyIterator={onApplyIterator}
+            />
           </div>
         ),
       },
@@ -132,31 +86,13 @@ export function ScraperExecutionHistory({
       {
         accessorKey: "result",
         header: "Result",
-        cell: ({ row }) => {
-          const lastExecutionInfo = row.original.iterations
-            .at(-1)
-            ?.executionInfo.at(-1)
-          if (!lastExecutionInfo) {
-            return <NullBadge />
-          }
-
-          if (
-            lastExecutionInfo.type ===
-            ScraperInstructionsExecutionInfoType.Success
-          ) {
-            return (
-              <span className="text-success">
-                <Check className="size-4 inline" /> Success
-              </span>
-            )
-          } else {
-            return (
-              <span className="text-destructive">
-                <X className="size-4 inline" /> Error
-              </span>
-            )
-          }
-        },
+        cell: ({ row }) => (
+          <ExecutionResultInfo
+            executionInfos={row.original.iterations.flatMap(
+              (it) => it.executionInfo.at(-1) ?? [],
+            )}
+          />
+        ),
       },
     ]
 
@@ -227,19 +163,6 @@ function ExecutionInfoRow({ row }: ExecutionInfoRowProps) {
   )
 }
 
-function getExecutionInfoDuration(
-  executionInfo: ScraperInstructionsExecutionInfo,
-) {
-  const lastExecutionInfo = executionInfo.at(-1)
-  if (
-    lastExecutionInfo?.type === ScraperInstructionsExecutionInfoType.Success ||
-    lastExecutionInfo?.type === ScraperInstructionsExecutionInfoType.Error
-  ) {
-    return lastExecutionInfo.summary.duration
-  }
-  return 0
-}
-
 const iterationColumns: ColumnDef<
   ScraperExecutionInfo["iterations"][number]
 >[] = [
@@ -264,27 +187,10 @@ const iterationColumns: ColumnDef<
   {
     accessorKey: "result",
     header: "Result",
-    cell: ({ row }) => {
-      const lastExecutionInfo = row.original.executionInfo.at(-1)
-      if (!lastExecutionInfo) {
-        return null
-      }
-
-      if (
-        lastExecutionInfo.type === ScraperInstructionsExecutionInfoType.Success
-      ) {
-        return (
-          <span className="text-success">
-            <Check className="size-4 inline" /> Success
-          </span>
-        )
-      } else {
-        return (
-          <span className="text-destructive">
-            <X className="size-4 inline" /> Error
-          </span>
-        )
-      }
-    },
+    cell: ({ row }) => (
+      <ExecutionResultInfo
+        executionInfos={row.original.executionInfo.slice(-1)}
+      />
+    ),
   },
 ]
