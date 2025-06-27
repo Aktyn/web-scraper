@@ -18,6 +18,7 @@ import type {
   Notification,
   ListScraperExecutionsQuery,
   NotificationQuery,
+  Status,
 } from "@web-scraper/common"
 import { apiErrorResponseSchema } from "@web-scraper/common"
 
@@ -161,6 +162,12 @@ export type Routes = {
     put: {
       body: Pick<UserPreferences[number], "value">
       response: ApiResponse<UserPreferences[number]>
+    }
+  }
+
+  status: {
+    get: {
+      response: ApiResponse<Status>
     }
   }
 

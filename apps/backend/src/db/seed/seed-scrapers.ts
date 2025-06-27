@@ -1,6 +1,6 @@
 import {
-  type Evaluator,
   ElementSelectorType,
+  type Evaluator,
   PageActionType,
   ScraperConditionType,
   type ScraperInstructions,
@@ -34,6 +34,8 @@ export async function seedScrapers(db: DbModule) {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       _captchaTesterScraper,
       brainFmRegisterScraper,
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      _aiLocalizationTest,
     ] = await tx
       .insert(scrapersTable)
       .values([
@@ -79,6 +81,11 @@ export async function seedScrapers(db: DbModule) {
           description:
             "Registering a new account at brain.fm. Should execute without any cursor configuration.",
           instructions: brainFmRegisterInstructions,
+        },
+        {
+          name: "AI localization test",
+          description: "Test of experimental AI feature",
+          instructions: aiLocalizationTestInstructions,
         },
       ])
       .returning()
@@ -654,5 +661,26 @@ const brainFmRegisterInstructions: ScraperInstructions = [
   {
     type: ScraperInstructionType.PageAction,
     action: { type: PageActionType.Wait, duration: 5000 },
+  },
+]
+
+const aiLocalizationTestInstructions: ScraperInstructions = [
+  {
+    type: ScraperInstructionType.PageAction,
+    action: { type: PageActionType.Navigate, url: "https://example.com/" },
+  },
+  {
+    type: ScraperInstructionType.PageAction,
+    pageIndex: 0,
+    action: {
+      type: PageActionType.SmartClick,
+      aiPrompt: 'Click on "more information" link',
+      waitForNavigation: false,
+      useGhostCursor: true,
+    },
+  },
+  {
+    type: ScraperInstructionType.PageAction,
+    action: { type: PageActionType.Wait, duration: 10_000 },
   },
 ]

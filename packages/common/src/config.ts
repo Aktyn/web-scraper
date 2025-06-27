@@ -9,6 +9,7 @@ export const defaultPreferences = {
     description:
       "Path to the Chrome executable. If not set, the default path will be used.",
   },
+
   proxyURL: {
     value: "",
     description:
@@ -19,6 +20,7 @@ export const defaultPreferences = {
     description:
       "URL for the portal feature to work. If not set, the portal will not be used.",
   },
+
   viewportWidth: {
     value: 1920,
     description:
@@ -28,5 +30,17 @@ export const defaultPreferences = {
     value: 1080,
     description:
       "Height of the viewport. This influences how the pages are rendered.",
+  },
+
+  localizationModel: {
+    value: "qwen2.5vl:32b",
+    description:
+      "Ollama model to use for the localization AI. If not set, the default model will be used (qwen2.5vl:32b). See https://ollama.com/search for list of available models. Ollama must be installed and running in order to use this feature. The model must be already available in Ollama.",
+  },
+  localizationSystemPrompt: {
+    value:
+      "Localize an element on the GUI image according to user's instructions and output a click position.",
+    description:
+      "System prompt for the localization AI. If not set, no system message will be sent to the AI which may result in less accurate localization.",
   },
 } satisfies Record<string, { value: unknown; description: string | null }>

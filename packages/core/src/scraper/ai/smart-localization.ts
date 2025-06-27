@@ -1,10 +1,16 @@
 import { z } from "zod"
 import { resizeScreenshot } from "./image-processing"
-import { pick, type SimpleLogger } from "@web-scraper/common"
+import {
+  defaultPreferences,
+  pick,
+  type SimpleLogger,
+} from "@web-scraper/common"
 import zodToJsonSchema from "zod-to-json-schema"
 import ollama, { type ChatRequest } from "ollama"
 
-type OllamaChatOptions = Partial<Pick<ChatRequest, "model" | "format">>
+type ChatOptions = Partial<Pick<ChatRequest, "model" | "format">> & {
+  systemPrompt?: string
+}
 
 const CoordinatesSchema = z.object({
   action: z.literal("click"),
@@ -21,33 +27,52 @@ const CoordinatesSchema = z.object({
 export class SmartLocalization {
   private static jsonSchema = zodToJsonSchema(CoordinatesSchema)
 
-  private readonly systemPrompt =
-    "Localize an element on the GUI image according to user's instructions and output a click position."
+  /** This function will throw an error if ollama is not installed */
+  public static async checkModelAvailability(modelName: string) {
+    const list = await ollama.list()
+
+    return list.models.some(
+      (model) =>
+        model.name.toLowerCase() === modelName.toLowerCase() ||
+        model.model.toLowerCase() === modelName.toLowerCase(),
+    )
+  }
 
   constructor(
     private readonly logger: SimpleLogger,
-    private readonly chatOptions: OllamaChatOptions = {},
+    private readonly chatOptions: ChatOptions = {},
   ) {}
 
   async localize(prompt: string, viewportData: Uint8Array) {
+    const model =
+      this.chatOptions.model || defaultPreferences.localizationModel.value
+
+    const modelAvailable = await SmartLocalization.checkModelAvailability(model)
+
+    if (!modelAvailable) {
+      throw new Error(
+        `Model "${model}" is not available. It must be pulled from Ollama first.`,
+      )
+    }
+
     const { resizedImageData, originalResolution, resizedResolution } =
       await resizeScreenshot(viewportData)
 
-    const base64ResizedViewport = resizedImageData.toString("base64")
+    const encodedImage = await ollama.encodeImage(resizedImageData)
 
     const response = await ollama.chat({
-      model: "qwen2.5vl:32b",
+      model,
       messages: [
-        {
+        this.chatOptions.systemPrompt && {
           role: "system",
-          content: this.systemPrompt,
+          content: this.chatOptions.systemPrompt,
         },
         {
           role: "user",
           content: prompt,
-          images: [base64ResizedViewport],
+          images: [encodedImage],
         },
-      ],
+      ].filter((message) => !!message),
       format: SmartLocalization.jsonSchema,
       stream: false,
       ...this.chatOptions,

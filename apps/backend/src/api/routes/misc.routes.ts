@@ -3,6 +3,8 @@ import {
   SubscriptionMessageType,
   apiErrorResponseSchema,
   getApiResponseSchema,
+  runUnsafeAsync,
+  statusSchema,
   userPreferencesSchema,
   uuid,
 } from "@web-scraper/common"
@@ -11,6 +13,7 @@ import type { FastifyInstance } from "fastify"
 import type { ZodTypeProvider } from "fastify-type-provider-zod"
 import { preferencesTable } from "../../db/schema"
 import { type ApiModuleContext } from "../api.module"
+import { SmartLocalization } from "@web-scraper/core"
 
 export async function miscRoutes(
   fastify: FastifyInstance,
@@ -107,6 +110,33 @@ export async function miscRoutes(
 
       return reply.status(200).send({
         data: updatedPreference,
+      })
+    },
+  )
+
+  fastify.withTypeProvider<ZodTypeProvider>().get(
+    "/status",
+    {
+      schema: {
+        response: {
+          200: getApiResponseSchema(statusSchema),
+        },
+      },
+    },
+    async (_request, reply) => {
+      const localizationModelAvailability = await runUnsafeAsync(
+        async () =>
+          await SmartLocalization.checkModelAvailability(
+            config.preferences.localizationModel,
+          ),
+        () => void 0,
+      )
+
+      return reply.status(200).send({
+        data: {
+          ollamaInstalled: localizationModelAvailability !== null,
+          localizationModelAvailable: Boolean(localizationModelAvailability),
+        },
       })
     },
   )

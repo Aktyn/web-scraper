@@ -64,9 +64,11 @@ export function ScraperInstructionsForm({
   name = "instructions",
   condition,
 }: ScraperInstructionsFormProps) {
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  //@ts-ignore
   const { fields, append, remove, move } = useFieldArray<CreateScraper, never>({
-    control: control as never,
-    name: name as never,
+    control,
+    name,
   })
 
   const addInstruction = () => {

@@ -47,13 +47,11 @@ export async function executeNewScraper(
     executablePath:
       context.config.preferences.chromeExecutablePath ||
       "/usr/bin/chromium-browser",
-    // "/usr/bin/google-chrome",
     userDataDir:
       scraperData.userDataDirectory ||
       path.resolve(
         process.env.HOME || "~",
         "snap/chromium/common/chromium/Default",
-        // ".config/google-chrome/Default"
       ),
     headless: context.config.preferences.headless,
     proxy: context.config.preferences.proxyURL,
@@ -62,6 +60,9 @@ export async function executeNewScraper(
       width: context.config.preferences.viewportWidth,
       height: context.config.preferences.viewportHeight,
     },
+    localizationModel: context.config.preferences.localizationModel,
+    localizationSystemPrompt:
+      context.config.preferences.localizationSystemPrompt,
   })
 
   scraper.on("stateChange", (state, previousState) => {

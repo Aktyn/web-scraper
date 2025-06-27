@@ -37,6 +37,9 @@ type ScraperOptions = Pick<ScraperType, "id" | "name"> & {
   portalUrl?: string
 
   viewport?: Pick<Viewport, "width" | "height">
+
+  localizationModel?: string
+  localizationSystemPrompt?: string
 } & Partial<LaunchOptions>
 
 type Metadata = Record<string, unknown>
@@ -115,7 +118,10 @@ export class Scraper<
       isLandscape: false,
     }
 
-    this.localization = new SmartLocalization(this.logger)
+    this.localization = new SmartLocalization(this.logger, {
+      systemPrompt: options.localizationSystemPrompt,
+      model: options.localizationModel,
+    })
 
     assert(
       !Scraper.instances.has(this.identifier),

@@ -21,6 +21,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/shadcn/popover"
+import { AvailabilityCheck } from "@/components/common/availability-check"
 
 export function PageActionDetails({ action }: { action: PageAction }) {
   switch (action.type) {
@@ -54,6 +55,7 @@ export function PageActionDetails({ action }: { action: PageAction }) {
     case PageActionType.SmartClick:
       return (
         <div className="flex flex-row flex-wrap gap-2 gap-x-4">
+          <AvailabilityCheck feature={AvailabilityCheck.Feature.SmartClick} />
           <LabeledValue label="Prompt:">{action.aiPrompt}</LabeledValue>
           <ClickActionFlags action={action} />
         </div>

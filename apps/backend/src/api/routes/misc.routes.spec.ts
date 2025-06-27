@@ -40,6 +40,15 @@ describe("Misc Routes", () => {
             key: "viewportHeight",
             value: 1080,
           },
+          {
+            key: "localizationModel",
+            value: "qwen2.5vl:32b",
+          },
+          {
+            key: "localizationSystemPrompt",
+            value:
+              "Localize an element on the GUI image according to user's instructions and output a click position.",
+          },
         ],
       })
     })

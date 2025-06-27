@@ -7,6 +7,7 @@ import { useWatch, type Control } from "react-hook-form"
 import { EvaluatorField } from "../common/evaluator-field"
 import { ScraperSelectorsForm } from "./scraper-selectors-form"
 import { ScraperValueForm } from "./scraper-value-form"
+import { AvailabilityCheck } from "@/components/common/availability-check"
 
 export type PageActionFieldName = `instructions.${number}.action`
 
@@ -56,6 +57,7 @@ export function PageActionForm({ control, fieldName }: PageActionFormProps) {
     case PageActionType.SmartClick:
       return (
         <div className="space-y-4">
+          <AvailabilityCheck feature={AvailabilityCheck.Feature.SmartClick} />
           <FormInput
             control={control}
             name={`${fieldName}.aiPrompt`}

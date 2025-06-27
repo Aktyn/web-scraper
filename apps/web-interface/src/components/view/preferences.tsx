@@ -8,22 +8,27 @@ import { useGet } from "@/hooks/api/useGet"
 import { usePut } from "@/hooks/api/usePut"
 import { useMounted } from "@/hooks/useMounted"
 import type { ColumnDef } from "@tanstack/react-table"
+import type { Status, UserPreferences } from "@web-scraper/common"
 import { defaultPreferences } from "@web-scraper/common"
-import { CheckIcon, EditIcon, XIcon } from "lucide-react"
+import { CheckIcon, EditIcon, Save, TriangleAlert, XIcon } from "lucide-react"
 import { useMemo, useState } from "react"
 import { NullBadge } from "../common/null-badge"
 import { DataTable } from "../common/table/data-table"
 import { Input } from "../shadcn/input"
 import { Label } from "../shadcn/label"
 import { Switch } from "../shadcn/switch"
+import { Tooltip, TooltipContent, TooltipTrigger } from "../shadcn/tooltip"
+
+type PreferenceKey = UserPreferences[number]["key"]
 
 export function Preferences() {
   const { data: userPreferences, isLoading, refetch } = useGet("/preferences")
+  const { data: status, isLoading: isStatusLoading } = useGet("/status")
 
   const preferences = useMemo(() => {
     return Object.entries(defaultPreferences).map(
       ([key, { value, description }]) => ({
-        key,
+        key: key as PreferenceKey,
         value: (userPreferences?.data.find((p) => p.key === key)?.value ??
           value) as Required<unknown>,
         description,
@@ -32,18 +37,28 @@ export function Preferences() {
   }, [userPreferences?.data])
 
   const columns = useMemo<
-    ColumnDef<{
-      key: string
-      value: Required<unknown>
-      description: string | null
-    }>[]
+    ColumnDef<
+      UserPreferences[number] & {
+        description: string | null
+      }
+    >[]
   >(
     () => [
       {
         accessorKey: "key",
         header: "Key",
         cell: ({ row }) => (
-          <div className="font-medium">{row.original.key}</div>
+          <div className="font-medium flex items-center gap-2">
+            {status && !isAvailable(row.original.key, status.data) && (
+              <Tooltip>
+                <TooltipTrigger>
+                  <TriangleAlert className="size-4 text-warning inline" />
+                </TooltipTrigger>
+                <TooltipContent>Feature not available</TooltipContent>
+              </Tooltip>
+            )}
+            {row.original.key}
+          </div>
         ),
       },
       {
@@ -57,13 +72,13 @@ export function Preferences() {
         accessorKey: "description",
         header: "Description",
         cell: ({ row }) => (
-          <span className="whitespace-normal text-muted-foreground">
+          <span className="whitespace-normal text-muted-foreground text-pretty inline-block">
             {row.original.description ?? <NullBadge />}
           </span>
         ),
       },
     ],
-    [refetch],
+    [refetch, status],
   )
 
   return (
@@ -73,10 +88,23 @@ export function Preferences() {
         className="view-transition delay-100"
         columns={columns}
         data={preferences}
-        isLoading={isLoading}
+        isLoading={isLoading || isStatusLoading}
       />
     </div>
   )
+}
+
+function isAvailable(key: PreferenceKey, status: Status) {
+  // eslint-disable-next-line @typescript-eslint/switch-exhaustiveness-check
+  switch (key) {
+    case "localizationModel":
+    case "localizationSystemPrompt":
+      return status.ollamaInstalled && status.localizationModelAvailable
+    default:
+      return true
+  }
+
+  return true
 }
 
 type ValueCellProps = {
@@ -106,7 +134,7 @@ function ValueCell({ preference, onValueChange }: ValueCellProps) {
 
   return (
     <div className="flex items-center justify-between gap-4">
-      <div className="truncate">
+      <div className="text-pretty max-h-64 overflow-y-auto">
         {typeof value === "boolean" ? (
           <span className="flex items-center gap-1 font-medium">
             {value ? (
@@ -118,6 +146,8 @@ function ValueCell({ preference, onValueChange }: ValueCellProps) {
           </span>
         ) : typeof value === "string" ? (
           value || <NullBadge />
+        ) : typeof value === "number" ? (
+          value
         ) : (
           JSON.stringify(value)
         )}
@@ -146,6 +176,12 @@ function ValueCell({ preference, onValueChange }: ValueCellProps) {
               value={value}
               onValueChange={handleChange}
             />
+          ) : typeof value === "number" ? (
+            <NumberValueCell
+              valueKey={key}
+              value={value}
+              onValueChange={handleChange}
+            />
           ) : (
             <Label>Not supported</Label>
           )}
@@ -170,12 +206,14 @@ function StringValueCell({
 
   return (
     <div className="flex flex-col items-center gap-2">
-      <Label htmlFor={valueKey}>
-        Set <b>{valueKey}</b>
+      <Label htmlFor={valueKey} className="gap-1">
+        <span>Set</span>
+        <b>{valueKey}</b>
       </Label>
       <Input
         id={valueKey}
         value={inputValue}
+        className="w-md"
         onChange={(event) => setInputValue(event.target.value)}
         onKeyDown={(event) => {
           if (event.key === "Enter") {
@@ -188,6 +226,53 @@ function StringValueCell({
         size="sm"
         onClick={() => onValueChange(inputValue)}
       >
+        <Save />
+        Save
+      </Button>
+    </div>
+  )
+}
+
+type NumberValueCellProps = {
+  valueKey: string
+  value: number
+  onValueChange: (newValue: number) => void
+}
+
+function NumberValueCell({
+  valueKey,
+  value,
+  onValueChange,
+}: NumberValueCellProps) {
+  const [inputValue, setInputValue] = useState(value.toString())
+
+  const handleSave = () => {
+    const numericValue = Number.parseInt(inputValue, 10)
+    if (!Number.isNaN(numericValue)) {
+      onValueChange(numericValue)
+    }
+  }
+
+  return (
+    <div className="flex flex-col items-center gap-2">
+      <Label htmlFor={valueKey} className="gap-1">
+        <span>Set</span>
+        <b>{valueKey}</b>
+      </Label>
+      <Input
+        id={valueKey}
+        type="number"
+        value={inputValue}
+        className="w-md"
+        onChange={(event) => setInputValue(event.target.value)}
+        onKeyDown={(event) => {
+          if (event.key === "Enter") {
+            handleSave()
+          }
+        }}
+      />
+      <Button variant="default" size="sm" onClick={handleSave}>
+        <Save />
         Save
       </Button>
     </div>
