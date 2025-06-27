@@ -30,8 +30,10 @@ export class SmartLocalization {
   ) {}
 
   async localize(prompt: string, viewportData: Uint8Array) {
-    const resizedViewport = await resizeScreenshot(viewportData)
-    const base64ResizedViewport = resizedViewport.toString("base64")
+    const { resizedImageData, originalResolution, resizedResolution } =
+      await resizeScreenshot(viewportData)
+
+    const base64ResizedViewport = resizedImageData.toString("base64")
 
     const response = await ollama.chat({
       model: "qwen2.5vl:32b",
@@ -56,7 +58,14 @@ export class SmartLocalization {
         JSON.parse(response.message.content),
       )
 
-      return pick(parsedOutput, "x", "y")
+      const coordinates = pick(parsedOutput, "x", "y")
+
+      return {
+        x: (coordinates.x * originalResolution.width) / resizedResolution.width,
+        y:
+          (coordinates.y * originalResolution.height) /
+          resizedResolution.height,
+      }
     } catch (error) {
       this.logger.error(error)
       return null

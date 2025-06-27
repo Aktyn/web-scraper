@@ -93,11 +93,13 @@ export async function performPageAction(
 
       if (action.useGhostCursor) {
         pageContext.cursor.toggleRandomMove(false)
+
         await pageContext.cursor.moveTo(coordinates, {
           randomizeMoveDelay: true,
           moveDelay: 3_000,
         })
         await pageContext.cursor.click(undefined, getGhostClickOptions())
+
         pageContext.cursor.toggleRandomMove(true)
       } else {
         await pageContext.page.mouse.click(coordinates.x, coordinates.y, {

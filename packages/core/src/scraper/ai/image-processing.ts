@@ -1,7 +1,10 @@
+import type { Viewport } from "rebrowser-puppeteer"
 import sharp from "sharp"
 
+type Resolution = Pick<Viewport, "width" | "height">
+
 function calculateSmartResolution(
-  { width, height }: { width: number; height: number },
+  { width, height }: Resolution,
   factor = 28,
   minPixels = 56 * 56,
   maxPixels = 14 * 14 * 4 * 1280,
@@ -34,16 +37,34 @@ function calculateSmartResolution(
   return { width: w_bar, height: h_bar }
 }
 
-export async function resizeScreenshot(imageData: Uint8Array) {
+export async function resizeScreenshot(imageData: Uint8Array): Promise<{
+  resizedImageData: Buffer<ArrayBufferLike>
+  originalResolution: Resolution
+  resizedResolution: Resolution
+}> {
   const image = sharp(imageData)
 
-  const { width, height } = calculateSmartResolution(await image.metadata())
+  const { width: originalWidth, height: originalHeight } =
+    await image.metadata()
+  const { width: resizedWidth, height: resizedHeight } =
+    calculateSmartResolution({ width: originalWidth, height: originalHeight })
 
   const resized = await image
-    .resize(width, height, {
+    .resize(resizedWidth, resizedHeight, {
       fit: "contain",
       kernel: sharp.kernel.lanczos3,
     })
     .toBuffer()
-  return resized
+
+  return {
+    resizedImageData: resized,
+    originalResolution: {
+      width: originalWidth,
+      height: originalHeight,
+    },
+    resizedResolution: {
+      width: resizedWidth,
+      height: resizedHeight,
+    },
+  }
 }
