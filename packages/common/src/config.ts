@@ -43,4 +43,13 @@ export const defaultPreferences = {
     description:
       "System prompt for the localization AI. If not set, no system message will be sent to the AI which may result in less accurate localization.",
   },
-} satisfies Record<string, { value: unknown; description: string | null }>
+
+  navigationModel: {
+    value: "qwen2.5vl:32b",
+    description:
+      "Same as localizationModel, but for running autonomous agents (page navigation).",
+  },
+} as const satisfies Record<
+  string,
+  { value: unknown; description: string | null }
+>

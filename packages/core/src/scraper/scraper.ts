@@ -1,6 +1,7 @@
 import {
   assert,
   deepMerge,
+  defaultPreferences,
   pick,
   type ScraperInstructions,
   type ScraperInstructionsExecutionInfo,
@@ -25,6 +26,7 @@ import { type DataBridge } from "./data-helper"
 import { ExecutionPages } from "./execution/execution-pages"
 import { executeInstructions } from "./execution/instructions"
 import { ScraperExecutionInfo } from "./execution/scraper-execution-info"
+import { AutonomousAgent } from "./ai/autonomous-agent"
 
 type ScraperOptions = Pick<ScraperType, "id" | "name"> & {
   logger?: SimpleLogger
@@ -40,6 +42,7 @@ type ScraperOptions = Pick<ScraperType, "id" | "name"> & {
 
   localizationModel?: string
   localizationSystemPrompt?: string
+  navigationModel?: string
 } & Partial<LaunchOptions>
 
 type Metadata = Record<string, unknown>
@@ -87,6 +90,7 @@ export class Scraper<
   private readonly logger: SimpleLogger
   private readonly defaultViewport: Viewport
   private readonly localization: SmartLocalization
+  private readonly agent: AutonomousAgent
 
   private initPromise: Promise<Browser> | null = null
 
@@ -110,17 +114,39 @@ export class Scraper<
     }
 
     this.defaultViewport = {
-      width: viewport?.width ?? 1920,
-      height: viewport?.height ?? 1080,
+      width: viewport?.width ?? defaultPreferences.viewportWidth.value,
+      height: viewport?.height ?? defaultPreferences.viewportHeight.value,
       isMobile: false,
       deviceScaleFactor: 1,
       hasTouch: false,
       isLandscape: false,
     }
 
-    this.localization = new SmartLocalization(this.logger, {
+    const localizationLogger =
+      "child" in this.logger && typeof this.logger.child === "function"
+        ? this.logger.child({
+            scraper: `${id}-${name}`,
+            ollama: true,
+            localization: true,
+          })
+        : this.logger
+
+    this.localization = new SmartLocalization(localizationLogger, {
       systemPrompt: options.localizationSystemPrompt,
       model: options.localizationModel,
+    })
+
+    const navigationLogger =
+      "child" in this.logger && typeof this.logger.child === "function"
+        ? this.logger.child({
+            scraper: `${id}-${name}`,
+            ollama: true,
+            navigation: true,
+          })
+        : this.logger
+
+    this.agent = new AutonomousAgent(navigationLogger, {
+      model: options.navigationModel,
     })
 
     assert(
@@ -405,6 +431,7 @@ export class Scraper<
           abortController: this.abortController,
           ai: {
             localization: this.localization,
+            navigation: this.agent,
           },
         },
         instructions,

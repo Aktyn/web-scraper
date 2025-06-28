@@ -62,6 +62,14 @@ export const pageActionTypeLabels: { [key in PageActionType]: ReactNode } = {
   [PageActionType.ScrollToTop]: "Scroll to top",
   [PageActionType.ScrollToElement]: "Scroll to element",
   [PageActionType.Evaluate]: "Evaluate",
+  [PageActionType.RunAutonomousAgent]: (
+    <div className="flex flex-row items-center gap-1">
+      <span>Run autonomous agent</span>
+      <span className="text-muted-foreground text-xs leading-none">
+        (<Brain className="size-3.5 inline" /> AI feature)
+      </span>
+    </div>
+  ),
 }
 
 export const selectorTypeLabels: { [key in ElementSelectorType]: string } = {

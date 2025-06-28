@@ -31,13 +31,14 @@ export async function executeInstructions(
   level = 0,
 ): Promise<ScraperInstructions[number] | null> {
   assert(instructions.length > 0 || level > 0, "Instructions are empty")
-  assert(
-    level > 0 ||
-      instructions[0].type === ScraperInstructionType.DeleteCookies ||
-      (instructions[0].type === ScraperInstructionType.PageAction &&
-        instructions[0].action.type === PageActionType.Navigate),
-    "First instruction must be a navigation action or delete cookies",
-  )
+
+  if (
+    level === 0 &&
+    (instructions[0].type !== ScraperInstructionType.PageAction ||
+      instructions[0].action.type !== PageActionType.Navigate)
+  ) {
+    context.logger.warn("First instruction should be a navigation action")
+  }
 
   for (let i = 0; i < instructions.length; i++) {
     const instruction = instructions[i]

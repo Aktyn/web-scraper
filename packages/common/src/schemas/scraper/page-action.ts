@@ -21,6 +21,15 @@ export enum PageActionType {
   ScrollToElement = "scroll-to-element",
 
   Evaluate = "evaluate",
+
+  /**
+   * This action is used to let AI take control over single page in order to perform a given task.\
+   * Task should be precise and specific and contain all necessary information to perform the task.\
+   * Example prompt: "Star repository named "Web-Scraper". The author is Aktyn."\
+   * AI is able to perform any user-like action on the page\
+   * If Ollama runs locally, this action can be really time consuming.
+   */
+  RunAutonomousAgent = "run-autonomous-agent",
 }
 
 export const pageActionSchema = z.discriminatedUnion("type", [
@@ -68,6 +77,14 @@ export const pageActionSchema = z.discriminatedUnion("type", [
   z.object({
     type: z.literal(PageActionType.Evaluate),
     evaluator: evaluatorSchema,
+  }),
+
+  z.object({
+    type: z.literal(PageActionType.RunAutonomousAgent),
+    startUrl: z.string().url("Invalid URL").optional(),
+    task: z.string().min(1, "Task description is required"),
+    useGhostCursor: z.boolean().optional(),
+    maximumSteps: z.number().int().min(1).max(256).optional(),
   }),
 ])
 

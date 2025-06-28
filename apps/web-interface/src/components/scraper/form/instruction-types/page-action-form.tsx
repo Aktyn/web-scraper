@@ -8,6 +8,7 @@ import { EvaluatorField } from "../common/evaluator-field"
 import { ScraperSelectorsForm } from "./scraper-selectors-form"
 import { ScraperValueForm } from "./scraper-value-form"
 import { AvailabilityCheck } from "@/components/common/availability-check"
+import { FormTextarea } from "@/components/common/form/form-textarea"
 
 export type PageActionFieldName = `instructions.${number}.action`
 
@@ -123,6 +124,37 @@ export function PageActionForm({ control, fieldName }: PageActionFormProps) {
           control={control}
           fieldName={`${fieldName}.evaluator`}
         />
+      )
+
+    case PageActionType.RunAutonomousAgent:
+      return (
+        <div className="space-y-4">
+          <FormTextarea
+            control={control}
+            name={`${fieldName}.task`}
+            label="Task"
+            description="Task to perform"
+          />
+          <FormInput
+            control={control}
+            name={`${fieldName}.startUrl`}
+            label="Start URL"
+            description="URL to start the agent from (optional)"
+          />
+          <FormInput
+            control={control}
+            name={`${fieldName}.maximumSteps`}
+            label="Maximum steps"
+            description="Maximum allowed number of steps that the agent can take before giving up"
+            type="number"
+          />
+          <FormSwitch
+            control={control}
+            name={`${fieldName}.useGhostCursor`}
+            label="Use ghost cursor"
+            description="Use a ghost cursor to click the element in user-like way"
+          />
+        </div>
       )
   }
 }

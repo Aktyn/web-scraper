@@ -88,4 +88,5 @@ const iconsMap: { [key in PageActionType]: IconName } = {
   [PageActionType.ScrollToTop]: "monitor-up",
   [PageActionType.ScrollToElement]: "mouse-pointer-click",
   [PageActionType.Evaluate]: "file-code",
+  [PageActionType.RunAutonomousAgent]: "bot",
 }

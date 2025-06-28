@@ -449,27 +449,6 @@ describe(
           },
         ] satisfies ErrorResultType[])
       }, 60_000)
-
-      it("should return error result if first instruction is not a page navigation action", async () => {
-        const instructions: ScraperInstructions = [
-          { type: ScraperInstructionType.Marker, name: "start" },
-        ]
-
-        await expect(
-          scraper
-            .execute(instructions, mockDataBridge)
-            .then((res) => res.get()),
-        ).resolves.toEqual([
-          {
-            type: ScraperInstructionsExecutionInfoType.Error,
-            errorMessage:
-              "First instruction must be a navigation action or delete cookies",
-            summary: {
-              duration: expect.any(Number) as never,
-            },
-          },
-        ] satisfies ErrorResultType[])
-      }, 60_000)
     })
 
     describe("requests data and use it to fill form fields", () => {

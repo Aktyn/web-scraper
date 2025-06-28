@@ -1,19 +1,19 @@
 import {
-  type SubscriptionMessage,
-  SubscriptionMessageType,
   apiErrorResponseSchema,
   getApiResponseSchema,
   runUnsafeAsync,
   statusSchema,
+  type SubscriptionMessage,
+  SubscriptionMessageType,
   userPreferencesSchema,
   uuid,
 } from "@web-scraper/common"
+import { checkModelAvailability } from "@web-scraper/core"
 import { eq } from "drizzle-orm"
 import type { FastifyInstance } from "fastify"
 import type { ZodTypeProvider } from "fastify-type-provider-zod"
 import { preferencesTable } from "../../db/schema"
 import { type ApiModuleContext } from "../api.module"
-import { SmartLocalization } from "@web-scraper/core"
 
 export async function miscRoutes(
   fastify: FastifyInstance,
@@ -126,9 +126,7 @@ export async function miscRoutes(
     async (_request, reply) => {
       const localizationModelAvailability = await runUnsafeAsync(
         async () =>
-          await SmartLocalization.checkModelAvailability(
-            config.preferences.localizationModel,
-          ),
+          await checkModelAvailability(config.preferences.localizationModel),
         () => void 0,
       )
 

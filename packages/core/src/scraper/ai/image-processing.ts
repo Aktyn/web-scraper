@@ -1,7 +1,9 @@
+import path from "node:path"
+import fs from "node:fs"
 import type { Viewport } from "rebrowser-puppeteer"
 import sharp from "sharp"
 
-type Resolution = Pick<Viewport, "width" | "height">
+export type Resolution = Pick<Viewport, "width" | "height">
 
 function calculateSmartResolution(
   { width, height }: Resolution,
@@ -49,15 +51,25 @@ export async function resizeScreenshot(imageData: Uint8Array): Promise<{
   const { width: resizedWidth, height: resizedHeight } =
     calculateSmartResolution({ width: originalWidth, height: originalHeight })
 
-  const resized = await image
-    .resize(resizedWidth, resizedHeight, {
-      fit: "contain",
-      kernel: sharp.kernel.lanczos3,
-    })
-    .toBuffer()
+  const resized = image.resize(resizedWidth, resizedHeight, {
+    fit: "contain",
+    kernel: sharp.kernel.lanczos3,
+  })
+
+  if (process.env.NODE_ENV === "development") {
+    try {
+      const outputPath = path.join(process.cwd(), "screenshots")
+      if (!fs.existsSync(outputPath)) {
+        fs.mkdirSync(outputPath, { recursive: true })
+      }
+      await resized.toFile(path.join(outputPath, "ollama_resized.jpeg"))
+    } catch {
+      // noop
+    }
+  }
 
   return {
-    resizedImageData: resized,
+    resizedImageData: await resized.toBuffer(),
     originalResolution: {
       width: originalWidth,
       height: originalHeight,

@@ -1,9 +1,10 @@
 import { randomInt, type SimpleLogger } from "@web-scraper/common"
 import type { ClickOptions } from "ghost-cursor"
+import type { AutonomousAgent } from "../ai/autonomous-agent"
+import type { SmartLocalization } from "../ai/smart-localization"
 import type { DataBridge } from "../data-helper"
 import type { ExecutionPages } from "./execution-pages"
 import type { ScraperExecutionInfo } from "./scraper-execution-info"
-import type { SmartLocalization } from "../ai/smart-localization"
 
 export type ScraperExecutionContext = {
   scraperIdentifier: `${number}-${string}`
@@ -14,6 +15,7 @@ export type ScraperExecutionContext = {
   abortController: AbortController
   ai: {
     localization: SmartLocalization
+    navigation: AutonomousAgent
   }
 }
 

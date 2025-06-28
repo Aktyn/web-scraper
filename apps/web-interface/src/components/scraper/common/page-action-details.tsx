@@ -140,6 +140,27 @@ export function PageActionDetails({ action }: { action: PageAction }) {
           )}
         </div>
       )
+
+    case PageActionType.RunAutonomousAgent:
+      return (
+        <div className="flex flex-row flex-wrap gap-2 gap-x-4">
+          <LabeledValue label="Task:">{action.task}</LabeledValue>
+          {action.startUrl && (
+            <LabeledValue label="Start URL:">
+              <ExternalLink url={action.startUrl} />
+            </LabeledValue>
+          )}
+          <LabeledValue label="Maximum steps:">
+            {action.maximumSteps ?? 256}
+          </LabeledValue>
+          {action.useGhostCursor && (
+            <Label className="flex flex-row items-center gap-2 pointer-events-auto">
+              <MousePointerClick className="size-4 inline" />
+              <span>Ghost cursor</span>
+            </Label>
+          )}
+        </div>
+      )
   }
 }
 

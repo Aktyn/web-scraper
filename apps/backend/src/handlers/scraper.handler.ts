@@ -63,6 +63,7 @@ export async function executeNewScraper(
     localizationModel: context.config.preferences.localizationModel,
     localizationSystemPrompt:
       context.config.preferences.localizationSystemPrompt,
+    navigationModel: context.config.preferences.navigationModel,
   })
 
   scraper.on("stateChange", (state, previousState) => {

@@ -1,4 +1,5 @@
 import {
+  type SimpleLogger,
   type PageAction,
   PageActionType,
   replaceSpecialStrings,
@@ -15,7 +16,7 @@ export async function performPageAction(
   context: ScraperExecutionContext,
   action: PageAction,
   pageContext: ScraperPageContext,
-) {
+): Promise<void> {
   context.logger.info({ msg: "Performing action", action })
 
   switch (action.type) {
@@ -64,11 +65,18 @@ export async function performPageAction(
       }
 
       if (action.waitForNavigation) {
-        await pageContext.page.waitForNavigation({
-          waitUntil: "networkidle0",
-          signal: context.abortController.signal,
-          timeout: 20_000,
-        })
+        try {
+          await pageContext.page.waitForNavigation({
+            waitUntil: "networkidle0",
+            signal: context.abortController.signal,
+            timeout: 20_000,
+          })
+        } catch (error) {
+          context.logger.warn({
+            msg: "An error occurred while waiting for navigation",
+            error,
+          })
+        }
       }
       break
     }
@@ -91,29 +99,16 @@ export async function performPageAction(
 
       context.logger.info({ msg: "Localization result", coordinates })
 
-      if (action.useGhostCursor) {
-        pageContext.cursor.toggleRandomMove(false)
-
-        await pageContext.cursor.moveTo(coordinates, {
-          randomizeMoveDelay: true,
-          moveDelay: 3_000,
-        })
-        await pageContext.cursor.click(undefined, getGhostClickOptions())
-
-        pageContext.cursor.toggleRandomMove(true)
-      } else {
-        await pageContext.page.mouse.click(coordinates.x, coordinates.y, {
-          delay: randomInt(1, 4),
-        })
-      }
-
-      if (action.waitForNavigation) {
-        await pageContext.page.waitForNavigation({
-          waitUntil: "networkidle0",
-          signal: context.abortController.signal,
-          timeout: 20_000,
-        })
-      }
+      await preciseClick(
+        pageContext,
+        coordinates,
+        {
+          useGhostCursor: action.useGhostCursor,
+          waitForNavigation: action.waitForNavigation,
+          abortController: context.abortController,
+        },
+        context.logger,
+      )
       break
     }
     case PageActionType.Type: {
@@ -143,11 +138,18 @@ export async function performPageAction(
       }
 
       if (action.waitForNavigation) {
-        await pageContext.page.waitForNavigation({
-          waitUntil: "networkidle0",
-          signal: context.abortController.signal,
-          timeout: 20_000,
-        })
+        try {
+          await pageContext.page.waitForNavigation({
+            waitUntil: "networkidle0",
+            signal: context.abortController.signal,
+            timeout: 20_000,
+          })
+        } catch (error) {
+          context.logger.warn({
+            msg: "An error occurred while waiting for navigation",
+            error,
+          })
+        }
       }
       break
     }
@@ -191,6 +193,35 @@ export async function performPageAction(
         )
       }
       break
+
+    case PageActionType.RunAutonomousAgent: {
+      if (action.startUrl) {
+        await performPageAction(
+          context,
+          {
+            type: PageActionType.Navigate,
+            url: action.startUrl,
+          },
+          pageContext,
+        )
+      }
+
+      context.logger.info({
+        msg: "Running autonomous agent",
+        task: action.task,
+      })
+
+      const answer = await context.ai.navigation.run(
+        action,
+        pageContext,
+        (commonAction) => performPageAction(context, commonAction, pageContext),
+      )
+
+      //TODO: handle answer somehow
+      context.logger.info({ msg: "Autonomous agent completed", answer })
+
+      break
+    }
   }
 
   await wait(randomInt(1_000, 2_000))
@@ -203,5 +234,50 @@ export async function performPageAction(
     await detectAndSolveCaptcha(context, pageContext)
   } catch (error) {
     context.logger.error({ msg: "Captcha detection failed", error })
+  }
+}
+
+type PreciseClickOptions = Partial<{
+  useGhostCursor: boolean
+  waitForNavigation: boolean
+  abortController: AbortController
+}>
+
+//TODO: add PreciseClick to pageActionSchema
+export async function preciseClick(
+  pageContext: ScraperPageContext,
+  coordinates: { x: number; y: number },
+  options: PreciseClickOptions,
+  logger: SimpleLogger,
+) {
+  if (options.useGhostCursor) {
+    pageContext.cursor.toggleRandomMove(false)
+
+    await pageContext.cursor.moveTo(coordinates, {
+      randomizeMoveDelay: true,
+      moveDelay: 3_000,
+    })
+    await pageContext.cursor.click(undefined, getGhostClickOptions())
+
+    pageContext.cursor.toggleRandomMove(true)
+  } else {
+    await pageContext.page.mouse.click(coordinates.x, coordinates.y, {
+      delay: randomInt(1, 4),
+    })
+  }
+
+  if (options.waitForNavigation) {
+    try {
+      await pageContext.page.waitForNavigation({
+        waitUntil: "networkidle0",
+        signal: options.abortController?.signal,
+        timeout: 20_000,
+      })
+    } catch (error) {
+      logger.warn({
+        msg: "An error occurred while waiting for navigation",
+        error,
+      })
+    }
   }
 }
