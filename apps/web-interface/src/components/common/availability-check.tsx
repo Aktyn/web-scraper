@@ -2,6 +2,7 @@ import { useGet } from "@/hooks/api/useGet"
 import { Ban } from "lucide-react"
 import { useMemo } from "react"
 import { Alert, AlertDescription, AlertTitle } from "../shadcn/alert"
+import type { Status } from "@web-scraper/common"
 
 enum AvailabilityCheckFeature {
   SmartClick = "smart-click",
@@ -19,24 +20,15 @@ export function AvailabilityCheck({
 }: AvailabilityCheckProps) {
   const { data: status, isLoading } = useGet("/status")
 
-  const isAvailable = useMemo(() => {
+  const available = useMemo(() => {
     if (isLoading || !status) {
       return true
     }
 
-    switch (feature) {
-      case AvailabilityCheckFeature.SmartClick:
-        return (
-          status.data.ollamaInstalled && status.data.localizationModelAvailable
-        )
-      case AvailabilityCheckFeature.AutonomousAgent:
-        return (
-          status.data.ollamaInstalled && status.data.navigationModelAvailable
-        )
-    }
+    return isAvailable(feature, status.data)
   }, [feature, isLoading, status])
 
-  if (isAvailable) {
+  if (available) {
     return null
   }
 
@@ -54,10 +46,20 @@ export function AvailabilityCheck({
 }
 
 AvailabilityCheck.Feature = AvailabilityCheckFeature
+AvailabilityCheck.isAvailable = isAvailable
 
 const notAvailableMessages = {
   [AvailabilityCheckFeature.SmartClick]:
     "Smart click is not available because Ollama is not installed or the localization model is not available.\nPlease pull the model from Ollama first.",
   [AvailabilityCheckFeature.AutonomousAgent]:
     "Autonomous agent is not available because Ollama is not installed or the navigation model is not available.\nPlease pull the model from Ollama first.",
+}
+
+function isAvailable(feature: AvailabilityCheckFeature, status: Status) {
+  switch (feature) {
+    case AvailabilityCheckFeature.SmartClick:
+      return status.ollamaInstalled && status.localizationModelAvailable
+    case AvailabilityCheckFeature.AutonomousAgent:
+      return status.ollamaInstalled && status.navigationModelAvailable
+  }
 }

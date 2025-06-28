@@ -25,6 +25,11 @@ export function NavigationMenu({ compact }: { compact: boolean }) {
         label="Data Stores"
       />
       <Item
+        view={useView.View.Routines}
+        icon="calendar-sync"
+        label="Routines"
+      />
+      <Item
         view={useView.View.Notifications}
         icon="bell"
         label="Notifications"

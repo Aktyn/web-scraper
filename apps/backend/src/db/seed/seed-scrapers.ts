@@ -79,7 +79,7 @@ export async function seedScrapers(db: DbModule) {
         {
           name: "Brain.fm registration",
           description:
-            "Registering a new account at brain.fm. Should execute without any cursor configuration.",
+            "Registering a new account at brain.fm. Should execute without iterator.",
           instructions: brainFmRegisterInstructions,
         },
         {

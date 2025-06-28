@@ -11,6 +11,7 @@ import { PinnedDataStoresProvider } from "./providers/pinned-data-stores.provide
 import { ServerEventsProvider } from "./providers/server-events.provider"
 import { Preferences } from "./components/view/preferences"
 import { Notifications } from "./components/view/notifications"
+import { Routines } from "./components/view/routines"
 
 export default function App() {
   return (
@@ -98,6 +99,7 @@ const viewsMap = {
   [useView.View.Dashboard]: Dashboard,
   [useView.View.Scrapers]: Scrapers,
   [useView.View.DataStores]: DataStores,
+  [useView.View.Routines]: Routines,
   [useView.View.Notifications]: Notifications,
   [useView.View.Preferences]: Preferences,
 }
