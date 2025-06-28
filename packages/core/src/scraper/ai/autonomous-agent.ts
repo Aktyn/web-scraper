@@ -7,7 +7,7 @@ import {
   type PageAction,
   type SimpleLogger,
 } from "@web-scraper/common"
-import ollama, { type ChatRequest } from "ollama"
+import ollama, { type ChatResponse, type ChatRequest } from "ollama"
 import zodToJsonSchema from "zod-to-json-schema"
 import type { ScraperPageContext } from "../execution/execution-pages"
 import { checkModelAvailability, getAbsoluteCoordinates } from "./helpers"
@@ -68,26 +68,42 @@ export class AutonomousAgent {
 
       const encodedImage = await ollama.encodeImage(resizedImageData)
 
-      const response = await ollama.chat({
-        model,
-        messages: [
-          {
-            role: "system",
-            content: getSystemPrompt(),
-          },
-          {
-            role: "user",
-            content: buildStepContent(
-              action.task,
-              observations.slice(-lastObservationsCount),
-            ),
-            images: [encodedImage],
-          },
-        ],
-        format: AutonomousAgent.jsonSchema,
-        stream: false,
-        ...this.requestOptions,
-      })
+      let response: ChatResponse | null = null
+
+      let attempt = 1
+      while (attempt <= 4) {
+        try {
+          response = await ollama.chat({
+            model,
+            messages: [
+              {
+                role: "system",
+                content: getSystemPrompt(),
+              },
+              {
+                role: "user",
+                content: buildStepContent(
+                  action.task,
+                  observations.slice(-lastObservationsCount),
+                ),
+                images: [encodedImage],
+              },
+            ],
+            format: AutonomousAgent.jsonSchema,
+            stream: false,
+            ...this.requestOptions,
+          })
+          break
+        } catch (error) {
+          this.logger.error(`Error generating response: ${error}`)
+          await wait(randomInt(100, 500))
+          attempt++
+        }
+      }
+
+      if (!response) {
+        throw new Error("Failed to generate response after 4 attempts")
+      }
 
       const navigationStep = NavigationStepSchema.parse(
         JSON.parse(response.message.content),

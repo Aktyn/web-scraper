@@ -129,6 +129,9 @@ export function PageActionForm({ control, fieldName }: PageActionFormProps) {
     case PageActionType.RunAutonomousAgent:
       return (
         <div className="space-y-4">
+          <AvailabilityCheck
+            feature={AvailabilityCheck.Feature.AutonomousAgent}
+          />
           <FormTextarea
             control={control}
             name={`${fieldName}.task`}

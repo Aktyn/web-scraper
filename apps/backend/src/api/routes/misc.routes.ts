@@ -9,7 +9,6 @@ import {
   uuid,
 } from "@web-scraper/common"
 import { checkModelAvailability } from "@web-scraper/core"
-import { eq } from "drizzle-orm"
 import type { FastifyInstance } from "fastify"
 import type { ZodTypeProvider } from "fastify-type-provider-zod"
 import { preferencesTable } from "../../db/schema"
@@ -92,13 +91,8 @@ export async function miscRoutes(
     async (request, reply) => {
       const { key } = request.params
       const { value } = request.body
-      const [updatedPreference] = await fastify.db
-        .update(preferencesTable)
-        .set({ value })
-        .where(eq(preferencesTable.key, key))
-        .returning()
 
-      if (!updatedPreference) {
+      if (!(key in config.preferences)) {
         return reply.code(404).send({
           error: "Not Found",
           code: "NOT_FOUND",
@@ -106,10 +100,21 @@ export async function miscRoutes(
         })
       }
 
+      const [upsertedPreference] = await fastify.db
+        .insert(preferencesTable)
+        .values({ key, value })
+        .onConflictDoUpdate({
+          target: preferencesTable.key,
+          set: {
+            value,
+          },
+        })
+        .returning()
+
       config.updatePreferences(key, value as never)
 
       return reply.status(200).send({
-        data: updatedPreference,
+        data: upsertedPreference,
       })
     },
   )
@@ -129,11 +134,17 @@ export async function miscRoutes(
           await checkModelAvailability(config.preferences.localizationModel),
         () => void 0,
       )
+      const navigationModelAvailability = await runUnsafeAsync(
+        async () =>
+          await checkModelAvailability(config.preferences.navigationModel),
+        () => void 0,
+      )
 
       return reply.status(200).send({
         data: {
           ollamaInstalled: localizationModelAvailability !== null,
           localizationModelAvailable: Boolean(localizationModelAvailability),
+          navigationModelAvailable: Boolean(navigationModelAvailability),
         },
       })
     },

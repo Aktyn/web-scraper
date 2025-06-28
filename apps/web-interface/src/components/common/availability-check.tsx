@@ -5,6 +5,7 @@ import { Alert, AlertDescription, AlertTitle } from "../shadcn/alert"
 
 enum AvailabilityCheckFeature {
   SmartClick = "smart-click",
+  AutonomousAgent = "autonomous-agent",
 }
 
 type AvailabilityCheckProps = {
@@ -27,6 +28,10 @@ export function AvailabilityCheck({
       case AvailabilityCheckFeature.SmartClick:
         return (
           status.data.ollamaInstalled && status.data.localizationModelAvailable
+        )
+      case AvailabilityCheckFeature.AutonomousAgent:
+        return (
+          status.data.ollamaInstalled && status.data.navigationModelAvailable
         )
     }
   }, [feature, isLoading, status])
@@ -53,4 +58,6 @@ AvailabilityCheck.Feature = AvailabilityCheckFeature
 const notAvailableMessages = {
   [AvailabilityCheckFeature.SmartClick]:
     "Smart click is not available because Ollama is not installed or the localization model is not available.\nPlease pull the model from Ollama first.",
+  [AvailabilityCheckFeature.AutonomousAgent]:
+    "Autonomous agent is not available because Ollama is not installed or the navigation model is not available.\nPlease pull the model from Ollama first.",
 }

@@ -100,6 +100,8 @@ function isAvailable(key: PreferenceKey, status: Status) {
     case "localizationModel":
     case "localizationSystemPrompt":
       return status.ollamaInstalled && status.localizationModelAvailable
+    case "navigationModel":
+      return status.ollamaInstalled && status.navigationModelAvailable
     default:
       return true
   }

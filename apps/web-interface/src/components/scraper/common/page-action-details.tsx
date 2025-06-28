@@ -144,6 +144,9 @@ export function PageActionDetails({ action }: { action: PageAction }) {
     case PageActionType.RunAutonomousAgent:
       return (
         <div className="flex flex-row flex-wrap gap-2 gap-x-4">
+          <AvailabilityCheck
+            feature={AvailabilityCheck.Feature.AutonomousAgent}
+          />
           <LabeledValue label="Task:">{action.task}</LabeledValue>
           {action.startUrl && (
             <LabeledValue label="Start URL:">
