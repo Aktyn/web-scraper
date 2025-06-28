@@ -36,6 +36,7 @@
     "fastify-type-provider-zod": "^4.0.2",
     "fastify-zod-query-coercion": "^1.0.0",
     "node-file-dialog": "^1.0.3",
+    "node-systray-v2": "github:Edgar-P-yan/node-systray-v2",
     "pino": "^9.7.0",
     "zod": "^3.25.67"
   },

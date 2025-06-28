@@ -6,6 +6,8 @@ import { getConfig } from "./config/config"
 import { getDbModule } from "./db/db.module"
 import { getEventsModule } from "./events/events.module"
 import { getLogger } from "./logger"
+import { setupSystray } from "./systray"
+import { exec } from "node:child_process"
 
 async function main() {
   const logger = getLogger()
@@ -20,7 +22,12 @@ async function main() {
 
   const config = await getConfig(db)
 
-  const api = await getApiModule({ db, config, logger, events })
+  const api = await getApiModule({
+    db,
+    config,
+    logger,
+    events,
+  })
 
   api.listen({ port: config.apiPort }, (err, address) => {
     if (err) {
@@ -45,8 +52,20 @@ process.addListener("SIGTERM", cleanup)
 process.addListener("SIGQUIT", cleanup)
 
 main()
-  .then(async (_modules) => {
-    // await testRun(_modules.db, _modules.logger)
+  .then(async (modules) => {
+    const openWebInterface = () => {
+      try {
+        exec(`open http://localhost:${modules.config.apiPort}`)
+      } catch (error) {
+        modules.logger.error(error)
+      }
+    }
+
+    if (process.env.NODE_ENV !== "development") {
+      openWebInterface()
+    }
+
+    setupSystray(modules, openWebInterface)
   })
   .catch((error) => {
     console.error(error)

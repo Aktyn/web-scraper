@@ -1,4 +1,5 @@
 import fastifyCors from "@fastify/cors"
+import fastifyStatic from "@fastify/static"
 import type { SimpleLogger } from "@web-scraper/common"
 import Fastify, { type FastifyServerOptions } from "fastify"
 import fastifyPlugin from "fastify-plugin"
@@ -7,17 +8,15 @@ import {
   serializerCompiler,
   validatorCompiler,
 } from "fastify-type-provider-zod"
-import fastifyStatic from "@fastify/static"
-import type { Logger } from "pino"
-import type { Config } from "../config/config"
-import type { DbModule } from "../db/db.module"
-import type { EventsModule } from "../events/events.module"
+import fastifyZodQueryCoercion from "fastify-zod-query-coercion"
 import fs from "fs"
 import path from "path"
-import * as routes from "./routes"
+import type { Logger } from "pino"
+import type { Config } from "../config/config"
 import { cwd } from "../cwd"
-import { exec } from "child_process"
-import fastifyZodQueryCoercion from "fastify-zod-query-coercion"
+import type { DbModule } from "../db/db.module"
+import type { EventsModule } from "../events/events.module"
+import * as routes from "./routes"
 
 declare module "fastify" {
   interface FastifyInstance {
@@ -73,12 +72,6 @@ export async function getApiModule(
     fastify.register(fastifyStatic, {
       root: webPath,
     })
-
-    try {
-      exec(`open http://localhost:${context.config.apiPort}`)
-    } catch (error) {
-      context.logger.error(error)
-    }
   }
 
   return fastify
