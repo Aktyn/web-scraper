@@ -4,13 +4,14 @@ export function wait(ms: number) {
 
 export async function waitFor(
   condition: () => boolean,
-  timeout = 5000,
+  /** If null, the function will wait indefinitely */
+  timeout: number | null = 5000,
   interval = 100,
 ) {
   const startTime = Date.now()
 
   while (!condition()) {
-    if (Date.now() - startTime > timeout) {
+    if (timeout !== null && Date.now() - startTime > timeout) {
       throw new Error("Timeout waiting for condition")
     }
     await wait(interval)

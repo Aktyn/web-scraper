@@ -2,12 +2,16 @@ import {
   NotificationType,
   runUnsafe,
   ScraperEventType,
+  ScraperState,
   SubscriptionMessageType,
+  waitFor,
   type ExecutionIterator,
   type ScraperType,
   type SimpleLogger,
 } from "@web-scraper/common"
 import { Scraper } from "@web-scraper/core"
+import type { InferSelectModel } from "drizzle-orm"
+import path from "node:path"
 import type { Logger } from "pino"
 import type { Config } from "../config/config"
 import { DataBridge } from "../db/data-bridge"
@@ -17,7 +21,8 @@ import {
   scraperExecutionsTable,
 } from "../db/schema/scraper-executions.schema"
 import type { EventsModule } from "../events/events.module"
-import path from "node:path"
+
+const executionQueue: Array<Scraper<{ iteration: number }>> = []
 
 type ScraperExecutorContext = {
   db: DbModule
@@ -39,6 +44,8 @@ export async function executeNewScraper(
           scraper: `${id}-${name}`,
         })
       : context.logger
+
+  const queued = Scraper.getInstances().length > 0
 
   const scraper = new Scraper<{ iteration: number }>({
     id,
@@ -64,71 +71,33 @@ export async function executeNewScraper(
     localizationSystemPrompt:
       context.config.preferences.localizationSystemPrompt,
     navigationModel: context.config.preferences.navigationModel,
+
+    noInit: queued,
   })
 
-  scraper.on("stateChange", (state, previousState) => {
+  executionQueue.push(scraper)
+
+  if (queued) {
+    logger.warn(
+      `Scraper "${name}" is queued for execution because there are other scrapers running. Currently parallel execution is not supported.`,
+    )
+
     context.events.emit("broadcast", {
       type: SubscriptionMessageType.ScraperEvent,
       scraperId: scraper.id,
       event: {
         type: ScraperEventType.StateChange,
-        state,
-        previousState,
+        state: ScraperState.Pending,
+        previousState: ScraperState.Pending,
       },
     })
-  })
-  scraper.on("executionStarted", () => {
-    context.events.emit("broadcast", {
-      type: SubscriptionMessageType.ScraperEvent,
-      scraperId: scraper.id,
-      event: {
-        type: ScraperEventType.ExecutionStarted,
-      },
-    })
-  })
-  scraper.on("executionUpdate", (update) => {
-    context.events.emit("broadcast", {
-      type: SubscriptionMessageType.ScraperEvent,
-      scraperId: scraper.id,
-      event: {
-        type: ScraperEventType.ExecutionUpdate,
-        update,
-      },
-    })
-  })
-  scraper.on("executingInstruction", (instruction) => {
-    context.events.emit("broadcast", {
-      type: SubscriptionMessageType.ScraperEvent,
-      scraperId: scraper.id,
-      event: {
-        type: ScraperEventType.ExecutingInstruction,
-        instruction,
-      },
-    })
-  })
-  scraper.on("executionFinished", (executionInfo, { iteration }) => {
-    context.db
-      .insert(scraperExecutionIterationsTable)
-      .values({
-        iteration,
-        executionId: executionRow.id,
-        executionInfo: executionInfo.get(),
-      })
-      .execute()
-      .catch((error) =>
-        logger.error("Error saving execution info to the database:", error),
-      )
-      .finally(() =>
-        context.events.emit("broadcast", {
-          type: SubscriptionMessageType.ScraperEvent,
-          scraperId: scraper.id,
-          event: {
-            type: ScraperEventType.ExecutionFinished,
-            executionInfo: executionInfo.get(),
-          },
-        }),
-      )
-  })
+
+    await waitFor(
+      () => executionQueue.length === 0 || executionQueue[0] === scraper,
+      null,
+      1_000,
+    )
+  }
 
   const executionRow = await context.db
     .insert(scraperExecutionsTable)
@@ -138,6 +107,8 @@ export async function executeNewScraper(
     })
     .returning()
     .get()
+
+  setupScraperEvents(scraper, { ...context, logger }, executionRow)
 
   const dataBridge = new DataBridge(
     context.db,
@@ -197,4 +168,79 @@ export async function executeNewScraper(
   } catch (error) {
     logger.error("Error destroying data bridge:", error)
   }
+
+  executionQueue.splice(executionQueue.indexOf(scraper), 1)
+}
+
+function setupScraperEvents(
+  scraper: Scraper<{ iteration: number }>,
+  context: ScraperExecutorContext,
+  executionRow: InferSelectModel<typeof scraperExecutionsTable>,
+) {
+  scraper.on("stateChange", (state, previousState) => {
+    context.events.emit("broadcast", {
+      type: SubscriptionMessageType.ScraperEvent,
+      scraperId: scraper.id,
+      event: {
+        type: ScraperEventType.StateChange,
+        state,
+        previousState,
+      },
+    })
+  })
+  scraper.on("executionStarted", () => {
+    context.events.emit("broadcast", {
+      type: SubscriptionMessageType.ScraperEvent,
+      scraperId: scraper.id,
+      event: {
+        type: ScraperEventType.ExecutionStarted,
+      },
+    })
+  })
+  scraper.on("executionUpdate", (update) => {
+    context.events.emit("broadcast", {
+      type: SubscriptionMessageType.ScraperEvent,
+      scraperId: scraper.id,
+      event: {
+        type: ScraperEventType.ExecutionUpdate,
+        update,
+      },
+    })
+  })
+  scraper.on("executingInstruction", (instruction) => {
+    context.events.emit("broadcast", {
+      type: SubscriptionMessageType.ScraperEvent,
+      scraperId: scraper.id,
+      event: {
+        type: ScraperEventType.ExecutingInstruction,
+        instruction,
+      },
+    })
+  })
+  scraper.on("executionFinished", (executionInfo, { iteration }) => {
+    context.db
+      .insert(scraperExecutionIterationsTable)
+      .values({
+        iteration,
+        executionId: executionRow.id,
+        executionInfo: executionInfo.get(),
+      })
+      .execute()
+      .catch((error) =>
+        context.logger.error(
+          "Error saving execution info to the database:",
+          error,
+        ),
+      )
+      .finally(() =>
+        context.events.emit("broadcast", {
+          type: SubscriptionMessageType.ScraperEvent,
+          scraperId: scraper.id,
+          event: {
+            type: ScraperEventType.ExecutionFinished,
+            executionInfo: executionInfo.get(),
+          },
+        }),
+      )
+  })
 }

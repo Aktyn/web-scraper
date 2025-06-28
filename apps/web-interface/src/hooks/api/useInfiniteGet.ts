@@ -30,6 +30,7 @@ export function useInfiniteGet<RoutePath extends RoutesWithMethod<"get">>(
   const [isLoading, setIsLoading] = useState(true)
   const [isLoadingMore, setIsLoadingMore] = useState(false)
   const [hasMore, setHasMore] = useState(true)
+  const [fetchFailed, setFetchFailed] = useState(false)
   const [currentPage, setCurrentPage] = useState(0)
 
   const stringifiedParams = params ? JSON.stringify(params) : undefined
@@ -45,6 +46,8 @@ export function useInfiniteGet<RoutePath extends RoutesWithMethod<"get">>(
           stringifiedParams && JSON.parse(stringifiedParams),
           queryParams,
         )
+
+        setFetchFailed(false)
 
         if ("data" in response && Array.isArray(response.data)) {
           const newData = response.data as ItemType[]
@@ -68,6 +71,8 @@ export function useInfiniteGet<RoutePath extends RoutesWithMethod<"get">>(
           setCurrentPage(page)
         }
       } catch (error) {
+        setFetchFailed(true)
+
         console.error(error)
         toast.error("Failed to fetch data", {
           description: error instanceof Error ? error.message : "Unknown error",
@@ -80,10 +85,10 @@ export function useInfiniteGet<RoutePath extends RoutesWithMethod<"get">>(
   )
 
   const loadMore = useCallback(() => {
-    if (!isLoadingMore && hasMore) {
+    if (!isLoadingMore && hasMore && !fetchFailed) {
       void loadPage(currentPage + 1, false)
     }
-  }, [currentPage, hasMore, isLoadingMore, loadPage])
+  }, [currentPage, fetchFailed, hasMore, isLoadingMore, loadPage])
 
   const refresh = useCallback(() => {
     setCurrentPage(0)

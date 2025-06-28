@@ -760,6 +760,18 @@ describe.sequential("Scrapers Routes", () => {
   })
 
   describe("POST /scrapers/:id/execute", () => {
+    afterEach(async () => {
+      await Promise.all(
+        Scraper.getInstances().map((scraper) => {
+          return runUnsafeAsync(
+            () => scraper.destroy(),
+            () => void 0,
+          )
+        }),
+      )
+      await wait(100)
+    })
+
     it("should execute the scraper and return status 200 with empty object", async () => {
       const listResponse = await modules.api.inject({
         method: "GET",

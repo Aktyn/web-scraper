@@ -2,7 +2,7 @@ import { z } from "zod"
 import { TAG_NAMES } from "./helpers"
 
 export enum ScraperState {
-  /** Pending initial execution */
+  /** Pending initial execution or queued for execution */
   Pending = "pending",
 
   /** Between execution iterations or before clean exit */

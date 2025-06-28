@@ -5,7 +5,7 @@ import {
   ScraperInstructionsExecutionInfoType,
   ScraperState,
 } from "@web-scraper/common"
-import { LoaderCircle, MonitorX } from "lucide-react"
+import { Hourglass, LoaderCircle, MonitorX } from "lucide-react"
 
 type ScraperStateWidgetProps = {
   scraperId: number
@@ -28,6 +28,13 @@ export function ScraperStateWidget({
 
   switch (state) {
     case ScraperState.Pending:
+      return (
+        <div className="flex flex-row items-center justify-center gap-2 text-info">
+          <Hourglass className="animate-spin ease-bounce duration-2000 inline" />
+          <span className="font-semibold">Queued for execution</span>
+        </div>
+      )
+
     case ScraperState.Idle:
       return <LoaderCircle className="animate-spin inline" />
 
