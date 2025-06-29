@@ -5,6 +5,7 @@
   "useSnapshot": false,
   "useCodeCache": false,
   "assets": {
-    "libsql.node": "node_modules/@libsql/linux-x64-gnu/index.node"
+    "libsql.node": "node_modules/@libsql/linux-x64-gnu/index.node",
+    "sharp.node": "node_modules/@img/sharp-linux-x64/lib/sharp-linux-x64.node"
   }
 }
