@@ -41,7 +41,7 @@
     "eslint-plugin-prettier": "^5.5.0",
     "globals": "^16.2.0",
     "pptr-mock-server": "^1.5.0",
-    "prettier": "^3.5.3",
+    "prettier": "^3.6.2",
     "typescript": "^5.8.3",
     "typescript-eslint": "^8.34.1",
     "vitest": "^3.2.4"
