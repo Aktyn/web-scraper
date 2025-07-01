@@ -1,0 +1,210 @@
+import {
+  RoutineStatus,
+  SchedulerType,
+  type UpsertRoutine,
+} from "@web-scraper/common"
+import { eq } from "drizzle-orm"
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
+import { routinesTable } from "../../db/schema"
+import { setup, type TestModules } from "../../test/setup"
+
+describe("Routines Routes", () => {
+  let modules: TestModules
+
+  beforeEach(async () => {
+    vi.clearAllMocks()
+    modules = await setup()
+  })
+
+  afterEach(() => {
+    vi.clearAllMocks()
+  })
+
+  describe("GET /routines", () => {
+    it("should return status 200 and paginated routines", async () => {
+      const response = await modules.api.inject({
+        method: "GET",
+        url: "/routines",
+      })
+
+      expect(response.statusCode).toBe(200)
+      const payload = JSON.parse(response.payload)
+      expect(payload.data.length).toBe(10)
+      expect(payload.page).toBe(0)
+      expect(payload.pageSize).toBe(64)
+      expect(payload.hasMore).toBe(false)
+    })
+
+    it("should respect pagination parameters", async () => {
+      const response = await modules.api.inject({
+        method: "GET",
+        url: "/routines?page=1&pageSize=5",
+      })
+
+      expect(response.statusCode).toBe(200)
+      const payload = JSON.parse(response.payload)
+      expect(payload.data.length).toBe(5)
+      expect(payload.page).toBe(1)
+      expect(payload.pageSize).toBe(5)
+      expect(payload.hasMore).toBe(false)
+    })
+  })
+
+  describe("GET /routines/:id", () => {
+    it("should return status 200 and the requested routine", async () => {
+      const response = await modules.api.inject({
+        method: "GET",
+        url: "/routines/1",
+      })
+
+      expect(response.statusCode).toBe(200)
+      const payload = JSON.parse(response.payload)
+      expect(payload.data.id).toBe(1)
+    })
+
+    it("should return 404 if routine does not exist", async () => {
+      const response = await modules.api.inject({
+        method: "GET",
+        url: "/routines/999",
+      })
+      expect(response.statusCode).toBe(404)
+    })
+  })
+
+  describe("POST /routines", () => {
+    it("should return status 201 and the created routine", async () => {
+      const newRoutine: UpsertRoutine = {
+        scraperId: 1,
+        description: "A new routine",
+        scheduler: {
+          type: SchedulerType.Interval,
+          interval: 60000,
+          startAt: new Date().getTime(),
+          endAt: null,
+        },
+        iterator: null,
+        pauseAfterNumberOfFailedExecutions: 3,
+      }
+
+      const response = await modules.api.inject({
+        method: "POST",
+        url: "/routines",
+        payload: newRoutine,
+      })
+
+      expect(response.statusCode).toBe(201)
+      const payload = JSON.parse(response.payload)
+      expect(payload.data.description).toBe(newRoutine.description)
+
+      const routineInDb = await modules.db
+        .select()
+        .from(routinesTable)
+        .where(eq(routinesTable.id, payload.data.id))
+        .get()
+      expect(routineInDb).toBeDefined()
+      expect(routineInDb?.description).toBe(newRoutine.description)
+    })
+
+    it("should return 404 if scraper does not exist", async () => {
+      const newRoutine: UpsertRoutine = {
+        scraperId: 999,
+        description: "A new routine",
+        scheduler: {
+          type: SchedulerType.Interval,
+          interval: 60000,
+          startAt: new Date().getTime(),
+          endAt: null,
+        },
+        iterator: null,
+        pauseAfterNumberOfFailedExecutions: null,
+      }
+      const response = await modules.api.inject({
+        method: "POST",
+        url: "/routines",
+        payload: newRoutine,
+      })
+      expect(response.statusCode).toBe(404)
+    })
+  })
+
+  describe("PUT /routines/:id", () => {
+    it("should return status 200 and the updated routine", async () => {
+      const updatedRoutineData: UpsertRoutine = {
+        scraperId: 1,
+        description: "An updated routine",
+        scheduler: {
+          type: SchedulerType.Interval,
+          interval: 120000,
+          startAt: new Date().getTime(),
+          endAt: null,
+        },
+        iterator: null,
+        pauseAfterNumberOfFailedExecutions: 5,
+      }
+      const response = await modules.api.inject({
+        method: "PUT",
+        url: "/routines/1",
+        payload: updatedRoutineData,
+      })
+
+      expect(response.statusCode).toBe(200)
+      const payload = JSON.parse(response.payload)
+      expect(payload.data.description).toBe(updatedRoutineData.description)
+
+      const routineInDb = await modules.db
+        .select()
+        .from(routinesTable)
+        .where(eq(routinesTable.id, 1))
+        .get()
+      expect(routineInDb).toBeDefined()
+      expect(routineInDb?.description).toBe(updatedRoutineData.description)
+    })
+
+    it("should return 404 if routine does not exist", async () => {
+      const response = await modules.api.inject({
+        method: "PUT",
+        url: "/routines/999",
+        payload: {
+          scraperId: 1,
+          status: RoutineStatus.Paused,
+          description: "A new routine",
+          scheduler: {
+            type: SchedulerType.Interval,
+            interval: 60000,
+            startAt: new Date().getTime(),
+            endAt: null,
+          },
+          iterator: null,
+          pauseAfterNumberOfFailedExecutions: 3,
+        },
+      })
+      expect(response.statusCode).toBe(404)
+    })
+  })
+
+  describe("DELETE /routines/:id", () => {
+    it("should return status 204 and delete the routine", async () => {
+      const response = await modules.api.inject({
+        method: "DELETE",
+        url: "/routines/1",
+      })
+
+      expect(response.statusCode).toBe(204)
+
+      const routineInDb = await modules.db
+        .select()
+        .from(routinesTable)
+        .where(eq(routinesTable.id, 1))
+        .get()
+      expect(routineInDb).toBeUndefined()
+    })
+
+    it("should return 404 if routine does not exist", async () => {
+      const response = await modules.api.inject({
+        method: "DELETE",
+        url: "/routines/999",
+      })
+      expect(response.statusCode).toBe(404)
+    })
+  })
+})

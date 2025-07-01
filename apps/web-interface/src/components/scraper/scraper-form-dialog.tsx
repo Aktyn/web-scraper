@@ -13,8 +13,8 @@ import { usePost } from "@/hooks/api/usePost"
 import { usePut } from "@/hooks/api/usePut"
 import { zodResolver } from "@hookform/resolvers/zod"
 import {
-  type CreateScraper,
-  createScraperSchema,
+  type UpsertScraper,
+  upsertScraperSchema,
   PageActionType,
   ScraperInstructionType,
   type ScraperType,
@@ -52,8 +52,8 @@ export function ScraperFormDialog({
   const isEditing = !!editScraper && editScraper.id !== -1
   const dataStores = dataStoresResponse?.data || []
 
-  const form = useForm<CreateScraper>({
-    resolver: zodResolver(createScraperSchema),
+  const form = useForm<UpsertScraper>({
+    resolver: zodResolver(upsertScraperSchema),
     defaultValues: editScraper
       ? {
           name: editScraper.name,
@@ -84,7 +84,7 @@ export function ScraperFormDialog({
     append: appendDataSource,
     remove: removeDataSource,
   } = useFieldArray({
-    control: form.control,
+    control: form.control as never,
     name: "dataSources",
   })
 
@@ -118,7 +118,7 @@ export function ScraperFormDialog({
     }
   }, [open, editScraper, form])
 
-  const onSubmit = async (data: CreateScraper) => {
+  const onSubmit = async (data: UpsertScraper) => {
     const cleanedData = {
       ...data,
       description: data.description?.trim() || null,

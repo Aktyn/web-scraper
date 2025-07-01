@@ -16,7 +16,7 @@ describe(cn.name, () => {
   })
 })
 
-describe("formatDateTime", () => {
+describe(formatDateTime.name, () => {
   it("formats a date to MM/DD/YYYY, HH:MM:SS", () => {
     const date = new Date("2023-12-31T23:59:59")
     expect(formatDateTime(date)).toMatch(
@@ -25,7 +25,7 @@ describe("formatDateTime", () => {
   })
 })
 
-describe("formatDuration", () => {
+describe(formatDuration.name, () => {
   const MINUTE_MS = 60 * 1000
   const HOUR_MS = 60 * MINUTE_MS
   const DAY_MS = 24 * HOUR_MS

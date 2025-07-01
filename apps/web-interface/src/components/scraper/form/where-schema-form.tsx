@@ -10,7 +10,7 @@ import {
   SqliteColumnType,
   SqliteConditionType,
   whereSchemaToSql,
-  type CreateScraper,
+  type UpsertScraper,
   type UserDataStoreColumn,
 } from "@web-scraper/common"
 import { AlertTriangle, Plus, Trash2 } from "lucide-react"
@@ -23,7 +23,7 @@ type WhereSchemaFormProps = {
   columns: UserDataStoreColumn[]
 } & (
   | {
-      control: Control<CreateScraper>
+      control: Control<UpsertScraper>
       name: `dataSources.${number}.whereSchema`
       dataSourceIndex: number
     }
@@ -39,10 +39,10 @@ export function WhereSchemaForm({
   columns,
 }: WhereSchemaFormProps) {
   const control = _control as unknown as Control<
-    CreateScraper | ExecutionIterator
+    UpsertScraper | ExecutionIterator
   >
 
-  const { setValue } = useFormContext<CreateScraper | ExecutionIterator>()
+  const { setValue } = useFormContext<UpsertScraper | ExecutionIterator>()
   const whereSchema = useWatch({ control, name })
 
   const sqlPreview = whereSchema
@@ -133,7 +133,7 @@ export function WhereSchemaForm({
 }
 
 type LogicalGroupFormProps = {
-  control: Control<CreateScraper | ExecutionIterator>
+  control: Control<UpsertScraper | ExecutionIterator>
   name: `dataSources.${number}.whereSchema` | "where"
   columns: UserDataStoreColumn[]
   onRemove: () => void
@@ -147,7 +147,7 @@ function LogicalGroupForm({
   onRemove,
   level,
 }: LogicalGroupFormProps) {
-  const { setValue } = useFormContext<CreateScraper | ExecutionIterator>()
+  const { setValue } = useFormContext<UpsertScraper | ExecutionIterator>()
   const group = useWatch({ control, name })
 
   const isLogicalGroup = group && ("and" in group || "or" in group)
@@ -157,7 +157,7 @@ function LogicalGroupForm({
 
   //eslint-disable-next-line @typescript-eslint/ban-ts-comment
   //@ts-ignore
-  const { fields, append, remove } = useFieldArray<CreateScraper, never>({
+  const { fields, append, remove } = useFieldArray<UpsertScraper, never>({
     control,
     name: `${name}.${groupType}` as never,
   })
@@ -326,14 +326,14 @@ function LogicalGroupItem({
 const conditionOptions = mapToSelectOptions(conditionLabels)
 
 type ConditionFormProps = {
-  control: Control<CreateScraper | ExecutionIterator>
+  control: Control<UpsertScraper | ExecutionIterator>
   name: `dataSources.${number}.whereSchema` | "where"
   columns: UserDataStoreColumn[]
   onRemove: () => void
 }
 //  & (
 //   | {
-//       control: Control<CreateScraper>
+//       control: Control<UpsertScraper>
 //       name: `dataSources.${number}.whereSchema`
 //     }
 //   | {
@@ -348,7 +348,7 @@ function ConditionForm({
   columns,
   onRemove,
 }: ConditionFormProps) {
-  const { setValue } = useFormContext<CreateScraper | ExecutionIterator>()
+  const { setValue } = useFormContext<UpsertScraper | ExecutionIterator>()
   const condition = useWatch({
     control,
     name: `${name}.condition`,
@@ -552,7 +552,7 @@ function ConditionForm({
 }
 
 type ArrayValueFormProps = {
-  control: Control<CreateScraper | ExecutionIterator>
+  control: Control<UpsertScraper | ExecutionIterator>
   name: `dataSources.${number}.whereSchema.value` | "where.value"
   inputType: string
   isBooleanColumn: boolean

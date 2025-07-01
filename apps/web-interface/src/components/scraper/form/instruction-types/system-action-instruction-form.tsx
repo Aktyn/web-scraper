@@ -1,9 +1,9 @@
 import { FormInput } from "@/components/common/form/form-input"
-import { SystemActionType, type CreateScraper } from "@web-scraper/common"
+import { SystemActionType, type UpsertScraper } from "@web-scraper/common"
 import { useWatch, type Control } from "react-hook-form"
 
 interface SystemActionInstructionFormProps {
-  control: Control<CreateScraper>
+  control: Control<UpsertScraper>
   fieldName: `instructions.${number}.systemAction`
 }
 

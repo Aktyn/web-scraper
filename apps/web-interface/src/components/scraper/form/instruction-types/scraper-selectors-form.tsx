@@ -9,7 +9,7 @@ import { selectorTypeLabels } from "@/lib/dictionaries"
 import {
   ElementSelectorType,
   TAG_NAMES,
-  type CreateScraper,
+  type UpsertScraper,
 } from "@web-scraper/common"
 import { ArrowDownFromLine, ArrowUpFromLine, Plus, Trash2 } from "lucide-react"
 import {
@@ -37,7 +37,7 @@ const tagNameOptions = TAG_NAMES.map((tag) => ({
 }))
 
 type ScraperSelectorFormProps = {
-  control: Control<CreateScraper>
+  control: Control<UpsertScraper>
   fieldName:
     | `${ScraperValueFieldName}.selectors`
     | `${PageActionFieldName}.selectors`
@@ -191,12 +191,12 @@ function SelectorFormByType({ control, fieldName }: SelectorFormByTypeProps) {
 }
 
 type AttributesFormProps = {
-  control: Control<CreateScraper>
+  control: Control<UpsertScraper>
   fieldName: `${ScraperSelectorFormProps["fieldName"]}.${number}`
 }
 
 function AttributesForm({ control, fieldName }: AttributesFormProps) {
-  const { setValue } = useFormContext<CreateScraper>()
+  const { setValue } = useFormContext<UpsertScraper>()
   const attributesFieldName = `${fieldName}.attributes` as const
   const attributes = useWatch({ control, name: attributesFieldName }) ?? {}
 

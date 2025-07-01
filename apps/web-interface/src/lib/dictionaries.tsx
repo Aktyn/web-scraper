@@ -2,6 +2,8 @@ import {
   ElementSelectorType,
   ExecutionIteratorType,
   PageActionType,
+  RoutineStatus,
+  SchedulerType,
   ScraperInstructionsExecutionInfoType,
   ScraperInstructionType,
   ScraperValueType,
@@ -108,4 +110,16 @@ export const conditionLabels: { [key in SqliteConditionType]: string } = {
 
 export const systemActionTypeLabels: { [key in SystemActionType]: string } = {
   [SystemActionType.ShowNotification]: "Show notification",
+}
+
+export const routineStatusLabels: { [key in RoutineStatus]: string } = {
+  [RoutineStatus.Active]: "Active",
+  [RoutineStatus.Executing]: "Executing",
+  [RoutineStatus.Paused]: "Paused",
+  [RoutineStatus.PausedDueToMaxNumberOfFailedExecutions]:
+    "Paused due to max number of failed executions",
+}
+
+export const schedulerTypeLabels: { [key in SchedulerType]: string } = {
+  [SchedulerType.Interval]: "Interval",
 }

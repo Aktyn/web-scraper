@@ -1,6 +1,7 @@
 import z from "zod"
 import { scraperDataSourceSchema } from "./data-source"
 import { scraperInstructionsSchema } from "./instructions"
+import { apiPaginationQuerySchema, timestampSchema } from "../common"
 
 export const scraperSchema = z.object({
   id: z.number().int().min(1),
@@ -9,27 +10,29 @@ export const scraperSchema = z.object({
   instructions: scraperInstructionsSchema,
   userDataDirectory: z.string().nullable(),
   dataSources: z.array(scraperDataSourceSchema),
-  createdAt: z.number(),
-  updatedAt: z.number(),
+  createdAt: timestampSchema,
+  updatedAt: timestampSchema,
 })
 
 export type ScraperType = z.infer<typeof scraperSchema>
 
-export const createScraperSchema = scraperSchema.omit({
+export const upsertScraperSchema = scraperSchema.omit({
   id: true,
   createdAt: true,
   updatedAt: true,
 })
 
-export type CreateScraper = z.infer<typeof createScraperSchema>
-
-export const updateScraperSchema = createScraperSchema
-
-export type UpdateScraper = z.infer<typeof updateScraperSchema>
+export type UpsertScraper = z.infer<typeof upsertScraperSchema>
 
 export const paramsWithScraperIdSchema = z.object({
   id: z.coerce.number().int().min(1),
 })
+
+export const scraperQuerySchema = apiPaginationQuerySchema.extend({
+  name: z.string().optional(),
+})
+
+export type ScraperQuery = z.infer<typeof scraperQuerySchema>
 
 export * from "./common"
 export * from "./condition"

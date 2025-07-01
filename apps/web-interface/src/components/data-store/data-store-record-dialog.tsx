@@ -8,15 +8,10 @@ import {
   type UserDataStore,
   type UserDataStoreColumn,
 } from "@web-scraper/common"
-import { Calendar, Delete, Download } from "lucide-react"
-import { useEffect, useState } from "react"
-import {
-  useForm,
-  useFormContext,
-  type Control,
-  type FieldValues,
-} from "react-hook-form"
-import { DateTimePicker } from "../common/form/datetime-picker"
+import { Delete, Download } from "lucide-react"
+import { useEffect } from "react"
+import { useForm, type Control, type FieldValues } from "react-hook-form"
+import { DateTimePickerButton } from "../common/button/datetime-picker-button"
 import { FormInput } from "../common/form/form-input"
 import { Badge } from "../shadcn/badge"
 import { Button } from "../shadcn/button"
@@ -36,7 +31,6 @@ import {
   FormMessage,
 } from "../shadcn/form"
 import { Input } from "../shadcn/input"
-import { Popover, PopoverContent, PopoverTrigger } from "../shadcn/popover"
 import { ScrollArea } from "../shadcn/scroll-area"
 import { Switch } from "../shadcn/switch"
 import { Tooltip, TooltipContent, TooltipTrigger } from "../shadcn/tooltip"
@@ -382,38 +376,4 @@ function ValueField({
         />
       )
   }
-}
-
-function DateTimePickerButton({ name }: { name: string }) {
-  const form = useFormContext<Record<string, unknown>>()
-
-  const [popoverOpen, setPopoverOpen] = useState(false)
-
-  return (
-    <Popover open={popoverOpen} onOpenChange={setPopoverOpen} modal>
-      <PopoverTrigger asChild>
-        <Button
-          variant="ghost"
-          size="icon"
-          disabled={popoverOpen}
-          onClick={(event) => event.stopPropagation()}
-          tabIndex={-1}
-        >
-          <Calendar />
-        </Button>
-      </PopoverTrigger>
-      <PopoverContent className="w-auto p-0 z-90!">
-        <DateTimePicker
-          value={form.getValues(name) as Date | null}
-          onSelect={(date) => {
-            form.setValue(name, date.getTime(), { shouldValidate: true })
-            setPopoverOpen(false)
-          }}
-          onCancel={() => {
-            setPopoverOpen(false)
-          }}
-        />
-      </PopoverContent>
-    </Popover>
-  )
 }

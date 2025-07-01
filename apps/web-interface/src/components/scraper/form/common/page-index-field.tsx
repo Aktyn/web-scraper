@@ -1,6 +1,6 @@
 import { FormInput } from "@/components/common/form/form-input"
 import { Button } from "@/components/shadcn/button"
-import type { CreateScraper } from "@web-scraper/common"
+import type { UpsertScraper } from "@web-scraper/common"
 import { Minus, Plus } from "lucide-react"
 import type { Control } from "react-hook-form"
 import { useFormContext, useWatch } from "react-hook-form"
@@ -8,7 +8,7 @@ import type { PageActionFieldName } from "../instruction-types/page-action-form.
 import type { ConditionInstructionFieldName } from "../instruction-types/condition-instruction-form.js"
 
 type PageIndexFieldProps = {
-  control: Control<CreateScraper>
+  control: Control<UpsertScraper>
   fieldName:
     | `instructions.${number}.pageIndex`
     | `instructions.${number}.value.pageIndex`

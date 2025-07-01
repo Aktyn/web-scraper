@@ -87,6 +87,11 @@ export async function seedScrapers(db: DbModule) {
           description: "Test of experimental AI feature",
           instructions: aiLocalizationTestInstructions,
         },
+        {
+          name: "Autonomous agent test",
+          description: "Test of autonomous agent",
+          instructions: autonomousAgentTestInstructions,
+        },
       ])
       .returning()
 
@@ -682,5 +687,29 @@ const aiLocalizationTestInstructions: ScraperInstructions = [
   {
     type: ScraperInstructionType.PageAction,
     action: { type: PageActionType.Wait, duration: 10_000 },
+  },
+]
+
+const autonomousAgentTestInstructions: ScraperInstructions = [
+  {
+    type: ScraperInstructionType.PageAction,
+    action: {
+      type: PageActionType.RunAutonomousAgent,
+      startUrl: "https://search.brave.com/",
+      task: "What are the detailed specifications of the newest Oppo Find model?\nI am interested in the screen resolution, size, refresh rate, peak brightness, battery capacity, memory size, storage capacity, and charging power.\nWhat color variants are available?",
+      useGhostCursor: false,
+      maximumSteps: 64,
+    },
+  },
+  {
+    type: ScraperInstructionType.SystemAction,
+    systemAction: {
+      type: SystemActionType.ShowNotification,
+      message: "Agent finished its task (or it failed miserably)",
+    },
+  },
+  {
+    type: ScraperInstructionType.PageAction,
+    action: { type: PageActionType.Wait, duration: 30_000 },
   },
 ]

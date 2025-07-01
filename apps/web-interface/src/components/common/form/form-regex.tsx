@@ -72,10 +72,10 @@ export function FormRegex<
       render={({ field }) => (
         <FormItem className={className}>
           <FormLabel className="flex items-center gap-1">
-            {label}
             {typeof value !== "string" && (
               <Regex className="size-3.5 inline text-muted-foreground" />
             )}
+            {label}
           </FormLabel>
           <FormControl>
             <div className="relative">

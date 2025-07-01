@@ -1,4 +1,4 @@
-import type { CreateScraper } from "@web-scraper/common"
+import type { UpsertScraper } from "@web-scraper/common"
 import { useFieldArray, type Control, useWatch } from "react-hook-form"
 import { DataKeyField } from "./data-key-field"
 import { ScraperValueForm } from "./scraper-value-form"
@@ -15,7 +15,7 @@ import {
 } from "@/components/shadcn/tooltip"
 
 interface SaveDataInstructionFormProps {
-  control: Control<CreateScraper>
+  control: Control<UpsertScraper>
   fieldName: `instructions.${number}`
 }
 

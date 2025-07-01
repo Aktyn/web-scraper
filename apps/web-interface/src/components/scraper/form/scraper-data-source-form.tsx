@@ -1,6 +1,6 @@
 import { FormInput } from "@/components/common/form/form-input"
 import { FormSelect } from "@/components/common/form/form-select"
-import type { CreateScraper, UserDataStore } from "@web-scraper/common"
+import type { UpsertScraper, UserDataStore } from "@web-scraper/common"
 import type { Control, FieldValues } from "react-hook-form"
 import { useWatch } from "react-hook-form"
 import { useMemo } from "react"
@@ -18,7 +18,7 @@ export function ScraperDataSourceForm({
   control,
   index,
   dataStores,
-}: ScraperDataSourceFormProps<CreateScraper>) {
+}: ScraperDataSourceFormProps<UpsertScraper>) {
   const selectedTableName = useWatch({
     control,
     name: `dataSources.${index}.dataStoreTableName`,

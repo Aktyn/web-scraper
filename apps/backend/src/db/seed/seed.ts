@@ -7,6 +7,7 @@ import { seedScraperExecutions } from "./seed-scraper-executions"
 import { seedScrapers } from "./seed-scrapers"
 import { seedUserDataStores } from "./seed-user-data-stores"
 import { seedNotifications } from "./seed-notifications"
+import { seedRoutines } from "./seed-routines"
 
 export async function seed(db?: DbModule) {
   if (!db) {
@@ -26,4 +27,5 @@ export async function seed(db?: DbModule) {
   await seedScrapers(db)
   await seedScraperExecutions(db)
   await seedNotifications(db)
+  await seedRoutines(db)
 }

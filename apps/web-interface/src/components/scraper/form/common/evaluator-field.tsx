@@ -5,7 +5,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/shadcn/popover"
-import { ScraperValueType, type CreateScraper } from "@web-scraper/common"
+import { ScraperValueType, type UpsertScraper } from "@web-scraper/common"
 import { Eye, Plus, Trash2 } from "lucide-react"
 import { useFieldArray, useWatch, type Control } from "react-hook-form"
 import type { PageActionFieldName } from "../instruction-types/page-action-form"
@@ -13,7 +13,7 @@ import { ScraperValueForm } from "../instruction-types/scraper-value-form"
 import { Code } from "@/components/common/code"
 
 type EvaluatorFieldProps = {
-  control: Control<CreateScraper>
+  control: Control<UpsertScraper>
   fieldName: `${PageActionFieldName}.evaluator`
 }
 
@@ -22,7 +22,7 @@ export function EvaluatorField({ control, fieldName }: EvaluatorFieldProps) {
 
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   //@ts-ignore
-  const { fields, append, remove } = useFieldArray<CreateScraper, never>({
+  const { fields, append, remove } = useFieldArray<UpsertScraper, never>({
     control,
     name: `${fieldName}.arguments` as never,
   })

@@ -6,7 +6,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/shadcn/accordion"
-import { ScraperConditionType, type CreateScraper } from "@web-scraper/common"
+import { ScraperConditionType, type UpsertScraper } from "@web-scraper/common"
 import { useWatch, type Control } from "react-hook-form"
 import { PageIndexField } from "../common/page-index-field"
 import { mapToSelectOptions } from "../helpers"
@@ -24,7 +24,7 @@ const conditionTypeOptions = mapToSelectOptions(conditionTypeLabels)
 export type ConditionInstructionFieldName = `instructions.${number}`
 
 interface ConditionInstructionFormProps {
-  control: Control<CreateScraper>
+  control: Control<UpsertScraper>
   fieldName: ConditionInstructionFieldName
 }
 

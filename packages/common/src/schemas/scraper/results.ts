@@ -1,6 +1,7 @@
 import { z } from "zod"
+import { durationSchema, timestampSchema } from "../common"
 import { executionIteratorSchema } from "../iterator"
-import { durationSchema, serializableRegexSchema } from "./common"
+import { serializableRegexSchema } from "./common"
 import { scraperConditionSchema } from "./condition"
 import { ScraperInstructionType } from "./instructions"
 import { pageActionSchema } from "./page-action"
@@ -148,10 +149,8 @@ export type ScraperInstructionsExecutionInfo = z.infer<
 export const scraperExecutionInfoSchema = z.object({
   id: z.number().int().min(1),
   scraperId: z.number().int().min(1),
-  iterator: executionIteratorSchema
-    ? executionIteratorSchema.nullable()
-    : executionIteratorSchema,
-  createdAt: z.number(),
+  iterator: executionIteratorSchema?.nullable(),
+  createdAt: timestampSchema,
   iterations: z.array(
     z.object({
       iteration: z.number().int().min(1),

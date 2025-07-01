@@ -1,6 +1,6 @@
 import { FormInput } from "@/components/common/form/form-input"
 import { FormSelect } from "@/components/common/form/form-select"
-import { ScraperValueType, type CreateScraper } from "@web-scraper/common"
+import { ScraperValueType, type UpsertScraper } from "@web-scraper/common"
 import { useWatch, type Control } from "react-hook-form"
 import { mapToSelectOptions } from "../helpers"
 import type { ConditionInstructionFieldName } from "./condition-instruction-form"
@@ -21,7 +21,7 @@ export type ScraperValueFieldName =
   | `${ConditionInstructionFieldName}.if.valueSelector`
 
 interface ScraperValueFormProps {
-  control: Control<CreateScraper>
+  control: Control<UpsertScraper>
   fieldName: ScraperValueFieldName
 }
 

@@ -1,5 +1,4 @@
 import {
-  type CreateScraper,
   PageActionType,
   runUnsafeAsync,
   type ScraperInstructions,
@@ -7,7 +6,7 @@ import {
   ScraperInstructionType,
   ScraperState,
   type SimpleLogger,
-  type UpdateScraper,
+  type UpsertScraper,
   wait,
 } from "@web-scraper/common"
 import {
@@ -261,6 +260,30 @@ describe.sequential("Scrapers Routes", () => {
       })
     })
 
+    it("should filter scrapers by name", async () => {
+      const name = "New pepper alerts"
+      const response = await modules.api.inject({
+        method: "GET",
+        url: `/scrapers?name=${encodeURIComponent(name.toLowerCase())}`,
+      })
+
+      expect(response.statusCode).toBe(200)
+      const data = JSON.parse(response.payload)
+      expect(data.data.length).toBe(1)
+      expect(data.data[0].name).toBe(name)
+      expect(data.hasMore).toBe(false)
+
+      const nonExistentResponse = await modules.api.inject({
+        method: "GET",
+        url: "/scrapers?name=non-existent-scraper",
+      })
+
+      expect(nonExistentResponse.statusCode).toBe(200)
+      const nonExistentData = JSON.parse(nonExistentResponse.payload)
+      expect(nonExistentData.data.length).toBe(0)
+      expect(nonExistentData.hasMore).toBe(false)
+    })
+
     it("should return 500 if there is a database error", async () => {
       vi.spyOn(modules.db, "select").mockRejectedValue(
         new Error("Database error"),
@@ -398,7 +421,7 @@ describe.sequential("Scrapers Routes", () => {
 
   describe("POST /scrapers", () => {
     it("should create a new scraper and return status 201", async () => {
-      const newScraper: CreateScraper = {
+      const newScraper: UpsertScraper = {
         name: "Test Scraper",
         description: "A test scraper",
         instructions: [
@@ -446,7 +469,7 @@ describe.sequential("Scrapers Routes", () => {
     })
 
     it("should create a new scraper without optional fields", async () => {
-      const newScraper: CreateScraper = {
+      const newScraper: UpsertScraper = {
         name: "Minimal Test Scraper",
         description: null,
         instructions: [
@@ -475,7 +498,7 @@ describe.sequential("Scrapers Routes", () => {
     })
 
     it("should return status 409 if a scraper with the same name already exists", async () => {
-      const newScraper: CreateScraper = {
+      const newScraper: UpsertScraper = {
         name: "New pepper alerts",
         description: "Duplicate name",
         instructions: [
@@ -525,7 +548,7 @@ describe.sequential("Scrapers Routes", () => {
       const listData = JSON.parse(listResponse.payload)
       const scraperId = listData.data[0].id
 
-      const updateData: UpdateScraper = {
+      const updateData: UpsertScraper = {
         name: "Updated Pepper Alerts",
         description: "Updated description",
         instructions: [
@@ -587,7 +610,7 @@ describe.sequential("Scrapers Routes", () => {
       const listData = JSON.parse(listResponse.payload)
       const scraperId = listData.data[0].id
 
-      const updateData: UpdateScraper = {
+      const updateData: UpsertScraper = {
         name: "Only Name Updated",
         description: null,
         instructions: [
@@ -617,7 +640,7 @@ describe.sequential("Scrapers Routes", () => {
     })
 
     it("should return status 404 if the scraper does not exist", async () => {
-      const updateData: UpdateScraper = {
+      const updateData: UpsertScraper = {
         name: "Non-existent Scraper",
         description: null,
         dataSources: [],
@@ -663,7 +686,7 @@ describe.sequential("Scrapers Routes", () => {
           ],
           dataSources: [],
           userDataDirectory: null,
-        } satisfies CreateScraper,
+        } satisfies UpsertScraper,
       })
 
       const listResponse = await modules.api.inject({
@@ -673,7 +696,7 @@ describe.sequential("Scrapers Routes", () => {
       const listData = JSON.parse(listResponse.payload)
       const originalScraperId = listData.data[1].id
 
-      const updateData: UpdateScraper = {
+      const updateData: UpsertScraper = {
         name: "Another Scraper",
         description: "Another test scraper",
         instructions: [

@@ -141,6 +141,20 @@
       "when": 1749915144998,
       "tag": "0019_narrow_lethal_legion",
       "breakpoints": true
+    },
+    {
+      "idx": 20,
+      "version": "6",
+      "when": 1751254456061,
+      "tag": "0020_noisy_puff_adder",
+      "breakpoints": true
+    },
+    {
+      "idx": 21,
+      "version": "6",
+      "when": 1751341489061,
+      "tag": "0021_stormy_invisible_woman",
+      "breakpoints": true
     }
   ]
 }

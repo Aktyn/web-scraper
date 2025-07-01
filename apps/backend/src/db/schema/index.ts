@@ -6,6 +6,7 @@ import {
 } from "./scraper-executions.schema"
 import { scrapersTable } from "./scrapers.schema"
 import { userDataStoresTable } from "./user-data-stores.schema"
+import { notificationsTable } from "./notifications.schema"
 
 export * from "./misc.schema"
 export * from "./scraper-data-sources.schema"
@@ -13,10 +14,12 @@ export * from "./scraper-executions.schema"
 export * from "./scrapers.schema"
 export * from "./user-data-stores.schema"
 export * from "./notifications.schema"
+export * from "./routines.schema"
 
 export const scrapersRelations = relations(scrapersTable, ({ many }) => ({
   dataSources: many(scraperDataSourcesTable),
   executions: many(scraperExecutionsTable),
+  notifications: many(notificationsTable),
 }))
 
 export const scraperDataSourcesRelations = relations(

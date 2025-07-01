@@ -19,7 +19,7 @@ import {
   PageActionType,
   ScraperConditionType,
   ScraperInstructionType,
-  type CreateScraper,
+  type UpsertScraper,
   type ScraperInstructions,
 } from "@web-scraper/common"
 import {
@@ -54,7 +54,7 @@ const defaultInstruction = {
 } as const satisfies ScraperInstructions[number]
 
 interface ScraperInstructionsFormProps {
-  control: Control<CreateScraper>
+  control: Control<UpsertScraper>
   name?: string
   condition?: "then" | "else"
 }
@@ -66,7 +66,7 @@ export function ScraperInstructionsForm({
 }: ScraperInstructionsFormProps) {
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   //@ts-ignore
-  const { fields, append, remove, move } = useFieldArray<CreateScraper, never>({
+  const { fields, append, remove, move } = useFieldArray<UpsertScraper, never>({
     control,
     name,
   })
@@ -110,7 +110,7 @@ export function ScraperInstructionsForm({
 }
 
 type InstructionFieldProps = {
-  control: Control<CreateScraper>
+  control: Control<UpsertScraper>
   fieldName: `instructions.${number}`
   index: number
   fieldsCount: number
@@ -310,7 +310,7 @@ const pageActionTypeOptions = mapToSelectOptions(pageActionTypeLabels)
 const systemActionTypeOptions = mapToSelectOptions(systemActionTypeLabels)
 
 type InstructionFormProps = {
-  control: Control<CreateScraper>
+  control: Control<UpsertScraper>
   fieldName: `instructions.${number}`
 }
 

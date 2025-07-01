@@ -1,21 +1,21 @@
 import {
-  type CreateScraper,
   apiErrorResponseSchema,
   apiPaginationQuerySchema,
-  createScraperSchema,
+  assert,
   executingScraperInfoSchema,
   executionIteratorSchema,
   getApiPaginatedResponseSchema,
   getApiResponseSchema,
+  listScraperExecutionsQuerySchema,
   omit,
   paramsWithScraperIdSchema,
   scraperExecutionInfoSchema,
   scraperExecutionStatusSchema,
+  scraperQuerySchema,
   scraperSchema,
-  updateScraperSchema,
+  upsertScraperSchema,
   type ScraperType,
-  listScraperExecutionsQuerySchema,
-  assert,
+  type UpsertScraper,
 } from "@web-scraper/common"
 import { Scraper } from "@web-scraper/core"
 import { asc, desc, eq, sql, type InferSelectModel } from "drizzle-orm"
@@ -55,7 +55,7 @@ export async function scrapersRoutes(
     }
   }
 
-  function insertScraperWithDataSources(scraper: CreateScraper) {
+  function insertScraperWithDataSources(scraper: UpsertScraper) {
     return fastify.db.transaction(async (tx) => {
       const [newScraper] = await tx
         .insert(scrapersTable)
@@ -102,7 +102,7 @@ export async function scrapersRoutes(
     "/scrapers",
     {
       schema: {
-        querystring: apiPaginationQuerySchema,
+        querystring: scraperQuerySchema,
         response: {
           200: getApiPaginatedResponseSchema(scraperSchema),
           400: apiErrorResponseSchema,
@@ -110,7 +110,7 @@ export async function scrapersRoutes(
       },
     },
     async (request, reply) => {
-      const { page, pageSize } = request.query
+      const { page, pageSize, name } = request.query
 
       const scrapers = await fastify.db
         .select({ scraper: scrapersTable })
@@ -118,6 +118,11 @@ export async function scrapersRoutes(
         .leftJoin(
           scraperExecutionsTable,
           eq(scrapersTable.id, scraperExecutionsTable.scraperId),
+        )
+        .where(
+          name
+            ? sql`LOWER(${scrapersTable.name}) LIKE LOWER(${"%" + name + "%"})`
+            : undefined,
         )
         .orderBy(
           desc(
@@ -210,7 +215,7 @@ export async function scrapersRoutes(
     "/scrapers",
     {
       schema: {
-        body: createScraperSchema,
+        body: upsertScraperSchema,
         response: {
           201: getApiResponseSchema(scraperSchema),
           409: apiErrorResponseSchema,
@@ -257,7 +262,7 @@ export async function scrapersRoutes(
     {
       schema: {
         params: paramsWithScraperIdSchema,
-        body: updateScraperSchema,
+        body: upsertScraperSchema,
         response: {
           200: getApiResponseSchema(scraperSchema),
           404: apiErrorResponseSchema,

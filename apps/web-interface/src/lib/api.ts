@@ -8,8 +8,7 @@ import type {
   UpdateUserDataStore,
   UpsertUserDataStoreRecord,
   ScraperType,
-  CreateScraper,
-  UpdateScraper,
+  UpsertScraper,
   ScraperExecutionStatus,
   ScraperExecutionInfo,
   ApiErrorResponse,
@@ -19,6 +18,9 @@ import type {
   ListScraperExecutionsQuery,
   NotificationQuery,
   Status,
+  Routine,
+  UpsertRoutine,
+  ScraperQuery,
 } from "@web-scraper/common"
 import { apiErrorResponseSchema } from "@web-scraper/common"
 
@@ -219,11 +221,11 @@ export type Routes = {
 
   scrapers: {
     get: {
-      querystring: Partial<ApiPaginationQuery>
+      querystring: Partial<ScraperQuery>
       response: ApiPaginatedResponse<ScraperType>
     }
     post: {
-      body: CreateScraper
+      body: UpsertScraper
       response: ApiResponse<ScraperType>
     }
   }
@@ -238,7 +240,7 @@ export type Routes = {
       response: ApiResponse<ScraperType>
     }
     put: {
-      body: UpdateScraper
+      body: UpsertScraper
       response: ApiResponse<ScraperType>
     }
     delete: {
@@ -280,6 +282,29 @@ export type Routes = {
     post: {
       body: null
       response: ApiResponse<null>
+    }
+  }
+
+  routines: {
+    get: {
+      querystring: Partial<ApiPaginationQuery>
+      response: ApiPaginatedResponse<Routine>
+    }
+    post: {
+      body: UpsertRoutine
+      response: ApiResponse<Routine>
+    }
+  }
+  "routines/:id": {
+    get: {
+      response: ApiResponse<Routine>
+    }
+    put: {
+      body: UpsertRoutine
+      response: ApiResponse<Routine>
+    }
+    delete: {
+      response: void
     }
   }
 

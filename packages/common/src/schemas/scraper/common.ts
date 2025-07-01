@@ -27,9 +27,3 @@ export const serializableRegexSchema = z.object({
 export type SerializableRegex = z.infer<typeof serializableRegexSchema>
 
 export const pageIndexSchema = z.number().int().min(0).max(255).optional()
-
-export const durationSchema = z
-  .number()
-  .int()
-  .nonnegative()
-  .describe("Duration in milliseconds")

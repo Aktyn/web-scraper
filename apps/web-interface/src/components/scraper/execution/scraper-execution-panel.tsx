@@ -61,29 +61,31 @@ export function ScraperExecutionPanel({ ref }: ScraperExecutionPanelProps) {
     <div className="flex flex-col items-stretch gap-3">
       {(!state || state === ScraperState.Exited) && (
         <>
-          <div className="flex flex-row items-center gap-2">
-            <IteratorDescription
-              iterator={iterator}
-              className="w-full bg-card border p-3 rounded-xl"
-            >
-              <Button
-                variant="outline"
-                tabIndex={-1}
-                onClick={() => setIteratorDialogOpen(true)}
+          {scraper.dataSources.length > 0 && (
+            <div className="flex flex-row items-center gap-2">
+              <IteratorDescription
+                iterator={iterator}
+                className="w-full bg-card border p-3 rounded-xl"
               >
-                <Settings2 />
-                Configure iterator
-              </Button>
-            </IteratorDescription>
+                <Button
+                  variant="outline"
+                  tabIndex={-1}
+                  onClick={() => setIteratorDialogOpen(true)}
+                >
+                  <Settings2 />
+                  Configure iterator
+                </Button>
+              </IteratorDescription>
 
-            <IteratorFormDialog
-              open={iteratorDialogOpen}
-              onOpenChange={setIteratorDialogOpen}
-              iterator={iterator}
-              onChange={setIterator}
-              dataSources={scraper.dataSources}
-            />
-          </div>
+              <IteratorFormDialog
+                open={iteratorDialogOpen}
+                onOpenChange={setIteratorDialogOpen}
+                iterator={iterator}
+                onChange={setIterator}
+                dataSources={scraper.dataSources}
+              />
+            </div>
+          )}
           <div className="flex flex-row items-center gap-4">
             <Button
               className="flex-grow"

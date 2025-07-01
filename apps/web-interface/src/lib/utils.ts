@@ -21,15 +21,23 @@ export function formatDateTime(date: Date | number) {
   })
 }
 
-const units = [
-  { label: "millisecond", ms: 1 },
-  { label: "second", ms: 1000 },
-  { label: "minute", ms: 60 * 1000 },
-  { label: "hour", ms: 60 * 60 * 1000 },
-  { label: "day", ms: 24 * 60 * 60 * 1000 },
-  { label: "month", ms: 30.44 * 24 * 60 * 60 * 1000 },
-  { label: "year", ms: 365.25 * 24 * 60 * 60 * 1000 },
-] as const
+export const timeUnits = {
+  millisecond: 1,
+  second: 1000,
+  minute: 60 * 1000,
+  hour: 60 * 60 * 1000,
+  day: 24 * 60 * 60 * 1000,
+  month: 30.44 * 24 * 60 * 60 * 1000,
+  year: 365.25 * 24 * 60 * 60 * 1000,
+} as const
+
+const units = Object.entries(timeUnits).map(([label, ms]) => ({
+  label,
+  ms,
+})) as {
+  label: keyof typeof timeUnits
+  ms: number
+}[]
 
 export function formatDuration(
   ms: number,

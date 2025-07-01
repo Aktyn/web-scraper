@@ -11,7 +11,9 @@ export const scraperExecutionsTable = sqliteTable("scraper_executions", {
   scraperId: integer("scraper_id")
     .notNull()
     .references(() => scrapersTable.id, { onDelete: "cascade" }),
-  iterator: text("iterator", { mode: "json" }).$type<ExecutionIterator>(),
+  iterator: text("iterator", {
+    mode: "json",
+  }).$type<ExecutionIterator | null>(),
   createdAt: timestamp("created_at"),
 })
 

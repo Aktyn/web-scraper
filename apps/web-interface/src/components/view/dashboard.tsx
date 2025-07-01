@@ -31,7 +31,7 @@ import { ScrollArea } from "../shadcn/scroll-area"
 
 export function Dashboard() {
   return (
-    <div className="w-full h-full overflow-hidden grid 2xl:grid-cols-[1fr_1px_minmax(auto,calc(var(--spacing)*170))] 2xl:grid-rows-[100%] max-2xl:grid-cols-1 max-2xl:grid-rows-[1fr_1px_1fr]">
+    <div className="w-full h-full overflow-hidden grid 2xl:grid-cols-[1fr_1px_minmax(auto,calc(var(--spacing)*170))] 2xl:grid-rows-[100%] max-2xl:grid-cols-1 max-2xl:grid-rows-[1fr_1px_1fr] 2xl:[:has(>div[data-empty=true])]:grid-cols-[1fr_1px_minmax(auto,calc(var(--spacing)*118))] max-2xl:[:has(>div[data-empty=true])]:grid-rows-[1fr_1px_calc(var(--spacing)*64)] transition-[grid-template-columns,grid-template-rows]">
       <RecentlyExecutedScrapers />
       <Separator
         orientation="vertical"
@@ -85,7 +85,7 @@ function RecentlyExecutedScrapers() {
     <>
       <div
         data-transition-direction="left"
-        className="view-transition grid grid-rows-[auto_1fr]"
+        className="view-transition grid grid-rows-[auto_1fr] overflow-hidden"
       >
         <div className="flex flex-row items-center justify-between gap-2 p-2">
           <Label className="text-muted-foreground font-semibold text-lg">
@@ -330,6 +330,9 @@ function UnreadNotifications() {
   return (
     <div
       data-transition-direction="right"
+      data-empty={
+        !unreadNotifications?.length && !isLoading && !isLoadingMore && !hasMore
+      }
       className="view-transition flex flex-col overflow-hidden"
     >
       <div className="flex flex-row items-center justify-between gap-2 p-2">

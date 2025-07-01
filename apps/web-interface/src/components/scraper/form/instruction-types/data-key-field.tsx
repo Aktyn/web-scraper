@@ -15,19 +15,19 @@ import {
   SelectValue,
 } from "@/components/shadcn/select"
 import { useGet } from "@/hooks/api/useGet"
-import type { CreateScraper } from "@web-scraper/common"
+import type { UpsertScraper } from "@web-scraper/common"
 import { useMemo, type ComponentProps } from "react"
 import { useFormContext, useWatch } from "react-hook-form"
 
 type DataKeyFieldProps = Omit<
-  ComponentProps<typeof FormInput<CreateScraper>>,
+  ComponentProps<typeof FormInput<UpsertScraper>>,
   "label"
 > & {
   label?: string
 }
 
 export function DataKeyField(props: DataKeyFieldProps) {
-  const { control } = useFormContext<CreateScraper>()
+  const { control } = useFormContext<UpsertScraper>()
 
   const dataSources = useWatch({ control, name: "dataSources" })
   const dataKey = useWatch({
