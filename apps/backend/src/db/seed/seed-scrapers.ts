@@ -695,10 +695,11 @@ const autonomousAgentTestInstructions: ScraperInstructions = [
     type: ScraperInstructionType.PageAction,
     action: {
       type: PageActionType.RunAutonomousAgent,
-      startUrl: "https://search.brave.com/",
-      task: "What are the detailed specifications of the newest Oppo Find model?\nI am interested in the screen resolution, size, refresh rate, peak brightness, battery capacity, memory size, storage capacity, and charging power.\nWhat color variants are available?",
+      startUrl: "https://www.google.com/",
+      task: "Find detailed specifications of the newest Oppo Find model.\nI am interested in the screen resolution, size, refresh rate, peak brightness, battery capacity, memory size, storage capacity, and charging power.\nWhat color variants are available?\nAvoid wikipedia",
+      usePreciseLocalization: true,
       useGhostCursor: false,
-      maximumSteps: 64,
+      maximumSteps: 32,
     },
   },
   {

@@ -1,4 +1,11 @@
-import { assert, RoutineStatus, SchedulerType } from "@web-scraper/common"
+import {
+  type Scheduler,
+  assert,
+  calculateNextScheduledExecutionAt,
+  randomInt,
+  RoutineStatus,
+  SchedulerType,
+} from "@web-scraper/common"
 import type { DbModule } from "../db.module"
 import { routinesTable, scrapersTable } from "../schema"
 
@@ -13,16 +20,27 @@ export async function seedRoutines(db: DbModule) {
     const scraper = scrapers[i % scrapers.length]
     assert(!!scraper, "Scraper not found during seeding")
 
+    const status = RoutineStatus.Active
+    const startOffset = randomInt(60_000 * 2, 60_000 * 20)
+    const startAt = new Date().getTime() + startOffset
+
+    const scheduler: Scheduler = {
+      type: SchedulerType.Interval,
+      interval: (i + 1) * 10 * 60 * 1000, // minutes to ms
+      startAt,
+      endAt: i % 3 === 0 ? startAt + randomInt(60_000 * 10, 60_000 * 60) : null,
+    }
+
     return {
       scraperId: scraper.id,
-      status: RoutineStatus.Active,
+      status,
       description: `Routine number ${i + 1}`,
-      scheduler: {
-        type: SchedulerType.Interval,
-        interval: (i + 1) * 10 * 60 * 1000, // minutes to ms
-        startAt: new Date().getTime(),
-        endAt: i % 2 === 0 ? new Date().getTime() + 10 * 60 * 1000 : null,
-      },
+      scheduler,
+      nextScheduledExecutionAt:
+        calculateNextScheduledExecutionAt({
+          status,
+          scheduler,
+        }) ?? zeroDate,
       iterator: null,
       pauseAfterNumberOfFailedExecutions: i % 2 === 0 ? 5 : null,
     }
@@ -30,3 +48,5 @@ export async function seedRoutines(db: DbModule) {
 
   await db.insert(routinesTable).values(routines)
 }
+
+const zeroDate = new Date(0)

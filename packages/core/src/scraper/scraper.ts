@@ -145,7 +145,7 @@ export class Scraper<
           })
         : this.logger
 
-    this.agent = new AutonomousAgent(navigationLogger, {
+    this.agent = new AutonomousAgent(navigationLogger, this.localization, {
       model: options.navigationModel,
     })
 

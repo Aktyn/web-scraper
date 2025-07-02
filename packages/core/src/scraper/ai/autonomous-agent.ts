@@ -1,40 +1,49 @@
 import {
+  type PageAction,
+  type SimpleLogger,
   defaultPreferences,
   PageActionType,
   pick,
   randomInt,
   wait,
-  type PageAction,
-  type SimpleLogger,
 } from "@web-scraper/common"
-import ollama, { type ChatResponse, type ChatRequest } from "ollama"
+import type { ScrollOptions } from "ghost-cursor"
+import ollama, {
+  type Message,
+  type ChatRequest,
+  type ChatResponse,
+} from "ollama"
 import zodToJsonSchema from "zod-to-json-schema"
 import type { ScraperPageContext } from "../execution/execution-pages"
-import { checkModelAvailability, getAbsoluteCoordinates } from "./helpers"
+import { preciseClick } from "../execution/page-actions"
+import {
+  type Coordinates,
+  checkModelAvailability,
+  getAbsoluteCoordinates,
+} from "./helpers"
 import { resizeScreenshot } from "./image-processing"
 import {
   type NavigationStep,
+  CoordinatesSchema,
   NavigationActionType,
   NavigationStepSchema,
 } from "./schemas"
-import type { ScrollOptions } from "ghost-cursor"
-import { preciseClick } from "../execution/page-actions"
+import type { SmartLocalization } from "./smart-localization"
 
 type RequestOptions = Partial<Pick<ChatRequest, "model" | "format">>
 
-/** Specifies how many previous observations to include in the system prompt */
-const lastObservationsCount = 5
+/** Specifies how many previous responses to include in the system prompt */
+const lastResponsesCount = 16
 
-type Observation = {
-  step: number
-  response: NavigationStep
-}
+/** Specifies how many times the same action can be repeated */
+const maximumActionRepetitions = 3
 
 export class AutonomousAgent {
   private static jsonSchema = zodToJsonSchema(NavigationStepSchema)
 
   constructor(
     private readonly logger: SimpleLogger,
+    private readonly localization: SmartLocalization,
     private readonly requestOptions: RequestOptions = {},
   ) {}
 
@@ -42,7 +51,7 @@ export class AutonomousAgent {
     action: PageAction & { type: PageActionType.RunAutonomousAgent },
     pageContext: ScraperPageContext,
     performCommonPageAction: (pageAction: PageAction) => Promise<void>,
-  ) {
+  ): Promise<string> {
     const model =
       this.requestOptions.model || defaultPreferences.navigationModel.value
 
@@ -54,7 +63,18 @@ export class AutonomousAgent {
       )
     }
 
-    const observations: Observation[] = []
+    const initialMessages: Message[] = [
+      {
+        role: "system",
+        content: getSystemPrompt(),
+      },
+      {
+        role: "user",
+        content: action.task,
+      },
+    ]
+    const assistantResponses: Message[] = []
+    const actionsHistory: Array<NavigationStep["action"]> = []
 
     for (let step = 1; step <= (action.maximumSteps ?? 256); step++) {
       const viewportData = await pageContext.page.screenshot({
@@ -68,27 +88,55 @@ export class AutonomousAgent {
 
       const encodedImage = await ollama.encodeImage(resizedImageData)
 
+      const transformCoordinates = async (
+        coordinates: Coordinates,
+        element: string,
+      ) => {
+        if (action.usePreciseLocalization) {
+          try {
+            const response = await this.localization.generateResponse(
+              element,
+              encodedImage,
+            )
+
+            const parsedOutput = CoordinatesSchema.parse(JSON.parse(response))
+            coordinates = pick(parsedOutput, "x", "y")
+            this.logger.info({
+              msg: "Precise localization coordinates",
+              response,
+            })
+          } catch (error) {
+            this.logger.error({
+              msg: "Failed to localize element",
+              error,
+            })
+          }
+        }
+
+        return getAbsoluteCoordinates(
+          coordinates,
+          originalResolution,
+          resizedResolution,
+        )
+      }
+
       let response: ChatResponse | null = null
+      const messages: Message[] = [
+        ...initialMessages,
+        ...assistantResponses.slice(-lastResponsesCount),
+        {
+          role: "user",
+          content: `Current page screenshot (${resizedResolution.width}x${resizedResolution.height})`,
+          images: [encodedImage],
+        },
+      ]
 
       let attempt = 1
       while (attempt <= 4) {
         try {
           response = await ollama.chat({
             model,
-            messages: [
-              {
-                role: "system",
-                content: getSystemPrompt(),
-              },
-              {
-                role: "user",
-                content: buildStepContent(
-                  action.task,
-                  observations.slice(-lastObservationsCount),
-                ),
-                images: [encodedImage],
-              },
-            ],
+            messages,
             format: AutonomousAgent.jsonSchema,
             stream: false,
             ...this.requestOptions,
@@ -105,141 +153,53 @@ export class AutonomousAgent {
         throw new Error("Failed to generate response after 4 attempts")
       }
 
-      const navigationStep = NavigationStepSchema.parse(
+      assistantResponses.push({
+        role: "assistant",
+        content: response.message.content,
+      })
+
+      const navigationStep = NavigationStepSchema.safeParse(
         JSON.parse(response.message.content),
       )
 
-      this.logger.info({
-        msg: "Navigation step completed",
-        step,
-        ...pick(navigationStep, "note", "thought", "action"),
-      })
+      if (navigationStep.success) {
+        this.logger.info({
+          msg: "Navigation step completed",
+          step,
+          data: navigationStep.data,
+        })
 
-      observations.push({
-        step,
-        response: navigationStep,
-      })
+        actionsHistory.push(navigationStep.data.action)
 
-      switch (navigationStep.action.action) {
-        case NavigationActionType.ClickElement:
-          {
-            // TODO: add option to smart localize element by navigationStep.action.element with another AI request to dedicated localization model
-
-            const absoluteClickPosition = getAbsoluteCoordinates(
-              pick(navigationStep.action, "x", "y"),
-              originalResolution,
-              resizedResolution,
-            )
-
-            await preciseClick(
-              pageContext,
-              absoluteClickPosition,
-              {
-                useGhostCursor: action.useGhostCursor,
-                waitForNavigation: true,
-              },
-              this.logger,
-            )
-          }
-          break
-        case NavigationActionType.WriteElement:
-          {
-            const absoluteClickPosition = getAbsoluteCoordinates(
-              pick(navigationStep.action, "x", "y"),
-              originalResolution,
-              resizedResolution,
-            )
-
-            await preciseClick(
-              pageContext,
-              absoluteClickPosition,
-              {
-                useGhostCursor: action.useGhostCursor,
-                waitForNavigation: false,
-              },
-              this.logger,
-            )
-
-            await pageContext.page.keyboard.type(
-              navigationStep.action.content,
-              {
-                delay: randomInt(1, 4),
-              },
-            )
-
-            if (navigationStep.action.pressEnter) {
-              await wait(randomInt(100, 500))
-              await pageContext.page.keyboard.press("Enter")
-            }
-          }
-          break
-        case NavigationActionType.Scroll:
-          {
-            const viewport = pageContext.page.viewport() ?? {
-              width: defaultPreferences.viewportWidth.value,
-              height: defaultPreferences.viewportHeight.value,
-            }
-            const scrollOptions: ScrollOptions = {
-              scrollSpeed: 50,
-              scrollDelay: randomInt(100, 500),
-            }
-            switch (navigationStep.action.direction) {
-              case "down":
-                await pageContext.cursor.scroll(
-                  { y: viewport.height },
-                  scrollOptions,
-                )
-                break
-              case "up":
-                await pageContext.cursor.scroll(
-                  { y: -viewport.height },
-                  scrollOptions,
-                )
-                break
-              case "left":
-                await pageContext.cursor.scroll(
-                  { x: -viewport.width },
-                  scrollOptions,
-                )
-                break
-              case "right":
-                await pageContext.cursor.scroll(
-                  { x: viewport.width },
-                  scrollOptions,
-                )
-                break
-            }
-          }
-          break
-
-        //TODO: implement page actions for GoBack, GoForward and Refresh
-        case NavigationActionType.GoBack:
-          await pageContext.page.goBack({
-            timeout: 30_000,
-            waitUntil: "networkidle0",
+        if (tooManyActionRepetitions(actionsHistory)) {
+          this.logger.warn({
+            msg: "Too many same action repetitions",
+            step,
+            action: navigationStep.data.action,
           })
-          break
-        case NavigationActionType.Refresh:
-          await performCommonPageAction({
-            type: PageActionType.Navigate,
-            url: pageContext.page.url(),
+
+          assistantResponses.push({
+            role: "user",
+            content: `The same action has been repeated ${maximumActionRepetitions} times. Please stop repeating it. Try different approach.`,
           })
-          break
-        case NavigationActionType.Goto:
-          await performCommonPageAction({
-            type: PageActionType.Navigate,
-            url: navigationStep.action.url,
-          })
-          break
-        case NavigationActionType.Wait:
-          await performCommonPageAction({
-            type: PageActionType.Wait,
-            duration: navigationStep.action.seconds * 1_000,
-          })
-          break
-        case NavigationActionType.Answer: {
-          return navigationStep.action.content
         }
+
+        const answer = await this.handleNavigationStep(
+          navigationStep.data,
+          action,
+          pageContext,
+          performCommonPageAction,
+          transformCoordinates,
+        )
+
+        if (answer) {
+          return answer
+        }
+      } else {
+        this.logger.error({
+          msg: "Failed to parse navigation step",
+          error: navigationStep.error,
+        })
       }
     }
 
@@ -247,26 +207,163 @@ export class AutonomousAgent {
       `Agent failed to complete the task in ${action.maximumSteps} steps`,
     )
   }
+
+  private async handleNavigationStep(
+    navigationStep: NavigationStep,
+    action: PageAction & { type: PageActionType.RunAutonomousAgent },
+    pageContext: ScraperPageContext,
+    performCommonPageAction: (pageAction: PageAction) => Promise<void>,
+    transformCoordinates: (
+      coordinates: Coordinates,
+      element: string,
+    ) => Promise<Coordinates>,
+  ) {
+    switch (navigationStep.action.action) {
+      case NavigationActionType.ClickElement:
+        {
+          await preciseClick(
+            pageContext,
+            await transformCoordinates(
+              pick(navigationStep.action, "x", "y"),
+              navigationStep.action.element,
+            ),
+            {
+              useGhostCursor: action.useGhostCursor,
+              waitForNavigation: true,
+            },
+            this.logger,
+          )
+        }
+        break
+      case NavigationActionType.WriteElement:
+        {
+          await preciseClick(
+            pageContext,
+            await transformCoordinates(
+              pick(navigationStep.action, "x", "y"),
+              navigationStep.action.element,
+            ),
+            {
+              useGhostCursor: action.useGhostCursor,
+              waitForNavigation: false,
+            },
+            this.logger,
+          )
+
+          const modifier = process.platform === "darwin" ? "Meta" : "Control"
+          await pageContext.page.keyboard.down(modifier)
+          await wait(randomInt(10, 50))
+          await pageContext.page.keyboard.press("KeyA")
+          await wait(randomInt(10, 50))
+          await pageContext.page.keyboard.up(modifier)
+          await wait(randomInt(50, 100))
+          await pageContext.page.keyboard.press("Backspace")
+          await wait(randomInt(50, 100))
+
+          await pageContext.page.keyboard.type(navigationStep.action.content, {
+            delay: randomInt(1, 4),
+          })
+
+          if (navigationStep.action.pressEnter) {
+            await wait(randomInt(100, 500))
+            await pageContext.page.keyboard.press("Enter")
+          }
+        }
+        break
+      case NavigationActionType.Scroll:
+        {
+          const viewport = pageContext.page.viewport() ?? {
+            width: defaultPreferences.viewportWidth.value,
+            height: defaultPreferences.viewportHeight.value,
+          }
+          const scrollOptions: ScrollOptions = {
+            scrollSpeed: 50,
+            scrollDelay: randomInt(100, 500),
+          }
+          switch (navigationStep.action.direction) {
+            case "down":
+              await pageContext.cursor.scroll(
+                { y: viewport.height },
+                scrollOptions,
+              )
+              break
+            case "up":
+              await pageContext.cursor.scroll(
+                { y: -viewport.height },
+                scrollOptions,
+              )
+              break
+            case "left":
+              await pageContext.cursor.scroll(
+                { x: -viewport.width },
+                scrollOptions,
+              )
+              break
+            case "right":
+              await pageContext.cursor.scroll(
+                { x: viewport.width },
+                scrollOptions,
+              )
+              break
+          }
+        }
+        break
+
+      //TODO: implement page actions for GoBack, GoForward and Refresh
+      case NavigationActionType.GoBack:
+        await pageContext.page.goBack({
+          timeout: 30_000,
+          waitUntil: "networkidle0",
+        })
+        break
+      case NavigationActionType.Refresh:
+        await performCommonPageAction({
+          type: PageActionType.Navigate,
+          url: pageContext.page.url(),
+        })
+        break
+      case NavigationActionType.Goto:
+        await performCommonPageAction({
+          type: PageActionType.Navigate,
+          url: navigationStep.action.url,
+        })
+        break
+      case NavigationActionType.Wait:
+        await performCommonPageAction({
+          type: PageActionType.Wait,
+          duration: navigationStep.action.seconds * 1_000,
+        })
+        break
+      case NavigationActionType.Answer: {
+        return navigationStep.action.content
+      }
+    }
+  }
 }
 
-function buildStepContent(task: string, observations: Observation[]) {
-  return `<task>
-${task}
-</task>
+export function tooManyActionRepetitions(
+  actionsHistory: Array<NavigationStep["action"]>,
+) {
+  if (actionsHistory.length < maximumActionRepetitions) {
+    return false
+  }
 
-${observations
-  .map(
-    (observation) => `<observation step=${observation.step}>
-  ${JSON.stringify(observation.response, null, 2)}
-</observation>`,
-  )
-  .join("\n")}
-`
+  const recentActions = actionsHistory.slice(-maximumActionRepetitions)
+
+  for (let i = 0; i < recentActions.length - 1; i++) {
+    if (
+      JSON.stringify(recentActions[i]) !== JSON.stringify(recentActions[i + 1])
+    ) {
+      return false
+    }
+  }
+
+  return true
 }
 
 function getSystemPrompt() {
   return `Imagine you are a robot browsing the web, just like humans. Now you need to complete a task.
-In each iteration/step you will receive list of ${lastObservationsCount} observations that includes response from previous steps.
+You remember ${lastResponsesCount} your last responses.
 You will also receive the current screenshot of the web page.
 Carefully analyze the visual information to identify what to do, then follow the guidelines to choose the following action.
 You should detail your thought (i.e. reasoning steps) before taking the action.
@@ -275,26 +372,24 @@ Once you have enough information in the notes to answer the task, return an answ
 This will be evaluated by an evaluator and should match all the criteria or requirements of the task.
 
 Guidelines:
-- Store in the notes all the relevant information to solve the task that fulfill the task criteria. Be precise.
-- Use both the task and the previous steps notes to decide what to do next.
+- Store in the notes all the relevant information to solve the task that fulfill the task criteria; be precise
+- Use both the task and notes from previous responses to decide what to do next
+- Due to the limited context, notes before ${lastResponsesCount - 1} previous responses should be repeated and combined with the current notes to avoid losing partial information needed to answer the task
 - If you want to write in a text field and the text field already has text, designate the text field by the text it contains and its type
-- If there is a cookies notice, always accept all the cookies first
-- Each observation contains response from previous steps up to ${lastObservationsCount} last steps.
+- If there is a cookies notice, privacy policy, or other agreement, always accept them first to avoid being blocked
 - If you see relevant information on the screenshot to answer the task, add it to the notes field of the action.
 - If there is no relevant information on the screenshot to answer the task, add an empty string to the notes field of the action.
 - If you see buttons that allow to navigate directly to relevant information, like jump to ... or go to ... , use them to navigate faster.
-- Sometimes, previous click or write action should be retried due to incorrect coordinates.
-- Screenshot content is more important than list of observations and should always be main factor while deciding what to do next.
-- In the answer action, give as many details a possible relevant to answering the task.
+- Don't repeat the same exact action (for example clicking on the same coordinates) more than ${maximumActionRepetitions} times; if you repeat the same action, add a note to the action to explain why you repeated it.
+- Screenshot content is more important than previous responses and should always be main factor while deciding what to do next; screenshot is the main source of truth
+- In the answer action, give as many details a possible relevant to answering the task
 - If you want to write, don't click before. Directly use the write action
 - To write, identify the web element which is type and the text it already contains
 - If you want to use a search bar, directly write text in the search bar
+- There is no need for click action before typing in a text field, search bar or any other input field; directly write in the input field with write action
 - Don't scroll too much. Don't scroll if the number of scrolls is greater than 3
-- Don't scroll if you are at the end of the webpage
 - Only refresh if you identify a rate limit problem
-- If you are looking for a single flights, click on round-trip to select 'one way'
-- Never try to login, enter email or password. If there is a need to login, then go back.
-- If you are facing a captcha on a website, try to solve it.
+- If you are facing a captcha on a website, try to solve it
 - If you have enough information in the screenshot and in the notes to answer the task, return an answer action with the detailed answer in the notes field
 - The current date is ${new Date().toString()}
 `

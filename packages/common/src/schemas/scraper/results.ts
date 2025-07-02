@@ -149,7 +149,7 @@ export type ScraperInstructionsExecutionInfo = z.infer<
 export const scraperExecutionInfoSchema = z.object({
   id: z.number().int().min(1),
   scraperId: z.number().int().min(1),
-  iterator: executionIteratorSchema?.nullable(),
+  iterator: z.lazy(() => executionIteratorSchema.nullable()),
   createdAt: timestampSchema,
   iterations: z.array(
     z.object({

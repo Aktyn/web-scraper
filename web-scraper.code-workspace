@@ -65,7 +65,8 @@
 		],
 		"npm.packageManager": "npm",
 		"vitest.maximumConfigs": 4,
-		"typescript.tsdk": "Root/node_modules/typescript/lib"
+		"typescript.tsdk": "Root/node_modules/typescript/lib",
+		"npm.scriptRunner": "npm"
 	},
 	"launch": {
 		"version": "3.0.0",

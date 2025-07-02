@@ -937,9 +937,7 @@ describe("Scrapers Routes", () => {
   })
 
   describe("GET /scrapers/executions", () => {
-    it("should return status 200 and paginated execution infos", async ({
-      skip,
-    }) => {
+    it("should return status 200 and paginated execution infos", async () => {
       const listResponse = await modules.api.inject({
         method: "GET",
         url: "/scrapers",
@@ -951,10 +949,6 @@ describe("Scrapers Routes", () => {
         method: "GET",
         url: `/scrapers/executions?page=0&pageSize=2&id=${scraperId}`,
       })
-
-      if (response.statusCode !== 200) {
-        skip("Mysteriously failing test")
-      }
 
       const data = JSON.parse(response.payload)
       expect(data.data.length).toBe(2)
@@ -971,17 +965,11 @@ describe("Scrapers Routes", () => {
       })
     })
 
-    it("should return status 200 and paginated execution infos for all scrapers if no id is provided", async ({
-      skip,
-    }) => {
+    it("should return status 200 and paginated execution infos for all scrapers if no id is provided", async () => {
       const response = await modules.api.inject({
         method: "GET",
         url: "/scrapers/executions?page=0&pageSize=5",
       })
-
-      if (response.statusCode !== 200) {
-        skip("Mysteriously failing test")
-      }
 
       const data = JSON.parse(response.payload)
       expect(data.data.length).toBe(5)

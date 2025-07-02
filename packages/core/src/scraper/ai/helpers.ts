@@ -12,7 +12,7 @@ export async function checkModelAvailability(modelName: string) {
   )
 }
 
-type Coordinates = {
+export type Coordinates = {
   x: number
   y: number
 }

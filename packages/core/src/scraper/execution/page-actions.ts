@@ -11,6 +11,7 @@ import { detectAndSolveCaptcha } from "./captcha-solver"
 import type { ScraperPageContext } from "./execution-pages"
 import { type ScraperExecutionContext, getGhostClickOptions } from "./helpers"
 import { getElementHandle } from "./selectors"
+import type { Coordinates } from "../ai/helpers"
 
 export async function performPageAction(
   context: ScraperExecutionContext,
@@ -244,9 +245,10 @@ type PreciseClickOptions = Partial<{
 }>
 
 //TODO: add PreciseClick to pageActionSchema
+/** Click on the page at the given coordinates */
 export async function preciseClick(
   pageContext: ScraperPageContext,
-  coordinates: { x: number; y: number },
+  coordinates: Coordinates,
   options: PreciseClickOptions,
   logger: SimpleLogger,
 ) {

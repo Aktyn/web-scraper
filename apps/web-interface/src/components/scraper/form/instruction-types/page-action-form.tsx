@@ -153,6 +153,12 @@ export function PageActionForm({ control, fieldName }: PageActionFormProps) {
           />
           <FormSwitch
             control={control}
+            name={`${fieldName}.usePreciseLocalization`}
+            label="Use precise localization"
+            description="Use AI to more precisely localize the element to click on or type in"
+          />
+          <FormSwitch
+            control={control}
             name={`${fieldName}.useGhostCursor`}
             label="Use ghost cursor"
             description="Use a ghost cursor to click the element in user-like way"

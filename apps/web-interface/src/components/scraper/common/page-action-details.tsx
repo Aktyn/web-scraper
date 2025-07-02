@@ -7,6 +7,7 @@ import type { PageAction } from "@web-scraper/common"
 import { PageActionType } from "@web-scraper/common"
 import {
   CornerDownLeft,
+  Crosshair,
   Delete,
   Eye,
   Hourglass,
@@ -35,8 +36,8 @@ export function PageActionDetails({ action }: { action: PageAction }) {
     case PageActionType.Navigate:
       return (
         <LabeledValue label="To:">
-          <div className="flex flex-row items-center gap-2">
-            <ExternalLink url={action.url} />
+          <div className="flex flex-row items-center gap-2 contain-inline-size">
+            <ExternalLink url={action.url} className="truncate" />
             <CopyButton value={action.url} className="size-6" />
           </div>
         </LabeledValue>
@@ -147,7 +148,12 @@ export function PageActionDetails({ action }: { action: PageAction }) {
           <AvailabilityCheck
             feature={AvailabilityCheck.Feature.AutonomousAgent}
           />
-          <LabeledValue label="Task:">{action.task}</LabeledValue>
+          <LabeledValue
+            label="Task:"
+            className="whitespace-pre-wrap max-h-24 overflow-y-auto"
+          >
+            {action.task}
+          </LabeledValue>
           {action.startUrl && (
             <LabeledValue label="Start URL:">
               <ExternalLink url={action.startUrl} />
@@ -156,6 +162,12 @@ export function PageActionDetails({ action }: { action: PageAction }) {
           <LabeledValue label="Maximum steps:">
             {action.maximumSteps ?? 256}
           </LabeledValue>
+          {action.usePreciseLocalization && (
+            <Label className="flex flex-row items-center gap-2 pointer-events-auto">
+              <Crosshair className="size-4 inline" />
+              <span>Precise localization</span>
+            </Label>
+          )}
           {action.useGhostCursor && (
             <Label className="flex flex-row items-center gap-2 pointer-events-auto">
               <MousePointerClick className="size-4 inline" />

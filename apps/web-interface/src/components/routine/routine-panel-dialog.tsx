@@ -1,5 +1,5 @@
-import type { Routine } from "@web-scraper/common"
-import { type ComponentProps } from "react"
+import { RoutineStatus, type Routine } from "@web-scraper/common"
+import { useEffect, useState, type ComponentProps } from "react"
 import {
   Dialog,
   DialogContent,
@@ -8,34 +8,73 @@ import {
   DialogTitle,
 } from "../shadcn/dialog.js"
 import { ScrollArea } from "../shadcn/scroll-area.js"
+import { RoutinePanel } from "./routine-panel.js"
+import { Button } from "../shadcn/button.js"
+import { Edit, Pause } from "lucide-react"
+import { RoutineFormDialog } from "./routine-form-dialog.js"
 
 type ScraperPanelDialogProps = {
   routine: Routine
 } & ComponentProps<typeof Dialog>
 
 export function RoutinePanelDialog({
-  routine,
+  routine: routineSource,
   ...dialogProps
 }: ScraperPanelDialogProps) {
+  const [routine, setRoutine] = useState<Routine>(routineSource)
+  const [editDialogOpen, setEditDialogOpen] = useState(false)
+
+  useEffect(() => {
+    setRoutine(routineSource)
+  }, [routineSource])
+
   return (
-    <Dialog {...dialogProps}>
-      <DialogContent
-        aria-describedby={undefined}
-        className="overflow-hidden grid grid-rows-[auto_1fr] p-0 sm:max-w-3xl"
-      >
-        <DialogHeader className="p-6 pb-0">
-          <DialogTitle>
-            Routine for scraper: <b>{routine.scraperName}</b>
-          </DialogTitle>
-          {routine.description && (
-            <DialogDescription>{routine.description}</DialogDescription>
-          )}
-        </DialogHeader>
-        <ScrollArea className="max-h-full overflow-hidden *:data-[radix-scroll-area-viewport]:px-6">
-          <div>TODO</div>
-          {/* <RoutinePanel routine={routine} /> */}
-        </ScrollArea>
-      </DialogContent>
-    </Dialog>
+    <>
+      <Dialog {...dialogProps}>
+        <DialogContent
+          aria-describedby={undefined}
+          className="overflow-hidden grid grid-rows-[auto_1fr] p-0 sm:max-w-3xl"
+        >
+          <DialogHeader className="p-6 pb-0">
+            <DialogTitle className="flex items-center justify-between gap-2">
+              <span className="text-left mr-auto">
+                Routine for scraper: <b>{routine.scraperName}</b>
+              </span>
+              <Button
+                variant="outline"
+                onClick={() => {
+                  //TODO: implement pause/resume routine
+                }}
+                tabIndex={-1}
+                disabled={routine.status === RoutineStatus.Executing}
+              >
+                <Pause />
+                Pause routine
+              </Button>
+              <Button
+                variant="outline"
+                onClick={() => setEditDialogOpen(true)}
+                tabIndex={-1}
+              >
+                <Edit />
+                Edit routine
+              </Button>
+            </DialogTitle>
+            {routine.description && (
+              <DialogDescription>{routine.description}</DialogDescription>
+            )}
+          </DialogHeader>
+          <ScrollArea className="max-h-full overflow-hidden *:data-[radix-scroll-area-viewport]:px-6 pb-4">
+            <RoutinePanel routine={routine} />
+          </ScrollArea>
+        </DialogContent>
+      </Dialog>
+      <RoutineFormDialog
+        open={editDialogOpen}
+        onOpenChange={setEditDialogOpen}
+        onSuccess={setRoutine}
+        editRoutine={routine}
+      />
+    </>
   )
 }

@@ -1,9 +1,11 @@
 import {
   apiErrorResponseSchema,
   apiPaginationQuerySchema,
+  calculateNextScheduledExecutionAt,
   getApiPaginatedResponseSchema,
   getApiResponseSchema,
   routineSchema,
+  RoutineStatus,
   upsertRoutineSchema,
   type Routine,
 } from "@web-scraper/common"
@@ -53,6 +55,8 @@ export async function routinesRoutes(
           ...routine,
           scraperName: scraper.name,
           previousExecutionsCount: 0,
+          nextScheduledExecutionAt:
+            routine.nextScheduledExecutionAt.getTime() || null,
           createdAt: routine.createdAt.getTime(),
           updatedAt: routine.updatedAt.getTime(),
         }))
@@ -102,6 +106,8 @@ export async function routinesRoutes(
         ...routine,
         scraperName: scraper.name,
         previousExecutionsCount: 0,
+        nextScheduledExecutionAt:
+          routine.nextScheduledExecutionAt.getTime() || null,
         createdAt: routine.createdAt.getTime(),
         updatedAt: routine.updatedAt.getTime(),
       }
@@ -138,13 +144,22 @@ export async function routinesRoutes(
 
       const [newRoutine] = await fastify.db
         .insert(routinesTable)
-        .values(request.body)
+        .values({
+          ...request.body,
+          nextScheduledExecutionAt:
+            calculateNextScheduledExecutionAt({
+              status: RoutineStatus.Active,
+              scheduler: request.body.scheduler,
+            }) ?? zeroDate,
+        })
         .returning()
 
       const data: Routine = {
         ...newRoutine,
         scraperName: scraper.name,
         previousExecutionsCount: 0,
+        nextScheduledExecutionAt:
+          newRoutine.nextScheduledExecutionAt.getTime() || null,
         createdAt: newRoutine.createdAt.getTime(),
         updatedAt: newRoutine.updatedAt.getTime(),
       }
@@ -195,7 +210,14 @@ export async function routinesRoutes(
 
       const [updatedRoutine] = await fastify.db
         .update(routinesTable)
-        .set(request.body)
+        .set({
+          ...request.body,
+          nextScheduledExecutionAt:
+            calculateNextScheduledExecutionAt({
+              status: RoutineStatus.Active,
+              scheduler: request.body.scheduler,
+            }) ?? zeroDate,
+        })
         .where(eq(routinesTable.id, id))
         .returning()
 
@@ -203,6 +225,8 @@ export async function routinesRoutes(
         ...updatedRoutine,
         scraperName: scraper.name,
         previousExecutionsCount: 0,
+        nextScheduledExecutionAt:
+          updatedRoutine.nextScheduledExecutionAt.getTime() || null,
         createdAt: updatedRoutine.createdAt.getTime(),
         updatedAt: updatedRoutine.updatedAt.getTime(),
       }
@@ -243,3 +267,5 @@ export async function routinesRoutes(
     },
   )
 }
+
+const zeroDate = new Date(0)

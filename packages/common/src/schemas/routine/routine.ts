@@ -32,6 +32,7 @@ export const routineSchema = z.object({
   status: z.nativeEnum(RoutineStatus),
   description: z.string().nullable(),
   scheduler: schedulerSchema,
+  nextScheduledExecutionAt: timestampSchema.nullable(),
   previousExecutionsCount: z.number().int().min(0),
   pauseAfterNumberOfFailedExecutions: z.number().int().min(1).nullable(),
   createdAt: timestampSchema,
@@ -44,9 +45,47 @@ export const upsertRoutineSchema = routineSchema.omit({
   id: true,
   scraperName: true,
   status: true,
+  nextScheduledExecutionAt: true,
   previousExecutionsCount: true,
   createdAt: true,
   updatedAt: true,
 })
 
 export type UpsertRoutine = z.infer<typeof upsertRoutineSchema>
+
+export function calculateNextScheduledExecutionAt(
+  routine: Pick<Routine, "status" | "scheduler">,
+): Date | null {
+  if (routine.status !== RoutineStatus.Active) {
+    return null
+  }
+
+  const { scheduler } = routine
+  if (scheduler.type !== SchedulerType.Interval) {
+    // Should not happen with the current schema, but good for robustness
+    return null
+  }
+
+  const now = Date.now()
+  const { startAt, interval, endAt } = scheduler
+
+  if (endAt !== null && endAt < now) {
+    return null
+  }
+
+  let nextExecutionAt: number
+  if (startAt >= now) {
+    nextExecutionAt = startAt
+  } else {
+    // startAt is in the past, calculate the next occurrence
+    const intervalsSinceStart = (now - startAt) / interval
+    const nextIntervalMultiplier = Math.floor(intervalsSinceStart) + 1
+    nextExecutionAt = startAt + nextIntervalMultiplier * interval
+  }
+
+  if (endAt !== null && nextExecutionAt > endAt) {
+    return null
+  }
+
+  return new Date(nextExecutionAt)
+}

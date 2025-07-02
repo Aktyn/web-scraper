@@ -1,0 +1,1 @@
+ALTER TABLE `routines` ADD `next_scheduled_execution_at` integer NOT NULL;

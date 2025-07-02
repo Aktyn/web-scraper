@@ -22,31 +22,12 @@ export class SmartLocalization {
   ) {}
 
   async localize(prompt: string, viewportData: Uint8Array) {
-    const model =
-      this.requestOptions.model || defaultPreferences.localizationModel.value
-
-    const modelAvailable = await checkModelAvailability(model)
-
-    if (!modelAvailable) {
-      throw new Error(
-        `Model "${model}" is not available. It must be pulled from Ollama first.`,
-      )
-    }
-
     const { resizedImageData, originalResolution, resizedResolution } =
       await resizeScreenshot(viewportData)
 
     const encodedImage = await ollama.encodeImage(resizedImageData)
 
-    const { response } = await ollama.generate({
-      model,
-      system: this.requestOptions.systemPrompt,
-      prompt: prompt,
-      images: [encodedImage],
-      format: SmartLocalization.jsonSchema,
-      stream: false,
-      ...this.requestOptions,
-    })
+    const response = await this.generateResponse(prompt, encodedImage)
 
     try {
       const parsedOutput = CoordinatesSchema.parse(JSON.parse(response))
@@ -62,5 +43,30 @@ export class SmartLocalization {
       this.logger.error(error)
       return null
     }
+  }
+
+  async generateResponse(prompt: string, encodedImage: string) {
+    const model =
+      this.requestOptions.model || defaultPreferences.localizationModel.value
+
+    const modelAvailable = await checkModelAvailability(model)
+
+    if (!modelAvailable) {
+      throw new Error(
+        `Model "${model}" is not available. It must be pulled from Ollama first.`,
+      )
+    }
+
+    const { response } = await ollama.generate({
+      model,
+      system: this.requestOptions.systemPrompt,
+      prompt: prompt,
+      images: [encodedImage],
+      format: SmartLocalization.jsonSchema,
+      stream: false,
+      ...this.requestOptions,
+    })
+
+    return response
   }
 }

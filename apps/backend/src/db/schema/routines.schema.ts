@@ -21,6 +21,10 @@ export const routinesTable = sqliteTable("routines", {
     .default(RoutineStatus.Active),
   description: text("description"),
   scheduler: text("scheduler", { mode: "json" }).notNull().$type<Scheduler>(),
+  /** Zero timestamp means that the routine has no next scheduled execution */
+  nextScheduledExecutionAt: integer("next_scheduled_execution_at", {
+    mode: "timestamp_ms",
+  }).notNull(),
   pauseAfterNumberOfFailedExecutions: integer(
     "pause_after_number_of_failed_executions",
   ),
