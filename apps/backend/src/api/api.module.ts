@@ -76,3 +76,5 @@ export async function getApiModule(
 
   return fastify
 }
+
+export type ApiModule = Awaited<ReturnType<typeof getApiModule>>

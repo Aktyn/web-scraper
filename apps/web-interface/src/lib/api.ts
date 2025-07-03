@@ -308,7 +308,7 @@ export type Routes = {
       response: void
     }
   }
-  "routines/:id/run": {
+  "routines/:id/execute": {
     post: {
       body: null
       response: ApiResponse<Routine>

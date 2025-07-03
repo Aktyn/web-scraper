@@ -1,17 +1,24 @@
+import { useGet } from "@/hooks/api/useGet"
 import { useInfiniteGet } from "@/hooks/api/useInfiniteGet"
+import { usePost } from "@/hooks/api/usePost"
 import { cn, formatDateTime } from "@/lib/utils"
+import { ServerEventsProvider } from "@/providers/server-events.provider"
 import type { ColumnDef } from "@tanstack/react-table"
-import type { Routine, ScheduledScraperExecution } from "@web-scraper/common"
+import {
+  ScraperEventType,
+  SubscriptionMessageType,
+  type Routine,
+  type ScheduledScraperExecution,
+} from "@web-scraper/common"
 import { Loader2, Play } from "lucide-react"
 import type { ComponentProps } from "react"
 import { useMemo, useState } from "react"
+import { Countdown } from "../common/label/countdown"
 import { NullBadge } from "../common/null-badge"
 import { DataTable } from "../common/table/data-table"
 import { IteratorDescription } from "../iterator/iterator-description"
 import { Button } from "../shadcn/button"
 import { RoutinePanelDialog } from "./routine-panel-dialog"
-import { useGet } from "@/hooks/api/useGet"
-import { usePost } from "@/hooks/api/usePost"
 
 export function ScheduledExecutions(divProps: ComponentProps<"div">) {
   const {
@@ -23,10 +30,25 @@ export function ScheduledExecutions(divProps: ComponentProps<"div">) {
     refresh,
   } = useInfiniteGet("/routines/scheduled-executions")
 
-  const { postItem: runRoutine } = usePost("/routines/:id/run", {
+  const { postItem: runRoutine } = usePost("/routines/:id/execute", {
     successMessage: "Routine executed",
     errorMessage: "Failed to execute routine",
   })
+
+  ServerEventsProvider.useMessages(
+    SubscriptionMessageType.ScraperEvent,
+    (message) => {
+      if (
+        [
+          ScraperEventType.ExecutionFinished,
+          ScraperEventType.ExecutionError,
+          ScraperEventType.ExecutionStarted,
+        ].includes(message.event.type)
+      ) {
+        refresh()
+      }
+    },
+  )
 
   const [routineViewOpen, setRoutineViewOpen] = useState(false)
   const [routineIdToView, setRoutineIdToView] = useState<Routine["id"] | null>(
@@ -65,8 +87,15 @@ export function ScheduledExecutions(divProps: ComponentProps<"div">) {
       {
         accessorKey: "nextScheduledExecutionAt",
         header: "Next execution",
-        cell: ({ row }) =>
-          formatDateTime(row.original.nextScheduledExecutionAt),
+        cell: ({ row }) => (
+          <div className="flex flex-row items-baseline gap-1">
+            <span>{formatDateTime(row.original.nextScheduledExecutionAt)}</span>
+            <span className="text-xs text-muted-foreground">
+              (
+              <Countdown timestamp={row.original.nextScheduledExecutionAt} />)
+            </span>
+          </div>
+        ),
       },
       {
         id: "actions",

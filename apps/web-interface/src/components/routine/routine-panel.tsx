@@ -11,6 +11,7 @@ import { Button } from "../shadcn/button"
 import { RoutineStatusBadge } from "./routine-status-badge"
 import { SchedulerInfo } from "./scheduler-info"
 import { usePost } from "@/hooks/api/usePost"
+import { Countdown } from "../common/label/countdown"
 
 type RoutinePanelProps = {
   routine: Routine
@@ -22,7 +23,7 @@ export function RoutinePanel({
   onRoutineExecuted,
 }: RoutinePanelProps) {
   const { data: scraper } = useGet("/scrapers/:id", { id: routine.scraperId })
-  const { postItem: runRoutine } = usePost("/routines/:id/run", {
+  const { postItem: runRoutine } = usePost("/routines/:id/execute", {
     successMessage: "Routine executed",
     errorMessage: "Failed to execute routine",
   })
@@ -50,9 +51,18 @@ export function RoutinePanel({
       {routine.status === RoutineStatus.Active && (
         <LabeledValue label="Next scheduled execution date">
           <div className="flex flex-row items-center gap-2">
-            {routine.nextScheduledExecutionAt
-              ? formatDateTime(routine.nextScheduledExecutionAt)
-              : "No more executions scheduled"}
+            {routine.nextScheduledExecutionAt ? (
+              <div className="flex flex-row items-baseline gap-1">
+                {formatDateTime(routine.nextScheduledExecutionAt)}
+                {routine.nextScheduledExecutionAt < Date.now() + 120_000 && (
+                  <span className="text-sm text-muted-foreground">
+                    (<Countdown timestamp={routine.nextScheduledExecutionAt} />)
+                  </span>
+                )}
+              </div>
+            ) : (
+              "No more executions scheduled"
+            )}
             <Button
               variant="outline"
               size="sm"

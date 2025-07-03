@@ -17,6 +17,7 @@ import { Scraper } from "@web-scraper/core"
 import {
   type InferSelectModel,
   and,
+  asc,
   desc,
   eq,
   getTableColumns,
@@ -292,7 +293,7 @@ export async function routinesRoutes(
   )
 
   fastify.withTypeProvider<ZodTypeProvider>().post(
-    "/routines/:id/run",
+    "/routines/:id/execute",
     {
       schema: {
         params: paramsWithRoutineIdSchema,
@@ -492,7 +493,7 @@ export async function routinesRoutes(
           ),
         )
         .innerJoin(scrapersTable, eq(routinesTable.scraperId, scrapersTable.id))
-        .orderBy(desc(routinesTable.nextScheduledExecutionAt))
+        .orderBy(asc(routinesTable.nextScheduledExecutionAt))
         .limit(pageSize + 1)
         .offset(page * pageSize)
 
@@ -661,6 +662,9 @@ async function handleRoutineExecutionFinished(
         ({ result }) => result === RoutineExecutionResult.Failed,
       )
     ) {
+      logger.info(
+        `Pausing routine ${data.id} due to max number of failed executions`,
+      )
       await db
         .update(routinesTable)
         .set({ status: RoutineStatus.PausedDueToMaxNumberOfFailedExecutions })

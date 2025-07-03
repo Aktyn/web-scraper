@@ -54,10 +54,13 @@ export function Routines() {
     SubscriptionMessageType.ScraperEvent,
     (message) => {
       if (
-        message.event.type === ScraperEventType.ExecutionFinished ||
-        message.event.type === ScraperEventType.ExecutionError
+        [
+          ScraperEventType.ExecutionFinished,
+          ScraperEventType.ExecutionError,
+          ScraperEventType.ExecutionStarted,
+        ].includes(message.event.type)
       ) {
-        refresh()
+        setTimeout(refresh, 1000)
       }
     },
   )
@@ -85,7 +88,12 @@ export function Routines() {
       {
         accessorKey: "status",
         header: "Status",
-        cell: ({ row }) => <RoutineStatusBadge status={row.original.status} />,
+        cell: ({ row }) => (
+          <RoutineStatusBadge
+            status={row.original.status}
+            className="max-w-48"
+          />
+        ),
       },
       {
         accessorKey: "scraperName",
@@ -180,7 +188,7 @@ export function Routines() {
   )
 
   return (
-    <div className="size-full *:w-256 *:max-w-full grid grid-rows-[auto_1fr_auto] grid-cols-1">
+    <div className="size-full *:w-320 *:max-w-full grid grid-rows-[auto_1fr_auto] grid-cols-1">
       <div
         data-transition-direction="top"
         className="view-transition p-2 flex flex-row items-center gap-2"

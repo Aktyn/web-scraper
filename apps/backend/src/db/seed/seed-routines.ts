@@ -21,14 +21,16 @@ export async function seedRoutines(db: DbModule) {
     assert(!!scraper, "Scraper not found during seeding")
 
     const status = RoutineStatus.Active
-    const startOffset = randomInt(60_000 * 2, 60_000 * 20)
+    const MINUTE = 60_000
+    const HOUR = MINUTE * 60
+    const startOffset = randomInt(MINUTE * 5, HOUR)
     const startAt = new Date().getTime() + startOffset
 
     const scheduler: Scheduler = {
       type: SchedulerType.Interval,
-      interval: (i + 1) * 10 * 60 * 1000, // minutes to ms
+      interval: MINUTE * randomInt(30, 120),
       startAt,
-      endAt: i % 3 === 0 ? startAt + randomInt(60_000 * 10, 60_000 * 60) : null,
+      endAt: i % 3 === 0 ? startAt + randomInt(HOUR, HOUR * 2) : null,
     }
 
     return {
