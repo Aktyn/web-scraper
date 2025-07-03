@@ -27,3 +27,15 @@ export function getAbsoluteCoordinates(
     y: (coordinates.y * originalResolution.height) / resizedResolution.height,
   }
 }
+
+export function coordinatesInBounds(
+  coordinates: Coordinates,
+  resolution: Resolution,
+) {
+  return (
+    coordinates.x >= 0 &&
+    coordinates.x <= resolution.width &&
+    coordinates.y >= 0 &&
+    coordinates.y <= resolution.height
+  )
+}

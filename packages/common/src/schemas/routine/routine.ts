@@ -17,6 +17,11 @@ export const schedulerSchema = z.discriminatedUnion("type", [
 
 export type Scheduler = z.infer<typeof schedulerSchema>
 
+export enum RoutineExecutionResult {
+  Success = "success",
+  Failed = "failed",
+}
+
 export enum RoutineStatus {
   Active = "active",
   Executing = "executing",
@@ -57,7 +62,7 @@ export type UpsertRoutine = z.infer<typeof upsertRoutineSchema>
 
 export function calculateNextScheduledExecutionAt(
   routine: Pick<Routine, "status" | "scheduler">,
-  lastExecutionAt: Date | null,
+  lastExecutionAt: number | null,
 ): Date | null {
   if (routine.status !== RoutineStatus.Active) {
     return null
@@ -78,16 +83,16 @@ export function calculateNextScheduledExecutionAt(
 
   let nextExecutionAt: number
 
-  if (!lastExecutionAt || startAt > lastExecutionAt.getTime()) {
+  if (!lastExecutionAt || startAt > lastExecutionAt) {
     nextExecutionAt = startAt
   } else {
-    const intervalsSinceStart = (lastExecutionAt.getTime() - startAt) / interval
+    const intervalsSinceStart = (lastExecutionAt - startAt) / interval
     const nextIntervalMultiplier = Math.ceil(intervalsSinceStart)
     nextExecutionAt = startAt + nextIntervalMultiplier * interval
   }
 
   if (lastExecutionAt !== null) {
-    if (nextExecutionAt <= lastExecutionAt.getTime()) {
+    if (nextExecutionAt <= lastExecutionAt) {
       nextExecutionAt += interval
     }
   }

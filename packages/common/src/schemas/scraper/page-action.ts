@@ -81,7 +81,7 @@ export const pageActionSchema = z.discriminatedUnion("type", [
 
   z.object({
     type: z.literal(PageActionType.RunAutonomousAgent),
-    startUrl: z.string().url("Invalid URL").optional(),
+    startUrl: z.string().url("Invalid URL").or(z.literal("")).optional(),
     task: z.string().min(1, "Task description is required"),
     usePreciseLocalization: z.boolean().optional(),
     useGhostCursor: z.boolean().optional(),

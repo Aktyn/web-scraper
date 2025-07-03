@@ -1,4 +1,6 @@
 import {
+  type Routine,
+  RoutineExecutionResult,
   RoutineStatus,
   SchedulerType,
   type UpsertRoutine,
@@ -6,6 +8,7 @@ import {
 import { eq } from "drizzle-orm"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 import { routinesTable } from "../../db/schema"
+import { routineExecutionsTable } from "../../db/schema/routine-executions.schema"
 import { setup, type TestModules } from "../../test/setup"
 
 describe("Routines Routes", () => {
@@ -48,6 +51,36 @@ describe("Routines Routes", () => {
       expect(payload.pageSize).toBe(5)
       expect(payload.hasMore).toBe(false)
     })
+
+    it("should return routines with lastExecutionAt", async () => {
+      const executionDate = new Date()
+      await modules.db.insert(routineExecutionsTable).values([
+        {
+          routineId: 1,
+          result: RoutineExecutionResult.Success,
+          createdAt: new Date(executionDate.getTime() - 10000),
+        },
+        {
+          routineId: 1,
+          result: RoutineExecutionResult.Success,
+          createdAt: executionDate,
+        },
+      ])
+
+      const response = await modules.api.inject({
+        method: "GET",
+        url: "/routines",
+      })
+
+      expect(response.statusCode).toBe(200)
+      const payload = JSON.parse(response.payload)
+      const routine = payload.data.find((r: Routine) => r.id === 1)
+      expect(routine).toBeDefined()
+      expect(routine.lastExecutionAt).toBe(executionDate.getTime())
+      const routine2 = payload.data.find((r: Routine) => r.id === 2)
+      expect(routine2).toBeDefined()
+      expect(routine2.lastExecutionAt).toBeNull()
+    })
   })
 
   describe("GET /routines/:id", () => {
@@ -60,6 +93,33 @@ describe("Routines Routes", () => {
       expect(response.statusCode).toBe(200)
       const payload = JSON.parse(response.payload)
       expect(payload.data.id).toBe(1)
+      expect(payload.data.lastExecutionAt).toBeNull()
+    })
+
+    it("should return the routine with lastExecutionAt", async () => {
+      const executionDate = new Date()
+      await modules.db.insert(routineExecutionsTable).values([
+        {
+          routineId: 1,
+          result: RoutineExecutionResult.Success,
+          createdAt: new Date(executionDate.getTime() - 10000),
+        },
+        {
+          routineId: 1,
+          result: RoutineExecutionResult.Success,
+          createdAt: executionDate,
+        },
+      ])
+
+      const response = await modules.api.inject({
+        method: "GET",
+        url: "/routines/1",
+      })
+
+      expect(response.statusCode).toBe(200)
+      const payload = JSON.parse(response.payload)
+      expect(payload.data.id).toBe(1)
+      expect(payload.data.lastExecutionAt).toBe(executionDate.getTime())
     })
 
     it("should return 404 if routine does not exist", async () => {

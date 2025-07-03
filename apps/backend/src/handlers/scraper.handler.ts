@@ -2,6 +2,7 @@ import {
   NotificationType,
   runUnsafe,
   ScraperEventType,
+  ScraperInstructionsExecutionInfoType,
   ScraperState,
   SubscriptionMessageType,
   waitFor,
@@ -29,6 +30,7 @@ type ScraperExecutorContext = {
   logger: Logger | SimpleLogger
   events: EventsModule
   config: Config
+  routineId?: number
 }
 
 export async function executeNewScraper(
@@ -104,6 +106,7 @@ export async function executeNewScraper(
     .values({
       scraperId: scraperData.id,
       iterator,
+      routineId: context.routineId ?? null,
     })
     .returning()
     .get()
@@ -170,6 +173,8 @@ export async function executeNewScraper(
   }
 
   executionQueue.splice(executionQueue.indexOf(scraper), 1)
+
+  return executionRow.id
 }
 
 function setupScraperEvents(
@@ -218,12 +223,17 @@ function setupScraperEvents(
     })
   })
   scraper.on("executionFinished", (executionInfo, { iteration }) => {
+    const scraperExecutionInfo = executionInfo.get()
+
     context.db
       .insert(scraperExecutionIterationsTable)
       .values({
         iteration,
         executionId: executionRow.id,
-        executionInfo: executionInfo.get(),
+        executionInfo: scraperExecutionInfo,
+        success:
+          scraperExecutionInfo.at(-1)?.type ===
+          ScraperInstructionsExecutionInfoType.Success,
       })
       .execute()
       .catch((error) =>
@@ -238,7 +248,7 @@ function setupScraperEvents(
           scraperId: scraper.id,
           event: {
             type: ScraperEventType.ExecutionFinished,
-            executionInfo: executionInfo.get(),
+            executionInfo: scraperExecutionInfo,
           },
         }),
       )

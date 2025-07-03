@@ -89,10 +89,13 @@ export async function seedScraperExecutions(db: DbModule) {
         continue
       }
 
+      const info = generateRandomExecutionInfo()
       await db.insert(scraperExecutionIterationsTable).values({
         executionId: newExecutions.id,
         iteration: 1,
-        executionInfo: generateRandomExecutionInfo(),
+        executionInfo: info,
+        success:
+          info.at(-1)?.type === ScraperInstructionsExecutionInfoType.Success,
       })
     }
   }

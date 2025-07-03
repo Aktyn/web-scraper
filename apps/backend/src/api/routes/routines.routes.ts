@@ -6,26 +6,36 @@ import {
   calculateNextScheduledExecutionAt,
   getApiPaginatedResponseSchema,
   getApiResponseSchema,
+  RoutineExecutionResult,
   routineSchema,
   RoutineStatus,
+  runUnsafeAsync,
   scheduledScraperExecutionSchema,
   upsertRoutineSchema,
 } from "@web-scraper/common"
+import { Scraper } from "@web-scraper/core"
 import {
   type InferSelectModel,
   and,
   desc,
   eq,
+  getTableColumns,
   isNotNull,
   not,
+  sql,
 } from "drizzle-orm"
 import type { FastifyInstance } from "fastify"
 import type { ZodTypeProvider } from "fastify-type-provider-zod"
 import { z } from "zod"
-import { routinesTable, scrapersTable } from "../../db/schema"
-import type { ApiModuleContext } from "../api.module"
-import { Scraper } from "@web-scraper/core"
+import {
+  routinesTable,
+  scraperExecutionIterationsTable,
+  scraperExecutionsTable,
+  scrapersTable,
+} from "../../db/schema"
+import { routineExecutionsTable } from "../../db/schema/routine-executions.schema"
 import { executeNewScraper } from "../../handlers/scraper.handler"
+import type { ApiModuleContext } from "../api.module"
 import { joinScraperWithDataSources } from "./helpers"
 
 export async function routinesRoutes(
@@ -35,18 +45,6 @@ export async function routinesRoutes(
   const paramsWithRoutineIdSchema = z.object({
     id: z.coerce.number().int().min(1),
   })
-
-  // Fix routines that were executing when the backend was restarted
-  const result = await fastify.db
-    .update(routinesTable)
-    .set({ status: RoutineStatus.Active })
-    .where(eq(routinesTable.status, RoutineStatus.Executing))
-
-  if (result.rowsAffected > 0) {
-    logger.info(
-      `${result.rowsAffected} routines were executing when the backend was restarted and were set back to active`,
-    )
-  }
 
   fastify.withTypeProvider<ZodTypeProvider>().get(
     "/routines",
@@ -66,6 +64,12 @@ export async function routinesRoutes(
         .select({
           routine: routinesTable,
           scraper: scrapersTable,
+          lastExecutionAt: sql<number>`(select ${
+            routineExecutionsTable.createdAt
+          } from ${routineExecutionsTable} where ${eq(
+            routineExecutionsTable.routineId,
+            routinesTable.id,
+          )} order by ${desc(routineExecutionsTable.createdAt)} limit 1)`,
         })
         .from(routinesTable)
         .innerJoin(scrapersTable, eq(routinesTable.scraperId, scrapersTable.id))
@@ -75,7 +79,9 @@ export async function routinesRoutes(
 
       const data: Routine[] = routines
         .slice(0, pageSize)
-        .map(({ routine, scraper }) => parseRoutineFromDb(routine, scraper))
+        .map(({ routine, lastExecutionAt, scraper }) =>
+          parseRoutineFromDb({ ...routine, lastExecutionAt }, scraper),
+        )
 
       return reply.status(200).send({
         data,
@@ -104,6 +110,12 @@ export async function routinesRoutes(
         .select({
           routine: routinesTable,
           scraper: scrapersTable,
+          lastExecutionAt: sql<number>`(select ${
+            routineExecutionsTable.createdAt
+          } from ${routineExecutionsTable} where ${eq(
+            routineExecutionsTable.routineId,
+            id,
+          )} order by ${desc(routineExecutionsTable.createdAt)} limit 1)`,
         })
         .from(routinesTable)
         .innerJoin(scrapersTable, eq(routinesTable.scraperId, scrapersTable.id))
@@ -116,11 +128,11 @@ export async function routinesRoutes(
         })
       }
 
-      const { routine, scraper } = routineResult
+      const { routine, scraper, lastExecutionAt } = routineResult
 
-      return reply
-        .status(200)
-        .send({ data: parseRoutineFromDb(routine, scraper) })
+      return reply.status(200).send({
+        data: parseRoutineFromDb({ ...routine, lastExecutionAt }, scraper),
+      })
     },
   )
 
@@ -165,9 +177,12 @@ export async function routinesRoutes(
         })
         .returning()
 
-      return reply
-        .status(201)
-        .send({ data: parseRoutineFromDb(newRoutine, scraper) })
+      return reply.status(201).send({
+        data: parseRoutineFromDb(
+          { ...newRoutine, lastExecutionAt: null },
+          scraper,
+        ),
+      })
     },
   )
 
@@ -188,7 +203,15 @@ export async function routinesRoutes(
       const { scraperId } = request.body
 
       const routine = await fastify.db
-        .select()
+        .select({
+          ...getTableColumns(routinesTable),
+          lastExecutionAt: sql<number>`(select ${
+            routineExecutionsTable.createdAt
+          } from ${routineExecutionsTable} where ${eq(
+            routineExecutionsTable.routineId,
+            id,
+          )} order by ${desc(routineExecutionsTable.createdAt)} limit 1)`,
+        })
         .from(routinesTable)
         .where(eq(routinesTable.id, id))
         .get()
@@ -227,9 +250,12 @@ export async function routinesRoutes(
         .where(eq(routinesTable.id, id))
         .returning()
 
-      return reply
-        .status(200)
-        .send({ data: parseRoutineFromDb(updatedRoutine, scraper) })
+      return reply.status(200).send({
+        data: parseRoutineFromDb(
+          { ...updatedRoutine, lastExecutionAt: routine.lastExecutionAt },
+          scraper,
+        ),
+      })
     },
   )
 
@@ -321,6 +347,15 @@ export async function routinesRoutes(
         "Routine is not active",
       )
 
+      const newRoutineExecution = await fastify.db
+        .insert(routineExecutionsTable)
+        .values({
+          routineId: id,
+          result: null,
+        })
+        .returning()
+        .get()
+
       if (error) {
         return reply.status(error.statusCode).send({ error: error.message })
       }
@@ -329,6 +364,18 @@ export async function routinesRoutes(
         fastify.db,
         scraperResponse,
       )
+
+      const onRoutineExecutionFinished = (executionId?: number) =>
+        runUnsafeAsync(
+          () =>
+            handleRoutineExecutionFinished(
+              fastify.db,
+              logger,
+              newRoutineExecution,
+              executionId,
+            ),
+          logger.error,
+        )
 
       executeNewScraper(
         scraperResponse.id,
@@ -340,13 +387,16 @@ export async function routinesRoutes(
           logger,
           events,
           config,
+          routineId: id,
         },
       )
-        .catch(logger.error)
-        //TODO: implement logic of pausing routine after reaching max number of failed executions
-        .finally(() =>
-          handleRoutineExecutionFinished(fastify.db, logger, routine.id),
-        )
+        .then((executionId) => {
+          void onRoutineExecutionFinished(executionId)
+        })
+        .catch((error) => {
+          logger.error(error)
+          void onRoutineExecutionFinished()
+        })
 
       return reply.status(200).send({ data })
     },
@@ -469,7 +519,9 @@ export async function routinesRoutes(
 const zeroDate = new Date(0)
 
 function parseRoutineFromDb(
-  routine: InferSelectModel<typeof routinesTable>,
+  routine: InferSelectModel<typeof routinesTable> & {
+    lastExecutionAt: number | null
+  },
   scraper: Pick<InferSelectModel<typeof scrapersTable>, "name">,
 ) {
   return {
@@ -478,7 +530,7 @@ function parseRoutineFromDb(
     previousExecutionsCount: 0,
     nextScheduledExecutionAt:
       routine.nextScheduledExecutionAt.getTime() || null,
-    lastExecutionAt: routine.lastExecutionAt?.getTime() ?? null,
+    lastExecutionAt: routine.lastExecutionAt ?? null,
     createdAt: routine.createdAt.getTime(),
     updatedAt: routine.updatedAt.getTime(),
   }
@@ -495,6 +547,12 @@ async function handleRoutineStatusChange(
     .select({
       routine: routinesTable,
       scraper: scrapersTable,
+      lastExecutionAt: sql<number>`(select ${
+        routineExecutionsTable.createdAt
+      } from ${routineExecutionsTable} where ${eq(
+        routineExecutionsTable.routineId,
+        routineId,
+      )} order by ${desc(routineExecutionsTable.createdAt)} limit 1)`,
     })
     .from(routinesTable)
     .innerJoin(scrapersTable, eq(routinesTable.scraperId, scrapersTable.id))
@@ -505,7 +563,7 @@ async function handleRoutineStatusChange(
     return { error: { statusCode: 404, message: "Routine not found" } }
   }
 
-  const { routine, scraper } = routineResult
+  const { routine, scraper, lastExecutionAt } = routineResult
 
   if (
     routine.status === RoutineStatus.Executing &&
@@ -538,23 +596,37 @@ async function handleRoutineStatusChange(
             status: newStatus,
             scheduler: routine.scheduler,
           },
-          routine.lastExecutionAt,
+          lastExecutionAt,
         ) ?? zeroDate,
     })
     .where(eq(routinesTable.id, routineId))
     .returning()
 
-  return { data: parseRoutineFromDb(updatedRoutine, scraper) }
+  return {
+    data: parseRoutineFromDb({ ...updatedRoutine, lastExecutionAt }, scraper),
+  }
 }
 
 async function handleRoutineExecutionFinished(
   db: ApiModuleContext["db"],
   logger: ApiModuleContext["logger"],
-  routineId: number,
+  routineExecution: InferSelectModel<typeof routineExecutionsTable>,
+  executionId?: number,
 ) {
-  const { error } = await handleRoutineStatusChange(
+  const result = executionId
+    ? await getScraperExecutionResult(db, routineExecution, executionId)
+    : RoutineExecutionResult.Failed
+
+  await db
+    .update(routineExecutionsTable)
+    .set({
+      result,
+    })
+    .where(eq(routineExecutionsTable.id, routineExecution.id))
+
+  const { data, error } = await handleRoutineStatusChange(
     db,
-    routineId,
+    routineExecution.routineId,
     RoutineStatus.Active,
     [RoutineStatus.Executing],
     "Routine is not executing",
@@ -563,4 +635,65 @@ async function handleRoutineExecutionFinished(
   if (error) {
     logger.error(error.message)
   }
+
+  if (
+    typeof data?.pauseAfterNumberOfFailedExecutions === "number" &&
+    data.pauseAfterNumberOfFailedExecutions > 0
+  ) {
+    // Pause routine if it reaches max number of failed executions in a row
+
+    const recentRoutineExecutionResults = await db
+      .select({
+        result: routineExecutionsTable.result,
+      })
+      .from(routineExecutionsTable)
+      .where(
+        and(
+          eq(routineExecutionsTable.routineId, data.id),
+          isNotNull(routineExecutionsTable.result),
+        ),
+      )
+      .orderBy(desc(routineExecutionsTable.createdAt))
+      .limit(data.pauseAfterNumberOfFailedExecutions)
+
+    if (
+      recentRoutineExecutionResults.every(
+        ({ result }) => result === RoutineExecutionResult.Failed,
+      )
+    ) {
+      await db
+        .update(routinesTable)
+        .set({ status: RoutineStatus.PausedDueToMaxNumberOfFailedExecutions })
+        .where(eq(routinesTable.id, data.id))
+    }
+  }
+}
+
+async function getScraperExecutionResult(
+  db: ApiModuleContext["db"],
+  routineExecution: InferSelectModel<typeof routineExecutionsTable>,
+  executionId: number,
+) {
+  const lastExecutionIterationResults = await db
+    .select({
+      success: scraperExecutionIterationsTable.success,
+    })
+    .from(scraperExecutionsTable)
+    .innerJoin(
+      scraperExecutionIterationsTable,
+      eq(
+        scraperExecutionsTable.id,
+        scraperExecutionIterationsTable.executionId,
+      ),
+    )
+    .where(
+      and(
+        eq(scraperExecutionsTable.id, executionId),
+        eq(scraperExecutionsTable.routineId, routineExecution.routineId),
+      ),
+    )
+
+  return lastExecutionIterationResults.every(({ success }) => success)
+    ? RoutineExecutionResult.Success
+    : RoutineExecutionResult.Failed
 }

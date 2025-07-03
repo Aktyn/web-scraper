@@ -1,8 +1,10 @@
 import { useDelete } from "@/hooks/api/useDelete"
 import { useInfiniteGet } from "@/hooks/api/useInfiniteGet"
 import { cn } from "@/lib/utils"
+import { ServerEventsProvider } from "@/providers/server-events.provider"
 import type { ColumnDef } from "@tanstack/react-table"
 import type { Routine } from "@web-scraper/common"
+import { ScraperEventType, SubscriptionMessageType } from "@web-scraper/common"
 import { Edit, MonitorPlay, Plus, Trash } from "lucide-react"
 import { useMemo, useState } from "react"
 import { ConfirmationDialog } from "../common/confirmation-dialog"
@@ -11,6 +13,7 @@ import { NullBadge } from "../common/null-badge"
 import { DataTable } from "../common/table/data-table"
 import { RefreshButton } from "../common/table/refresh-button"
 import { RoutineFormDialog } from "../routine/routine-form-dialog"
+import { RoutinePanelDialog } from "../routine/routine-panel-dialog"
 import { RoutineStatusBadge } from "../routine/routine-status-badge"
 import { ScheduledExecutions } from "../routine/scheduled-executions"
 import { SchedulerInfo } from "../routine/scheduler-info"
@@ -23,7 +26,6 @@ import {
 } from "../shadcn/accordion"
 import { Button } from "../shadcn/button"
 import { Tooltip, TooltipContent, TooltipTrigger } from "../shadcn/tooltip"
-import { RoutinePanelDialog } from "../routine/routine-panel-dialog"
 
 export function Routines() {
   const {
@@ -47,6 +49,18 @@ export function Routines() {
   const [routineToEdit, setRoutineToEdit] = useState<Routine | null>(null)
 
   const [showScheduledExecutions, setShowScheduledExecutions] = useState(false)
+
+  ServerEventsProvider.useMessages(
+    SubscriptionMessageType.ScraperEvent,
+    (message) => {
+      if (
+        message.event.type === ScraperEventType.ExecutionFinished ||
+        message.event.type === ScraperEventType.ExecutionError
+      ) {
+        refresh()
+      }
+    },
+  )
 
   const handleDeleteClick = (routine: Routine) => {
     setRoutineToDelete(routine)

@@ -169,6 +169,13 @@
       "when": 1751510524302,
       "tag": "0023_early_vermin",
       "breakpoints": true
+    },
+    {
+      "idx": 24,
+      "version": "6",
+      "when": 1751540045269,
+      "tag": "0024_noisy_forgotten_one",
+      "breakpoints": true
     }
   ]
 }

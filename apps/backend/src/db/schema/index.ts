@@ -7,6 +7,8 @@ import {
 import { scrapersTable } from "./scrapers.schema"
 import { userDataStoresTable } from "./user-data-stores.schema"
 import { notificationsTable } from "./notifications.schema"
+import { routinesTable } from "./routines.schema"
+import { routineExecutionsTable } from "./routine-executions.schema"
 
 export * from "./misc.schema"
 export * from "./scraper-data-sources.schema"
@@ -20,6 +22,7 @@ export const scrapersRelations = relations(scrapersTable, ({ many }) => ({
   dataSources: many(scraperDataSourcesTable),
   executions: many(scraperExecutionsTable),
   notifications: many(notificationsTable),
+  routines: many(routinesTable),
 }))
 
 export const scraperDataSourcesRelations = relations(
@@ -60,6 +63,28 @@ export const scraperExecutionIterationsRelations = relations(
     execution: one(scraperExecutionsTable, {
       fields: [scraperExecutionIterationsTable.executionId],
       references: [scraperExecutionsTable.id],
+    }),
+  }),
+)
+
+export const routinesRelations = relations(routinesTable, ({ many }) => ({
+  executions: many(routineExecutionsTable),
+  scraperExecutions: many(scraperExecutionsTable),
+}))
+
+export const routineScrapersRelations = relations(
+  scrapersTable,
+  ({ many }) => ({
+    routines: many(routinesTable),
+  }),
+)
+
+export const routineExecutionsRelations = relations(
+  routineExecutionsTable,
+  ({ one }) => ({
+    routine: one(routinesTable, {
+      fields: [routineExecutionsTable.routineId],
+      references: [routinesTable.id],
     }),
   }),
 )

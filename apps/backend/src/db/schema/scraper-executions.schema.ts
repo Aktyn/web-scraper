@@ -5,6 +5,7 @@ import type {
 import { integer, primaryKey, sqliteTable, text } from "drizzle-orm/sqlite-core"
 import { primaryKey as primaryKeyColumn, timestamp } from "./helpers"
 import { scrapersTable } from "./scrapers.schema"
+import { routinesTable } from "./routines.schema"
 
 export const scraperExecutionsTable = sqliteTable("scraper_executions", {
   id: primaryKeyColumn(),
@@ -14,6 +15,9 @@ export const scraperExecutionsTable = sqliteTable("scraper_executions", {
   iterator: text("iterator", {
     mode: "json",
   }).$type<ExecutionIterator | null>(),
+  routineId: integer("routine_id").references(() => routinesTable.id, {
+    onDelete: "set null",
+  }),
   createdAt: timestamp("created_at"),
 })
 
@@ -29,6 +33,7 @@ export const scraperExecutionIterationsTable = sqliteTable(
     executionInfo: text("execution_info", { mode: "json" })
       .notNull()
       .$type<ScraperInstructionsExecutionInfo>(),
+    success: integer("success", { mode: "boolean" }).notNull(),
     finishedAt: timestamp("finished_at"),
   },
   (table) => [primaryKey({ columns: [table.iteration, table.executionId] })],

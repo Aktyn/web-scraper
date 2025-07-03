@@ -8,6 +8,7 @@ import { getEventsModule } from "./events/events.module"
 import { getLogger } from "./logger"
 import { setupSystray } from "./systray"
 import { exec } from "node:child_process"
+import { startMonitoringRoutines } from "./routines-monitor"
 
 async function main() {
   const logger = getLogger()
@@ -66,6 +67,8 @@ main()
     }
 
     setupSystray(modules, openWebInterface)
+
+    await startMonitoringRoutines(modules)
   })
   .catch((error) => {
     console.error(error)

@@ -20,11 +20,10 @@ export enum NavigationActionType {
   ClickElement = "click_element",
   WriteElement = "write_element_abs",
   Scroll = "scroll",
-  GoBack = "go_back",
+  // GoBack = "go_back",
   Refresh = "refresh",
   Goto = "goto",
-  Wait = "wait",
-  Restart = "restart",
+  // Wait = "wait",
   Answer = "answer",
 }
 
@@ -72,11 +71,11 @@ const ScrollActionSchema = z.object({
     .describe("The direction to scroll in"),
 })
 
-const GoBackActionSchema = z.object({
-  action: z
-    .literal(NavigationActionType.GoBack)
-    .describe("Navigate to the previous page"),
-})
+// const GoBackActionSchema = z.object({
+//   action: z
+//     .literal(NavigationActionType.GoBack)
+//     .describe("Navigate to the previous page"),
+// })
 
 const RefreshActionSchema = z.object({
   action: z
@@ -91,21 +90,17 @@ const GotoActionSchema = z.object({
   url: z.string().url().describe("A url starting with http:// or https://"),
 })
 
-const WaitActionSchema = z.object({
-  action: z
-    .literal(NavigationActionType.Wait)
-    .describe("Wait for a particular amount of time"),
-  seconds: z
-    .number()
-    .int()
-    .min(0)
-    .max(60)
-    .default(2)
-    .describe("The number of seconds to wait"),
-})
-
-// const RestartActionSchema = z.object({
-//   action: z.literal(NavigationActionType.Restart).describe("Restart the agent"),
+// const WaitActionSchema = z.object({
+//   action: z
+//     .literal(NavigationActionType.Wait)
+//     .describe("Wait for a particular amount of time"),
+//   seconds: z
+//     .number()
+//     .int()
+//     .min(0)
+//     .max(60)
+//     .default(2)
+//     .describe("The number of seconds to wait"),
 // })
 
 const AnswerActionSchema = z.object({
@@ -117,10 +112,9 @@ const ActionSpaceSchema = z.discriminatedUnion("action", [
   ClickElementActionSchema,
   WriteElementActionSchema,
   ScrollActionSchema,
-  GoBackActionSchema,
+  // GoBackActionSchema,
   RefreshActionSchema,
-  WaitActionSchema,
-  // RestartActionSchema,
+  // WaitActionSchema,
   AnswerActionSchema,
   GotoActionSchema,
 ])

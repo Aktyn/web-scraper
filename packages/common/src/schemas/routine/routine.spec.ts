@@ -132,7 +132,7 @@ describe(calculateNextScheduledExecutionAt.name, () => {
         status: RoutineStatus.Active,
         scheduler,
       },
-      new Date(now),
+      now,
     )
     expect(result).toEqual(new Date(expected))
   })
@@ -215,7 +215,7 @@ describe(calculateNextScheduledExecutionAt.name, () => {
         status: RoutineStatus.Active,
         scheduler,
       },
-      lastExecutionAt,
+      lastExecutionAt.getTime(),
     )
     expect(result).toEqual(new Date(expected))
   })
@@ -243,7 +243,7 @@ describe(calculateNextScheduledExecutionAt.name, () => {
         status: RoutineStatus.Active,
         scheduler,
       },
-      lastExecutionAt,
+      lastExecutionAt.getTime(),
     )
     expect(result).toEqual(new Date(expected))
   })
@@ -273,7 +273,7 @@ describe(calculateNextScheduledExecutionAt.name, () => {
         status: RoutineStatus.Active,
         scheduler,
       },
-      lastExecutionAt,
+      lastExecutionAt.getTime(),
     )
     expect(result).toEqual(new Date(expected))
   })
