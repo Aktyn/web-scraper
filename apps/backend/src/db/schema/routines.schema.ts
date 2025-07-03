@@ -25,6 +25,9 @@ export const routinesTable = sqliteTable("routines", {
   nextScheduledExecutionAt: integer("next_scheduled_execution_at", {
     mode: "timestamp_ms",
   }).notNull(),
+  lastExecutionAt: integer("last_execution_at", {
+    mode: "timestamp_ms",
+  }),
   pauseAfterNumberOfFailedExecutions: integer(
     "pause_after_number_of_failed_executions",
   ),

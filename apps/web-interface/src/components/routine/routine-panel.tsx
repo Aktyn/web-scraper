@@ -2,7 +2,7 @@ import { LabeledValue } from "@/components/common/label/labeled-value"
 import { useGet } from "@/hooks/api/useGet"
 import { formatDateTime } from "@/lib/utils"
 import { RoutineStatus, type Routine } from "@web-scraper/common"
-import { Play, SquareStack, TrafficCone } from "lucide-react"
+import { CalendarClock, Play, SquareStack, TrafficCone } from "lucide-react"
 import { useState } from "react"
 import { ScraperIcon } from "../icons/scraper-icon"
 import { IteratorDescription } from "../iterator/iterator-description"
@@ -10,9 +10,22 @@ import { ScraperPanelDialog } from "../scraper/scraper-panel-dialog"
 import { Button } from "../shadcn/button"
 import { RoutineStatusBadge } from "./routine-status-badge"
 import { SchedulerInfo } from "./scheduler-info"
+import { usePost } from "@/hooks/api/usePost"
 
-export function RoutinePanel({ routine }: { routine: Routine }) {
+type RoutinePanelProps = {
+  routine: Routine
+  onRoutineExecuted: (updatedRoutine: Routine) => void
+}
+
+export function RoutinePanel({
+  routine,
+  onRoutineExecuted,
+}: RoutinePanelProps) {
   const { data: scraper } = useGet("/scrapers/:id", { id: routine.scraperId })
+  const { postItem: runRoutine } = usePost("/routines/:id/run", {
+    successMessage: "Routine executed",
+    errorMessage: "Failed to execute routine",
+  })
 
   const [scraperViewOpen, setScraperViewOpen] = useState(false)
 
@@ -40,7 +53,23 @@ export function RoutinePanel({ routine }: { routine: Routine }) {
             {routine.nextScheduledExecutionAt
               ? formatDateTime(routine.nextScheduledExecutionAt)
               : "No more executions scheduled"}
-            <Button variant="outline" size="sm" tabIndex={-1}>
+            <Button
+              variant="outline"
+              size="sm"
+              tabIndex={-1}
+              onClick={(event) => {
+                event.stopPropagation()
+                event.preventDefault()
+
+                runRoutine(null, { id: routine.id })
+                  .then((res) => {
+                    if (res?.data) {
+                      onRoutineExecuted(res.data)
+                    }
+                  })
+                  .catch(console.error)
+              }}
+            >
               <Play />
               Run now
             </Button>
@@ -82,6 +111,24 @@ export function RoutinePanel({ routine }: { routine: Routine }) {
         >
           {routine.previousExecutionsCount}
         </LabeledValue>
+
+        {routine.lastExecutionAt && (
+          <LabeledValue
+            label={
+              <div className="flex flex-col">
+                <div className="flex items-center gap-1">
+                  <CalendarClock className="size-4" />
+                  <span>Last execution date</span>
+                </div>
+                <p className="text-xs font-normal text-muted-foreground">
+                  Date and time of the last execution of the routine.
+                </p>
+              </div>
+            }
+          >
+            {formatDateTime(routine.lastExecutionAt)}
+          </LabeledValue>
+        )}
       </div>
 
       <div className="flex flex-row flex-wrap items-start gap-4 text-xs text-muted-foreground">

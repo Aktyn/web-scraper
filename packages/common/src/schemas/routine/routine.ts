@@ -33,6 +33,7 @@ export const routineSchema = z.object({
   description: z.string().nullable(),
   scheduler: schedulerSchema,
   nextScheduledExecutionAt: timestampSchema.nullable(),
+  lastExecutionAt: timestampSchema.nullable(),
   previousExecutionsCount: z.number().int().min(0),
   pauseAfterNumberOfFailedExecutions: z.number().int().min(1).nullable(),
   createdAt: timestampSchema,
@@ -46,6 +47,7 @@ export const upsertRoutineSchema = routineSchema.omit({
   scraperName: true,
   status: true,
   nextScheduledExecutionAt: true,
+  lastExecutionAt: true,
   previousExecutionsCount: true,
   createdAt: true,
   updatedAt: true,
@@ -55,6 +57,7 @@ export type UpsertRoutine = z.infer<typeof upsertRoutineSchema>
 
 export function calculateNextScheduledExecutionAt(
   routine: Pick<Routine, "status" | "scheduler">,
+  lastExecutionAt: Date | null,
 ): Date | null {
   if (routine.status !== RoutineStatus.Active) {
     return null
@@ -74,13 +77,19 @@ export function calculateNextScheduledExecutionAt(
   }
 
   let nextExecutionAt: number
-  if (startAt >= now) {
+
+  if (!lastExecutionAt || startAt > lastExecutionAt.getTime()) {
     nextExecutionAt = startAt
   } else {
-    // startAt is in the past, calculate the next occurrence
-    const intervalsSinceStart = (now - startAt) / interval
-    const nextIntervalMultiplier = Math.floor(intervalsSinceStart) + 1
+    const intervalsSinceStart = (lastExecutionAt.getTime() - startAt) / interval
+    const nextIntervalMultiplier = Math.ceil(intervalsSinceStart)
     nextExecutionAt = startAt + nextIntervalMultiplier * interval
+  }
+
+  if (lastExecutionAt !== null) {
+    if (nextExecutionAt <= lastExecutionAt.getTime()) {
+      nextExecutionAt += interval
+    }
   }
 
   if (endAt !== null && nextExecutionAt > endAt) {

@@ -21,6 +21,7 @@ import type {
   Routine,
   UpsertRoutine,
   ScraperQuery,
+  ScheduledScraperExecution,
 } from "@web-scraper/common"
 import { apiErrorResponseSchema } from "@web-scraper/common"
 
@@ -305,6 +306,30 @@ export type Routes = {
     }
     delete: {
       response: void
+    }
+  }
+  "routines/:id/run": {
+    post: {
+      body: null
+      response: ApiResponse<Routine>
+    }
+  }
+  "routines/:id/pause": {
+    post: {
+      body: null
+      response: ApiResponse<Routine>
+    }
+  }
+  "routines/:id/resume": {
+    post: {
+      body: null
+      response: ApiResponse<Routine>
+    }
+  }
+  "routines/scheduled-executions": {
+    get: {
+      querystring: Partial<ApiPaginationQuery>
+      response: ApiPaginatedResponse<ScheduledScraperExecution>
     }
   }
 

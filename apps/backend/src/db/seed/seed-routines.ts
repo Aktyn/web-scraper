@@ -37,10 +37,14 @@ export async function seedRoutines(db: DbModule) {
       description: `Routine number ${i + 1}`,
       scheduler,
       nextScheduledExecutionAt:
-        calculateNextScheduledExecutionAt({
-          status,
-          scheduler,
-        }) ?? zeroDate,
+        calculateNextScheduledExecutionAt(
+          {
+            status,
+            scheduler,
+          },
+          null,
+        ) ?? zeroDate,
+      lastExecutionAt: null,
       iterator: null,
       pauseAfterNumberOfFailedExecutions: i % 2 === 0 ? 5 : null,
     }

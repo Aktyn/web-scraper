@@ -207,4 +207,130 @@ describe("Routines Routes", () => {
       expect(response.statusCode).toBe(404)
     })
   })
+
+  describe("POST /routines/:id/pause", () => {
+    it("should return status 200 and the paused routine", async () => {
+      await modules.db
+        .update(routinesTable)
+        .set({ status: RoutineStatus.Active })
+        .where(eq(routinesTable.id, 1))
+
+      const response = await modules.api.inject({
+        method: "POST",
+        url: "/routines/1/pause",
+      })
+
+      expect(response.statusCode).toBe(200)
+      const payload = JSON.parse(response.payload)
+      expect(payload.data.status).toBe(RoutineStatus.Paused)
+      expect(payload.data.nextScheduledExecutionAt).toBeNull()
+
+      const routineInDb = await modules.db
+        .select()
+        .from(routinesTable)
+        .where(eq(routinesTable.id, 1))
+        .get()
+      expect(routineInDb?.status).toBe(RoutineStatus.Paused)
+    })
+
+    it("should return 409 if routine is not active", async () => {
+      await modules.db
+        .update(routinesTable)
+        .set({ status: RoutineStatus.Paused })
+        .where(eq(routinesTable.id, 1))
+
+      const response = await modules.api.inject({
+        method: "POST",
+        url: "/routines/1/pause",
+      })
+
+      expect(response.statusCode).toBe(409)
+    })
+
+    it("should return 409 if routine is executing", async () => {
+      await modules.db
+        .update(routinesTable)
+        .set({ status: RoutineStatus.Executing })
+        .where(eq(routinesTable.id, 1))
+
+      const response = await modules.api.inject({
+        method: "POST",
+        url: "/routines/1/pause",
+      })
+
+      expect(response.statusCode).toBe(409)
+    })
+
+    it("should return 404 if routine does not exist", async () => {
+      const response = await modules.api.inject({
+        method: "POST",
+        url: "/routines/999/pause",
+      })
+      expect(response.statusCode).toBe(404)
+    })
+  })
+
+  describe("POST /routines/:id/resume", () => {
+    it("should return status 200 and the resumed routine", async () => {
+      await modules.db
+        .update(routinesTable)
+        .set({ status: RoutineStatus.Paused })
+        .where(eq(routinesTable.id, 1))
+
+      const response = await modules.api.inject({
+        method: "POST",
+        url: "/routines/1/resume",
+      })
+
+      expect(response.statusCode).toBe(200)
+      const payload = JSON.parse(response.payload)
+      expect(payload.data.status).toBe(RoutineStatus.Active)
+      expect(payload.data.nextScheduledExecutionAt).toBeGreaterThan(
+        new Date().getTime(),
+      )
+
+      const routineInDb = await modules.db
+        .select()
+        .from(routinesTable)
+        .where(eq(routinesTable.id, 1))
+        .get()
+      expect(routineInDb?.status).toBe(RoutineStatus.Active)
+    })
+
+    it("should return 409 if routine is not paused", async () => {
+      await modules.db
+        .update(routinesTable)
+        .set({ status: RoutineStatus.Active })
+        .where(eq(routinesTable.id, 1))
+
+      const response = await modules.api.inject({
+        method: "POST",
+        url: "/routines/1/resume",
+      })
+
+      expect(response.statusCode).toBe(409)
+    })
+
+    it("should return 409 if routine is executing", async () => {
+      await modules.db
+        .update(routinesTable)
+        .set({ status: RoutineStatus.Executing })
+        .where(eq(routinesTable.id, 1))
+
+      const response = await modules.api.inject({
+        method: "POST",
+        url: "/routines/1/resume",
+      })
+
+      expect(response.statusCode).toBe(409)
+    })
+
+    it("should return 404 if routine does not exist", async () => {
+      const response = await modules.api.inject({
+        method: "POST",
+        url: "/routines/999/resume",
+      })
+      expect(response.statusCode).toBe(404)
+    })
+  })
 })

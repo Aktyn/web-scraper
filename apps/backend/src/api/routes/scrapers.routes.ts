@@ -14,11 +14,10 @@ import {
   scraperQuerySchema,
   scraperSchema,
   upsertScraperSchema,
-  type ScraperType,
   type UpsertScraper,
 } from "@web-scraper/common"
 import { Scraper } from "@web-scraper/core"
-import { asc, desc, eq, sql, type InferSelectModel } from "drizzle-orm"
+import { asc, desc, eq, sql } from "drizzle-orm"
 import type { FastifyInstance } from "fastify"
 import type { ZodTypeProvider } from "fastify-type-provider-zod"
 import fs from "node:fs"
@@ -34,27 +33,12 @@ import { executeNewScraper } from "../../handlers/scraper.handler"
 import type { ApiModuleContext } from "../api.module"
 //@ts-expect-error No types for this package
 import dialog from "node-file-dialog"
+import { joinScraperWithDataSources } from "./helpers"
 
 export async function scrapersRoutes(
   fastify: FastifyInstance,
   { logger, events, config }: ApiModuleContext,
 ) {
-  async function joinScraperWithDataSources(
-    scraper: InferSelectModel<typeof scrapersTable>,
-  ): Promise<ScraperType> {
-    const dataSources = await fastify.db
-      .select()
-      .from(scraperDataSourcesTable)
-      .where(eq(scraperDataSourcesTable.scraperId, scraper.id))
-
-    return {
-      ...scraper,
-      createdAt: scraper.createdAt.getTime(),
-      updatedAt: scraper.updatedAt.getTime(),
-      dataSources,
-    }
-  }
-
   function insertScraperWithDataSources(scraper: UpsertScraper) {
     return fastify.db.transaction(async (tx) => {
       const [newScraper] = await tx
@@ -136,7 +120,9 @@ export async function scrapersRoutes(
       const data = await Promise.all(
         scrapers
           .slice(0, pageSize)
-          .map(({ scraper }) => joinScraperWithDataSources(scraper)),
+          .map(({ scraper }) =>
+            joinScraperWithDataSources(fastify.db, scraper),
+          ),
       )
 
       return reply.status(200).send({
@@ -206,7 +192,7 @@ export async function scrapersRoutes(
       }
 
       return reply.status(200).send({
-        data: await joinScraperWithDataSources(scraper),
+        data: await joinScraperWithDataSources(fastify.db, scraper),
       })
     },
   )
@@ -252,7 +238,7 @@ export async function scrapersRoutes(
       })
 
       return reply.status(201).send({
-        data: await joinScraperWithDataSources(scraper),
+        data: await joinScraperWithDataSources(fastify.db, scraper),
       })
     },
   )
@@ -345,7 +331,7 @@ export async function scrapersRoutes(
       })
 
       return reply.status(200).send({
-        data: await joinScraperWithDataSources(scraper),
+        data: await joinScraperWithDataSources(fastify.db, scraper),
       })
     },
   )
@@ -423,7 +409,10 @@ export async function scrapersRoutes(
         })
       }
 
-      const scraperData = await joinScraperWithDataSources(scraperResponse)
+      const scraperData = await joinScraperWithDataSources(
+        fastify.db,
+        scraperResponse,
+      )
 
       executeNewScraper(
         scraperResponse.id,
@@ -623,7 +612,10 @@ export async function scrapersRoutes(
         omit(scraperData, "id", "createdAt", "updatedAt"),
       )
 
-      const scraperWithDataSources = await joinScraperWithDataSources(scraper)
+      const scraperWithDataSources = await joinScraperWithDataSources(
+        fastify.db,
+        scraper,
+      )
 
       return reply.status(200).send({ data: scraperWithDataSources })
     },
@@ -655,7 +647,7 @@ export async function scrapersRoutes(
         })
       }
 
-      const scraperData = await joinScraperWithDataSources(scraper)
+      const scraperData = await joinScraperWithDataSources(fastify.db, scraper)
 
       const [directory] = await dialog({ type: "directory" })
 
