@@ -9,6 +9,9 @@ import { getLogger } from "./logger"
 import { setupSystray } from "./systray"
 import { exec } from "node:child_process"
 import { startMonitoringRoutines } from "./routines-monitor"
+import sea from "node:sea"
+import path from "node:path"
+import { cwd } from "./cwd"
 
 async function main() {
   const logger = getLogger()
@@ -17,7 +20,9 @@ async function main() {
 
   const events = getEventsModule()
 
-  const dbUrl = process.env.DB_FILE_NAME || "file:data.db"
+  const dbUrl =
+    process.env.DB_FILE_NAME ||
+    (sea.isSea() ? `file:${path.join(cwd(), "data.db")}` : "file:data.db")
 
   const db = await getDbModule(dbUrl, logger)
 
