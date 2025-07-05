@@ -7,14 +7,14 @@ import ollama, { type GenerateRequest } from "ollama"
 import zodToJsonSchema from "zod-to-json-schema"
 import { checkModelAvailability, getAbsoluteCoordinates } from "./helpers"
 import { resizeScreenshot } from "./image-processing"
-import { CoordinatesSchema } from "./schemas"
+import { coordinatesSchema } from "./schemas"
 
 type RequestOptions = Partial<Pick<GenerateRequest, "model" | "format">> & {
   systemPrompt?: string
 }
 
 export class SmartLocalization {
-  private static jsonSchema = zodToJsonSchema(CoordinatesSchema)
+  private static jsonSchema = zodToJsonSchema(coordinatesSchema)
 
   constructor(
     private readonly logger: SimpleLogger,
@@ -30,7 +30,7 @@ export class SmartLocalization {
     const response = await this.generateResponse(prompt, encodedImage)
 
     try {
-      const parsedOutput = CoordinatesSchema.parse(JSON.parse(response))
+      const parsedOutput = coordinatesSchema.parse(JSON.parse(response))
 
       const coordinates = pick(parsedOutput, "x", "y")
 

@@ -9,9 +9,9 @@ import {
 } from "@web-scraper/common"
 import type { ScrollOptions } from "ghost-cursor"
 import ollama, {
-  type Message,
   type ChatRequest,
   type ChatResponse,
+  type Message,
 } from "ollama"
 import zodToJsonSchema from "zod-to-json-schema"
 import type { ScraperPageContext } from "../execution/execution-pages"
@@ -24,23 +24,23 @@ import {
 } from "./helpers"
 import { resizeScreenshot } from "./image-processing"
 import {
+  type AutonomousAgentAction,
   type NavigationStep,
-  CoordinatesSchema,
   NavigationActionType,
-  NavigationStepSchema,
+  navigationStepSchema,
 } from "./schemas"
 import type { SmartLocalization } from "./smart-localization"
 
 type RequestOptions = Partial<Pick<ChatRequest, "model" | "format">>
 
 /** Specifies how many previous responses to include in the system prompt */
-const lastResponsesCount = 16
+const lastResponsesCount = 10
 
 /** Specifies how many times the same action can be repeated */
 const maximumActionRepetitions = 3
 
 export class AutonomousAgent {
-  private static jsonSchema = zodToJsonSchema(NavigationStepSchema)
+  private static jsonSchema = zodToJsonSchema(navigationStepSchema)
 
   constructor(
     private readonly logger: SimpleLogger,
@@ -75,7 +75,11 @@ export class AutonomousAgent {
       },
     ]
     const assistantResponses: Message[] = []
-    const actionsHistory: Array<NavigationStep["action"]> = []
+    const actionsHistory: NavigationStep["actions"] = []
+
+    if (process.env.NODE_ENV === "development") {
+      this.logger.info({ navigationStepSchema: AutonomousAgent.jsonSchema })
+    }
 
     for (let step = 1; step <= (action.maximumSteps ?? 256); step++) {
       const viewportData = await pageContext.page.screenshot({
@@ -89,41 +93,38 @@ export class AutonomousAgent {
 
       const encodedImage = await ollama.encodeImage(resizedImageData)
 
-      const transformCoordinates = async (
-        coordinates: Coordinates,
-        element: string,
-      ) => {
-        if (action.usePreciseLocalization) {
-          try {
-            const response = await this.localization.generateResponse(
-              element,
-              encodedImage,
-            )
+      const transformCoordinates = async (coordinates: Coordinates) => {
+        // if (action.usePreciseLocalization) {
+        //   try {
+        //     const response = await this.localization.generateResponse(
+        //       element,
+        //       encodedImage,
+        //     )
 
-            const parsedOutput = CoordinatesSchema.parse(JSON.parse(response))
+        //     const parsedOutput = coordinatesSchema.parse(JSON.parse(response))
 
-            const originalCoordinates = coordinates
-            coordinates = pick(parsedOutput, "x", "y")
-            this.logger.info({
-              msg: "Precise localization coordinates",
-              response,
-            })
+        //     const originalCoordinates = coordinates
+        //     coordinates = pick(parsedOutput, "x", "y")
+        //     this.logger.info({
+        //       msg: "Precise localization coordinates",
+        //       response,
+        //     })
 
-            if (!coordinatesInBounds(coordinates, resizedResolution)) {
-              this.logger.error({
-                msg: "Precise coordinates out of bounds, reverting to original coordinates",
-                coordinates,
-                resizedResolution,
-              })
-              coordinates = originalCoordinates
-            }
-          } catch (error) {
-            this.logger.error({
-              msg: "Failed to localize element",
-              error,
-            })
-          }
-        }
+        //     if (!coordinatesInBounds(coordinates, resizedResolution)) {
+        //       this.logger.error({
+        //         msg: "Precise coordinates out of bounds, reverting to original coordinates",
+        //         coordinates,
+        //         resizedResolution,
+        //       })
+        //       coordinates = originalCoordinates
+        //     }
+        //   } catch (error) {
+        //     this.logger.error({
+        //       msg: "Failed to localize element",
+        //       error,
+        //     })
+        //   }
+        // }
 
         if (!coordinatesInBounds(coordinates, resizedResolution)) {
           this.logger.error({
@@ -177,12 +178,7 @@ export class AutonomousAgent {
         )
       }
 
-      assistantResponses.push({
-        role: "assistant",
-        content: response.message.content,
-      })
-
-      const navigationStep = NavigationStepSchema.safeParse(
+      const navigationStep = navigationStepSchema.safeParse(
         JSON.parse(response.message.content),
       )
 
@@ -193,34 +189,41 @@ export class AutonomousAgent {
           data: navigationStep.data,
         })
 
-        actionsHistory.push(navigationStep.data.action)
+        assistantResponses.push({
+          role: "assistant",
+          content: JSON.stringify(navigationStep.data, null, 2),
+        })
+
+        actionsHistory.push(...navigationStep.data.actions)
 
         if (tooManyActionRepetitions(actionsHistory)) {
           this.logger.warn({
             msg: "Too many same action repetitions",
             step,
-            action: navigationStep.data.action,
+            action: navigationStep.data.actions.at(-1),
           })
 
           assistantResponses.push({
             role: "system",
-            content: `The same action has been repeated ${maximumActionRepetitions} times. Try different approach.`,
+            content: `The same action has been repeated ${maximumActionRepetitions} times. You must try a different approach.`,
           })
         }
 
-        const answer = await this.handleNavigationStep(
-          navigationStep.data,
-          action,
-          pageContext,
-          performCommonPageAction,
-          transformCoordinates,
-        )
+        for (const actionToPerform of navigationStep.data.actions) {
+          const answer = await this.handleNavigationStep(
+            actionToPerform,
+            action,
+            pageContext,
+            performCommonPageAction,
+            transformCoordinates,
+          )
 
-        if (answer) {
-          return answer
+          if (answer) {
+            return answer
+          }
+
+          await wait(2_000)
         }
-
-        await wait(2_000)
       } else {
         this.logger.error({
           msg: "Failed to parse navigation step",
@@ -235,22 +238,20 @@ export class AutonomousAgent {
   }
 
   private async handleNavigationStep(
-    navigationStep: NavigationStep,
-    action: PageAction & { type: PageActionType.RunAutonomousAgent },
+    action: AutonomousAgentAction,
+    {
+      useGhostCursor,
+    }: PageAction & { type: PageActionType.RunAutonomousAgent },
     pageContext: ScraperPageContext,
     performCommonPageAction: (pageAction: PageAction) => Promise<void>,
     transformCoordinates: (
       coordinates: Coordinates,
-      element: string,
     ) => Promise<Coordinates | null>,
   ) {
-    switch (navigationStep.action.action) {
+    switch (action.actionType) {
       case NavigationActionType.ClickElement:
         {
-          const coordinates = await transformCoordinates(
-            pick(navigationStep.action, "x", "y"),
-            navigationStep.action.element,
-          )
+          const coordinates = await transformCoordinates(pick(action, "x", "y"))
 
           if (!coordinates) {
             break
@@ -260,54 +261,51 @@ export class AutonomousAgent {
             pageContext,
             coordinates,
             {
-              useGhostCursor: action.useGhostCursor,
+              useGhostCursor: useGhostCursor,
               waitForNavigation: true,
             },
             this.logger,
           )
         }
         break
-      case NavigationActionType.WriteElement:
+      case NavigationActionType.TypeText:
         {
-          const coordinates = await transformCoordinates(
-            pick(navigationStep.action, "x", "y"),
-            navigationStep.action.element,
-          )
+          // if (!coordinates) {
+          //   break
+          // }
 
-          if (!coordinates) {
-            break
-          }
+          // await preciseClick(
+          //   pageContext,
+          //   coordinates,
+          //   {
+          //     useGhostCursor: useGhostCursor,
+          //     waitForNavigation: false,
+          //   },
+          //   this.logger,
+          // )
 
-          await preciseClick(
-            pageContext,
-            coordinates,
-            {
-              useGhostCursor: action.useGhostCursor,
-              waitForNavigation: false,
-            },
-            this.logger,
-          )
+          //TODO: allow agent to "clear before type"
+          // const modifier = process.platform === "darwin" ? "Meta" : "Control"
+          // await pageContext.page.keyboard.down(modifier)
+          // await wait(randomInt(10, 50))
+          // await pageContext.page.keyboard.press("KeyA")
+          // await wait(randomInt(10, 50))
+          // await pageContext.page.keyboard.up(modifier)
+          // await wait(randomInt(50, 100))
+          // await pageContext.page.keyboard.press("Backspace")
+          // await wait(randomInt(50, 100))
 
-          const modifier = process.platform === "darwin" ? "Meta" : "Control"
-          await pageContext.page.keyboard.down(modifier)
-          await wait(randomInt(10, 50))
-          await pageContext.page.keyboard.press("KeyA")
-          await wait(randomInt(10, 50))
-          await pageContext.page.keyboard.up(modifier)
-          await wait(randomInt(50, 100))
-          await pageContext.page.keyboard.press("Backspace")
-          await wait(randomInt(50, 100))
-
-          await pageContext.page.keyboard.type(navigationStep.action.content, {
+          await pageContext.page.keyboard.type(action.text, {
             delay: randomInt(1, 4),
           })
 
-          if (navigationStep.action.pressEnter) {
+          if (action.pressEnter) {
             await wait(randomInt(100, 500))
             await pageContext.page.keyboard.press("Enter")
           }
         }
         break
+
       case NavigationActionType.Scroll:
         {
           const viewport = pageContext.page.viewport() ?? {
@@ -318,7 +316,7 @@ export class AutonomousAgent {
             scrollSpeed: 50,
             scrollDelay: randomInt(100, 500),
           }
-          switch (navigationStep.action.direction) {
+          switch (action.direction) {
             case "down":
               await pageContext.cursor.scroll(
                 { y: viewport.height },
@@ -347,14 +345,6 @@ export class AutonomousAgent {
         }
         break
 
-      // case NavigationActionType.GoBack:
-      //   await pageContext.page.goBack({
-      //     timeout: 30_000,
-      //     waitUntil: "networkidle0",
-      //   })
-      //   break
-
-      //TODO: implement page actions for GoBack, GoForward and Refresh
       case NavigationActionType.Refresh:
         await performCommonPageAction({
           type: PageActionType.Navigate,
@@ -364,24 +354,19 @@ export class AutonomousAgent {
       case NavigationActionType.Goto:
         await performCommonPageAction({
           type: PageActionType.Navigate,
-          url: navigationStep.action.url,
+          url: action.url,
         })
         break
-      // case NavigationActionType.Wait:
-      //   await performCommonPageAction({
-      //     type: PageActionType.Wait,
-      //     duration: navigationStep.action.seconds * 1_000,
-      //   })
-      //   break
+
       case NavigationActionType.Answer: {
-        return navigationStep.action.content
+        return action.content
       }
     }
   }
 }
 
 export function tooManyActionRepetitions(
-  actionsHistory: Array<NavigationStep["action"]>,
+  actionsHistory: NavigationStep["actions"],
 ) {
   if (actionsHistory.length < maximumActionRepetitions) {
     return false
@@ -401,28 +386,26 @@ export function tooManyActionRepetitions(
 }
 
 function getSystemPrompt() {
-  return `Imagine you are a robot browsing the web, just like humans. Now you need to complete a task.
+  return `Imagine you are a robot browsing the web, just like humans. Now you need to complete a task described by the user.
 You remember ${lastResponsesCount} your last responses which tell you what you already did.
-You will also receive the current screenshot of the web page.
-Carefully analyze the visual information to identify what to do, then follow the guidelines to choose the following action.
+On each step, you will receive the current screenshot of the web page.
+Carefully analyze the visual information to identify what to do, then follow the guidelines to choose the next series of actions.
 You should detail your thought (i.e. reasoning steps) before taking the action.
-Also detail in the notes field of the action the extracted information relevant to solve the task.
-Once you have enough information in the notes to answer the task, return an answer action with the detailed answer in the notes field.
+Also detail in the notes field the extracted information relevant to solve the task.
+Once you have enough information in the notes to answer the task, return an answer action with the detailed answer in the content field.
 
 Guidelines:
 - Store in the notes all the relevant information to solve the task that fulfill the task criteria; be precise
 - Use both the task and previous responses to decide what to do next
 - Due to the limited context, notes before ${lastResponsesCount - 1} previous responses should be repeated and combined with the current notes to avoid losing partial information needed to answer the task
 - If there is a cookies notice, privacy policy, or other agreement, always accept them first to avoid being blocked
-- If you see relevant information on the screenshot to answer the task, add it to the notes field of the action.
-- If there is no relevant information on the screenshot to answer the task, add an empty string to the notes field of the action.
+- If you see relevant information on the screenshot to answer the task, add it to the notes field
+- If there is no relevant information on the screenshot to answer the task, add an empty string to the notes field
 - If you see buttons that allow to navigate directly to relevant information, like jump to ... or go to ... , use them to navigate faster.
+- Don't perform too many actions at once; if you need to fill an input field for example, you should return two actions: first click on the input field and then type the text
 - Don't repeat the same exact action (for example clicking on the same coordinates) more than ${maximumActionRepetitions} times; if you repeat the same action, add a note to the action to explain why you repeated it
 - Avoid being stuck on partial goals; you can always change approach to solve the task
-- Screenshot content is more important than previous responses and should always be main factor while deciding what to do next - screenshot is the main source of truth
 - In the answer action, give as many details a possible relevant to answering the task
-- To write, identify the web element which is type and the text it already contains
-- Never use click action before typing in a text field, search bar or any other input field; directly write in the input field with write action
 - Remember that you can automatically press enter after typing to avoid unnecessary clicks
 - Only refresh the page if you identify a rate limit problem
 - If you are facing a captcha on a website, try to solve it

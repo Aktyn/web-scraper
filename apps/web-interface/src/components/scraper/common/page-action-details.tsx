@@ -1,13 +1,20 @@
+import { AvailabilityCheck } from "@/components/common/availability-check"
 import { CopyButton } from "@/components/common/button/copy-button"
 import { ExternalLink } from "@/components/common/button/external-link"
+import { Code } from "@/components/common/code"
 import { LabeledValue } from "@/components/common/label/labeled-value"
+import { Button } from "@/components/shadcn/button"
 import { Label } from "@/components/shadcn/label"
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/shadcn/popover"
 import { formatDuration } from "@/lib/utils"
 import type { PageAction } from "@web-scraper/common"
 import { PageActionType } from "@web-scraper/common"
 import {
   CornerDownLeft,
-  Crosshair,
   Delete,
   Eye,
   Hourglass,
@@ -15,14 +22,6 @@ import {
 } from "lucide-react"
 import { ScraperSelector } from "../instruction-types/scraper-selector"
 import { ScraperValue } from "./scraper-value"
-import { Code } from "@/components/common/code"
-import { Button } from "@/components/shadcn/button"
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/shadcn/popover"
-import { AvailabilityCheck } from "@/components/common/availability-check"
 
 export function PageActionDetails({ action }: { action: PageAction }) {
   switch (action.type) {
@@ -162,12 +161,12 @@ export function PageActionDetails({ action }: { action: PageAction }) {
           <LabeledValue label="Maximum steps:">
             {action.maximumSteps ?? 256}
           </LabeledValue>
-          {action.usePreciseLocalization && (
+          {/* {action.usePreciseLocalization && (
             <Label className="flex flex-row items-center gap-2 pointer-events-auto">
               <Crosshair className="size-4 inline" />
               <span>Precise localization</span>
             </Label>
-          )}
+          )} */}
           {action.useGhostCursor && (
             <Label className="flex flex-row items-center gap-2 pointer-events-auto">
               <MousePointerClick className="size-4 inline" />

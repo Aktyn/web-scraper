@@ -1,5 +1,7 @@
+import { AvailabilityCheck } from "@/components/common/availability-check"
 import { FormInput } from "@/components/common/form/form-input"
 import { FormSwitch } from "@/components/common/form/form-switch"
+import { FormTextarea } from "@/components/common/form/form-textarea"
 import { FormField, FormItem } from "@/components/shadcn/form"
 import { cn } from "@/lib/utils"
 import { PageActionType, type UpsertScraper } from "@web-scraper/common"
@@ -7,8 +9,6 @@ import { useWatch, type Control } from "react-hook-form"
 import { EvaluatorField } from "../common/evaluator-field"
 import { ScraperSelectorsForm } from "./scraper-selectors-form"
 import { ScraperValueForm } from "./scraper-value-form"
-import { AvailabilityCheck } from "@/components/common/availability-check"
-import { FormTextarea } from "@/components/common/form/form-textarea"
 
 export type PageActionFieldName = `instructions.${number}.action`
 
@@ -151,12 +151,12 @@ export function PageActionForm({ control, fieldName }: PageActionFormProps) {
             description="Maximum allowed number of steps that the agent can take before giving up"
             type="number"
           />
-          <FormSwitch
+          {/* <FormSwitch
             control={control}
             name={`${fieldName}.usePreciseLocalization`}
             label="Use precise localization"
             description="Use AI to more precisely localize the element to click on or type in"
-          />
+          /> */}
           <FormSwitch
             control={control}
             name={`${fieldName}.useGhostCursor`}

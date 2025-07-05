@@ -697,7 +697,7 @@ const autonomousAgentTestInstructions: ScraperInstructions = [
       type: PageActionType.RunAutonomousAgent,
       startUrl: "https://www.google.com/",
       task: "Find detailed specifications of the newest Oppo Find model.\nI am interested in the screen resolution, size, refresh rate, peak brightness, battery capacity, memory size, storage capacity, and charging power.\nWhat color variants are available?\nAvoid wikipedia",
-      usePreciseLocalization: true,
+      // usePreciseLocalization: true,
       useGhostCursor: false,
       maximumSteps: 32,
     },

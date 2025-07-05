@@ -2,7 +2,7 @@ import { z } from "zod"
 
 // ----- Localization schemas -----
 
-export const CoordinatesSchema = z.object({
+export const coordinatesSchema = z.object({
   action: z.literal("click"),
   x: z
     .number()
@@ -11,59 +11,51 @@ export const CoordinatesSchema = z.object({
   y: z
     .number()
     .int()
-    .describe("The y coordinate, number of pixels from the top edge."),
+    .describe("The y coordinate, number of pixels from the top edge"),
 })
 
 // ----- Navigation schemas -----
 
 export enum NavigationActionType {
   ClickElement = "click_element",
-  WriteElement = "write_element_abs",
+  TypeText = "type_text",
   Scroll = "scroll",
-  // GoBack = "go_back",
   Refresh = "refresh",
   Goto = "goto",
-  // Wait = "wait",
   Answer = "answer",
 }
 
-const ClickElementActionSchema = z.object({
-  action: z
+const clickElementActionSchema = z.object({
+  actionType: z
     .literal(NavigationActionType.ClickElement)
-    .describe("Click at absolute coordinates of a web element"),
-  element: z.string().describe("Text description of the element"),
+    .describe("Click at absolute coordinates in a web page"),
+  // element: z.string().describe("Text description of the element"),
   x: z
     .number()
     .int()
-    .describe("The x coordinate, number of pixels from the left edge."),
+    .describe("The x coordinate, number of pixels from the left edge"),
   y: z
     .number()
     .int()
-    .describe("The y coordinate, number of pixels from the top edge."),
+    .describe("The y coordinate, number of pixels from the top edge"),
 })
 
-const WriteElementActionSchema = z.object({
-  action: z
-    .literal(NavigationActionType.WriteElement)
-    .describe("Write content at absolute coordinates of a web page"),
-  content: z.string().describe("Content to write"),
-  element: z.string().describe("Text description of the element"),
+const typeTextActionSchema = z.object({
+  actionType: z
+    .literal(NavigationActionType.TypeText)
+    .describe(
+      "Use keyboard to write some text in a web element; should be preceded by a click action",
+    ),
+  text: z.string().describe("Text to write"),
+  // element: z.string().describe("Text description of the element"),
   pressEnter: z
     .boolean()
     .optional()
-    .describe("Whether to press enter after writing"),
-  x: z
-    .number()
-    .int()
-    .describe("The x coordinate, number of pixels from the left edge."),
-  y: z
-    .number()
-    .int()
-    .describe("The y coordinate, number of pixels from the top edge."),
+    .describe("Whether to press enter after typing"),
 })
 
-const ScrollActionSchema = z.object({
-  action: z
+const scrollActionSchema = z.object({
+  actionType: z
     .literal(NavigationActionType.Scroll)
     .describe("Scroll the page or a specific element"),
   direction: z
@@ -71,63 +63,48 @@ const ScrollActionSchema = z.object({
     .describe("The direction to scroll in"),
 })
 
-// const GoBackActionSchema = z.object({
-//   action: z
-//     .literal(NavigationActionType.GoBack)
-//     .describe("Navigate to the previous page"),
-// })
-
-const RefreshActionSchema = z.object({
-  action: z
+const refreshActionSchema = z.object({
+  actionType: z
     .literal(NavigationActionType.Refresh)
     .describe("Refresh the current page"),
 })
 
-const GotoActionSchema = z.object({
-  action: z
+const gotoActionSchema = z.object({
+  actionType: z
     .literal(NavigationActionType.Goto)
-    .describe("Goto a particular URL"),
-  url: z.string().url().describe("A url starting with http:// or https://"),
+    .describe("Navigate to a particular URL"),
+  url: z.string().describe("URL starting with http:// or https://"),
 })
 
-// const WaitActionSchema = z.object({
-//   action: z
-//     .literal(NavigationActionType.Wait)
-//     .describe("Wait for a particular amount of time"),
-//   seconds: z
-//     .number()
-//     .int()
-//     .min(0)
-//     .max(60)
-//     .default(2)
-//     .describe("The number of seconds to wait"),
-// })
-
-const AnswerActionSchema = z.object({
-  action: z.literal(NavigationActionType.Answer).describe("Answer a question"),
+const answerActionSchema = z.object({
+  actionType: z
+    .literal(NavigationActionType.Answer)
+    .describe("Answer a question"),
   content: z.string().describe("The answer content"),
 })
 
-const ActionSpaceSchema = z.discriminatedUnion("action", [
-  ClickElementActionSchema,
-  WriteElementActionSchema,
-  ScrollActionSchema,
-  // GoBackActionSchema,
-  RefreshActionSchema,
-  // WaitActionSchema,
-  AnswerActionSchema,
-  GotoActionSchema,
+const pageActionSchema = z.discriminatedUnion("actionType", [
+  clickElementActionSchema,
+  typeTextActionSchema,
+  scrollActionSchema,
+  refreshActionSchema,
+  answerActionSchema,
+  gotoActionSchema,
 ])
 
-export const NavigationStepSchema = z.object({
+export type AutonomousAgentAction = z.infer<typeof pageActionSchema>
+
+export const navigationStepSchema = z.object({
   note: z
     .string()
     .default("")
     .describe(
       "Task-relevant information extracted from the previous observation. Keep empty if no new info.",
     ),
-  thought: z.string().describe("Reasoning about next steps (<4 lines)"),
-  action: ActionSpaceSchema.describe("Next action to take"),
+  thought: z.string().describe("Reasoning about current step"),
+  actions: z
+    .array(pageActionSchema)
+    .describe("Series of page actions to perform"),
 })
 
-export type NavigationStep = z.infer<typeof NavigationStepSchema>
+export type NavigationStep = z.infer<typeof navigationStepSchema>
