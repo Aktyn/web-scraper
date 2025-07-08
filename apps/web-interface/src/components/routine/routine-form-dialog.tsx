@@ -36,6 +36,7 @@ import { FormTextarea } from "../common/form/form-textarea.js"
 import { IteratorDescription } from "../iterator/iterator-description.js"
 import { IteratorFormDialog } from "../iterator/iterator-form-dialog.js"
 import { Tooltip, TooltipContent, TooltipTrigger } from "../shadcn/tooltip.js"
+import { TermInfo } from "../info/term-info.js"
 
 const HOUR_IN_MS = 3_600_000
 
@@ -166,8 +167,9 @@ export function RoutineFormDialog({
         className="sm:max-w-2xl max-h-[90vh] overflow-y-auto grid grid-rows-[auto_1fr]"
       >
         <DialogHeader>
-          <DialogTitle>
+          <DialogTitle className="flex flex-row items-center gap-2">
             {isEditing ? "Edit Routine" : "Create Routine"}
+            <TermInfo term="routine" />
           </DialogTitle>
           <DialogDescription>
             Routine allows you to schedule scraper executions at defined

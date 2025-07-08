@@ -25,6 +25,7 @@ import { useEffect, useMemo, useState } from "react"
 import { useForm, useFormContext, useWatch } from "react-hook-form"
 import { mapToSelectOptions } from "../scraper/form/helpers"
 import { WhereSchemaForm } from "../scraper/form/where-schema-form"
+import { TermInfo } from "../info/term-info"
 
 interface IteratorFormDialogProps {
   open: boolean
@@ -120,7 +121,10 @@ export function IteratorFormDialog({
         className="sm:max-w-2xl max-h-[90vh] overflow-y-auto grid grid-rows-[auto_1fr_auto]"
       >
         <DialogHeader>
-          <DialogTitle>Execution iterator</DialogTitle>
+          <DialogTitle className="flex flex-row items-center gap-2">
+            <span>Execution iterator</span>
+            <TermInfo term="iterator" />
+          </DialogTitle>
         </DialogHeader>
 
         <ScrollArea className="-m-6 **:[form]:p-6 overflow-hidden mask-t-from-[calc(100%-var(--spacing)*8)] mask-b-from-[calc(100%-var(--spacing)*8)]">

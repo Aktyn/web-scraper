@@ -31,6 +31,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "../shadcn/accordion"
+import { TermInfo } from "../info/term-info"
 
 interface ScraperFormDialogProps {
   open: boolean
@@ -154,8 +155,9 @@ export function ScraperFormDialog({
         className="sm:max-w-2xl max-h-[90vh] overflow-y-auto grid grid-rows-[auto_1fr]"
       >
         <DialogHeader>
-          <DialogTitle>
+          <DialogTitle className="flex flex-row items-center gap-2">
             {isEditing ? "Edit Scraper" : "Create Scraper"}
+            <TermInfo term="scraper" />
           </DialogTitle>
           <DialogDescription>
             {isEditing
@@ -205,7 +207,9 @@ export function ScraperFormDialog({
                 <AccordionItem value="data-sources">
                   <AccordionTrigger className="items-center">
                     <div>
-                      <h3 className="text-lg font-medium">Data Sources</h3>
+                      <h3 className="text-lg font-medium flex flex-row items-center gap-2">
+                        Data Sources <TermInfo term="dataSource" />
+                      </h3>
                       <p className="text-sm text-muted-foreground">
                         Configure external data sources for this scraper.
                       </p>

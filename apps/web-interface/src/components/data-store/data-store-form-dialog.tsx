@@ -33,6 +33,7 @@ import { useFieldArray, useForm } from "react-hook-form"
 import { FormInput } from "../common/form/form-input"
 import { FormSelect } from "../common/form/form-select"
 import { FormSwitch } from "../common/form/form-switch"
+import { TermInfo } from "../info/term-info"
 
 const columnTypeOptions = [
   { value: SqliteColumnType.TEXT, label: "Text" },
@@ -161,8 +162,9 @@ export function DataStoreFormDialog({
         className="max-w-2xl max-h-[90vh] overflow-y-auto grid grid-rows-[auto_1fr]"
       >
         <DialogHeader>
-          <DialogTitle>
+          <DialogTitle className="flex flex-row items-center gap-2">
             {isEditing ? "Edit Data Store" : "Create Data Store"}
+            <TermInfo term="dataStore" />
           </DialogTitle>
           <DialogDescription>
             {isEditing

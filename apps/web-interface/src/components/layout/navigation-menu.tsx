@@ -39,6 +39,7 @@ export function NavigationMenu({ compact }: { compact: boolean }) {
         icon="settings-2"
         label="Preferences"
       />
+      <Item view={useView.View.Info} icon="info" label="Info" />
     </nav>
   )
 }

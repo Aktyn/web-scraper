@@ -54,8 +54,7 @@ node --experimental-sea-config sea-config.json
 echo "... done building SEA bundle"
 
 echo "Removing copy of bundled backend code..."
-# TODO: uncomment this
-# rm -rf ./apps/backend/dist/standalone-copy.js
+rm -rf ./apps/backend/dist/standalone-copy.js
 echo "... done removing copy of bundled backend code"
 
 echo ""

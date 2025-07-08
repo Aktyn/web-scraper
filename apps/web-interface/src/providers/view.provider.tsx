@@ -7,6 +7,7 @@ enum View {
   Routines = "routines",
   Notifications = "notifications",
   Preferences = "preferences",
+  Info = "info",
 }
 
 const ViewContext = createContext({
