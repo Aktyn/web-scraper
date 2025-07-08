@@ -5,7 +5,9 @@ import { createUserDataStore } from "../user-data-store-helpers"
 
 export async function seedUserDataStores(db: DbModule) {
   const { table: personalCredentialsTable } = await createUserDataStore(db, {
-    tableName: sanitizeTableName("Personal credentials random string"),
+    tableName: sanitizeTableName(
+      "data-store-Personal credentials random string",
+    ),
     name: "Personal credentials",
     description: "Personal credentials for various websites",
     columns: [
@@ -46,7 +48,9 @@ export async function seedUserDataStores(db: DbModule) {
   ])
 
   await createUserDataStore(db, {
-    tableName: sanitizeTableName("Example test of saving page content"),
+    tableName: sanitizeTableName(
+      "data-store-Example test of saving page content",
+    ),
     name: "Example test of saving page content",
     description: "Example test of saving page content",
     columns: [
@@ -66,7 +70,7 @@ export async function seedUserDataStores(db: DbModule) {
   })
 
   const { table: cryptocurrenciesTable } = await createUserDataStore(db, {
-    tableName: sanitizeTableName("Crypto prices"),
+    tableName: sanitizeTableName("data-store-Crypto prices"),
     name: "Crypto prices",
     columns: [
       { name: "Cryptocurrency", type: SqliteColumnType.TEXT, notNull: true },
@@ -100,7 +104,7 @@ export async function seedUserDataStores(db: DbModule) {
   ])
 
   const { table: dataMarkersTable } = await createUserDataStore(db, {
-    tableName: sanitizeTableName("Data markers"),
+    tableName: sanitizeTableName("data-store-Data markers"),
     name: "Data markers",
     columns: [
       { name: "Name", type: SqliteColumnType.TEXT, notNull: true },
@@ -113,7 +117,7 @@ export async function seedUserDataStores(db: DbModule) {
     .values([{ Name: "Last pepper alert", Content: null }])
 
   await createUserDataStore(db, {
-    tableName: sanitizeTableName("Brain fm accounts"),
+    tableName: sanitizeTableName("data-store-Brain fm accounts"),
     name: "Brain FM accounts",
     columns: [
       { name: "Name", type: SqliteColumnType.TEXT },

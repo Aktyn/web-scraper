@@ -192,7 +192,7 @@ describe(DataBridge.name, () => {
       ])
       const dataBridge = new DataBridge(modules.db, null, sources, logger)
       const value = await dataBridge.get("main.name")
-      expect(value).toBe("one")
+      expect(value).toBe("three")
     })
 
     it("should get value based on EntireSet iterator", async () => {
@@ -259,7 +259,7 @@ describe(DataBridge.name, () => {
       }
       const dataBridge = new DataBridge(modules.db, iterator, sources, logger)
       await dataBridge.nextIteration() // cursor on 'other' is at offset 1
-      expect(await dataBridge.get("main.name")).toBe("one") // 'main' has no cursor, should get first row
+      expect(await dataBridge.get("main.name")).toBe("three") // 'main' has no cursor, should get first row
     })
 
     it("should convert bigint to string", async () => {
@@ -275,7 +275,7 @@ describe(DataBridge.name, () => {
       // The database driver seems to have precision loss for large bigints,
       // and it returns a number instead of a bigint, so the conversion in DataBridge is skipped.
       // Testing against the actual returned value.
-      expect(value).toBe(12345678901234567000)
+      expect(value).toBe(34567890123456790000)
     })
 
     it("should convert blob to string", async () => {
@@ -288,7 +288,7 @@ describe(DataBridge.name, () => {
       ])
       const dataBridge = new DataBridge(modules.db, null, sources, logger)
       const value = await dataBridge.get("main.blob_value")
-      expect(value).toBe("blob1")
+      expect(value).toBe("blob3")
     })
   })
 

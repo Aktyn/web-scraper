@@ -22,6 +22,17 @@ const mockStore = new Map<string, DataBridgeValue>([
 ])
 
 const mockDataBridge: DataBridge = {
+  getSchema: async () => ({
+    "user.name": "string",
+    "user.password": "string",
+    "button.next": "string",
+    "product.name": "string",
+    "product.price": "number",
+    "product.attribute": "string",
+    "product.attributeValue": "string",
+    "user.greeting": "string",
+  }),
+
   get: async (key) => {
     return mockStore.get(key) ?? null
   },

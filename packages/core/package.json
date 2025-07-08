@@ -20,6 +20,8 @@
     "@types/node-notifier": "^8.0.5",
     "@web-scraper/common": "*",
     "ghost-cursor": "^1.4.1",
+    "is-plain-object": "^5.0.0",
+    "kind-of": "^6.0.3",
     "node-notifier": "^10.0.1",
     "ollama": "^0.5.16",
     "puppeteer-extra": "^3.3.6",
@@ -28,6 +30,7 @@
     "puppeteer-extra-plugin-stealth": "^2.11.2",
     "puppeteer-real-browser": "^1.4.2",
     "rebrowser-puppeteer": "^24.8.1",
+    "shallow-clone": "^3.0.1",
     "sharp": "^0.34.2",
     "zod": "^3.25.67",
     "zod-to-json-schema": "^3.24.6"

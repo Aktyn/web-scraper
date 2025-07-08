@@ -33,7 +33,7 @@ function Description({ iterator }: { iterator: ExecutionIterator | null }) {
       <span className="font-semibold text-muted-foreground text-pretty">
         No iterator configured. Scraper will run once.
         <br />
-        Data will be fetched from the first row from data source.
+        Data will be fetched from the last row from data source.
         <br />
         Data save instructions will try to insert new row.
       </span>

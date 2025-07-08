@@ -1,10 +1,12 @@
 import {
   type PageAction,
+  type ScraperDataKey,
   type SimpleLogger,
   defaultPreferences,
   PageActionType,
   pick,
   randomInt,
+  SystemActionType,
   wait,
 } from "@web-scraper/common"
 import type { ScrollOptions } from "ghost-cursor"
@@ -14,6 +16,8 @@ import ollama, {
   type Message,
 } from "ollama"
 import zodToJsonSchema from "zod-to-json-schema"
+import { performSystemAction } from "../../system-actions"
+import type { DataBridge, DataBridgeValue } from "../data-helper"
 import type { ScraperPageContext } from "../execution/execution-pages"
 import { preciseClick } from "../execution/page-actions"
 import {
@@ -24,12 +28,10 @@ import {
 } from "./helpers"
 import { resizeScreenshot } from "./image-processing"
 import {
-  type AutonomousAgentAction,
   type NavigationStep,
+  getNavigationStepSchema,
   NavigationActionType,
-  navigationStepSchema,
 } from "./schemas"
-import type { SmartLocalization } from "./smart-localization"
 
 type RequestOptions = Partial<Pick<ChatRequest, "model" | "format">>
 
@@ -40,17 +42,15 @@ const lastResponsesCount = 10
 const maximumActionRepetitions = 3
 
 export class AutonomousAgent {
-  private static jsonSchema = zodToJsonSchema(navigationStepSchema)
-
   constructor(
     private readonly logger: SimpleLogger,
-    private readonly localization: SmartLocalization,
     private readonly requestOptions: RequestOptions = {},
   ) {}
 
   async run(
     action: PageAction & { type: PageActionType.RunAutonomousAgent },
     pageContext: ScraperPageContext,
+    dataBridge: DataBridge,
     performCommonPageAction: (pageAction: PageAction) => Promise<void>,
   ): Promise<string> {
     const model =
@@ -64,21 +64,35 @@ export class AutonomousAgent {
       )
     }
 
+    let dataBridgeSchema: Record<string, string> | null =
+      await dataBridge.getSchema()
+    if (JSON.stringify(dataBridgeSchema) === "{}") {
+      dataBridgeSchema = null
+    }
+
     const initialMessages: Message[] = [
       {
         role: "system",
         content: getSystemPrompt(),
       },
+      dataBridgeSchema && {
+        role: "system",
+        content: `Available storage keys and its types:\n${JSON.stringify(dataBridgeSchema, null, 2)}\nUse fetch_from_storage and save_to_storage actions to interact with the storage.`,
+      },
       {
         role: "user",
         content: action.task,
       },
-    ]
+    ].filter((message) => !!message)
     const assistantResponses: Message[] = []
     const actionsHistory: NavigationStep["actions"] = []
 
+    const navigationStepSchema = getNavigationStepSchema(!!dataBridgeSchema)
+    const jsonSchema = zodToJsonSchema(navigationStepSchema)
+
     if (process.env.NODE_ENV === "development") {
-      this.logger.info({ navigationStepSchema: AutonomousAgent.jsonSchema })
+      //TODO: make sure there are no weird zod additions when omitting schema actions
+      this.logger.info({ navigationStepSchema: jsonSchema })
     }
 
     for (let step = 1; step <= (action.maximumSteps ?? 256); step++) {
@@ -149,7 +163,7 @@ export class AutonomousAgent {
         ...assistantResponses.slice(-lastResponsesCount),
         {
           role: "user",
-          content: `Current page screenshot (${resizedResolution.width}x${resizedResolution.height})`,
+          content: `Current page screenshot resolution: (${resizedResolution.width}x${resizedResolution.height})\nCurrent URL: ${pageContext.page.url()}`,
           images: [encodedImage],
         },
       ]
@@ -160,7 +174,7 @@ export class AutonomousAgent {
           response = await ollama.chat({
             model,
             messages,
-            format: AutonomousAgent.jsonSchema,
+            format: jsonSchema,
             stream: false,
             ...this.requestOptions,
           })
@@ -214,11 +228,13 @@ export class AutonomousAgent {
             actionToPerform,
             action,
             pageContext,
+            dataBridge,
             performCommonPageAction,
             transformCoordinates,
+            (message) => assistantResponses.push(message),
           )
 
-          if (answer) {
+          if (typeof answer === "string") {
             return answer
           }
 
@@ -238,15 +254,17 @@ export class AutonomousAgent {
   }
 
   private async handleNavigationStep(
-    action: AutonomousAgentAction,
+    action: NavigationStep["actions"][number],
     {
       useGhostCursor,
     }: PageAction & { type: PageActionType.RunAutonomousAgent },
     pageContext: ScraperPageContext,
+    dataBridge: DataBridge,
     performCommonPageAction: (pageAction: PageAction) => Promise<void>,
     transformCoordinates: (
       coordinates: Coordinates,
     ) => Promise<Coordinates | null>,
+    pushMessage: (message: Message) => number,
   ) {
     switch (action.actionType) {
       case NavigationActionType.ClickElement:
@@ -270,30 +288,15 @@ export class AutonomousAgent {
         break
       case NavigationActionType.TypeText:
         {
-          // if (!coordinates) {
-          //   break
-          // }
-
-          // await preciseClick(
-          //   pageContext,
-          //   coordinates,
-          //   {
-          //     useGhostCursor: useGhostCursor,
-          //     waitForNavigation: false,
-          //   },
-          //   this.logger,
-          // )
-
-          //TODO: allow agent to "clear before type"
-          // const modifier = process.platform === "darwin" ? "Meta" : "Control"
-          // await pageContext.page.keyboard.down(modifier)
-          // await wait(randomInt(10, 50))
-          // await pageContext.page.keyboard.press("KeyA")
-          // await wait(randomInt(10, 50))
-          // await pageContext.page.keyboard.up(modifier)
-          // await wait(randomInt(50, 100))
-          // await pageContext.page.keyboard.press("Backspace")
-          // await wait(randomInt(50, 100))
+          const modifier = process.platform === "darwin" ? "Meta" : "Control"
+          await pageContext.page.keyboard.down(modifier)
+          await wait(randomInt(10, 50))
+          await pageContext.page.keyboard.press("KeyA")
+          await wait(randomInt(10, 50))
+          await pageContext.page.keyboard.up(modifier)
+          await wait(randomInt(50, 100))
+          await pageContext.page.keyboard.press("Backspace")
+          await wait(randomInt(50, 100))
 
           await pageContext.page.keyboard.type(action.text, {
             delay: randomInt(1, 4),
@@ -358,6 +361,56 @@ export class AutonomousAgent {
         })
         break
 
+      case NavigationActionType.FetchFromStorage:
+        {
+          const returnedValue = await dataBridge.get(
+            action.storageKey as ScraperDataKey,
+          )
+          this.logger.info({
+            msg: `Value fetched from ${action.storageKey}`,
+            value: returnedValue,
+          })
+          pushMessage({
+            role: "assistant",
+            content: `Data fetched from ${action.storageKey}: ${returnedValue}`,
+          })
+        }
+        break
+      case NavigationActionType.SaveToStorage:
+        {
+          const groups = action.items.reduce((acc, item) => {
+            try {
+              const [sourceName, columnName] = item.storageKey.split(".")
+              const items = acc.get(sourceName) ?? []
+              items.push({
+                columnName,
+                value: item.value,
+              })
+              acc.set(sourceName, items)
+            } catch {
+              // noop
+            }
+            return acc
+          }, new Map<string, Array<{ columnName: string; value: DataBridgeValue }>>())
+
+          for (const [dataSourceName, items] of groups.entries()) {
+            this.logger.info({
+              msg: "Saving data batch",
+              dataSourceName,
+              items,
+            })
+            await dataBridge.setMany(dataSourceName, items)
+          }
+        }
+        break
+
+      case NavigationActionType.ShowNotification:
+        performSystemAction({
+          type: SystemActionType.ShowNotification,
+          message: action.content,
+        })
+        break
+
       case NavigationActionType.Answer: {
         return action.content
       }
@@ -386,30 +439,32 @@ export function tooManyActionRepetitions(
 }
 
 function getSystemPrompt() {
-  return `Imagine you are a robot browsing the web, just like humans. Now you need to complete a task described by the user.
-You remember ${lastResponsesCount} your last responses which tell you what you already did.
-On each step, you will receive the current screenshot of the web page.
-Carefully analyze the visual information to identify what to do, then follow the guidelines to choose the next series of actions.
-You should detail your thought (i.e. reasoning steps) before taking the action.
-Also detail in the notes field the extracted information relevant to solve the task.
-Once you have enough information in the notes to answer the task, return an answer action with the detailed answer in the content field.
+  return `Imagine that you are a robot browsing the web like a human would. Now, you need to complete a task described by a user.
+You can see your last ${lastResponsesCount} responses, which show you what you did in the previous steps.
+At each step, you will receive a screenshot of the current webpage along with its URL.
+Analyze the screenshots and previous responses carefully to identify the next steps, and then follow the guidelines to choose the next series of actions.
+Before taking action, detail your thought process (i.e., reasoning steps).
+Also, note the extracted information relevant to solving the task in the notes field.
+Once you have enough information in the notes to answer the task, submit an answer with a detailed response in the content field.
+
+You don't always need to interact with the page. Sometimes, the user requires you to read or write storage data, or perform system actions, such as showing a notification.
 
 Guidelines:
-- Store in the notes all the relevant information to solve the task that fulfill the task criteria; be precise
-- Use both the task and previous responses to decide what to do next
-- Due to the limited context, notes before ${lastResponsesCount - 1} previous responses should be repeated and combined with the current notes to avoid losing partial information needed to answer the task
-- If there is a cookies notice, privacy policy, or other agreement, always accept them first to avoid being blocked
-- If you see relevant information on the screenshot to answer the task, add it to the notes field
-- If there is no relevant information on the screenshot to answer the task, add an empty string to the notes field
-- If you see buttons that allow to navigate directly to relevant information, like jump to ... or go to ... , use them to navigate faster.
-- Don't perform too many actions at once; if you need to fill an input field for example, you should return two actions: first click on the input field and then type the text
-- Don't repeat the same exact action (for example clicking on the same coordinates) more than ${maximumActionRepetitions} times; if you repeat the same action, add a note to the action to explain why you repeated it
-- Avoid being stuck on partial goals; you can always change approach to solve the task
-- In the answer action, give as many details a possible relevant to answering the task
-- Remember that you can automatically press enter after typing to avoid unnecessary clicks
-- Only refresh the page if you identify a rate limit problem
-- If you are facing a captcha on a website, try to solve it
-- If you have enough information in the screenshot and in the notes to answer the task, return an answer action with the detailed answer in the notes field
-- The current date is ${new Date().toString()}
+- Store all relevant information in the notes to solve the task and fulfill the task criteria. Be precise.
+- Use the task and previous responses to decide what to do next.
+- Due to the limited context, the notes from the previous ${lastResponsesCount - 1} responses should be repeated and combined with the current notes to avoid losing information necessary for answering the task.
+- If there is a cookie notice, privacy policy, or other agreement, accept it first to avoid being blocked.
+- If you see relevant information on the screenshot that can help you answer the task, add it to the notes field.
+- If there is no relevant information on the screenshot, add an empty string to the notes field.
+- If you see buttons that allow you to navigate directly to relevant information, such as "jump to..." or "go to... , use them to navigate faster.
+- You can perform multiple actions at once. For example, if you need to fill out an input field, you should perform two actions: first, click on the input field, and then type the text.
+- Avoid repeating the same action (e.g., clicking on the same coordinates) more than ${maximumActionRepetitions} times. If you must repeat an action, add a note explaining why.
+- Avoid getting stuck on partial goals. You can always change your approach to solve the task.
+- In the answer action, provide as many relevant details as possible.
+- Remember that you can press Enter automatically after typing to avoid unnecessary clicks.
+- Only refresh the page if you encounter a rate limit problem.
+- If you encounter a captcha on a website, try to solve it.
+- If you have enough information in the screenshot and notes to answer the task, submit an answer with a detailed response in the notes field.
+- The current date is ${new Date().toDateString()} ${new Date().toLocaleTimeString("en-GB")}.
 `
 }

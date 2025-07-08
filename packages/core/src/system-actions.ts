@@ -1,7 +1,7 @@
 import { type SystemAction, SystemActionType } from "@web-scraper/common"
 import { notify } from "node-notifier"
 
-export async function performSystemAction(action: SystemAction) {
+export function performSystemAction(action: SystemAction) {
   switch (action.type) {
     case SystemActionType.ShowNotification:
       notify({

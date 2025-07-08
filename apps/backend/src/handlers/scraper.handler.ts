@@ -64,7 +64,11 @@ export async function executeNewScraper(
       ),
     headless: context.config.preferences.headless,
     proxy: context.config.preferences.proxyURL,
-    portalUrl: context.config.preferences.portalURL,
+    plugins: {
+      portalUrl: context.config.preferences.portalURL,
+      adblocker: context.config.preferences.useAdblockerPlugin,
+      stealth: context.config.preferences.useStealthPlugin,
+    },
     viewport: {
       width: context.config.preferences.viewportWidth,
       height: context.config.preferences.viewportHeight,
@@ -163,7 +167,7 @@ export async function executeNewScraper(
       logger.error("Error destroying scraper:", error)
     }
   } else {
-    logger.warn("Scraper was destroyed unexpectedly")
+    logger.warn({ ms: "Scraper was destroyed unexpectedly" })
   }
 
   try {

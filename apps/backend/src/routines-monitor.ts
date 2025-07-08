@@ -51,7 +51,7 @@ export async function startMonitoringRoutines(
           method: "POST",
           url: `/routines/${routine.id}/execute`,
         })
-        .catch(logger.error)
+        .catch((error) => logger.error(error))
 
       await wait(1_000)
     }

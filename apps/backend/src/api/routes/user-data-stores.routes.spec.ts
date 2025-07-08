@@ -271,7 +271,7 @@ describe("User Data Stores Routes", () => {
         description: "A test data store",
         recordsCount: 0,
       })
-      expect(responseData.data.tableName).toMatch(/^test_store_[a-z0-9]+$/)
+      expect(responseData.data.tableName).toMatch(/^data_store_test_store$/)
       expect(responseData.data.columns).toEqual([
         {
           name: "id",
@@ -371,7 +371,7 @@ describe("User Data Stores Routes", () => {
       const responseData = JSON.parse(response.payload)
       expect(responseData.data).toMatchObject({
         tableName: expect.stringMatching(
-          /^updated_personal_credentials_[a-z0-9]+$/,
+          /^data_store_updated_personal_credentials$/,
         ),
         name: "Updated Personal Credentials",
         description: "Updated description",

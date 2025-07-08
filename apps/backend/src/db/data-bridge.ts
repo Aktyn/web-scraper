@@ -1,9 +1,11 @@
 import {
-  type SimpleLogger,
   assert,
   type ExecutionIterator,
   ExecutionIteratorType,
+  type ScraperDataKey,
   type ScraperDataSource,
+  type SimpleLogger,
+  SqliteColumnType,
   SqliteConditionType,
   type WhereSchema,
   whereSchemaToSql,
@@ -12,8 +14,9 @@ import type {
   DataBridge as DataBridgeInterface,
   DataBridgeValue,
 } from "@web-scraper/core"
-import { count, sql } from "drizzle-orm"
+import { count, desc, eq, sql } from "drizzle-orm"
 import type { DbModule } from "./db.module"
+import { userDataStoresTable } from "./schema"
 import { createTemporaryView, removeTemporaryView } from "./view-helpers"
 
 enum DataBridgeSourceType {
@@ -182,6 +185,45 @@ export class DataBridge<
     }
   }
 
+  async getSchema() {
+    const mapped = await Promise.all(
+      Object.entries(this.dataSources).map(
+        async ([sourceAlias, dataBridgeSource]) => {
+          const tableName =
+            dataBridgeSource.type === DataBridgeSourceType.Table
+              ? dataBridgeSource.name
+              : dataBridgeSource.originalTableName
+
+          const data = await this.db
+            .select({ columns: userDataStoresTable.columnDefinitions })
+            .from(userDataStoresTable)
+            .where(eq(userDataStoresTable.tableName, tableName))
+            .get()
+
+          if (!data || !data.columns.length) {
+            return []
+          }
+
+          return data.columns.map(
+            (column) =>
+              [
+                `${sourceAlias}.${column.name}`,
+                [
+                  SqliteColumnType.NUMERIC,
+                  SqliteColumnType.INTEGER,
+                  SqliteColumnType.REAL,
+                ].includes(column.type)
+                  ? "number"
+                  : "string",
+              ] as [ScraperDataKey, "string" | "number"],
+          )
+        },
+      ),
+    )
+
+    return Object.fromEntries(mapped.flat())
+  }
+
   async get(key: SourceTypeKey<SourcesType>) {
     const { source, column, sourceAlias } = this.parseKey(key)
     const cursor = this.cursor
@@ -205,6 +247,8 @@ export class DataBridge<
       if (typeof cursor.offset === "number") {
         query = query.offset(cursor.offset) as typeof query
       }
+    } else {
+      query = query.orderBy(desc(sql.identifier("id"))) as typeof query
     }
 
     const result = await query.limit(1).get()

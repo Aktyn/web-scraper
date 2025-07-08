@@ -3,7 +3,7 @@ import { FormInput } from "@/components/common/form/form-input"
 import { FormSwitch } from "@/components/common/form/form-switch"
 import { FormTextarea } from "@/components/common/form/form-textarea"
 import { FormField, FormItem } from "@/components/shadcn/form"
-import { cn } from "@/lib/utils"
+import { cn, formatDuration } from "@/lib/utils"
 import { PageActionType, type UpsertScraper } from "@web-scraper/common"
 import { useWatch, type Control } from "react-hook-form"
 import { EvaluatorField } from "../common/evaluator-field"
@@ -19,6 +19,7 @@ type PageActionFormProps = {
 
 export function PageActionForm({ control, fieldName }: PageActionFormProps) {
   const actionType = useWatch({ control, name: `${fieldName}.type` })
+  const duration = useWatch({ control, name: `${fieldName}.duration` })
 
   switch (actionType) {
     case PageActionType.Navigate:
@@ -40,7 +41,16 @@ export function PageActionForm({ control, fieldName }: PageActionFormProps) {
           label="Duration (ms)"
           type="number"
           placeholder="1000"
-          description="Wait duration in milliseconds"
+          description={
+            <>
+              <span>Wait duration in milliseconds</span>
+              {typeof duration === "number" && (
+                <span className="text-xs ml-1">
+                  ({formatDuration(duration)})
+                </span>
+              )}
+            </>
+          }
         />
       )
 

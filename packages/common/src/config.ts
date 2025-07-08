@@ -18,7 +18,17 @@ export const defaultPreferences = {
   portalURL: {
     value: "http://localhost:3000",
     description:
-      "URL for the portal feature to work. If not set, the portal will not be used.",
+      "URL for the portal feature to work. If not set, the portal will not be used. This feature is using puppeteer-extra-plugin-portal package.",
+  },
+
+  useAdblockerPlugin: {
+    value: true,
+    description: "Use the puppeteer-extra-plugin-adblocker package.",
+  },
+
+  useStealthPlugin: {
+    value: true,
+    description: "Use the puppeteer-extra-plugin-stealth package.",
   },
 
   viewportWidth: {

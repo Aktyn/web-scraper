@@ -60,7 +60,8 @@ export function Notifications() {
                   className="whitespace-normal"
                 >
                   Scraper <b>{notification.scraperName}</b> has finished after{" "}
-                  {notification.iterations} iterations.
+                  {notification.iterations} iteration
+                  {notification.iterations !== 1 ? "s" : ""}.
                 </ScraperPanelTrigger>
               )
               break

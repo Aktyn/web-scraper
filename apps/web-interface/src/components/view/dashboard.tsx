@@ -1,7 +1,7 @@
 import { useGet } from "@/hooks/api/useGet"
 import { useInfiniteGet } from "@/hooks/api/useInfiniteGet"
 import { usePatch } from "@/hooks/api/usePatch"
-import { formatDateTime, formatDuration } from "@/lib/utils"
+import { cn, formatDateTime, formatDuration } from "@/lib/utils"
 import { ScraperProvider } from "@/providers/scraper.provider"
 import { ServerEventsProvider } from "@/providers/server-events.provider"
 import { useView } from "@/providers/view.provider"
@@ -195,13 +195,19 @@ function ScraperCard({ onClick }: ScraperCardProps) {
       }, 0)
     : 0
 
+  const canRepeatLastExecution =
+    !isLoading &&
+    !!lastExecution &&
+    !sendingExecutionRequest &&
+    (!state || state === ScraperState.Exited)
+
   return (
     <div
       className="bg-card hover:bg-background-lighter border rounded-lg p-2 shadow-lg transition-colors cursor-pointer flex flex-col items-center gap-2 **:[label]:cursor-[inherit]"
       onClick={onClick}
     >
       <Label className="text-lg">{scraper.name}</Label>
-      <div className="bg-background-lighter rounded-md p-2 w-full grow">
+      <div className="bg-background-lighter rounded-md p-2 w-full grow flex items-center justify-center">
         {isLoading || !executions?.data ? (
           <Skeleton className="h-24 w-full" />
         ) : lastExecution ? (
@@ -237,12 +243,13 @@ function ScraperCard({ onClick }: ScraperCardProps) {
         asChild
         variant="outline"
         size="sm"
-        disabled={
-          isLoading ||
-          !lastExecution ||
-          sendingExecutionRequest ||
-          !(!state || state === ScraperState.Exited)
-        }
+        className={cn(
+          canRepeatLastExecution
+            ? "hover:text-primary"
+            : "pointer-events-none opacity-50",
+          "w-full mt-auto",
+        )}
+        disabled={!canRepeatLastExecution}
         onClick={(event) => {
           event.stopPropagation()
           event.preventDefault()
@@ -252,7 +259,7 @@ function ScraperCard({ onClick }: ScraperCardProps) {
           }
         }}
       >
-        <div className="hover:text-primary w-full mt-auto">
+        <div>
           {!state || state === ScraperState.Exited ? (
             <>
               <Play />
@@ -308,7 +315,8 @@ function UnreadNotifications() {
                   className="whitespace-normal"
                 >
                   Scraper <b>{notification.scraperName}</b> has finished after{" "}
-                  {notification.iterations} iterations.
+                  {notification.iterations} iteration
+                  {notification.iterations !== 1 ? "s" : ""}.
                 </ScraperPanelTrigger>
               )
               break

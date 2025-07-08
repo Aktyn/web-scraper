@@ -425,7 +425,7 @@ export async function scrapersRoutes(
           events,
           config,
         },
-      ).catch(logger.error)
+      ).catch((error) => logger.error(error))
 
       return reply.status(200).send({
         data: null,

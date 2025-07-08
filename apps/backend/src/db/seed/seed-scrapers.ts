@@ -16,14 +16,16 @@ import { sanitizeTableName } from "../schema/helpers"
 
 export async function seedScrapers(db: DbModule) {
   const personalCredentialsTableName = sanitizeTableName(
-    "Personal credentials random string",
+    "data-store-Personal credentials random string",
   )
   const exampleSiteContentTableName = sanitizeTableName(
-    "Example test of saving page content",
+    "data-store-Example test of saving page content",
   )
-  const cryptoPricesTableName = sanitizeTableName("Crypto prices")
-  const dataMarkersTableName = sanitizeTableName("Data markers")
-  const brainFmAccountsTableName = sanitizeTableName("Brain FM accounts")
+  const cryptoPricesTableName = sanitizeTableName("data-store-Crypto prices")
+  const dataMarkersTableName = sanitizeTableName("data-store-Data markers")
+  const brainFmAccountsTableName = sanitizeTableName(
+    "data-store-Brain FM accounts",
+  )
 
   await db.transaction(async (tx) => {
     const [

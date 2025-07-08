@@ -84,6 +84,10 @@ export class ExecutionPages {
       typeof page.openPortal === "function"
     ) {
       pagePortalUrl = await page.openPortal()
+      this.options.logger.info({
+        msg: "Opened portal",
+        portalUrl: pagePortalUrl,
+      })
     }
 
     const cursor = createCursor(page, await getRandomPagePoint(page), true)

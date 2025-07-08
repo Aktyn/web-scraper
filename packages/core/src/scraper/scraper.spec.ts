@@ -30,6 +30,12 @@ describe(
       ["button.next", "second"],
     ])
     const mockDataBridge: DataBridge = {
+      getSchema: async () => ({
+        "user.name": "string",
+        "user.password": "string",
+        "button.next": "string",
+      }),
+
       get: async (key) => {
         return mockStore.get(key) ?? null
       },

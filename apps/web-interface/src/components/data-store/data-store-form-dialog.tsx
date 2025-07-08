@@ -243,7 +243,7 @@ export function DataStoreFormDialog({
                         <FormInput
                           control={form.control}
                           name={`columns.${index}.name`}
-                          label="Column Name"
+                          label="Column name"
                           placeholder="e.g., title, price, url"
                         />
 

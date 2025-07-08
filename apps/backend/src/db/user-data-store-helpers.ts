@@ -1,9 +1,4 @@
-import {
-  type CreateUserDataStore,
-  randomString,
-  SqliteColumnType,
-} from "@web-scraper/common"
-// import { generateSQLiteDrizzleJson, generateSQLiteMigration } from "drizzle-kit/api"
+import { type CreateUserDataStore, SqliteColumnType } from "@web-scraper/common"
 import {
   blob,
   integer,
@@ -28,7 +23,7 @@ export async function createUserDataStore(
   data: CreateUserDataStore & { tableName?: string },
 ) {
   const tableName =
-    data.tableName ?? sanitizeTableName(`${data.name}_${randomString(8)}`)
+    data.tableName ?? sanitizeTableName(`data-store-${data.name}`)
 
   const columns = data.columns.reduce(
     (acc, columnSchema) => {

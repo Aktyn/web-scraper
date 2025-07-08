@@ -215,6 +215,7 @@ export async function performPageAction(
       const answer = await context.ai.navigation.run(
         action,
         pageContext,
+        context.dataBridge,
         (commonAction) => performPageAction(context, commonAction, pageContext),
       )
 

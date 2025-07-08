@@ -1,8 +1,26 @@
+import "puppeteer-extra-plugin-stealth/evasions/chrome.app"
+import "puppeteer-extra-plugin-stealth/evasions/chrome.csi"
+import "puppeteer-extra-plugin-stealth/evasions/chrome.loadTimes"
+import "puppeteer-extra-plugin-stealth/evasions/chrome.runtime"
+import "puppeteer-extra-plugin-stealth/evasions/defaultArgs"
+import "puppeteer-extra-plugin-stealth/evasions/iframe.contentWindow"
+import "puppeteer-extra-plugin-stealth/evasions/media.codecs"
+import "puppeteer-extra-plugin-stealth/evasions/navigator.hardwareConcurrency"
+import "puppeteer-extra-plugin-stealth/evasions/navigator.languages"
+import "puppeteer-extra-plugin-stealth/evasions/navigator.permissions"
+import "puppeteer-extra-plugin-stealth/evasions/navigator.plugins"
+import "puppeteer-extra-plugin-stealth/evasions/navigator.webdriver"
+import "puppeteer-extra-plugin-stealth/evasions/sourceurl"
+import "puppeteer-extra-plugin-stealth/evasions/user-agent-override"
+import "puppeteer-extra-plugin-stealth/evasions/webgl.vendor"
+import "puppeteer-extra-plugin-stealth/evasions/window.outerdimensions"
+import "puppeteer-extra-plugin-user-preferences"
+import "puppeteer-extra-plugin-user-data-dir"
+
 import {
   assert,
   deepMerge,
   defaultPreferences,
-  pick,
   type ScraperInstructions,
   type ScraperInstructionsExecutionInfo,
   ScraperInstructionsExecutionInfoType,
@@ -21,12 +39,12 @@ import puppeteer, {
   type Page,
   type Viewport,
 } from "rebrowser-puppeteer"
+import { AutonomousAgent } from "./ai/autonomous-agent"
 import { SmartLocalization } from "./ai/smart-localization"
-import { type DataBridge } from "./data-helper"
+import type { DataBridge } from "./data-helper"
 import { ExecutionPages } from "./execution/execution-pages"
 import { executeInstructions } from "./execution/instructions"
 import { ScraperExecutionInfo } from "./execution/scraper-execution-info"
-import { AutonomousAgent } from "./ai/autonomous-agent"
 
 type ScraperOptions = Pick<ScraperType, "id" | "name"> & {
   logger?: SimpleLogger
@@ -36,7 +54,11 @@ type ScraperOptions = Pick<ScraperType, "id" | "name"> & {
 
   proxy?: string
 
-  portalUrl?: string
+  plugins?: {
+    portalUrl?: string
+    adblocker?: boolean
+    stealth?: boolean
+  }
 
   viewport?: Pick<Viewport, "width" | "height">
 
@@ -145,7 +167,7 @@ export class Scraper<
           })
         : this.logger
 
-    this.agent = new AutonomousAgent(navigationLogger, this.localization, {
+    this.agent = new AutonomousAgent(navigationLogger, {
       model: options.navigationModel,
     })
 
@@ -219,12 +241,13 @@ export class Scraper<
                 disableXvfb: !launchOptions.headless,
                 turnstile: true,
                 plugins: [
-                  AdblockerPlugin({ blockTrackers: true }),
-                  StealthPlugin(),
-                  this.options.portalUrl &&
+                  this.options.plugins?.adblocker &&
+                    AdblockerPlugin({ blockTrackers: true }),
+                  this.options.plugins?.stealth && StealthPlugin(),
+                  this.options.plugins?.portalUrl &&
                     PortalPlugin({
                       webPortalConfig: {
-                        baseUrl: this.options.portalUrl,
+                        baseUrl: this.options.plugins.portalUrl,
                       },
                     }),
                 ].filter((plugin) => !!plugin),
@@ -258,7 +281,7 @@ export class Scraper<
           void this.destroy()
         })
       })
-      .catch(this.logger.error)
+      .catch((error) => this.logger.error(error))
       .finally(() => {
         this.initPromise = null
       })
@@ -299,7 +322,7 @@ export class Scraper<
       promise = this.browser
         .close()
         .then(() => this.logger.info("Browser closed"))
-        .catch(this.logger.error)
+        .catch((error) => this.logger.error(error))
       this.browser = null
     }
     this.initPromise = null
@@ -408,10 +431,13 @@ export class Scraper<
       this.browser = await this.init(this.options)
     }
 
+    assert(!this.destroyed, "Cannot execute scraper because it is destroyed")
+
     const startTime = Date.now()
 
     const pages = new ExecutionPages(this.browser, {
-      ...pick(this.options, "proxy", "portalUrl"),
+      proxy: this.options.proxy,
+      portalUrl: this.options.plugins?.portalUrl,
       viewport: this.defaultViewport,
       logger: this.logger,
       executionInfo,

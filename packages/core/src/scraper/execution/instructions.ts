@@ -342,7 +342,7 @@ async function executeInstructionByType(
         context,
       )
 
-      await performSystemAction(instruction.systemAction)
+      performSystemAction(instruction.systemAction)
       break
   }
 

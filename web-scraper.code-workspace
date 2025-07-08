@@ -44,6 +44,7 @@
 			"notnull",
 			"ollama",
 			"ostring",
+			"outerdimensions",
 			"pino",
 			"postject",
 			"pptr",
@@ -53,10 +54,12 @@
 			"Radosław",
 			"shadcn",
 			"sonner",
+			"sourceurl",
 			"systray",
 			"Systray",
 			"upserted",
 			"uuidv",
+			"webgl",
 			"webgpu"
 		],
 		"tailwindCSS.classAttributes": [

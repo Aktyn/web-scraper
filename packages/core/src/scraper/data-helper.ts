@@ -14,6 +14,8 @@ import type { ScraperExecutionContext } from "./execution/helpers"
 export type DataBridgeValue = string | number | null
 
 export interface DataBridge {
+  getSchema(): Promise<Record<ScraperDataKey, "string" | "number">>
+
   get(key: ScraperDataKey): Promise<DataBridgeValue>
   set(key: ScraperDataKey, value: DataBridgeValue): Promise<void>
   setMany(

@@ -20,7 +20,7 @@ export async function seedRoutines(db: DbModule) {
     const scraper = scrapers[i % scrapers.length]
     assert(!!scraper, "Scraper not found during seeding")
 
-    const status = RoutineStatus.Active
+    const status = RoutineStatus.Paused
     const MINUTE = 60_000
     const HOUR = MINUTE * 60
     const startOffset = randomInt(MINUTE * 5, HOUR)
