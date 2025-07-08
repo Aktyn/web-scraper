@@ -33,6 +33,14 @@ describe("Misc Routes", () => {
             value: "http://localhost:3000",
           },
           {
+            key: "useAdblockerPlugin",
+            value: true,
+          },
+          {
+            key: "useStealthPlugin",
+            value: true,
+          },
+          {
             key: "viewportWidth",
             value: 1920,
           },

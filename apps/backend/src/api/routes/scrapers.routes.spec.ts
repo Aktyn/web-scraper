@@ -436,7 +436,7 @@ describe("Scrapers Routes", () => {
         userDataDirectory: "/test/directory",
         dataSources: [
           {
-            dataStoreTableName: "personal_credentials_random_string",
+            dataStoreTableName: "data_store_personal_credentials",
             sourceAlias: "foo",
             whereSchema: null,
           },
@@ -563,7 +563,7 @@ describe("Scrapers Routes", () => {
         userDataDirectory: "/updated/directory",
         dataSources: [
           {
-            dataStoreTableName: "personal_credentials_random_string",
+            dataStoreTableName: "data_store_personal_credentials",
             sourceAlias: "foo",
             whereSchema: null,
           },
@@ -594,7 +594,7 @@ describe("Scrapers Routes", () => {
         userDataDirectory: "/updated/directory",
         dataSources: [
           {
-            dataStoreTableName: "personal_credentials_random_string",
+            dataStoreTableName: "data_store_personal_credentials",
             sourceAlias: "foo",
             whereSchema: null,
           },

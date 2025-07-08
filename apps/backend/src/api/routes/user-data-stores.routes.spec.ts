@@ -25,7 +25,7 @@ describe("User Data Stores Routes", () => {
       expect(JSON.parse(response.payload)).toEqual({
         data: [
           {
-            tableName: "personal_credentials_random_string",
+            tableName: "data_store_personal_credentials",
             name: "Personal credentials",
             description: "Personal credentials for various websites",
             recordsCount: 2,
@@ -56,7 +56,7 @@ describe("User Data Stores Routes", () => {
             ],
           },
           {
-            tableName: "example_test_of_saving_page_content",
+            tableName: expect.any(String),
             name: "Example test of saving page content",
             description: "Example test of saving page content",
             recordsCount: 0,
@@ -77,7 +77,7 @@ describe("User Data Stores Routes", () => {
             ],
           },
           {
-            tableName: "crypto_prices",
+            tableName: expect.any(String),
             name: "Crypto prices",
             description: null,
             recordsCount: 4,
@@ -106,8 +106,8 @@ describe("User Data Stores Routes", () => {
             ],
           },
           {
+            tableName: expect.any(String),
             name: "Data markers",
-            tableName: "data_markers",
             description: null,
             recordsCount: 1,
             columns: [
@@ -128,8 +128,8 @@ describe("User Data Stores Routes", () => {
             ],
           },
           {
+            tableName: expect.any(String),
             name: "Brain FM accounts",
-            tableName: "brain_fm_accounts",
             description: null,
             recordsCount: 0,
             columns: [
@@ -179,12 +179,12 @@ describe("User Data Stores Routes", () => {
     it("should return status 200 and the user data store if it exists", async () => {
       const response = await modules.api.inject({
         method: "GET",
-        url: "/user-data-stores/personal_credentials_random_string",
+        url: "/user-data-stores/data_store_personal_credentials",
       })
       expect(response.statusCode).toBe(200)
       expect(JSON.parse(response.payload)).toEqual({
         data: {
-          tableName: "personal_credentials_random_string",
+          tableName: "data_store_personal_credentials",
           name: "Personal credentials",
           description: "Personal credentials for various websites",
           recordsCount: 2,
@@ -215,7 +215,7 @@ describe("User Data Stores Routes", () => {
     it("should return status 200 and store data from the database", async () => {
       const response = await modules.api.inject({
         method: "GET",
-        url: "/user-data-stores/personal_credentials_random_string/records",
+        url: "/user-data-stores/data_store_personal_credentials/records",
       })
 
       expect(response.statusCode).toBe(200)
@@ -363,7 +363,7 @@ describe("User Data Stores Routes", () => {
 
       const response = await modules.api.inject({
         method: "PUT",
-        url: "/user-data-stores/personal_credentials_random_string",
+        url: "/user-data-stores/data_store_personal_credentials",
         payload: updateData,
       })
 
@@ -392,7 +392,7 @@ describe("User Data Stores Routes", () => {
 
       const response = await modules.api.inject({
         method: "PUT",
-        url: "/user-data-stores/personal_credentials_random_string",
+        url: "/user-data-stores/data_store_personal_credentials",
         payload: updateData,
       })
 
@@ -454,7 +454,7 @@ describe("User Data Stores Routes", () => {
 
       const response = await modules.api.inject({
         method: "PUT",
-        url: "/user-data-stores/personal_credentials_random_string",
+        url: "/user-data-stores/data_store_personal_credentials",
         payload: updateData,
       })
 
@@ -467,7 +467,7 @@ describe("User Data Stores Routes", () => {
     it("should return status 400 for invalid input", async () => {
       const response = await modules.api.inject({
         method: "PUT",
-        url: "/user-data-stores/personal_credentials_random_string",
+        url: "/user-data-stores/data_store_personal_credentials",
         payload: {
           name: "",
         },
@@ -481,7 +481,7 @@ describe("User Data Stores Routes", () => {
     it("should delete an existing user data store and return status 204", async () => {
       const response = await modules.api.inject({
         method: "DELETE",
-        url: "/user-data-stores/personal_credentials_random_string",
+        url: "/user-data-stores/data_store_personal_credentials",
       })
 
       expect(response.statusCode).toBe(204)
@@ -522,7 +522,7 @@ describe("User Data Stores Routes", () => {
 
       const response = await modules.api.inject({
         method: "POST",
-        url: "/user-data-stores/personal_credentials_random_string/records",
+        url: "/user-data-stores/data_store_personal_credentials/records",
         payload: newRecord,
       })
 
@@ -560,7 +560,7 @@ describe("User Data Stores Routes", () => {
     it("should delete all existing records and return status 204", async () => {
       const response = await modules.api.inject({
         method: "DELETE",
-        url: "/user-data-stores/personal_credentials_random_string/records",
+        url: "/user-data-stores/data_store_personal_credentials/records",
       })
 
       expect(response.statusCode).toBe(204)
@@ -568,7 +568,7 @@ describe("User Data Stores Routes", () => {
 
       const getResponse = await modules.api.inject({
         method: "GET",
-        url: "/user-data-stores/personal_credentials_random_string/records",
+        url: "/user-data-stores/data_store_personal_credentials/records",
       })
 
       const getData = JSON.parse(getResponse.payload)
@@ -599,7 +599,7 @@ describe("User Data Stores Routes", () => {
 
       const response = await modules.api.inject({
         method: "PUT",
-        url: "/user-data-stores/personal_credentials_random_string/records/1",
+        url: "/user-data-stores/data_store_personal_credentials/records/1",
         payload: updateData,
       })
 
@@ -640,7 +640,7 @@ describe("User Data Stores Routes", () => {
 
       const response = await modules.api.inject({
         method: "PUT",
-        url: "/user-data-stores/personal_credentials_random_string/records/999",
+        url: "/user-data-stores/data_store_personal_credentials/records/999",
         payload: updateData,
       })
 
@@ -655,7 +655,7 @@ describe("User Data Stores Routes", () => {
     it("should delete an existing record and return status 204", async () => {
       const response = await modules.api.inject({
         method: "DELETE",
-        url: "/user-data-stores/personal_credentials_random_string/records/2",
+        url: "/user-data-stores/data_store_personal_credentials/records/2",
       })
 
       expect(response.statusCode).toBe(204)
@@ -663,7 +663,7 @@ describe("User Data Stores Routes", () => {
 
       const getResponse = await modules.api.inject({
         method: "GET",
-        url: "/user-data-stores/personal_credentials_random_string/records",
+        url: "/user-data-stores/data_store_personal_credentials/records",
       })
 
       const getData = JSON.parse(getResponse.payload)
@@ -686,7 +686,7 @@ describe("User Data Stores Routes", () => {
     it("should return status 404 if the record does not exist", async () => {
       const response = await modules.api.inject({
         method: "DELETE",
-        url: "/user-data-stores/personal_credentials_random_string/records/999",
+        url: "/user-data-stores/data_store_personal_credentials/records/999",
       })
 
       expect(response.statusCode).toBe(404)

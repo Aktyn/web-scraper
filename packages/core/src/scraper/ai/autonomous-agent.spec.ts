@@ -2,23 +2,20 @@ import { describe, it, expect } from "vitest"
 import { tooManyActionRepetitions } from "./autonomous-agent"
 import { type NavigationStep, NavigationActionType } from "./schemas"
 
-const actionA: NavigationStep["action"] = {
-  action: NavigationActionType.ClickElement,
-  element: "A",
+const actionA: NavigationStep["actions"][number] = {
+  actionType: NavigationActionType.ClickElement,
   x: 0,
   y: 0,
 }
-const actionB: NavigationStep["action"] = {
-  action: NavigationActionType.ClickElement,
-  element: "B",
-  x: 0,
-  y: 0,
+const actionB: NavigationStep["actions"][number] = {
+  actionType: NavigationActionType.ClickElement,
+  x: 10,
+  y: 10,
 }
-const actionC: NavigationStep["action"] = {
-  action: NavigationActionType.ClickElement,
-  element: "C",
-  x: 0,
-  y: 0,
+const actionC: NavigationStep["actions"][number] = {
+  actionType: NavigationActionType.ClickElement,
+  x: 20,
+  y: 20,
 }
 
 describe(tooManyActionRepetitions.name, () => {

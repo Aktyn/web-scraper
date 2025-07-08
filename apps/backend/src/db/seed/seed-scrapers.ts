@@ -16,7 +16,7 @@ import { sanitizeTableName } from "../schema/helpers"
 
 export async function seedScrapers(db: DbModule) {
   const personalCredentialsTableName = sanitizeTableName(
-    "data-store-Personal credentials random string",
+    "data-store-Personal credentials",
   )
   const exampleSiteContentTableName = sanitizeTableName(
     "data-store-Example test of saving page content",

@@ -5,9 +5,7 @@ import { createUserDataStore } from "../user-data-store-helpers"
 
 export async function seedUserDataStores(db: DbModule) {
   const { table: personalCredentialsTable } = await createUserDataStore(db, {
-    tableName: sanitizeTableName(
-      "data-store-Personal credentials random string",
-    ),
+    tableName: sanitizeTableName("data-store-Personal credentials"),
     name: "Personal credentials",
     description: "Personal credentials for various websites",
     columns: [
