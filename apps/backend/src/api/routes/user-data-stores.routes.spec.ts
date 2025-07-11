@@ -3,9 +3,30 @@ import {
   type CreateUserDataStore,
   SqliteColumnType,
 } from "@web-scraper/common"
-import { beforeEach, describe, expect, it } from "vitest"
+import { beforeEach, describe, expect, it, vi } from "vitest"
 import { userDataStoresTable } from "../../db/schema"
 import { setup, type TestModules } from "../../test/setup"
+//@ts-expect-error No types for this package
+import dialog from "node-file-dialog"
+import fs from "fs"
+
+vi.mock("node-file-dialog", () => ({
+  default: vi.fn(),
+}))
+
+vi.mock("fs", async () => {
+  const actualFs = await vi.importActual<typeof fs>("fs")
+  return {
+    ...actualFs,
+    readFileSync: vi.fn(),
+    writeFileSync: vi.fn(),
+    default: {
+      ...actualFs,
+      readFileSync: vi.fn(),
+      writeFileSync: vi.fn(),
+    },
+  }
+})
 
 describe("User Data Stores Routes", () => {
   let modules: TestModules
@@ -586,6 +607,18 @@ describe("User Data Stores Routes", () => {
         error: "Data store not found",
       })
     })
+
+    it("should return status 404 if the record does not exist", async () => {
+      const response = await modules.api.inject({
+        method: "DELETE",
+        url: "/user-data-stores/data_store_personal_credentials/records/999",
+      })
+
+      expect(response.statusCode).toBe(404)
+      expect(JSON.parse(response.payload)).toEqual({
+        error: "Record not found",
+      })
+    })
   })
 
   describe("PUT /user-data-stores/:tableName/records/:id", () => {
@@ -693,6 +726,223 @@ describe("User Data Stores Routes", () => {
       expect(JSON.parse(response.payload)).toEqual({
         error: "Record not found",
       })
+    })
+  })
+
+  describe("POST /user-data-stores/:tableName/import", () => {
+    beforeEach(() => {
+      vi.mocked(dialog).mockClear()
+      vi.mocked(fs.readFileSync).mockClear()
+      vi.mocked(fs.writeFileSync).mockClear()
+    })
+
+    it("should import data from a CSV file", async () => {
+      // Setup: Mock dialog to return a fake file path and fs.readFileSync to return CSV content
+      vi.mocked(dialog).mockResolvedValue(["/fake/path/data.csv"])
+      const csvContent = `id,origin,username,email,password\n3,https://new.com,new,new@new.com,new_pass123`
+      vi.mocked(fs.readFileSync).mockReturnValue(csvContent)
+
+      // Action
+      const response = await modules.api.inject({
+        method: "POST",
+        url: "/user-data-stores/data_store_personal_credentials/import",
+        payload: { updateRows: false },
+      })
+
+      // Assertion
+      expect(response.statusCode).toBe(200)
+
+      // Verify data is imported
+      const recordsResponse = await modules.api.inject({
+        method: "GET",
+        url: "/user-data-stores/data_store_personal_credentials/records",
+      })
+      const { data } = JSON.parse(recordsResponse.payload)
+      expect(data).toHaveLength(3)
+      expect(data[2]).toEqual({
+        id: 3,
+        origin: "https://new.com",
+        username: "new",
+        email: "new@new.com",
+        password: "new_pass123",
+      })
+    })
+
+    it("should import data from a JSON file and update existing rows", async () => {
+      // Setup: Mock dialog and fs for JSON import
+      vi.mocked(dialog).mockResolvedValue(["/fake/path/data.json"])
+      const jsonContent = JSON.stringify({
+        rows: [
+          {
+            id: 1,
+            origin: "https://updated.com",
+            username: "updated",
+            email: "updated@updated.com",
+            password: "updated_pass123",
+          },
+          {
+            id: 3,
+            origin: "https://new.com",
+            username: "new",
+            email: "new@new.com",
+            password: "new_pass123",
+          },
+        ],
+      })
+      vi.mocked(fs.readFileSync).mockReturnValue(jsonContent)
+
+      // Action
+      const response = await modules.api.inject({
+        method: "POST",
+        url: "/user-data-stores/data_store_personal_credentials/import",
+        payload: { updateRows: true },
+      })
+
+      // Assertion
+      expect(response.statusCode).toBe(200)
+
+      // Verify data is imported and updated
+      const recordsResponse = await modules.api.inject({
+        method: "GET",
+        url: "/user-data-stores/data_store_personal_credentials/records",
+      })
+      const { data } = JSON.parse(recordsResponse.payload)
+      const sortedData = data.sort(
+        (a: { id: number }, b: { id: number }) => a.id - b.id,
+      )
+      expect(sortedData).toHaveLength(3)
+      expect(sortedData[0]).toEqual({
+        id: 1,
+        origin: "https://updated.com",
+        username: "updated",
+        email: "updated@updated.com",
+        password: "updated_pass123",
+      })
+      expect(sortedData[1].id).toBe(2) // Unchanged
+      expect(sortedData[2]).toEqual({
+        id: 3,
+        origin: "https://new.com",
+        username: "new",
+        email: "new@new.com",
+        password: "new_pass123",
+      })
+    })
+
+    it("should return 404 if data store does not exist", async () => {
+      const response = await modules.api.inject({
+        method: "POST",
+        url: "/user-data-stores/non_existent/import",
+        payload: { updateRows: false },
+      })
+      expect(response.statusCode).toBe(404)
+    })
+
+    it("should return 400 for invalid file format", async () => {
+      vi.mocked(dialog).mockResolvedValue(["/fake/path/data.txt"])
+      vi.mocked(fs.readFileSync).mockReturnValue("some content")
+
+      const response = await modules.api.inject({
+        method: "POST",
+        url: "/user-data-stores/data_store_personal_credentials/import",
+        payload: { updateRows: false },
+      })
+      expect(response.statusCode).toBe(400)
+      expect(JSON.parse(response.payload).error).toBe("Invalid file format")
+    })
+
+    it("should return 400 for CSV with mismatched columns", async () => {
+      vi.mocked(dialog).mockResolvedValue(["/fake/path/data.csv"])
+      const csvContent = `id,origin,extra_col\n1,https://a.com,extra`
+      vi.mocked(fs.readFileSync).mockReturnValue(csvContent)
+
+      const response = await modules.api.inject({
+        method: "POST",
+        url: "/user-data-stores/data_store_personal_credentials/import",
+        payload: { updateRows: false },
+      })
+      expect(response.statusCode).toBe(400)
+      expect(JSON.parse(response.payload).error).toBe(
+        "Number of columns does not match",
+      )
+    })
+  })
+
+  describe("POST /user-data-stores/:tableName/export", () => {
+    beforeEach(() => {
+      vi.mocked(dialog).mockClear()
+      vi.mocked(fs.writeFileSync).mockClear()
+    })
+
+    it("should export data to a CSV file", async () => {
+      // Setup
+      const mockDir = "/fake/dir"
+      const mockTableName = "data_store_personal_credentials"
+      vi.mocked(dialog).mockResolvedValue([mockDir])
+      const writeSpy = vi
+        .spyOn(fs, "writeFileSync")
+        .mockImplementation(() => {})
+
+      // Action
+      const response = await modules.api.inject({
+        method: "POST",
+        url: `/user-data-stores/${mockTableName}/export`,
+        payload: { format: "csv" },
+      })
+
+      // Assertion
+      expect(response.statusCode).toBe(200)
+      expect(dialog).toHaveBeenCalledWith({ type: "directory" })
+      expect(writeSpy).toHaveBeenCalledTimes(1)
+      const writtenContent = writeSpy.mock.calls[0][1] as string
+      expect(writtenContent).toContain("id,origin,username,email,password")
+      expect(writtenContent).toContain(
+        "1,https://example.com/,noop,noop@gmail.com,Noop123!",
+      )
+    })
+
+    it("should export data to a JSON file with column definitions", async () => {
+      // Setup
+      const mockDir = "/fake/dir"
+      const mockTableName = "data_store_personal_credentials"
+      vi.mocked(dialog).mockResolvedValue([mockDir])
+      const writeSpy = vi
+        .spyOn(fs, "writeFileSync")
+        .mockImplementation(() => {})
+
+      // Action
+      const response = await modules.api.inject({
+        method: "POST",
+        url: `/user-data-stores/${mockTableName}/export`,
+        payload: { format: "json", includeColumnDefinitions: true },
+      })
+
+      // Assertion
+      expect(response.statusCode).toBe(200)
+      const writtenContent = JSON.parse(writeSpy.mock.calls[0][1] as string)
+      expect(writtenContent.columnDefinitions).toBeDefined()
+      expect(writtenContent.rows).toHaveLength(2)
+    })
+
+    it("should return 404 if data store does not exist", async () => {
+      const response = await modules.api.inject({
+        method: "POST",
+        url: "/user-data-stores/non_existent/export",
+        payload: { format: "csv" },
+      })
+      expect(response.statusCode).toBe(404)
+    })
+
+    it("should return 400 if no directory is selected", async () => {
+      vi.mocked(dialog).mockResolvedValue([])
+
+      const response = await modules.api.inject({
+        method: "POST",
+        url: "/user-data-stores/data_store_personal_credentials/export",
+        payload: { format: "csv" },
+      })
+
+      expect(response.statusCode).toBe(400)
+      expect(JSON.parse(response.payload).error).toBe("No directory selected")
     })
   })
 })

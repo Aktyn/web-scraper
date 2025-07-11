@@ -99,3 +99,17 @@ export function upsertUserDataStoreRecordSchemaFactory(
 export type UpsertUserDataStoreRecord = z.infer<
   ReturnType<typeof upsertUserDataStoreRecordSchemaFactory>
 >
+
+export const importUserDataStoreSchema = z.object({
+  updateRows: z.boolean(),
+})
+
+export type ImportUserDataStore = z.infer<typeof importUserDataStoreSchema>
+
+export const exportUserDataStoreSchema = z.object({
+  format: z.enum(["csv", "json"]),
+  /** Only applicable for JSON format */
+  includeColumnDefinitions: z.boolean().optional(),
+})
+
+export type ExportUserDataStore = z.infer<typeof exportUserDataStoreSchema>

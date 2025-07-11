@@ -584,14 +584,12 @@ export async function scrapersRoutes(
         response: {
           200: getApiResponseSchema(scraperSchema),
           400: apiErrorResponseSchema,
-          404: apiErrorResponseSchema,
           409: apiErrorResponseSchema,
         },
       },
     },
     async (_request, reply) => {
       const [filePath] = await dialog({ type: "open-file" })
-
       const fileContent = fs.readFileSync(filePath, "utf8")
 
       const scraperData = scraperSchema.parse(JSON.parse(fileContent))

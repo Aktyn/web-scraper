@@ -22,6 +22,8 @@ import type {
   UpsertRoutine,
   ScraperQuery,
   ScheduledScraperExecution,
+  ExportUserDataStore,
+  ImportUserDataStore,
 } from "@web-scraper/common"
 import { apiErrorResponseSchema } from "@web-scraper/common"
 
@@ -194,6 +196,20 @@ export type Routes = {
     }
     delete: {
       response: void
+    }
+  }
+
+  "user-data-stores/:tableName/import": {
+    post: {
+      body: ImportUserDataStore
+      response: ApiResponse<null>
+    }
+  }
+
+  "user-data-stores/:tableName/export": {
+    post: {
+      body: ExportUserDataStore
+      response: ApiResponse<null>
     }
   }
 

@@ -9,7 +9,8 @@ import {
   type UserDataStoreColumn,
 } from "@web-scraper/common"
 import { Check, Download, Edit, Eraser, Plus, Trash, X } from "lucide-react"
-import { type ReactNode, useMemo, useState } from "react"
+import type { RefObject } from "react"
+import { type ReactNode, useImperativeHandle, useMemo, useState } from "react"
 import { ConfirmationDialog } from "../common/confirmation-dialog"
 import { NullBadge } from "../common/null-badge"
 import { DataTable } from "../common/table/data-table"
@@ -20,6 +21,10 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "../shadcn/tooltip"
 import { DataStoreFormDialog } from "./data-store-form-dialog"
 import { DataStoreRecordDialog } from "./data-store-record-dialog"
 
+export interface DataStoreTableInterface {
+  refresh: () => void
+}
+
 type DataStoreTableProps = {
   store: UserDataStore
   className?: string
@@ -29,7 +34,8 @@ type DataStoreTableProps = {
 export function DataStoreTable({
   store: initialStore,
   className,
-}: DataStoreTableProps) {
+  ref,
+}: DataStoreTableProps & { ref?: RefObject<DataStoreTableInterface | null> }) {
   const [store, setStore] = useState(initialStore)
 
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
@@ -87,6 +93,14 @@ export function DataStoreTable({
       setEraseDialogOpen(false)
     }
   }
+
+  useImperativeHandle(
+    ref,
+    () => ({
+      refresh,
+    }),
+    [refresh],
+  )
 
   const columns: ColumnDef<Record<string, unknown>>[] = useMemo(
     () => [
@@ -169,11 +183,16 @@ export function DataStoreTable({
               setRecordToEdit(null)
               setUpsertRecordDialogOpen(true)
             }}
+            tabIndex={-1}
           >
             <Plus />
             Add record
           </Button>
-          <Button variant="outline" onClick={() => setEditDialogOpen(true)}>
+          <Button
+            variant="outline"
+            onClick={() => setEditDialogOpen(true)}
+            tabIndex={-1}
+          >
             <Edit />
             Edit structure
           </Button>
@@ -182,6 +201,7 @@ export function DataStoreTable({
             className="ml-auto"
             onClick={() => setEraseDialogOpen(true)}
             disabled={isDeletingAllRecords}
+            tabIndex={-1}
           >
             <Eraser />
             {isDeletingAllRecords ? "Erasing..." : "Erase all records"}
@@ -190,6 +210,7 @@ export function DataStoreTable({
             className="ml-0"
             onClick={refresh}
             refreshing={isLoading || isLoadingMore}
+            tabIndex={-1}
           />
         </div>
         <DataTable
