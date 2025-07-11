@@ -12,19 +12,27 @@ import { startMonitoringRoutines } from "./routines-monitor"
 import sea from "node:sea"
 import path from "node:path"
 import { cwd } from "./cwd"
+import { getCliModule } from "./cli/cli.module"
 
 async function main() {
   const logger = getLogger()
+  const events = getEventsModule()
+  const cli = getCliModule({ logger, events })
+
+  logger.info({ msg: "CLI arguments", args: cli })
+
+  if (cli.cancelRun) {
+    return null
+  }
 
   logger.info(`Starting application at ${new Date().toUTCString()}`)
 
-  const events = getEventsModule()
+  const dbUrl = cli.inMemoryDatabase
+    ? ":memory:"
+    : process.env.DB_FILE_NAME ||
+      (sea.isSea() ? `file:${path.join(cwd(), "data.db")}` : "file:data.db")
 
-  const dbUrl =
-    process.env.DB_FILE_NAME ||
-    (sea.isSea() ? `file:${path.join(cwd(), "data.db")}` : "file:data.db")
-
-  const db = await getDbModule(dbUrl, logger)
+  const db = await getDbModule({ dbUrl, logger })
 
   const config = await getConfig(db)
 
@@ -59,6 +67,10 @@ process.addListener("SIGQUIT", cleanup)
 
 main()
   .then(async (modules) => {
+    if (!modules) {
+      return
+    }
+
     const openWebInterface = () => {
       try {
         exec(`open http://localhost:${modules.config.apiPort}`)

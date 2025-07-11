@@ -27,7 +27,7 @@ export async function setup() {
     fatal: console.error,
   }
 
-  const db = await getDbModule(":memory:", logger)
+  const db = await getDbModule({ dbUrl: ":memory:", logger })
 
   // Transactions are not supported in memory database, so we need to mock them
   vi.spyOn(db, "transaction").mockImplementation(

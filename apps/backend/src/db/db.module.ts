@@ -3,17 +3,29 @@ import { drizzle } from "drizzle-orm/libsql"
 import fs from "fs"
 import { getDrizzleKitApi } from "./helpers"
 import * as schema from "./schema"
+import type { Logger } from "pino"
+import { IS_TEST_ENV } from "../test/is-test-env"
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
 const { pushSQLiteSchema } = getDrizzleKitApi()
 
-export async function getDbModule(dbUrl: string, logger?: SimpleLogger) {
+export type DatabaseModuleContext = {
+  /** :memory: or file:path/to/db.db */
+  dbUrl: string
+  logger?: Logger | SimpleLogger
+}
+
+export async function getDbModule({ dbUrl, logger }: DatabaseModuleContext) {
   const db = drizzle(dbUrl, {
     schema,
     logger: undefined, // new DefaultLogger()
   })
 
-  if (dbUrl.startsWith("file:") && !isDatabaseFileReady(dbUrl)) {
+  const shouldPushSchema =
+    (dbUrl.startsWith("file:") && !isDatabaseFileReady(dbUrl)) ||
+    (dbUrl === ":memory:" && !IS_TEST_ENV)
+
+  if (shouldPushSchema) {
     logger?.info("Database file is not ready, pushing schema")
 
     try {

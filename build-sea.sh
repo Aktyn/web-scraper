@@ -37,14 +37,6 @@ sed -i 's/var cmd = path[0-9]*.join("python", "dist");/var cmd = ".";/g' ./apps/
 
 sed -i 's/.join(cmd, "linux", filename);/.join(cmd, filename);/g' ./apps/backend/dist/standalone-copy.js
 
-sed -i 's/require("kind-of", "typeOf");/utils2.typeOf = require_kind_of();/g' ./apps/backend/dist/standalone-copy.js
-
-sed -i 's/require("is-plain-object", "isObject");/utils2.isObject = require_is_plain_object().isPlainObject;/g' ./apps/backend/dist/standalone-copy.js
-
-sed -i 's/require("shallow-clone", "clone");/utils2.clone = require_shallow_clone();/g' ./apps/backend/dist/standalone-copy.js
-
-sed -i 's/require_for_own();/utils2.forOwn = require_for_own();/g' ./apps/backend/dist/standalone-copy.js
-
 sed -i 's/dep = require(name)();/dep = name === "puppeteer-extra-plugin-stealth\/evasions\/chrome.app" ? require_chrome()() : name === "puppeteer-extra-plugin-stealth\/evasions\/chrome.csi" ? require_chrome2()() : name === "puppeteer-extra-plugin-stealth\/evasions\/chrome.loadTimes" ? require_chrome3()() : name === "puppeteer-extra-plugin-stealth\/evasions\/chrome.runtime" ? require_chrome4()() : name === "puppeteer-extra-plugin-stealth\/evasions\/defaultArgs" ? require_defaultArgs()() : name === "puppeteer-extra-plugin-stealth\/evasions\/iframe.contentWindow" ? require_iframe()() : name === "puppeteer-extra-plugin-stealth\/evasions\/media.codecs" ? require_media()() : name === "puppeteer-extra-plugin-stealth\/evasions\/navigator.hardwareConcurrency" ? require_navigator()() : name === "puppeteer-extra-plugin-stealth\/evasions\/navigator.languages" ? require_navigator2()() : name === "puppeteer-extra-plugin-stealth\/evasions\/navigator.permissions" ? require_navigator3()() : name === "puppeteer-extra-plugin-stealth\/evasions\/navigator.plugins" ? require_navigator4()() : name === "puppeteer-extra-plugin-stealth\/evasions\/navigator.webdriver" ? require_navigator5()() : name === "puppeteer-extra-plugin-stealth\/evasions\/sourceurl" ? require_sourceurl()() : name === "puppeteer-extra-plugin-stealth\/evasions\/user-agent-override" ? require_user_agent_override()() : name === "puppeteer-extra-plugin-stealth\/evasions\/webgl.vendor" ? require_webgl()() : name === "puppeteer-extra-plugin-stealth\/evasions\/window.outerdimensions" ? require_window()() : name === "puppeteer-extra-plugin-user-preferences" ? require_puppeteer_extra_plugin_user_preferences()() : name === "puppeteer-extra-plugin-user-data-dir" ? require_puppeteer_extra_plugin_user_data_dir()() : require(name)();/g' ./apps/backend/dist/standalone-copy.js
 
 echo "... done adjusting backend code before SEA build"

@@ -43,14 +43,21 @@ await esbuild.build({
 
 fs.writeFileSync(
   outfile,
-  fs
-    .readFileSync(outfile, "utf-8")
-    .replace(
-      /var __filename\d+ = import_node_url\.default\.fileURLToPath\(import_meta\d+\.url\);\s*var __dirname\d+ = import_node_path\d+\.default\.dirname\(__filename\d+\);\s*var (require\d+) = import_node_module\d+\.default\.createRequire\(import_meta\d+\.url\);/g,
-      'var $1 = () => ({version: "2.0.0"})',
-    ).replace(/return \(\) =\> __dirname\d;/g, "return () => __dirname;"),
+  fixCode(fs.readFileSync(outfile, "utf-8")),
 );
 
 fs.cpSync("../../node_modules/@libsql", "./dist/node_modules/@libsql", {
   recursive: true,
-}); 
+});
+
+/** @param {string} code */
+function fixCode(code) {
+  return code.replace(
+    /var __filename\d+ = import_node_url\.default\.fileURLToPath\(import_meta\d+\.url\);\s*var __dirname\d+ = import_node_path\d+\.default\.dirname\(__filename\d+\);\s*var (require\d+) = import_node_module\d+\.default\.createRequire\(import_meta\d+\.url\);/g,
+    'var $1 = () => ({version: "2.0.0"})',
+  ).replace(/return \(\) =\> __dirname\d;/g, "return () => __dirname;")
+    .replace(/require\("kind-of", "typeOf"\);/g, 'utils2.typeOf = require_kind_of();')
+    .replace(/require\("is-plain-object", "isObject"\);/g, 'utils2.isObject = require_is_plain_object().isPlainObject;')
+    .replace(/require\("shallow-clone", "clone"\);/g, 'utils2.clone = require_shallow_clone();')
+    .replace(/require_for_own\(\);/g, 'utils2.forOwn = require_for_own();');
+}

@@ -28,16 +28,14 @@ import {
 import type { FastifyInstance } from "fastify"
 import type { ZodTypeProvider } from "fastify-type-provider-zod"
 import { z } from "zod"
-import {
-  routinesTable,
-  scraperExecutionIterationsTable,
-  scraperExecutionsTable,
-  scrapersTable,
-} from "../../db/schema"
+import { routinesTable, scrapersTable } from "../../db/schema"
 import { routineExecutionsTable } from "../../db/schema/routine-executions.schema"
 import { executeNewScraper } from "../../handlers/scraper.handler"
 import type { ApiModuleContext } from "../api.module"
-import { joinScraperWithDataSources } from "./helpers"
+import {
+  getScraperExecutionResult,
+  joinScraperWithDataSources,
+} from "./helpers"
 
 export async function routinesRoutes(
   fastify: FastifyInstance,
@@ -615,7 +613,11 @@ async function handleRoutineExecutionFinished(
   executionId?: number,
 ) {
   const result = executionId
-    ? await getScraperExecutionResult(db, routineExecution, executionId)
+    ? await getScraperExecutionResult(
+        db,
+        executionId,
+        routineExecution.routineId,
+      )
     : RoutineExecutionResult.Failed
 
   await db
@@ -671,33 +673,4 @@ async function handleRoutineExecutionFinished(
         .where(eq(routinesTable.id, data.id))
     }
   }
-}
-
-async function getScraperExecutionResult(
-  db: ApiModuleContext["db"],
-  routineExecution: InferSelectModel<typeof routineExecutionsTable>,
-  executionId: number,
-) {
-  const lastExecutionIterationResults = await db
-    .select({
-      success: scraperExecutionIterationsTable.success,
-    })
-    .from(scraperExecutionsTable)
-    .innerJoin(
-      scraperExecutionIterationsTable,
-      eq(
-        scraperExecutionsTable.id,
-        scraperExecutionIterationsTable.executionId,
-      ),
-    )
-    .where(
-      and(
-        eq(scraperExecutionsTable.id, executionId),
-        eq(scraperExecutionsTable.routineId, routineExecution.routineId),
-      ),
-    )
-
-  return lastExecutionIterationResults.every(({ success }) => success)
-    ? RoutineExecutionResult.Success
-    : RoutineExecutionResult.Failed
 }

@@ -1,6 +1,12 @@
-import type { ScraperType } from "@web-scraper/common"
-import { type InferSelectModel, eq } from "drizzle-orm"
-import { type scrapersTable, scraperDataSourcesTable } from "../../db/schema"
+import { RoutineExecutionResult, type ScraperType } from "@web-scraper/common"
+import { type InferSelectModel, and, eq } from "drizzle-orm"
+import {
+  type routineExecutionsTable,
+  scraperDataSourcesTable,
+  scraperExecutionIterationsTable,
+  scraperExecutionsTable,
+  type scrapersTable,
+} from "../../db/schema"
 import type { ApiModuleContext } from "../api.module"
 
 export async function joinScraperWithDataSources(
@@ -18,4 +24,33 @@ export async function joinScraperWithDataSources(
     updatedAt: scraper.updatedAt.getTime(),
     dataSources,
   }
+}
+
+export async function getScraperExecutionResult(
+  db: ApiModuleContext["db"],
+  executionId: number,
+  routineId?: InferSelectModel<typeof routineExecutionsTable>["routineId"],
+) {
+  const lastExecutionIterationResults = await db
+    .select({
+      success: scraperExecutionIterationsTable.success,
+    })
+    .from(scraperExecutionsTable)
+    .innerJoin(
+      scraperExecutionIterationsTable,
+      eq(
+        scraperExecutionsTable.id,
+        scraperExecutionIterationsTable.executionId,
+      ),
+    )
+    .where(
+      and(
+        eq(scraperExecutionsTable.id, executionId),
+        routineId ? eq(scraperExecutionsTable.routineId, routineId) : undefined,
+      ),
+    )
+
+  return lastExecutionIterationResults.every(({ success }) => success)
+    ? RoutineExecutionResult.Success
+    : RoutineExecutionResult.Failed
 }

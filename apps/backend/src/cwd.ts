@@ -1,12 +1,9 @@
 import path from "path"
 import sea from "node:sea"
+import { IS_TEST_ENV } from "./test/is-test-env"
 
 export function cwd() {
-  if (
-    process.env.TEST === "true" ||
-    process.env.VITEST === "true" ||
-    process.env.CI === "true"
-  ) {
+  if (IS_TEST_ENV) {
     return path.join(__dirname, "..")
   }
 
