@@ -53,7 +53,7 @@
     "@babel/plugin-proposal-explicit-resource-management": "^7.27.4",
     "@eslint/js": "^9.29.0",
     "@tailwindcss/vite": "^4.1.11",
-    "@types/node": "^24.0.3",
+    "@types/node": "^24.0.13",
     "@types/react": "^19.1.8",
     "@types/react-dom": "^19.1.6",
     "@typescript-eslint/eslint-plugin": "^8.34.1",
