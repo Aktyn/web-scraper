@@ -15,10 +15,11 @@ import {
   DeleteDataInstruction,
   SaveDataBatchInstruction,
   SaveDataInstruction,
-} from "./instruction-types/data-instruction"
+} from "./instruction-types/data-instructions"
 import { PageActionInstruction } from "./instruction-types/page-action-instruction"
 import { SystemActionInstruction } from "./instruction-types/system-action-instruction"
 import { DeleteCookiesInstruction } from "./instruction-types/delete-cookies-instruction"
+import { LogDataInstruction } from "./instruction-types/log-data-instruction"
 
 type InstructionBlockProps = {
   instruction: ScraperInstructions[number]
@@ -54,6 +55,12 @@ export function InstructionBlock({ instruction }: InstructionBlockProps) {
         </BlockContainer>
       )
 
+    case ScraperInstructionType.LogData:
+      return (
+        <BlockContainer asChild>
+          <LogDataInstruction value={instruction.value} />
+        </BlockContainer>
+      )
     case ScraperInstructionType.SaveData:
       return (
         <BlockContainer asChild>

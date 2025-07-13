@@ -14,11 +14,19 @@ import { Brain } from "lucide-react"
 import type { ReactNode } from "react"
 
 export const instructionTypeLabels: {
-  [key in ScraperInstructionType]: string
+  [key in ScraperInstructionType]: ReactNode
 } = {
   [ScraperInstructionType.PageAction]: "Page action",
   [ScraperInstructionType.Condition]: "Condition",
   [ScraperInstructionType.DeleteCookies]: "Delete cookies",
+  [ScraperInstructionType.LogData]: (
+    <div className="flex flex-row items-baseline gap-1">
+      <span>Log data</span>
+      <span className="text-muted-foreground text-xs leading-none">
+        (useful in CLI)
+      </span>
+    </div>
+  ),
   [ScraperInstructionType.SaveData]: "Save data",
   [ScraperInstructionType.SaveDataBatch]: "Save data batch",
   [ScraperInstructionType.DeleteData]: "Delete data",

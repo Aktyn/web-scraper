@@ -16,10 +16,11 @@ import {
   DeleteDataInstruction,
   SaveDataBatchInstruction,
   SaveDataInstruction,
-} from "../instruction-types/data-instruction"
+} from "../instruction-types/data-instructions"
 import { PageActionInstruction } from "../instruction-types/page-action-instruction"
 import { SystemActionInstruction } from "../instruction-types/system-action-instruction"
 import { DeleteCookiesInstruction } from "../instruction-types/delete-cookies-instruction"
+import { LogDataInstruction } from "../instruction-types/log-data-instruction"
 
 type ExternalDataOperationProps = {
   info: ScraperInstructionInfo
@@ -63,6 +64,12 @@ export function ScraperInstructionInfo({ info }: ExternalDataOperationProps) {
             domain={info.domain}
             deletedCookies={info.deletedCookies}
           />
+        </ContainerLayout>
+      )
+    case ScraperInstructionType.LogData:
+      return (
+        <ContainerLayout>
+          <LogDataInstruction value={info.value} />
         </ContainerLayout>
       )
     case ScraperInstructionType.SaveData:

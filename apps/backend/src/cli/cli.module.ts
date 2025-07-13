@@ -23,8 +23,11 @@ export function getCliModule(context: CliModuleContext) {
       "Execute an existing scraper by its name and optional iterator",
       (_, __, _args) => {
         cancelRun = true
+        const cliArgs = _args as unknown as CliArguments
 
-        executeScraperCLI(_args as never, context).catch((error) =>
+        preHandleArgs(cliArgs, context)
+
+        executeScraperCLI(cliArgs, context).catch((error) =>
           context.logger.error(error),
         )
       },
@@ -46,13 +49,13 @@ export function getCliModule(context: CliModuleContext) {
     mri: {},
   }) as CliArguments
 
-  if (
-    cliArguments.silent &&
-    "child" in context.logger &&
-    typeof context.logger.child === "function"
-  ) {
-    context.logger.level = "silent"
-  }
+  preHandleArgs(cliArguments, context)
 
   return { ...cliArguments, cancelRun }
+}
+
+function preHandleArgs(args: CliArguments, { logger }: CliModuleContext) {
+  if (args.silent && "child" in logger && typeof logger.child === "function") {
+    logger.level = "silent"
+  }
 }

@@ -13,32 +13,54 @@ export enum ScraperEventType {
   ExecutionError = "executionError",
 }
 
-export const scraperEventSchema = z.discriminatedUnion("type", [
-  z.object({
-    type: z.literal(ScraperEventType.StateChange),
-    state: z.nativeEnum(ScraperState),
-    previousState: z.nativeEnum(ScraperState),
-  }),
-  z.object({
-    type: z.literal(ScraperEventType.ExecutionStarted),
-  }),
-  z.object({
-    type: z.literal(ScraperEventType.ExecutionUpdate),
-    update: scraperInstructionsExecutionInfoSchema.element,
-  }),
-  z.object({
-    type: z.literal(ScraperEventType.ExecutingInstruction),
-    instruction: scraperInstructionsSchema.element,
-  }),
-  z.object({
-    type: z.literal(ScraperEventType.ExecutionFinished),
-    executionInfo: scraperInstructionsExecutionInfoSchema,
-  }),
-  z.object({
-    type: z.literal(ScraperEventType.ExecutionError),
-    error: z.string(),
-    executionInfo: scraperInstructionsExecutionInfoSchema.nullable(),
-  }),
+const scraperStateChangeEventSchema = z.object({
+  type: z.literal(ScraperEventType.StateChange),
+  state: z.nativeEnum(ScraperState),
+  previousState: z.nativeEnum(ScraperState),
+})
+
+const scraperExecutionStartedEventSchema = z.object({
+  type: z.literal(ScraperEventType.ExecutionStarted),
+})
+
+const scraperExecutionUpdateEventSchema = z.object({
+  type: z.literal(ScraperEventType.ExecutionUpdate),
+  update: scraperInstructionsExecutionInfoSchema.element,
+})
+
+const scraperExecutingInstructionEventSchema = z.object({
+  type: z.literal(ScraperEventType.ExecutingInstruction),
+  instruction: scraperInstructionsSchema.element,
+})
+
+const scraperExecutionFinishedEventSchema = z.object({
+  type: z.literal(ScraperEventType.ExecutionFinished),
+  executionInfo: scraperInstructionsExecutionInfoSchema,
+})
+
+const scraperExecutionErrorEventSchema = z.object({
+  type: z.literal(ScraperEventType.ExecutionError),
+  error: z.string(),
+  executionInfo: scraperInstructionsExecutionInfoSchema.nullable(),
+})
+
+export const scraperEventSchema: z.ZodDiscriminatedUnion<
+  "type",
+  [
+    typeof scraperStateChangeEventSchema,
+    typeof scraperExecutionStartedEventSchema,
+    typeof scraperExecutionUpdateEventSchema,
+    typeof scraperExecutingInstructionEventSchema,
+    typeof scraperExecutionFinishedEventSchema,
+    typeof scraperExecutionErrorEventSchema,
+  ]
+> = z.discriminatedUnion("type", [
+  scraperStateChangeEventSchema,
+  scraperExecutionStartedEventSchema,
+  scraperExecutionUpdateEventSchema,
+  scraperExecutingInstructionEventSchema,
+  scraperExecutionFinishedEventSchema,
+  scraperExecutionErrorEventSchema,
 ])
 
 export type ScraperEvent = z.infer<typeof scraperEventSchema>

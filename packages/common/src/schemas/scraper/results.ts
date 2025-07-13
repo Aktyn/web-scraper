@@ -32,6 +32,10 @@ const instructionInfoSchema = z.discriminatedUnion("type", [
   }),
 
   z.object({
+    type: z.literal(ScraperInstructionType.LogData),
+    value: scraperValueSchema,
+  }),
+  z.object({
     type: z.literal(ScraperInstructionType.SaveData),
     dataKey: scraperDataKeySchema,
     value: scraperValueSchema,

@@ -28,7 +28,7 @@ export function SaveDataInstructionForm({
       <DataKeyField control={control} name={`${fieldName}.dataKey`} />
 
       <div>
-        <h5 className="font-medium mb-2">Value to Save</h5>
+        <h5 className="font-medium mb-2">Value to save</h5>
         <ScraperValueForm control={control} fieldName={`${fieldName}.value`} />
       </div>
     </div>

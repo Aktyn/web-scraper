@@ -25,6 +25,9 @@ export enum ScraperInstructionType {
   /** Used to delete browser cookies */
   DeleteCookies = "deleteCookies",
 
+  /** Used to log data to the console (CLI use case) */
+  LogData = "logData",
+
   /** Used to save data to the data bridge */
   SaveData = "saveData",
 
@@ -70,6 +73,10 @@ type ScraperInstructionRecursive =
       domain: string | SerializableRegex
     }
   | {
+      type: ScraperInstructionType.LogData
+      value: ScraperValue
+    }
+  | {
       type: ScraperInstructionType.SaveData
       dataKey: ScraperDataKey
       value: ScraperValue
@@ -106,6 +113,10 @@ const scraperInstructionSchema: z.ZodType<ScraperInstructionRecursive> =
       domain: z.union([z.string(), serializableRegexSchema]),
     }),
 
+    z.object({
+      type: z.literal(ScraperInstructionType.LogData),
+      value: scraperValueSchema,
+    }),
     z.object({
       type: z.literal(ScraperInstructionType.SaveData),
       dataKey: scraperDataKeySchema,

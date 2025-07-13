@@ -19,8 +19,8 @@ import {
   PageActionType,
   ScraperConditionType,
   ScraperInstructionType,
-  type UpsertScraper,
   type ScraperInstructions,
+  type UpsertScraper,
 } from "@web-scraper/common"
 import {
   FoldVertical,
@@ -36,6 +36,7 @@ import { PageIndexField } from "./common/page-index-field"
 import { mapToSelectOptions } from "./helpers"
 import { ConditionInstructionForm } from "./instruction-types/condition-instruction-form"
 import { DeleteDataInstructionForm } from "./instruction-types/delete-data-instruction-form"
+import { LogDataInstructionForm } from "./instruction-types/log-data-instruction-form"
 import { PageActionForm } from "./instruction-types/page-action-form"
 import {
   SaveDataBatchInstructionForm,
@@ -349,6 +350,8 @@ function InstructionForm({ control, fieldName }: InstructionFormProps) {
         />
       )
 
+    case ScraperInstructionType.LogData:
+      return <LogDataInstructionForm control={control} fieldName={fieldName} />
     case ScraperInstructionType.SaveData:
       return <SaveDataInstructionForm control={control} fieldName={fieldName} />
     case ScraperInstructionType.SaveDataBatch:

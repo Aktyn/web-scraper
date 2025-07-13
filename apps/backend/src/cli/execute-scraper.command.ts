@@ -63,8 +63,6 @@ export async function executeScraperCLI(
       : RoutineExecutionResult.Failed
 
     logger.info({ msg: "CLI scraper execution finished", result })
-
-    //TODO: add instruction that allows to return scraped data without saving it to the database (combined with --silent flag can be used to print clean scraped data in console)
   } catch (error) {
     logger.error(error)
   }

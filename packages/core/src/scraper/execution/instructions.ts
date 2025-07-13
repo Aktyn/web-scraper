@@ -209,6 +209,25 @@ async function executeInstructionByType(
       }
       break
 
+    case ScraperInstructionType.LogData:
+      {
+        context.logger.info("Logging data to console", {
+          value: instruction.value,
+        })
+
+        lastInstructionInfo = pushInstructionInfo(
+          {
+            type: instruction.type,
+            value: instruction.value,
+          },
+          context,
+        )
+
+        const scraperValue = await getScraperValue(context, instruction.value)
+        // eslint-disable-next-line no-console
+        console.log(String(scraperValue))
+      }
+      break
     case ScraperInstructionType.SaveData:
       {
         context.logger.info("Saving data to data bridge", {
