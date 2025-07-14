@@ -34,7 +34,7 @@
     "fastify": "^5.4.0",
     "fastify-plugin": "^5.0.1",
     "fastify-sse-v2": "^4.2.1",
-    "fastify-type-provider-zod": "^4.0.2",
+    "fastify-type-provider-zod": "^5.0.2",
     "fastify-zod-query-coercion": "^1.0.0",
     "node-file-dialog": "^1.0.3",
     "node-systray-v2": "github:Edgar-P-yan/node-systray-v2",
