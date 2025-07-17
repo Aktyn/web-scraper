@@ -20,11 +20,9 @@ type EvaluatorFieldProps = {
 export function EvaluatorField({ control, fieldName }: EvaluatorFieldProps) {
   const code = useWatch({ control, name: `${fieldName}.code` })
 
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  //@ts-ignore
-  const { fields, append, remove } = useFieldArray<UpsertScraper, never>({
+  const { fields, append, remove } = useFieldArray({
     control,
-    name: `${fieldName}.arguments` as never,
+    name: `${fieldName}.arguments`,
   })
 
   return (

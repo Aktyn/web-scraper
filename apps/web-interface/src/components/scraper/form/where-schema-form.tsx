@@ -158,7 +158,7 @@ function LogicalGroupForm({
   //eslint-disable-next-line @typescript-eslint/ban-ts-comment
   //@ts-ignore
   const { fields, append, remove } = useFieldArray<UpsertScraper, never>({
-    control,
+    control: control as never,
     name: `${name}.${groupType}` as never,
   })
 

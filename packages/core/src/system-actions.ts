@@ -1,5 +1,6 @@
 import { type SystemAction, SystemActionType } from "@web-scraper/common"
 import { notify } from "node-notifier"
+import { execSync } from "node:child_process"
 
 export function performSystemAction(action: SystemAction) {
   switch (action.type) {
@@ -8,8 +9,12 @@ export function performSystemAction(action: SystemAction) {
         title: "Web Scraper",
         message: action.message,
         wait: false,
-        sound: true,
+        sound: false,
       })
+      break
+
+    case SystemActionType.ExecuteSystemCommand:
+      execSync(action.command, { stdio: "inherit" })
       break
   }
 }

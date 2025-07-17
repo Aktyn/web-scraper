@@ -24,6 +24,16 @@ export function SystemActionInstructionForm({
           description="The message to display in the notification."
         />
       )
+    case SystemActionType.ExecuteSystemCommand:
+      return (
+        <FormInput
+          control={control}
+          name={`${fieldName}.command`}
+          label="Command"
+          placeholder="echo 'Hello, world!'"
+          description="The command to execute. Output will be logged in the terminal (even when --silent option is enabled)."
+        />
+      )
     default:
       return <div>Unknown system action type</div>
   }

@@ -72,6 +72,26 @@ export async function miscRoutes(
     },
   )
 
+  fastify.withTypeProvider<ZodTypeProvider>().post(
+    "/preferences/reset",
+    {
+      schema: {
+        response: {
+          200: getApiResponseSchema(userPreferencesSchema),
+        },
+      },
+    },
+    async (_request, reply) => {
+      await fastify.db.delete(preferencesTable)
+
+      config.resetPreferences()
+
+      return reply.status(200).send({
+        data: [],
+      })
+    },
+  )
+
   fastify.withTypeProvider<ZodTypeProvider>().put(
     "/preferences/:key",
     {

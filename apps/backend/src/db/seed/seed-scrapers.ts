@@ -32,7 +32,6 @@ export async function seedScrapers(db: DbModule) {
       scraper1,
       scraper2,
       scraper3,
-      scraper4,
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       _captchaTesterScraper,
       brainFmRegisterScraper,
@@ -55,12 +54,6 @@ export async function seedScrapers(db: DbModule) {
           userDataDirectory: "/tmp/user-data-dir",
           createdAt: new Date(new Date().getTime() + 60_000),
           updatedAt: new Date(new Date().getTime() + 60_000),
-        },
-        {
-          name: "New pepper alerts",
-          description:
-            "See if there are new pepper alerts and notify user if so",
-          instructions: checkNewPepperAlertsInstructions,
         },
         {
           name: "Site content scraper",
@@ -93,6 +86,11 @@ export async function seedScrapers(db: DbModule) {
           name: "Autonomous agent test",
           description: "Test of autonomous agent",
           instructions: autonomousAgentTestInstructions,
+        },
+        {
+          name: "System actions",
+          description: "Example scraper using system actions",
+          instructions: systemActionsTestInstructions,
         },
       ])
       .returning()
@@ -138,12 +136,12 @@ export async function seedScrapers(db: DbModule) {
         },
       },
       {
-        scraperId: scraper3.id,
+        scraperId: scraper2.id,
         sourceAlias: "Store",
         dataStoreTableName: exampleSiteContentTableName, //Note: it has to be already seeded
       },
       {
-        scraperId: scraper4.id,
+        scraperId: scraper3.id,
         sourceAlias: "crypto",
         dataStoreTableName: cryptoPricesTableName, //Note: it has to be already seeded
       },
@@ -155,192 +153,6 @@ export async function seedScrapers(db: DbModule) {
     ])
   })
 }
-
-const checkNewPepperAlertsInstructions: ScraperInstructions = [
-  {
-    type: ScraperInstructionType.PageAction,
-    action: { type: PageActionType.Navigate, url: "https://www.pepper.pl/" },
-  },
-  {
-    type: ScraperInstructionType.Condition,
-    if: {
-      type: ScraperConditionType.IsVisible,
-      selectors: [
-        {
-          type: ElementSelectorType.TextContent,
-          text: { source: "akceptuj wszystkie", flags: "i" },
-        },
-        { type: ElementSelectorType.TagName, tagName: "button" },
-      ],
-    },
-    then: [
-      {
-        type: ScraperInstructionType.PageAction,
-        action: {
-          type: PageActionType.Click,
-          selectors: [
-            {
-              type: ElementSelectorType.TextContent,
-              text: { source: "akceptuj wszystkie", flags: "i" },
-            },
-            { type: ElementSelectorType.TagName, tagName: "button" },
-          ],
-        },
-      },
-    ],
-    else: [],
-  },
-  {
-    type: ScraperInstructionType.Condition,
-    if: {
-      type: ScraperConditionType.IsVisible,
-      selectors: [
-        {
-          type: ElementSelectorType.TextContent,
-          text: { source: "zaloguj się", flags: "i" },
-        },
-        { type: ElementSelectorType.TagName, tagName: "button" },
-      ],
-    },
-    then: [
-      {
-        type: ScraperInstructionType.PageAction,
-        action: {
-          type: PageActionType.Click,
-          selectors: [
-            {
-              type: ElementSelectorType.TextContent,
-              text: { source: "zaloguj się", flags: "i" },
-            },
-            { type: ElementSelectorType.TagName, tagName: "button" },
-          ],
-        },
-      },
-      {
-        type: ScraperInstructionType.PageAction,
-        action: {
-          type: PageActionType.Type,
-          selectors: [
-            {
-              type: ElementSelectorType.Query,
-              query: "input[type='email'][name='identity']",
-            },
-          ],
-          value: { type: ScraperValueType.ExternalData, dataKey: "user.email" },
-        },
-      },
-      {
-        type: ScraperInstructionType.PageAction,
-        action: {
-          type: PageActionType.Click,
-          selectors: [
-            {
-              type: ElementSelectorType.TextContent,
-              text: { source: "Kontynuuj", flags: "i" },
-            },
-            { type: ElementSelectorType.TagName, tagName: "button" },
-            {
-              type: ElementSelectorType.Attributes,
-              attributes: { type: "submit" },
-            },
-          ],
-        },
-      },
-      {
-        type: ScraperInstructionType.PageAction,
-        action: {
-          type: PageActionType.Type,
-          selectors: [
-            {
-              type: ElementSelectorType.Query,
-              query: "input[type='password'][name='password']",
-            },
-          ],
-          value: {
-            type: ScraperValueType.ExternalData,
-            dataKey: "user.password",
-          },
-        },
-      },
-      {
-        type: ScraperInstructionType.PageAction,
-        action: {
-          type: PageActionType.Click,
-          selectors: [
-            {
-              type: ElementSelectorType.Query,
-              query: "input[type='password'][name='password'] + span>button",
-            },
-          ],
-        },
-      },
-      {
-        type: ScraperInstructionType.PageAction,
-        action: {
-          type: PageActionType.Click,
-          selectors: [
-            {
-              type: ElementSelectorType.TextContent,
-              text: { source: "Zaloguj się", flags: "i" },
-            },
-            { type: ElementSelectorType.TagName, tagName: "button" },
-            {
-              type: ElementSelectorType.Attributes,
-              attributes: { type: "submit" },
-            },
-          ],
-        },
-      },
-    ],
-    else: [],
-  },
-  {
-    type: ScraperInstructionType.PageAction,
-    action: {
-      type: PageActionType.Navigate,
-      url: "https://www.pepper.pl/alerts",
-    },
-  },
-  {
-    type: ScraperInstructionType.Condition,
-    if: {
-      type: ScraperConditionType.IsVisible,
-      selectors: [
-        {
-          type: ElementSelectorType.Query,
-          query: "#tab-feed > article:first-of-type .thread-title > a",
-        },
-        {
-          type: ElementSelectorType.TextContent,
-          text: `{{${SpecialStringType.DataKey},marker.Content}}`,
-        },
-      ],
-    },
-    then: [],
-    else: [
-      {
-        type: ScraperInstructionType.SaveData,
-        dataKey: "marker.Content",
-        value: {
-          type: ScraperValueType.ElementTextContent,
-          selectors: [
-            {
-              type: ElementSelectorType.Query,
-              query: "#tab-feed > article:first-of-type .thread-title > a",
-            },
-          ],
-        },
-      },
-      {
-        type: ScraperInstructionType.SystemAction,
-        systemAction: {
-          type: SystemActionType.ShowNotification,
-          message: "New pepper alert!",
-        },
-      },
-    ],
-  },
-]
 
 const scrapExampleSiteInstructions: ScraperInstructions = [
   {
@@ -714,5 +526,37 @@ const autonomousAgentTestInstructions: ScraperInstructions = [
   {
     type: ScraperInstructionType.PageAction,
     action: { type: PageActionType.Wait, duration: 30_000 },
+  },
+]
+
+const systemActionsTestInstructions: ScraperInstructions = [
+  {
+    type: ScraperInstructionType.PageAction,
+    action: {
+      type: PageActionType.Navigate,
+      url: "https://en.wikipedia.org/wiki/Actinium",
+    },
+  },
+  {
+    type: ScraperInstructionType.PageAction,
+    action: { type: PageActionType.Wait, duration: 5000 },
+  },
+  {
+    type: ScraperInstructionType.SystemAction,
+    systemAction: {
+      type: SystemActionType.ShowNotification,
+      message: "It's an example system message :)",
+    },
+  },
+  {
+    type: ScraperInstructionType.PageAction,
+    action: { type: PageActionType.Wait, duration: 5000 },
+  },
+  {
+    type: ScraperInstructionType.SystemAction,
+    systemAction: {
+      type: SystemActionType.ExecuteSystemCommand,
+      command: "whoami && pwd && ls -lh",
+    },
   },
 ]

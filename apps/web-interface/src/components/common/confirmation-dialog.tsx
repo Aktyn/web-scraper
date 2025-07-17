@@ -1,11 +1,13 @@
 import { Button } from "@/components/shadcn/button"
 import {
   Dialog,
+  DialogClose,
   DialogContent,
   DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
+  DialogTrigger,
 } from "@/components/shadcn/dialog"
 import type { ComponentProps } from "react"
 
@@ -27,22 +29,21 @@ export function ConfirmationDialog({
   onConfirm,
   variant = "default",
   className,
+  children,
   ...dialogProps
 }: ConfirmationDialogProps) {
   return (
     <Dialog {...dialogProps}>
+      {children && <DialogTrigger asChild>{children}</DialogTrigger>}
       <DialogContent aria-describedby={undefined} className={className}>
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
           <DialogDescription>{description}</DialogDescription>
         </DialogHeader>
         <DialogFooter>
-          <Button
-            variant="outline"
-            onClick={() => dialogProps.onOpenChange?.(false)}
-          >
-            {cancelText}
-          </Button>
+          <DialogClose asChild>
+            <Button variant="outline">{cancelText}</Button>
+          </DialogClose>
           <Button variant={variant} onClick={onConfirm}>
             {confirmText}
           </Button>

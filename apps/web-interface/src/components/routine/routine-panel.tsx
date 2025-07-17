@@ -12,6 +12,7 @@ import { RoutineStatusBadge } from "./routine-status-badge"
 import { SchedulerInfo } from "./scheduler-info"
 import { usePost } from "@/hooks/api/usePost"
 import { Countdown } from "../common/label/countdown"
+import { TermInfo } from "../info/term-info"
 
 type RoutinePanelProps = {
   routine: Routine
@@ -36,7 +37,14 @@ export function RoutinePanel({
         <LabeledValue label="Status">
           <RoutineStatusBadge status={routine.status} />
         </LabeledValue>
-        <LabeledValue label="Iterator">
+        <LabeledValue
+          label={
+            <div className="flex flex-row items-center gap-1">
+              <span>Iterator</span>
+              <TermInfo term="iterator" className="size-3.5" />
+            </div>
+          }
+        >
           <IteratorDescription
             iterator={routine.iterator}
             className="whitespace-normal"

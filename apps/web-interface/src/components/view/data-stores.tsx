@@ -18,6 +18,7 @@ import { NullBadge } from "../common/null-badge"
 import { RefreshButton } from "../common/table/refresh-button"
 import { DataStoreDialog } from "../data-store/data-store-dialog"
 import { DataStoreFormDialog } from "../data-store/data-store-form-dialog"
+import { TermInfo } from "../info/term-info"
 
 export function DataStores() {
   const { unpinDataStore } = usePinnedDataStores()
@@ -130,7 +131,7 @@ export function DataStores() {
     <div className="size-full *:w-256 *:max-w-full">
       <div
         data-transition-direction="top"
-        className="view-transition p-2 flex flex-row items-center"
+        className="view-transition p-2 flex flex-row items-center gap-2"
       >
         <Button
           variant="outline"
@@ -140,8 +141,9 @@ export function DataStores() {
           }}
         >
           <Plus />
-          Add Data Store
+          Add data store
         </Button>
+        <TermInfo term="dataStore" />
         <RefreshButton
           onClick={refresh}
           refreshing={isLoading || isLoadingMore}

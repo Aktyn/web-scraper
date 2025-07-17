@@ -28,11 +28,16 @@ export function SystemActionInstruction({
 
 const iconsMap: { [key in SystemActionType]: IconName } = {
   [SystemActionType.ShowNotification]: "bell-plus",
+  [SystemActionType.ExecuteSystemCommand]: "terminal",
 }
 
 function SystemActionDetails({ systemAction }: { systemAction: SystemAction }) {
   switch (systemAction.type) {
     case SystemActionType.ShowNotification:
       return <LabeledValue label="Message">{systemAction.message}</LabeledValue>
+    case SystemActionType.ExecuteSystemCommand:
+      return <LabeledValue label="Command">{systemAction.command}</LabeledValue>
+    default:
+      return null
   }
 }

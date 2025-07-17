@@ -163,6 +163,12 @@ export type Routes = {
       response: ApiResponse<UserPreferences>
     }
   }
+  "preferences/reset": {
+    post: {
+      body: null
+      response: ApiResponse<UserPreferences>
+    }
+  }
   "preferences/:key": {
     put: {
       body: Pick<UserPreferences[number], "value">

@@ -1,282 +1,63 @@
-import { Button } from "@/components/shadcn/button"
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/shadcn/popover"
-import { useGet } from "@/hooks/api/useGet"
-import { usePut } from "@/hooks/api/usePut"
-import { useMounted } from "@/hooks/useMounted"
-import type { ColumnDef } from "@tanstack/react-table"
-import type { Status, UserPreferences } from "@web-scraper/common"
-import { defaultPreferences } from "@web-scraper/common"
-import { CheckIcon, EditIcon, Save, TriangleAlert, XIcon } from "lucide-react"
-import { useMemo, useState } from "react"
-import { NullBadge } from "../common/null-badge"
-import { DataTable } from "../common/table/data-table"
-import { Input } from "../shadcn/input"
+import { usePost } from "@/hooks/api/usePost"
+import { ListRestart } from "lucide-react"
+import { useRef, useState } from "react"
+import { ConfirmationDialog } from "../common/confirmation-dialog"
+import type { PreferencesTableInterface } from "../preferences/preferences-table"
+import { PreferencesTable } from "../preferences/preferences-table"
+import { Button } from "../shadcn/button"
 import { Label } from "../shadcn/label"
-import { Switch } from "../shadcn/switch"
-import { Tooltip, TooltipContent, TooltipTrigger } from "../shadcn/tooltip"
-
-type PreferenceKey = UserPreferences[number]["key"]
+import { Separator } from "../shadcn/separator"
 
 export function Preferences() {
-  const { data: userPreferences, isLoading, refetch } = useGet("/preferences")
-  const { data: status, isLoading: isStatusLoading } = useGet("/status")
+  const preferencesTableRef = useRef<PreferencesTableInterface>(null)
 
-  const preferences = useMemo(() => {
-    return Object.entries(defaultPreferences).map(
-      ([key, { value, description }]) => ({
-        key: key as PreferenceKey,
-        value: (userPreferences?.data.find((p) => p.key === key)?.value ??
-          value) as Required<unknown>,
-        description,
-      }),
-    )
-  }, [userPreferences?.data])
+  const { postItem: resetPreferences, isPosting } =
+    usePost("/preferences/reset")
 
-  const columns = useMemo<
-    ColumnDef<
-      UserPreferences[number] & {
-        description: string | null
-      }
-    >[]
-  >(
-    () => [
-      {
-        accessorKey: "key",
-        header: "Key",
-        cell: ({ row }) => (
-          <div className="font-medium flex items-center gap-2">
-            {status && !isAvailable(row.original.key, status.data) && (
-              <Tooltip>
-                <TooltipTrigger>
-                  <TriangleAlert className="size-4 text-warning inline" />
-                </TooltipTrigger>
-                <TooltipContent>Feature not available</TooltipContent>
-              </Tooltip>
-            )}
-            {row.original.key}
-          </div>
-        ),
-      },
-      {
-        accessorKey: "value",
-        header: "Value",
-        cell: ({ row }) => (
-          <ValueCell preference={row.original} onValueChange={refetch} />
-        ),
-      },
-      {
-        accessorKey: "description",
-        header: "Description",
-        cell: ({ row }) => (
-          <span className="whitespace-normal text-muted-foreground text-pretty inline-block">
-            {row.original.description ?? <NullBadge />}
-          </span>
-        ),
-      },
-    ],
-    [refetch, status],
-  )
+  const [openConfirmationDialog, setOpenConfirmationDialog] = useState(false)
 
   return (
-    <div className="size-full *:w-256 *:max-w-full">
-      <DataTable
-        data-transition-direction="left"
-        className="view-transition delay-100"
-        columns={columns}
-        data={preferences}
-        isLoading={isLoading || isStatusLoading}
-      />
-    </div>
-  )
-}
-
-function isAvailable(key: PreferenceKey, status: Status) {
-  // eslint-disable-next-line @typescript-eslint/switch-exhaustiveness-check
-  switch (key) {
-    case "localizationModel":
-    case "localizationSystemPrompt":
-      return status.ollamaInstalled && status.localizationModelAvailable
-    case "navigationModel":
-      return status.ollamaInstalled && status.navigationModelAvailable
-    default:
-      return true
-  }
-
-  return true
-}
-
-type ValueCellProps = {
-  preference: {
-    value: Required<unknown>
-    key: string
-  }
-  onValueChange: (newValue: Required<unknown>) => void
-}
-
-function ValueCell({ preference, onValueChange }: ValueCellProps) {
-  const { value, key } = preference
-
-  const { putItem } = usePut("/preferences/:key")
-  const [open, setOpen] = useState(false)
-
-  const mounted = useMounted()
-
-  const handleChange = async (newValue: Required<unknown>) => {
-    await putItem({ value: newValue }, { key })
-
-    if (mounted.current) {
-      onValueChange(newValue)
-      setOpen(false)
-    }
-  }
-
-  return (
-    <div className="flex items-center justify-between gap-4">
-      <div className="text-pretty max-h-64 overflow-y-auto">
-        {typeof value === "boolean" ? (
-          <span className="flex items-center gap-1 font-medium">
-            {value ? (
-              <CheckIcon className="size-4 text-success" />
-            ) : (
-              <XIcon className="size-4 text-destructive" />
-            )}
-            {value ? "True" : "False"}
-          </span>
-        ) : typeof value === "string" ? (
-          value || <NullBadge />
-        ) : typeof value === "number" ? (
-          value
-        ) : (
-          JSON.stringify(value)
-        )}
-      </div>
-      <Popover open={open} onOpenChange={setOpen}>
-        <PopoverTrigger asChild>
-          <Button size="icon" variant="ghost">
-            <EditIcon className="size-4" />
-          </Button>
-        </PopoverTrigger>
-        <PopoverContent className="w-auto">
-          {typeof value === "boolean" ? (
-            <div className="flex flex-col items-center gap-2">
-              <Label htmlFor={key}>
-                Toggle <b>{key}</b>
-              </Label>
-              <Switch
-                id={key}
-                defaultChecked={value}
-                onCheckedChange={handleChange}
-              />
-            </div>
-          ) : typeof value === "string" ? (
-            <StringValueCell
-              valueKey={key}
-              value={value}
-              onValueChange={handleChange}
-            />
-          ) : typeof value === "number" ? (
-            <NumberValueCell
-              valueKey={key}
-              value={value}
-              onValueChange={handleChange}
-            />
-          ) : (
-            <Label>Not supported</Label>
-          )}
-        </PopoverContent>
-      </Popover>
-    </div>
-  )
-}
-
-type StringValueCellProps = {
-  valueKey: string
-  value: string
-  onValueChange: (newValue: string) => void
-}
-
-function StringValueCell({
-  valueKey,
-  value,
-  onValueChange,
-}: StringValueCellProps) {
-  const [inputValue, setInputValue] = useState(value)
-
-  return (
-    <div className="flex flex-col items-center gap-2">
-      <Label htmlFor={valueKey} className="gap-1">
-        <span>Set</span>
-        <b>{valueKey}</b>
-      </Label>
-      <Input
-        id={valueKey}
-        value={inputValue}
-        className="w-md"
-        onChange={(event) => setInputValue(event.target.value)}
-        onKeyDown={(event) => {
-          if (event.key === "Enter") {
-            onValueChange(inputValue)
-          }
-        }}
-      />
-      <Button
-        variant="default"
-        size="sm"
-        onClick={() => onValueChange(inputValue)}
+    <div className="size-full flex flex-col overflow-hidden">
+      <div
+        data-transition-direction="top"
+        className="view-transition flex flex-row items-center gap-2 p-2"
       >
-        <Save />
-        Save
-      </Button>
-    </div>
-  )
-}
+        todo
+      </div>
+      <Separator className="view-transition" />
+      <div
+        data-transition-direction="left"
+        className="view-transition delay-100 flex flex-row items-center justify-between gap-2 p-2"
+      >
+        <Label className="text-lg font-semibold text-muted-foreground">
+          Config
+        </Label>
+        <ConfirmationDialog
+          open={openConfirmationDialog}
+          onOpenChange={setOpenConfirmationDialog}
+          title="Reset config"
+          description="Are you sure you want to reset the config to the default values?"
+          confirmText={isPosting ? "Resetting..." : "Confirm reset"}
+          onConfirm={() => {
+            if (isPosting) {
+              return
+            }
 
-type NumberValueCellProps = {
-  valueKey: string
-  value: number
-  onValueChange: (newValue: number) => void
-}
-
-function NumberValueCell({
-  valueKey,
-  value,
-  onValueChange,
-}: NumberValueCellProps) {
-  const [inputValue, setInputValue] = useState(value.toString())
-
-  const handleSave = () => {
-    const numericValue = Number.parseInt(inputValue, 10)
-    if (!Number.isNaN(numericValue)) {
-      onValueChange(numericValue)
-    }
-  }
-
-  return (
-    <div className="flex flex-col items-center gap-2">
-      <Label htmlFor={valueKey} className="gap-1">
-        <span>Set</span>
-        <b>{valueKey}</b>
-      </Label>
-      <Input
-        id={valueKey}
-        type="number"
-        value={inputValue}
-        className="w-md"
-        onChange={(event) => setInputValue(event.target.value)}
-        onKeyDown={(event) => {
-          if (event.key === "Enter") {
-            handleSave()
-          }
-        }}
-      />
-      <Button variant="default" size="sm" onClick={handleSave}>
-        <Save />
-        Save
-      </Button>
+            resetPreferences(null)
+              .then(() => {
+                setOpenConfirmationDialog(false)
+                preferencesTableRef.current?.refetch()
+              })
+              .catch(console.error)
+          }}
+        >
+          <Button variant="outline">
+            <ListRestart />
+            Reset to default
+          </Button>
+        </ConfirmationDialog>
+      </div>
+      <PreferencesTable ref={preferencesTableRef} />
     </div>
   )
 }

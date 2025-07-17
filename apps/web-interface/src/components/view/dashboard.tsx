@@ -28,6 +28,7 @@ import { Separator } from "../shadcn/separator"
 import { Skeleton } from "../shadcn/skeleton"
 import { ScraperPanelTrigger } from "./notifications"
 import { ScrollArea } from "../shadcn/scroll-area"
+import { TermInfo } from "../info/term-info"
 
 export function Dashboard() {
   return (
@@ -87,12 +88,14 @@ function RecentlyExecutedScrapers() {
         data-transition-direction="left"
         className="view-transition grid grid-rows-[auto_1fr] overflow-hidden"
       >
-        <div className="flex flex-row items-center justify-between gap-2 p-2">
+        <div className="flex flex-row items-center gap-2 p-2">
           <Label className="text-muted-foreground font-semibold text-lg">
             Recent scrapers
           </Label>
+          <TermInfo term="scraper" />
           <Button
             variant="ghost"
+            className="ml-auto"
             onClick={() => setView(useView.View.Scrapers)}
           >
             <List />

@@ -26,6 +26,7 @@ import {
 } from "../shadcn/accordion"
 import { Button } from "../shadcn/button"
 import { Tooltip, TooltipContent, TooltipTrigger } from "../shadcn/tooltip"
+import { TermInfo } from "../info/term-info"
 
 export function Routines() {
   const {
@@ -201,8 +202,9 @@ export function Routines() {
           }}
         >
           <Plus />
-          Add Routine
+          Add routine
         </Button>
+        <TermInfo term="routine" />
         <RefreshButton
           onClick={refresh}
           refreshing={isLoading || isLoadingMore}

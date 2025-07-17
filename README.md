@@ -5,6 +5,19 @@
 This is a highly customizable, Puppeteer-based scraper with experimental AI features.\
 The initial idea was to develop an advanced testing tool for web projects.
 
+## Table of Contents
+
+- [Requirements](#requirements)
+- [System support](#system-support)
+- [Features and use cases](#features-and-use-cases)
+  - [Regular web scraping](#regular-web-scraping)
+  - [Routines](#routines)
+  - [CLI](#cli)
+  - [AI](#ai)
+  - [Portal](#portal)
+- [How it works (with screenshots and videos)](#how-it-works-with-screenshots-and-videos)
+- [Setup and development](#setup-and-development)
+
 ## Requirements
 
 - Chrome or Chromium browser is required.\
@@ -13,14 +26,12 @@ It might be necessary to provide path to the browser executable in the settings.
 User must also make sure that proper model is pulled and ready to use in Ollama.\
 By default, the project uses [qwen2.5vl:32b](https://ollama.com/library/qwen2.5vl) model. It can be changed via Web Scraper preferences.
 
-### System support
+## System support
 
-#### Development
-
+- Development\
 The development mode should work on every system without any additional setup except `npm install` of course.
 
-#### SEA
-
+- SEA\
 There is a SEA build possible. [About SEA](https://nodejs.org/api/single-executable-applications.html)\
 For now, the SEA has only been build and tested on Linux.\
 I'm happy to provide support and binaries for other systems upon request.\

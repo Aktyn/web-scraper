@@ -1,23 +1,22 @@
-import { type SimpleLogger, defaultPreferences } from "@web-scraper/common"
+import { type SimpleLogger } from "@web-scraper/common"
 import { migrate } from "drizzle-orm/libsql/migrator"
+import path from "path"
 import { vi } from "vitest"
 import { getApiModule } from "../api/api.module"
-import type { Config } from "../config/config"
-import { type DbModule, getDbModule } from "../db/db.module"
+import { getDefaultPreferences, type Config } from "../config/config"
+import { cwd } from "../cwd"
+import { getDbModule, type DbModule } from "../db/db.module"
 import { seed } from "../db/seed/seed"
 import { getEventsModule } from "../events/events.module"
-import { cwd } from "../cwd"
-import path from "path"
 
 const mockConfig: Config = {
   apiPort: 3001,
-  preferences: Object.fromEntries(
-    Object.entries(defaultPreferences).map(([key, { value }]) => [key, value]),
-  ) as {
-    [key in keyof typeof defaultPreferences]: (typeof defaultPreferences)[key]["value"]
-  },
+  preferences: getDefaultPreferences(),
   updatePreferences: (key, value) => {
     mockConfig.preferences[key] = value
+  },
+  resetPreferences: () => {
+    mockConfig.preferences = getDefaultPreferences()
   },
 }
 
@@ -49,7 +48,7 @@ export async function setup() {
     },
   )
 
-  return { api, db, logger, events }
+  return { api, db, logger, events, config: mockConfig }
 }
 
 export type TestModules = Awaited<ReturnType<typeof setup>>

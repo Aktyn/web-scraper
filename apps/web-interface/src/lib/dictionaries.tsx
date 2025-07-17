@@ -118,6 +118,7 @@ export const conditionLabels: { [key in SqliteConditionType]: string } = {
 
 export const systemActionTypeLabels: { [key in SystemActionType]: string } = {
   [SystemActionType.ShowNotification]: "Show notification",
+  [SystemActionType.ExecuteSystemCommand]: "Execute system command",
 }
 
 export const routineStatusLabels: { [key in RoutineStatus]: string } = {

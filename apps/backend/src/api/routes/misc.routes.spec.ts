@@ -1,3 +1,4 @@
+import { defaultPreferences } from "@web-scraper/common"
 import { beforeEach, describe, expect, it } from "vitest"
 import { preferencesTable } from "../../db/schema"
 import { setup, type TestModules } from "../../test/setup"
@@ -110,6 +111,36 @@ describe("Misc Routes", () => {
       })
 
       expect(response.statusCode).toBe(400)
+    })
+  })
+
+  describe("POST /preferences/reset", () => {
+    it("should return 200 and reset all preferences", async () => {
+      // To ensure there is data to be deleted
+      const preferencesBefore = await modules.db.select().from(preferencesTable)
+      expect(preferencesBefore.length).toBeGreaterThan(0)
+
+      const response = await modules.api.inject({
+        method: "POST",
+        url: "/preferences/reset",
+      })
+
+      expect(response.statusCode).toBe(200)
+      expect(JSON.parse(response.payload)).toEqual({
+        data: [],
+      })
+
+      const preferencesAfter = await modules.db.select().from(preferencesTable)
+      expect(preferencesAfter).toEqual([])
+
+      expect(modules.config.preferences).toEqual(
+        Object.fromEntries(
+          Object.entries(defaultPreferences).map(([key, { value }]) => [
+            key,
+            value,
+          ]),
+        ),
+      )
     })
   })
 })

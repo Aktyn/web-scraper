@@ -22,6 +22,7 @@ import {
   AccordionTrigger,
 } from "../shadcn/accordion"
 import { ScraperExecutionHistory } from "../scraper/execution/scraper-execution-history"
+import { TermInfo } from "../info/term-info"
 
 export function Scrapers() {
   const {
@@ -188,6 +189,7 @@ export function Scrapers() {
           <FileUp />
           Import Scraper
         </Button>
+        <TermInfo term="scraper" />
         <RefreshButton
           onClick={refresh}
           refreshing={isLoading || isLoadingMore}
