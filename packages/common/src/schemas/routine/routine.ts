@@ -34,7 +34,7 @@ export const routineSchema = z.object({
   scraperId: z.number().int().min(1),
   scraperName: z.string().min(1),
   iterator: executionIteratorSchema.nullable(),
-  status: z.nativeEnum(RoutineStatus),
+  status: z.enum(RoutineStatus),
   description: z.string().nullable(),
   scheduler: schedulerSchema,
   nextScheduledExecutionAt: timestampSchema.nullable(),

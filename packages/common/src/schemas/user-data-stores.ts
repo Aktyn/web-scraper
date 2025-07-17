@@ -12,7 +12,7 @@ export enum SqliteColumnType {
 
 const columnSchema = z.object({
   name: z.string().min(1, "Column name is required"),
-  type: z.nativeEnum(SqliteColumnType),
+  type: z.enum(SqliteColumnType),
   notNull: z.boolean().optional(),
   defaultValue: z
     .union([z.string(), z.number(), z.boolean(), z.null()])
@@ -34,7 +34,9 @@ export type UserDataStore = z.infer<typeof userDataStoreSchema>
 export const createUserDataStoreSchema = z.object({
   name: z.string().min(1, "Name is required"),
   description: z.string().nullable().optional(),
-  columns: z.array(columnSchema).min(1, "At least one column is required"),
+  columns: z
+    .array(columnSchema)
+    .nonempty({ error: "At least one column is required" }),
 })
 
 export type CreateUserDataStore = z.infer<typeof createUserDataStoreSchema>

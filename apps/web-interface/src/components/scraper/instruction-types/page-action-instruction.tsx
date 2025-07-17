@@ -54,7 +54,7 @@ export function PageActionInstruction({
         </span>
         {!!pageIndex && (
           <Badge variant="outline" className="text-muted-foreground">
-            page: {pageIndex}
+            page: {pageIndex + 1}
           </Badge>
         )}
       </div>

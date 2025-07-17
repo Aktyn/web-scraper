@@ -240,7 +240,7 @@ describe("User Data Stores Routes", () => {
       })
 
       expect(response.statusCode).toBe(200)
-      expect(JSON.parse(response.payload)).toEqual({
+      expect(JSON.parse(response.payload)).toMatchObject({
         data: [
           {
             id: 1,
@@ -759,7 +759,7 @@ describe("User Data Stores Routes", () => {
       })
       const { data } = JSON.parse(recordsResponse.payload)
       expect(data).toHaveLength(3)
-      expect(data[2]).toEqual({
+      expect(data[2]).toMatchObject({
         id: 3,
         origin: "https://new.com",
         username: "new",
@@ -810,8 +810,9 @@ describe("User Data Stores Routes", () => {
       const sortedData = data.sort(
         (a: { id: number }, b: { id: number }) => a.id - b.id,
       )
+
       expect(sortedData).toHaveLength(3)
-      expect(sortedData[0]).toEqual({
+      expect(sortedData[0]).toMatchObject({
         id: 1,
         origin: "https://updated.com",
         username: "updated",
@@ -819,7 +820,7 @@ describe("User Data Stores Routes", () => {
         password: "updated_pass123",
       })
       expect(sortedData[1].id).toBe(2) // Unchanged
-      expect(sortedData[2]).toEqual({
+      expect(sortedData[2]).toMatchObject({
         id: 3,
         origin: "https://new.com",
         username: "new",

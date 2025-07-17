@@ -8,7 +8,6 @@ import {
   serializerCompiler,
   validatorCompiler,
 } from "fastify-type-provider-zod"
-import fastifyZodQueryCoercion from "fastify-zod-query-coercion"
 import fs from "fs"
 import path from "path"
 import type { Logger } from "pino"
@@ -16,6 +15,7 @@ import type { Config } from "../config/config"
 import { cwd } from "../cwd"
 import type { DbModule } from "../db/db.module"
 import type { EventsModule } from "../events/events.module"
+import { zodQueryTransformPlugin } from "./plugins/zod-query-transform.plugin"
 import * as routes from "./routes"
 
 declare module "fastify" {
@@ -55,10 +55,12 @@ export async function getApiModule(
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
   })
 
+  //TODO: plugin for query type coercion from zod schema
+
   fastify.setValidatorCompiler(validatorCompiler)
   fastify.setSerializerCompiler(serializerCompiler)
 
-  await fastify.register(fastifyZodQueryCoercion)
+  fastify.register(zodQueryTransformPlugin)
 
   fastify.register(FastifySSEPlugin)
 

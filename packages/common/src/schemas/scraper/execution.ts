@@ -15,8 +15,8 @@ export enum ScraperEventType {
 
 const scraperStateChangeEventSchema = z.object({
   type: z.literal(ScraperEventType.StateChange),
-  state: z.nativeEnum(ScraperState),
-  previousState: z.nativeEnum(ScraperState),
+  state: z.enum(ScraperState),
+  previousState: z.enum(ScraperState),
 })
 
 const scraperExecutionStartedEventSchema = z.object({
@@ -44,17 +44,19 @@ const scraperExecutionErrorEventSchema = z.object({
   executionInfo: scraperInstructionsExecutionInfoSchema.nullable(),
 })
 
-export const scraperEventSchema: z.ZodDiscriminatedUnion<
-  "type",
-  [
-    typeof scraperStateChangeEventSchema,
-    typeof scraperExecutionStartedEventSchema,
-    typeof scraperExecutionUpdateEventSchema,
-    typeof scraperExecutingInstructionEventSchema,
-    typeof scraperExecutionFinishedEventSchema,
-    typeof scraperExecutionErrorEventSchema,
-  ]
-> = z.discriminatedUnion("type", [
+//TODO: remove commented type
+// z.ZodDiscriminatedUnion<
+//   "type",
+//   [
+//     typeof scraperStateChangeEventSchema,
+//     typeof scraperExecutionStartedEventSchema,
+//     typeof scraperExecutionUpdateEventSchema,
+//     typeof scraperExecutingInstructionEventSchema,
+//     typeof scraperExecutionFinishedEventSchema,
+//     typeof scraperExecutionErrorEventSchema,
+//   ]
+// >
+export const scraperEventSchema = z.discriminatedUnion("type", [
   scraperStateChangeEventSchema,
   scraperExecutionStartedEventSchema,
   scraperExecutionUpdateEventSchema,
@@ -66,7 +68,7 @@ export const scraperEventSchema: z.ZodDiscriminatedUnion<
 export type ScraperEvent = z.infer<typeof scraperEventSchema>
 
 export const scraperExecutionStatusSchema = z.object({
-  state: z.nativeEnum(ScraperState),
+  state: z.enum(ScraperState),
   executionInfo: scraperInstructionsExecutionInfoSchema,
   currentlyExecutingInstruction: scraperInstructionsSchema.element.nullable(),
 })

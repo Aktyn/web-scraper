@@ -14,7 +14,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/shadcn/radio-group"
 import { ScrollArea } from "@/components/shadcn/scroll-area"
 import { useGet } from "@/hooks/api/useGet"
 import { executionIteratorTypeLabels } from "@/lib/dictionaries"
-import { zodResolver } from "@hookform/resolvers/zod"
+import { standardSchemaResolver } from "@hookform/resolvers/standard-schema"
 import type { ExecutionIterator, ScraperDataSource } from "@web-scraper/common"
 import {
   executionIteratorSchema,
@@ -45,7 +45,7 @@ export function IteratorFormDialog({
   dataSources,
 }: IteratorFormDialogProps) {
   const form = useForm<ExecutionIterator>({
-    resolver: zodResolver(executionIteratorSchema),
+    resolver: standardSchemaResolver(executionIteratorSchema),
     defaultValues: iterator ?? {
       type: ExecutionIteratorType.Range,
       dataSourceName: "",

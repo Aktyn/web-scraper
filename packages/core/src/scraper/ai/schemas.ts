@@ -115,11 +115,12 @@ const actions = [
 export function getNavigationStepSchema(includeStorageActions = false) {
   const filteredActions = includeStorageActions
     ? actions
-    : (actions.filter((a) =>
-        [
-          NavigationActionType.FetchFromStorage,
-          NavigationActionType.SaveToStorage,
-        ].includes(a._type.actionType),
+    : (actions.filter(
+        (action) =>
+          [
+            NavigationActionType.FetchFromStorage,
+            NavigationActionType.SaveToStorage,
+          ].includes(action.shape.actionType.value), //TODO: make sure this works
       ) as unknown as typeof actions)
 
   return z.object({

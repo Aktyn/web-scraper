@@ -9,7 +9,7 @@ export const executionRangeSchema = z
     step: z.number().int().min(1).optional(),
   })
   .refine((data) => data.start <= data.end, {
-    message: "Start must be less than or equal to end",
+    error: "Start must be less than or equal to end",
     path: ["start"],
   })
 

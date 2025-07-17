@@ -20,7 +20,7 @@ import { ScrollArea } from "@/components/shadcn/scroll-area"
 import { usePost } from "@/hooks/api/usePost"
 import { usePut } from "@/hooks/api/usePut"
 import { cn } from "@/lib/utils"
-import { zodResolver } from "@hookform/resolvers/zod"
+import { standardSchemaResolver } from "@hookform/resolvers/standard-schema"
 import {
   createUserDataStoreSchema,
   SqliteColumnType,
@@ -65,7 +65,7 @@ export function DataStoreFormDialog({
   const showColumnsEditWarning = isEditing && editStore.recordsCount > 0
 
   const form = useForm<CreateUserDataStore>({
-    resolver: zodResolver(createUserDataStoreSchema),
+    resolver: standardSchemaResolver(createUserDataStoreSchema),
     defaultValues: editStore
       ? {
           name: editStore.name,

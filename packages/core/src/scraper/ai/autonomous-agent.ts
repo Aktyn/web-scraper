@@ -15,7 +15,7 @@ import ollama, {
   type ChatResponse,
   type Message,
 } from "ollama"
-import zodToJsonSchema from "zod-to-json-schema"
+import { z } from "zod"
 import { performSystemAction } from "../../system-actions"
 import type { DataBridge, DataBridgeValue } from "../data-helper"
 import type { ScraperPageContext } from "../execution/execution-pages"
@@ -88,7 +88,9 @@ export class AutonomousAgent {
     const actionsHistory: NavigationStep["actions"] = []
 
     const navigationStepSchema = getNavigationStepSchema(!!dataBridgeSchema)
-    const jsonSchema = zodToJsonSchema(navigationStepSchema)
+    const jsonSchema = z.toJSONSchema(navigationStepSchema)
+
+    //TODO: check jsonSchema
 
     if (process.env.NODE_ENV === "development") {
       //TODO: make sure there are no weird zod additions when omitting schema actions

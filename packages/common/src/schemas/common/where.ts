@@ -93,11 +93,11 @@ export type WhereSchema = Condition | AndConditions | OrConditions
 export const whereSchema: z.ZodType<WhereSchema> = z.union([
   conditionSchema,
   z.object({
-    and: z.array(z.lazy(() => whereSchema)).min(1),
+    and: z.array(z.lazy(() => whereSchema)).nonempty(),
     negate: z.boolean().optional(),
   }),
   z.object({
-    or: z.array(z.lazy(() => whereSchema)).min(1),
+    or: z.array(z.lazy(() => whereSchema)).nonempty(),
     negate: z.boolean().optional(),
   }),
 ])

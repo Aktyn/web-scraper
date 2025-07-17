@@ -5,7 +5,7 @@ import { apiPaginationQuerySchema, timestampSchema } from "../common"
 
 export const scraperSchema = z.object({
   id: z.number().int().min(1),
-  name: z.string().min(1, "Scraper name is required"),
+  name: z.string().min(1, { error: "Scraper name is required" }),
   description: z.string().nullable(),
   instructions: scraperInstructionsSchema,
   userDataDirectory: z.string().nullable(),

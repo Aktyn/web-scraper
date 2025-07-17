@@ -11,7 +11,7 @@ import { ScrollArea } from "@/components/shadcn/scroll-area"
 import { useGet } from "@/hooks/api/useGet"
 import { usePost } from "@/hooks/api/usePost"
 import { usePut } from "@/hooks/api/usePut"
-import { zodResolver } from "@hookform/resolvers/zod"
+import { standardSchemaResolver } from "@hookform/resolvers/standard-schema"
 import {
   type UpsertScraper,
   upsertScraperSchema,
@@ -54,7 +54,7 @@ export function ScraperFormDialog({
   const dataStores = dataStoresResponse?.data || []
 
   const form = useForm<UpsertScraper>({
-    resolver: zodResolver(upsertScraperSchema),
+    resolver: standardSchemaResolver(upsertScraperSchema),
     defaultValues: editScraper
       ? {
           name: editScraper.name,

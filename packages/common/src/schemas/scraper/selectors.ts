@@ -35,13 +35,16 @@ export const scraperElementSelectorsSchema = z
       }),
     ]),
   )
-  .min(1, "At least one selector is required")
-  .refine((selectors) => {
-    return (
-      unique(selectors.map((selector) => selector.type)).length ===
-      selectors.length
-    )
-  }, "There cannot be more than one selector of the same type")
+  .nonempty({ error: "At least one selector is required" })
+  .refine(
+    (selectors) => {
+      return (
+        unique(selectors.map((selector) => selector.type)).length ===
+        selectors.length
+      )
+    },
+    { error: "There cannot be more than one selector of the same type" },
+  )
 
 export type ScraperElementSelectors = z.infer<
   typeof scraperElementSelectorsSchema

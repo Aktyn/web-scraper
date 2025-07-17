@@ -19,6 +19,7 @@ export default tseslint.config(
       parserOptions: {
         project: "tsconfig.app.json",
         sourceType: "module",
+        tsconfigRootDir: import.meta.dirname,
       },
     },
     plugins: {

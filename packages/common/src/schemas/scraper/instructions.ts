@@ -127,7 +127,9 @@ const scraperInstructionSchema: z.ZodType<ScraperInstructionRecursive> =
       dataSourceName: dataSourceNameSchema,
       items: z.array(
         z.object({
-          columnName: z.string().min(1, "Column name must not be empty"),
+          columnName: z
+            .string()
+            .min(1, { error: "Column name must not be empty" }),
           value: scraperValueSchema,
         }),
       ),
@@ -139,11 +141,11 @@ const scraperInstructionSchema: z.ZodType<ScraperInstructionRecursive> =
 
     z.object({
       type: z.literal(ScraperInstructionType.Marker),
-      name: z.string().min(1, "Marker name must not be empty"),
+      name: z.string().min(1, { error: "Marker name must not be empty" }),
     }),
     z.object({
       type: z.literal(ScraperInstructionType.Jump),
-      markerName: z.string().min(1, "Marker name must not be empty"),
+      markerName: z.string().min(1, { error: "Marker name must not be empty" }),
     }),
 
     z.object({

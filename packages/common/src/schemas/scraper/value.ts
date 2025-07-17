@@ -11,7 +11,7 @@ export const scraperDataKeySchema = z.custom<ScraperDataKey>(
     return /^[^.]+\.[^.]+$/.test(value)
   },
   {
-    message:
+    error:
       "Invalid data key format. Expected format: 'DataSourceName.ColumnName'",
   },
 )
@@ -58,7 +58,9 @@ export const scraperValueSchema = z.discriminatedUnion("type", [
     type: z.literal(ScraperValueType.ElementAttribute),
     pageIndex: pageIndexSchema,
     selectors: scraperElementSelectorsSchema,
-    attributeName: z.string().min(1, "Attribute name must not be empty"),
+    attributeName: z
+      .string()
+      .min(1, { error: "Attribute name must not be empty" }),
   }),
 ])
 

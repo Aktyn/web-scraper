@@ -44,7 +44,7 @@ export function ScraperValue({ value }: ScraperValueProps) {
         </span>
         {!!pageIndex && (
           <Badge variant="outline" className="text-muted-foreground">
-            page: {pageIndex}
+            page: {pageIndex + 1}
           </Badge>
         )}
       </div>

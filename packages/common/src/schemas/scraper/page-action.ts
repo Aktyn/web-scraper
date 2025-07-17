@@ -39,7 +39,7 @@ export const pageActionSchema = z.discriminatedUnion("type", [
   }),
   z.object({
     type: z.literal(PageActionType.Navigate),
-    url: z.string().url("Invalid URL"),
+    url: z.url({ error: "Invalid URL" }),
   }),
 
   z.object({
@@ -50,7 +50,7 @@ export const pageActionSchema = z.discriminatedUnion("type", [
   }),
   z.object({
     type: z.literal(PageActionType.SmartClick),
-    aiPrompt: z.string().min(1, "AI prompt is required"),
+    aiPrompt: z.string().min(1, { error: "AI prompt is required" }),
     waitForNavigation: z.boolean().optional(),
     useGhostCursor: z.boolean().optional(),
   }),
@@ -81,8 +81,8 @@ export const pageActionSchema = z.discriminatedUnion("type", [
 
   z.object({
     type: z.literal(PageActionType.RunAutonomousAgent),
-    startUrl: z.string().url("Invalid URL").or(z.literal("")).optional(),
-    task: z.string().min(1, "Task description is required"),
+    startUrl: z.url({ error: "Invalid URL" }).or(z.literal("")).optional(),
+    task: z.string().min(1, { error: "Task description is required" }),
     useGhostCursor: z.boolean().optional(),
     maximumSteps: z.number().int().min(1).max(256).optional(),
     // usePreciseLocalization: z.boolean().optional(),

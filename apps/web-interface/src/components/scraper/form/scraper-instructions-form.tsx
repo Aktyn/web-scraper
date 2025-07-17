@@ -181,7 +181,7 @@ function InstructionField({
             {instruction.type === ScraperInstructionType.PageAction && (
               <>
                 {!!instruction.pageIndex && (
-                  <span> (page: {instruction.pageIndex})</span>
+                  <span> (page: {instruction.pageIndex + 1})</span>
                 )}
                 <span> -&gt; </span>
                 {instruction.action.type ? (

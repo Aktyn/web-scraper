@@ -4,7 +4,7 @@ import {
   type SimpleLogger,
 } from "@web-scraper/common"
 import ollama, { type GenerateRequest } from "ollama"
-import zodToJsonSchema from "zod-to-json-schema"
+import { z } from "zod"
 import { checkModelAvailability, getAbsoluteCoordinates } from "./helpers"
 import { resizeScreenshot } from "./image-processing"
 import { coordinatesSchema } from "./schemas"
@@ -14,7 +14,7 @@ type RequestOptions = Partial<Pick<GenerateRequest, "model" | "format">> & {
 }
 
 export class SmartLocalization {
-  private static jsonSchema = zodToJsonSchema(coordinatesSchema)
+  private static jsonSchema = z.toJSONSchema(coordinatesSchema)
 
   constructor(
     private readonly logger: SimpleLogger,

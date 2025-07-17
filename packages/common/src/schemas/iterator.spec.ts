@@ -73,7 +73,7 @@ describe("executionIteratorSchema", () => {
     }
     const result = executionIteratorSchema.safeParse(data)
     if (!result.success) {
-      console.error(result.error.errors)
+      console.error(result.error.message)
     }
     expect(result.success).toBe(true)
   })

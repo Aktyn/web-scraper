@@ -17,7 +17,7 @@ import { useGet } from "@/hooks/api/useGet"
 import { usePost } from "@/hooks/api/usePost"
 import { usePut } from "@/hooks/api/usePut"
 import { formatDateTime } from "@/lib/utils.js"
-import { zodResolver } from "@hookform/resolvers/zod"
+import { standardSchemaResolver } from "@hookform/resolvers/standard-schema"
 import type {
   ExecutionIterator,
   Routine,
@@ -61,7 +61,7 @@ export function RoutineFormDialog({
   const isEditing = !!editRoutine && editRoutine.id !== -1
 
   const form = useForm<UpsertRoutine>({
-    resolver: zodResolver(upsertRoutineSchema),
+    resolver: standardSchemaResolver(upsertRoutineSchema),
     defaultValues: editRoutine
       ? {
           ...editRoutine,

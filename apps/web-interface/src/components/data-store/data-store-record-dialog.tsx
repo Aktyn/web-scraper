@@ -1,6 +1,6 @@
 import { usePost } from "@/hooks/api/usePost"
 import { usePut } from "@/hooks/api/usePut"
-import { zodResolver } from "@hookform/resolvers/zod"
+import { standardSchemaResolver } from "@hookform/resolvers/standard-schema"
 import {
   SqliteColumnType,
   upsertUserDataStoreRecordSchemaFactory,
@@ -61,8 +61,8 @@ export function DataStoreRecordDialog({
 
   const schema = upsertUserDataStoreRecordSchemaFactory(store.columns)
 
-  const form = useForm<typeof schema._type>({
-    resolver: zodResolver(schema),
+  const form = useForm<UpsertUserDataStoreRecord>({
+    resolver: standardSchemaResolver(schema),
     defaultValues: editRecord ? { ...editRecord } : {},
   })
 
