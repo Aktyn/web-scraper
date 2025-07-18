@@ -9,16 +9,16 @@ const CHECK_INTERVAL = 1000 * 60 // 1 minute
 
 type Context = {
   logger: Logger | SimpleLogger
-  db: DbModule
+  dbModule: DbModule
   api: ApiModule
 }
 
 export async function startMonitoringRoutines(
-  { logger, db, api }: Context,
+  { logger, dbModule, api }: Context,
   abortSignal?: AbortSignal,
 ) {
   // Fix routines that were executing when the backend was restarted
-  const result = await db
+  const result = await dbModule.db
     .update(routinesTable)
     .set({ status: RoutineStatus.Active })
     .where(eq(routinesTable.status, RoutineStatus.Executing))
@@ -30,7 +30,7 @@ export async function startMonitoringRoutines(
   }
 
   while (abortSignal ? !abortSignal.aborted : true) {
-    const routinesToExecute = await db
+    const routinesToExecute = await dbModule.db
       .select()
       .from(routinesTable)
       .where(

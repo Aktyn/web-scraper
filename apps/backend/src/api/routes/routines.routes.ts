@@ -39,7 +39,7 @@ import {
 
 export async function routinesRoutes(
   fastify: FastifyInstance,
-  { logger, events, config }: ApiModuleContext,
+  { dbModule, logger, events, config }: ApiModuleContext,
 ) {
   const paramsWithRoutineIdSchema = z.object({
     id: z.coerce.number().int().min(1),
@@ -382,7 +382,7 @@ export async function routinesRoutes(
         scraperData,
         routine.iterator,
         {
-          db: fastify.db,
+          dbModule,
           logger,
           events,
           config,
@@ -536,7 +536,7 @@ function parseRoutineFromDb(
 }
 
 async function handleRoutineStatusChange(
-  db: ApiModuleContext["db"],
+  db: ApiModuleContext["dbModule"]["db"],
   routineId: number,
   newStatus: RoutineStatus,
   allowedCurrentStatuses: RoutineStatus[],
@@ -607,7 +607,7 @@ async function handleRoutineStatusChange(
 }
 
 async function handleRoutineExecutionFinished(
-  db: ApiModuleContext["db"],
+  db: ApiModuleContext["dbModule"]["db"],
   logger: ApiModuleContext["logger"],
   routineExecution: InferSelectModel<typeof routineExecutionsTable>,
   executionId?: number,

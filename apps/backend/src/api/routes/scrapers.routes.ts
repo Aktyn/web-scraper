@@ -37,7 +37,7 @@ import { joinScraperWithDataSources } from "./helpers"
 
 export async function scrapersRoutes(
   fastify: FastifyInstance,
-  { logger, events, config }: ApiModuleContext,
+  { dbModule, logger, events, config }: ApiModuleContext,
 ) {
   function insertScraperWithDataSources(scraper: UpsertScraper) {
     return fastify.db.transaction(async (tx) => {
@@ -420,7 +420,7 @@ export async function scrapersRoutes(
         scraperData,
         iterator,
         {
-          db: fastify.db,
+          dbModule,
           logger,
           events,
           config,

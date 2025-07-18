@@ -14,7 +14,7 @@ import type { DbModule } from "../db.module"
 import { scraperDataSourcesTable, scrapersTable } from "../schema"
 import { sanitizeTableName } from "../schema/helpers"
 
-export async function seedScrapers(db: DbModule) {
+export async function seedScrapers(db: DbModule["db"]) {
   const personalCredentialsTableName = sanitizeTableName(
     "data-store-Personal credentials",
   )
@@ -27,131 +27,140 @@ export async function seedScrapers(db: DbModule) {
     "data-store-Brain FM accounts",
   )
 
-  await db.transaction(async (tx) => {
-    const [
-      scraper1,
-      scraper2,
-      scraper3,
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      _captchaTesterScraper,
-      brainFmRegisterScraper,
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      _aiLocalizationTest,
-    ] = await tx
-      .insert(scrapersTable)
-      .values([
-        {
-          name: "Small example scraper",
-          instructions: [
-            {
-              type: ScraperInstructionType.PageAction,
-              action: {
-                type: PageActionType.Navigate,
-                url: "https://example.com",
+  try {
+    await db.transaction(async (tx) => {
+      const [
+        scraper1,
+        scraper2,
+        scraper3,
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        _captchaTesterScraper,
+        brainFmRegisterScraper,
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        _aiLocalizationTest,
+      ] = await tx
+        .insert(scrapersTable)
+        .values([
+          {
+            name: "Small example scraper",
+            instructions: [
+              {
+                type: ScraperInstructionType.PageAction,
+                action: {
+                  type: PageActionType.Navigate,
+                  url: "https://example.com",
+                },
               },
-            },
-          ],
-          userDataDirectory: "/tmp/user-data-dir",
-          createdAt: new Date(new Date().getTime() + 60_000),
-          updatedAt: new Date(new Date().getTime() + 60_000),
-        },
-        {
-          name: "Site content scraper",
-          description: "Saves site content to the database",
-          instructions: scrapExampleSiteInstructions,
-        },
-        {
-          name: "Update crypto prices",
-          description: "Saves or updates crypto prices from coinmarketcap.com",
-          instructions: scrapCryptoPricesInstructions,
-        },
-        {
-          name: "Captcha tester",
-          description:
-            "Testing scraper bot detection and solving captchas capabilities",
-          instructions: captchaTesterInstructions,
-        },
-        {
-          name: "Brain.fm registration",
-          description:
-            "Registering a new account at brain.fm. Should execute without iterator.",
-          instructions: brainFmRegisterInstructions,
-        },
-        {
-          name: "AI localization test",
-          description: "Test of experimental AI feature",
-          instructions: aiLocalizationTestInstructions,
-        },
-        {
-          name: "Autonomous agent test",
-          description: "Test of autonomous agent",
-          instructions: autonomousAgentTestInstructions,
-        },
-        {
-          name: "System actions",
-          description: "Example scraper using system actions",
-          instructions: systemActionsTestInstructions,
-        },
-      ])
-      .returning()
+            ],
+            userDataDirectory: "/tmp/user-data-dir",
+            createdAt: new Date(new Date().getTime() + 60_000),
+            updatedAt: new Date(new Date().getTime() + 60_000),
+          },
+          {
+            name: "Site content scraper",
+            description: "Saves site content to the database",
+            instructions: scrapExampleSiteInstructions,
+          },
+          {
+            name: "Update crypto prices",
+            description:
+              "Saves or updates crypto prices from coinmarketcap.com",
+            instructions: scrapCryptoPricesInstructions,
+          },
+          {
+            name: "Captcha tester",
+            description:
+              "Testing scraper bot detection and solving captchas capabilities",
+            instructions: captchaTesterInstructions,
+          },
+          {
+            name: "Brain.fm registration",
+            description:
+              "Registering a new account at brain.fm. Should execute without iterator.",
+            instructions: brainFmRegisterInstructions,
+          },
+          {
+            name: "AI localization test",
+            description: "Test of experimental AI feature",
+            instructions: aiLocalizationTestInstructions,
+          },
+          {
+            name: "Autonomous agent test",
+            description: "Test of autonomous agent",
+            instructions: autonomousAgentTestInstructions,
+          },
+          {
+            name: "System actions",
+            description: "Example scraper using system actions",
+            instructions: systemActionsTestInstructions,
+          },
+        ])
+        .onConflictDoNothing()
+        .returning()
 
-    await tx.insert(scraperDataSourcesTable).values([
-      {
-        scraperId: scraper1.id,
-        sourceAlias: "foo",
-        dataStoreTableName: personalCredentialsTableName, //Note: it has to be already seeded
-        whereSchema: {
-          and: [
-            {
-              column: "username",
-              condition: SqliteConditionType.NotEquals,
-              value: "any value that is not noop",
+      await tx
+        .insert(scraperDataSourcesTable)
+        .values([
+          {
+            scraperId: scraper1.id,
+            sourceAlias: "foo",
+            dataStoreTableName: personalCredentialsTableName, //Note: it has to be already seeded
+            whereSchema: {
+              and: [
+                {
+                  column: "username",
+                  condition: SqliteConditionType.NotEquals,
+                  value: "any value that is not noop",
+                },
+                {
+                  column: "email",
+                  condition: SqliteConditionType.Equals,
+                  value: "noop@gmail.com",
+                },
+              ],
             },
-            {
-              column: "email",
-              condition: SqliteConditionType.Equals,
-              value: "noop@gmail.com",
+          },
+          {
+            scraperId: scraper2.id,
+            sourceAlias: "user",
+            dataStoreTableName: personalCredentialsTableName, //Note: it has to be already seeded
+            whereSchema: {
+              column: "origin",
+              condition: SqliteConditionType.ILike,
+              value: "%pepper.pl%",
             },
-          ],
-        },
-      },
-      {
-        scraperId: scraper2.id,
-        sourceAlias: "user",
-        dataStoreTableName: personalCredentialsTableName, //Note: it has to be already seeded
-        whereSchema: {
-          column: "origin",
-          condition: SqliteConditionType.ILike,
-          value: "%pepper.pl%",
-        },
-      },
-      {
-        scraperId: scraper2.id,
-        sourceAlias: "marker",
-        dataStoreTableName: dataMarkersTableName, //Note: it has to be already seeded
-        whereSchema: {
-          column: "Name",
-          condition: SqliteConditionType.ILike,
-          value: "Last pepper alert",
-        },
-      },
-      {
-        scraperId: scraper2.id,
-        sourceAlias: "Store",
-        dataStoreTableName: exampleSiteContentTableName, //Note: it has to be already seeded
-      },
-      {
-        scraperId: scraper3.id,
-        sourceAlias: "crypto",
-        dataStoreTableName: cryptoPricesTableName, //Note: it has to be already seeded
-      },
-      {
-        scraperId: brainFmRegisterScraper.id,
-        sourceAlias: "Accounts",
-        dataStoreTableName: brainFmAccountsTableName, //Note: it has to be already seeded
-      },
-    ])
-  })
+          },
+          {
+            scraperId: scraper2.id,
+            sourceAlias: "marker",
+            dataStoreTableName: dataMarkersTableName, //Note: it has to be already seeded
+            whereSchema: {
+              column: "Name",
+              condition: SqliteConditionType.ILike,
+              value: "Last pepper alert",
+            },
+          },
+          {
+            scraperId: scraper2.id,
+            sourceAlias: "Store",
+            dataStoreTableName: exampleSiteContentTableName, //Note: it has to be already seeded
+          },
+          {
+            scraperId: scraper3.id,
+            sourceAlias: "crypto",
+            dataStoreTableName: cryptoPricesTableName, //Note: it has to be already seeded
+          },
+          {
+            scraperId: brainFmRegisterScraper.id,
+            sourceAlias: "Accounts",
+            dataStoreTableName: brainFmAccountsTableName, //Note: it has to be already seeded
+          },
+        ])
+        .onConflictDoNothing()
+    })
+  } catch {
+    // noop
+  }
 }
 
 const scrapExampleSiteInstructions: ScraperInstructions = [

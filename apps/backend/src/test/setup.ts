@@ -26,29 +26,29 @@ export async function setup() {
     fatal: console.error,
   }
 
-  const db = await getDbModule({ dbUrl: ":memory:", logger })
+  const dbModule = await getDbModule({ dbUrl: ":memory:", logger })
 
   // Transactions are not supported in memory database, so we need to mock them
-  vi.spyOn(db, "transaction").mockImplementation(
+  vi.spyOn(dbModule.db, "transaction").mockImplementation(
     //@ts-expect-error - mock implementation
-    async (callback: (db: DbModule) => Promise<unknown>) => {
-      return await callback(db)
+    async (callback: (db: DbModule["db"]) => Promise<unknown>) => {
+      return await callback(dbModule.db)
     },
   )
 
-  await migrate(db, { migrationsFolder: path.join(cwd(), "drizzle") })
-  await seed(db)
+  await migrate(dbModule.db, { migrationsFolder: path.join(cwd(), "drizzle") })
+  await seed(dbModule.db)
 
   const events = getEventsModule()
 
   const api = await getApiModule(
-    { db, logger, config: mockConfig, events },
+    { dbModule, logger, config: mockConfig, events },
     {
       logger: false,
     },
   )
 
-  return { api, db, logger, events, config: mockConfig }
+  return { api, dbModule, logger, events, config: mockConfig }
 }
 
 export type TestModules = Awaited<ReturnType<typeof setup>>

@@ -1,146 +1,68 @@
-import { defaultPreferences } from "@web-scraper/common"
-import { beforeEach, describe, expect, it } from "vitest"
-import { preferencesTable } from "../../db/schema"
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
+import { routinesTable } from "../../db/schema"
 import { setup, type TestModules } from "../../test/setup"
 
 describe("Misc Routes", () => {
   let modules: TestModules
 
   beforeEach(async () => {
+    vi.clearAllMocks()
     modules = await setup()
   })
 
-  describe("GET /preferences", () => {
-    it("should return status 200 and preferences from the database", async () => {
-      const response = await modules.api.inject({
-        method: "GET",
-        url: "/preferences",
-      })
-
-      expect(response.statusCode).toBe(200)
-      expect(JSON.parse(response.payload)).toEqual({
-        data: [
-          { key: "headless", value: true },
-          {
-            key: "chromeExecutablePath",
-            value: "",
-          },
-          {
-            key: "proxyURL",
-            value: "",
-          },
-          {
-            key: "portalURL",
-            value: "http://localhost:3000",
-          },
-          {
-            key: "useAdblockerPlugin",
-            value: true,
-          },
-          {
-            key: "useStealthPlugin",
-            value: true,
-          },
-          {
-            key: "viewportWidth",
-            value: 1920,
-          },
-          {
-            key: "viewportHeight",
-            value: 1080,
-          },
-          { key: "localizationModel", value: "qwen2.5vl:32b" },
-          {
-            key: "localizationSystemPrompt",
-            value:
-              "Localize an element on the GUI image according to user's instructions and output a click position.",
-          },
-          { key: "navigationModel", value: "qwen2.5vl:32b" },
-        ],
-      })
-    })
-
-    it("should return status 200 and an empty array if no preferences exist", async () => {
-      await modules.db.delete(preferencesTable)
-
-      const response = await modules.api.inject({
-        method: "GET",
-        url: "/preferences",
-      })
-
-      expect(response.statusCode).toBe(200)
-      expect(JSON.parse(response.payload)).toEqual({
-        data: [],
-      })
-    })
+  afterEach(() => {
+    vi.clearAllMocks()
   })
 
-  describe("PUT /preferences/:key", () => {
-    it("should return 200 and the updated preference", async () => {
-      const response = await modules.api.inject({
-        method: "PUT",
-        url: "/preferences/headless",
-        payload: {
-          value: false,
-        },
-      })
-
-      expect(response.statusCode).toBe(200)
-      expect(JSON.parse(response.payload)).toEqual({
-        data: { key: "headless", value: false },
-      })
-    })
-
-    it("should return 400 if given key is not a valid preference key", async () => {
-      const response = await modules.api.inject({
-        method: "PUT",
-        url: "/preferences/non-existent-key",
-        payload: {
-          value: "some-value",
-        },
-      })
-
-      expect(response.statusCode).toBe(400)
-    })
-
-    it("should return 400 if the payload is invalid", async () => {
-      const response = await modules.api.inject({
-        method: "PUT",
-        url: "/preferences/headless",
-        payload: null as never,
-      })
-
-      expect(response.statusCode).toBe(400)
-    })
-  })
-
-  describe("POST /preferences/reset", () => {
-    it("should return 200 and reset all preferences", async () => {
-      // To ensure there is data to be deleted
-      const preferencesBefore = await modules.db.select().from(preferencesTable)
-      expect(preferencesBefore.length).toBeGreaterThan(0)
+  describe("POST /reset-database", () => {
+    it("should return status 200 and reset the database", async () => {
+      const routinesBefore = await modules.dbModule.db
+        .select()
+        .from(routinesTable)
+      expect(routinesBefore.length).toBeGreaterThan(0)
 
       const response = await modules.api.inject({
         method: "POST",
-        url: "/preferences/reset",
+        url: "/reset-database",
       })
 
       expect(response.statusCode).toBe(200)
-      expect(JSON.parse(response.payload)).toEqual({
-        data: [],
+      const payload = JSON.parse(response.payload)
+      expect(payload.data).toBeNull()
+
+      const routinesAfter = await modules.dbModule.db
+        .select()
+        .from(routinesTable)
+      expect(routinesAfter.length).toBe(0)
+    })
+  })
+
+  describe("POST /seed-database", () => {
+    it("should return status 200 and seed the database", async () => {
+      // First reset the database to have a clean state
+      await modules.api.inject({
+        method: "POST",
+        url: "/reset-database",
       })
 
-      const preferencesAfter = await modules.db.select().from(preferencesTable)
-      expect(preferencesAfter).toEqual([])
+      const routinesBefore = await modules.dbModule.db
+        .select()
+        .from(routinesTable)
+      expect(routinesBefore.length).toBe(0)
 
-      expect(modules.config.preferences).toEqual(
-        Object.fromEntries(
-          Object.entries(defaultPreferences).map(([key, { value }]) => [
-            key,
-            value,
-          ]),
-        ),
-      )
+      const response = await modules.api.inject({
+        method: "POST",
+        url: "/seed-database",
+      })
+
+      expect(response.statusCode).toBe(200)
+      const payload = JSON.parse(response.payload)
+      expect(payload.data).toBeNull()
+
+      const routinesAfter = await modules.dbModule.db
+        .select()
+        .from(routinesTable)
+      expect(routinesAfter.length).toBeGreaterThan(0)
     })
   })
 })

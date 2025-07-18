@@ -4,13 +4,13 @@ import type { DbModule } from "./db.module"
 import { sanitizeTableName } from "./schema/helpers"
 
 export async function createTemporaryView(
-  db: DbModule,
+  dbModule: DbModule,
   sourceTableName: string,
   whereSQL: string,
 ) {
   const viewName = sanitizeTableName(`temporary_view_${uuid()}`)
 
-  await db
+  await dbModule.db
     .run(
       sql.raw(
         `CREATE TEMPORARY VIEW IF NOT EXISTS ${viewName} AS SELECT * FROM ${sourceTableName} WHERE ${whereSQL}`,
@@ -20,6 +20,8 @@ export async function createTemporaryView(
   return viewName
 }
 
-export function removeTemporaryView(db: DbModule, name: string) {
-  return db.run(sql`DROP VIEW IF EXISTS ${sql.identifier(name)}`).execute()
+export function removeTemporaryView(dbModule: DbModule, name: string) {
+  return dbModule.db
+    .run(sql`DROP VIEW IF EXISTS ${sql.identifier(name)}`)
+    .execute()
 }

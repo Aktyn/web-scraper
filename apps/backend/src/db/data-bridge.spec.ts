@@ -16,16 +16,16 @@ describe(DataBridge.name, () => {
 
   beforeEach(async () => {
     modules = await setup()
-    await modules.db.run(
+    await modules.dbModule.db.run(
       sql`CREATE TABLE test_table (id INTEGER PRIMARY KEY, name TEXT, value INTEGER, big_value BIGINT, blob_value BLOB);`,
     )
-    await modules.db.run(
+    await modules.dbModule.db.run(
       sql`INSERT INTO test_table (id, name, value, big_value, blob_value) VALUES (1, 'one', 10, 12345678901234567890, 'blob1'), (2, 'two', 20, 23456789012345678901, 'blob2'), (3, 'three', 30, 34567890123456789012, 'blob3');`,
     )
-    await modules.db.run(
+    await modules.dbModule.db.run(
       sql`CREATE TABLE other_table (id INTEGER PRIMARY KEY, description TEXT);`,
     )
-    await modules.db.run(
+    await modules.dbModule.db.run(
       sql`INSERT INTO other_table (id, description) VALUES (1, 'desc1'), (2, 'desc2');`,
     )
 
@@ -58,14 +58,14 @@ describe(DataBridge.name, () => {
       ]
 
       const sources = await DataBridge.buildDataBridgeSources(
-        modules.db,
+        modules.dbModule,
         dataSources,
       )
 
       expect(sources.filtered_source.type).toBe("temporaryView")
       expect(sources.filtered_source.name).toMatch(/^temporary_view_.*/)
 
-      const result = await modules.db
+      const result = await modules.dbModule.db
         .select({
           id: sql<number>`id`,
           name: sql<string>`name`,
@@ -87,7 +87,7 @@ describe(DataBridge.name, () => {
       ]
 
       const sources = await DataBridge.buildDataBridgeSources(
-        modules.db,
+        modules.dbModule,
         dataSources,
       )
 
@@ -111,22 +111,25 @@ describe(DataBridge.name, () => {
       ]
 
       const sources = await DataBridge.buildDataBridgeSources(
-        modules.db,
+        modules.dbModule,
         dataSources,
       )
 
-      const dataBridge = new DataBridge(modules.db, null, sources, logger)
+      const dataBridge = new DataBridge(modules.dbModule, null, sources, logger)
       await dataBridge.destroy()
 
       await expect(
-        modules.db.select().from(sql.raw(sources.filtered_source.name)).all(),
+        modules.dbModule.db
+          .select()
+          .from(sql.raw(sources.filtered_source.name))
+          .all(),
       ).rejects.toThrow()
     })
   })
 
   describe("isLastIteration", () => {
     it("should be true when no iterator is provided", async () => {
-      const dataBridge = new DataBridge(modules.db, null, {}, logger)
+      const dataBridge = new DataBridge(modules.dbModule, null, {}, logger)
       expect(await dataBridge.isLastIteration()).toBe(true)
     })
 
@@ -137,7 +140,7 @@ describe(DataBridge.name, () => {
         identifier: "id",
         range: 5,
       }
-      const dataBridge = new DataBridge(modules.db, iterator, {}, logger)
+      const dataBridge = new DataBridge(modules.dbModule, iterator, {}, logger)
       expect(await dataBridge.isLastIteration()).toBe(true)
     })
 
@@ -148,7 +151,7 @@ describe(DataBridge.name, () => {
         identifier: "id",
         range: { start: 1, end: 5, step: 2 },
       }
-      const dataBridge = new DataBridge(modules.db, iterator, {}, logger)
+      const dataBridge = new DataBridge(modules.dbModule, iterator, {}, logger)
       expect(await dataBridge.isLastIteration()).toBe(false)
       await dataBridge.nextIteration() // currentIteration = 2, value = 3
       expect(await dataBridge.isLastIteration()).toBe(false)
@@ -165,14 +168,19 @@ describe(DataBridge.name, () => {
         },
       ]
       const sources = await DataBridge.buildDataBridgeSources(
-        modules.db,
+        modules.dbModule,
         dataSources,
       )
       const iterator: ExecutionIterator = {
         type: ExecutionIteratorType.EntireSet,
         dataSourceName: "main",
       }
-      const dataBridge = new DataBridge(modules.db, iterator, sources, logger)
+      const dataBridge = new DataBridge(
+        modules.dbModule,
+        iterator,
+        sources,
+        logger,
+      )
       expect(await dataBridge.isLastIteration()).toBe(false) // 1 of 3
       await dataBridge.nextIteration() // 2 of 3
       expect(await dataBridge.isLastIteration()).toBe(false)
@@ -183,48 +191,62 @@ describe(DataBridge.name, () => {
 
   describe("get", () => {
     it("should get value from the first row when no iterator is present", async () => {
-      const sources = await DataBridge.buildDataBridgeSources(modules.db, [
-        {
-          dataStoreTableName: "test_table",
-          sourceAlias: "main",
-          whereSchema: null,
-        },
-      ])
-      const dataBridge = new DataBridge(modules.db, null, sources, logger)
+      const sources = await DataBridge.buildDataBridgeSources(
+        modules.dbModule,
+        [
+          {
+            dataStoreTableName: "test_table",
+            sourceAlias: "main",
+            whereSchema: null,
+          },
+        ],
+      )
+      const dataBridge = new DataBridge(modules.dbModule, null, sources, logger)
       const value = await dataBridge.get("main.name")
       expect(value).toBe("three")
     })
 
     it("should get value based on EntireSet iterator", async () => {
-      const sources = await DataBridge.buildDataBridgeSources(modules.db, [
-        {
-          dataStoreTableName: "test_table",
-          sourceAlias: "main",
-          whereSchema: null,
-        },
-      ])
+      const sources = await DataBridge.buildDataBridgeSources(
+        modules.dbModule,
+        [
+          {
+            dataStoreTableName: "test_table",
+            sourceAlias: "main",
+            whereSchema: null,
+          },
+        ],
+      )
       const iterator: ExecutionIterator = {
         type: ExecutionIteratorType.EntireSet,
         dataSourceName: "main",
       }
-      const dataBridge = new DataBridge(modules.db, iterator, sources, logger)
+      const dataBridge = new DataBridge(
+        modules.dbModule,
+        iterator,
+        sources,
+        logger,
+      )
       expect(await dataBridge.get("main.name")).toBe("one")
       await dataBridge.nextIteration()
       expect(await dataBridge.get("main.name")).toBe("two")
     })
 
     it("should get value based on FilteredSet iterator", async () => {
-      const sources = await DataBridge.buildDataBridgeSources(modules.db, [
-        {
-          dataStoreTableName: "test_table",
-          sourceAlias: "main",
-          whereSchema: {
-            column: "value",
-            condition: SqliteConditionType.GreaterThan,
-            value: 15,
+      const sources = await DataBridge.buildDataBridgeSources(
+        modules.dbModule,
+        [
+          {
+            dataStoreTableName: "test_table",
+            sourceAlias: "main",
+            whereSchema: {
+              column: "value",
+              condition: SqliteConditionType.GreaterThan,
+              value: 15,
+            },
           },
-        },
-      ])
+        ],
+      )
       const iterator: ExecutionIterator = {
         type: ExecutionIteratorType.FilteredSet,
         dataSourceName: "main",
@@ -234,43 +256,59 @@ describe(DataBridge.name, () => {
           value: 15,
         },
       }
-      const dataBridge = new DataBridge(modules.db, iterator, sources, logger)
+      const dataBridge = new DataBridge(
+        modules.dbModule,
+        iterator,
+        sources,
+        logger,
+      )
       expect(await dataBridge.get("main.name")).toBe("two")
       await dataBridge.nextIteration()
       expect(await dataBridge.get("main.name")).toBe("three")
     })
 
     it("should return the first row if cursor is for another source", async () => {
-      const sources = await DataBridge.buildDataBridgeSources(modules.db, [
-        {
-          dataStoreTableName: "test_table",
-          sourceAlias: "main",
-          whereSchema: null,
-        },
-        {
-          dataStoreTableName: "other_table",
-          sourceAlias: "other",
-          whereSchema: null,
-        },
-      ])
+      const sources = await DataBridge.buildDataBridgeSources(
+        modules.dbModule,
+        [
+          {
+            dataStoreTableName: "test_table",
+            sourceAlias: "main",
+            whereSchema: null,
+          },
+          {
+            dataStoreTableName: "other_table",
+            sourceAlias: "other",
+            whereSchema: null,
+          },
+        ],
+      )
       const iterator: ExecutionIterator = {
         type: ExecutionIteratorType.EntireSet,
         dataSourceName: "other",
       }
-      const dataBridge = new DataBridge(modules.db, iterator, sources, logger)
+      const dataBridge = new DataBridge(
+        modules.dbModule,
+        iterator,
+        sources,
+        logger,
+      )
       await dataBridge.nextIteration() // cursor on 'other' is at offset 1
       expect(await dataBridge.get("main.name")).toBe("three") // 'main' has no cursor, should get first row
     })
 
     it("should convert bigint to string", async () => {
-      const sources = await DataBridge.buildDataBridgeSources(modules.db, [
-        {
-          dataStoreTableName: "test_table",
-          sourceAlias: "main",
-          whereSchema: null,
-        },
-      ])
-      const dataBridge = new DataBridge(modules.db, null, sources, logger)
+      const sources = await DataBridge.buildDataBridgeSources(
+        modules.dbModule,
+        [
+          {
+            dataStoreTableName: "test_table",
+            sourceAlias: "main",
+            whereSchema: null,
+          },
+        ],
+      )
+      const dataBridge = new DataBridge(modules.dbModule, null, sources, logger)
       const value = await dataBridge.get("main.big_value")
       // The database driver seems to have precision loss for large bigints,
       // and it returns a number instead of a bigint, so the conversion in DataBridge is skipped.
@@ -279,14 +317,17 @@ describe(DataBridge.name, () => {
     })
 
     it("should convert blob to string", async () => {
-      const sources = await DataBridge.buildDataBridgeSources(modules.db, [
-        {
-          dataStoreTableName: "test_table",
-          sourceAlias: "main",
-          whereSchema: null,
-        },
-      ])
-      const dataBridge = new DataBridge(modules.db, null, sources, logger)
+      const sources = await DataBridge.buildDataBridgeSources(
+        modules.dbModule,
+        [
+          {
+            dataStoreTableName: "test_table",
+            sourceAlias: "main",
+            whereSchema: null,
+          },
+        ],
+      )
+      const dataBridge = new DataBridge(modules.dbModule, null, sources, logger)
       const value = await dataBridge.get("main.blob_value")
       expect(value).toBe("blob3")
     })
@@ -294,18 +335,21 @@ describe(DataBridge.name, () => {
 
   describe("set", () => {
     it("should insert a new row if no cursor is active for the source", async () => {
-      const sources = await DataBridge.buildDataBridgeSources(modules.db, [
-        {
-          dataStoreTableName: "other_table",
-          sourceAlias: "other",
-          whereSchema: null,
-        },
-      ])
-      const dataBridge = new DataBridge(modules.db, null, sources, logger)
+      const sources = await DataBridge.buildDataBridgeSources(
+        modules.dbModule,
+        [
+          {
+            dataStoreTableName: "other_table",
+            sourceAlias: "other",
+            whereSchema: null,
+          },
+        ],
+      )
+      const dataBridge = new DataBridge(modules.dbModule, null, sources, logger)
 
       await dataBridge.set("other.description", "new_desc")
 
-      const result = await modules.db
+      const result = await modules.dbModule.db
         .select({
           id: sql<number>`id`,
           description: sql<string>`description`,
@@ -317,23 +361,31 @@ describe(DataBridge.name, () => {
     })
 
     it("should update a row based on EntireSet iterator", async () => {
-      const sources = await DataBridge.buildDataBridgeSources(modules.db, [
-        {
-          dataStoreTableName: "test_table",
-          sourceAlias: "main",
-          whereSchema: null,
-        },
-      ])
+      const sources = await DataBridge.buildDataBridgeSources(
+        modules.dbModule,
+        [
+          {
+            dataStoreTableName: "test_table",
+            sourceAlias: "main",
+            whereSchema: null,
+          },
+        ],
+      )
       const iterator: ExecutionIterator = {
         type: ExecutionIteratorType.EntireSet,
         dataSourceName: "main",
       }
-      const dataBridge = new DataBridge(modules.db, iterator, sources, logger)
+      const dataBridge = new DataBridge(
+        modules.dbModule,
+        iterator,
+        sources,
+        logger,
+      )
       await dataBridge.nextIteration() // cursor at offset 1 (id=2)
 
       await dataBridge.set("main.name", "updated_two")
 
-      const result = await modules.db
+      const result = await modules.dbModule.db
         .select({ name: sql<string>`name` })
         .from(sql.raw("test_table"))
         .where(sql`id = 2`)
@@ -344,21 +396,24 @@ describe(DataBridge.name, () => {
 
   describe("setMany", () => {
     it("should insert a new row with multiple values", async () => {
-      const sources = await DataBridge.buildDataBridgeSources(modules.db, [
-        {
-          dataStoreTableName: "test_table",
-          sourceAlias: "main",
-          whereSchema: null,
-        },
-      ])
-      const dataBridge = new DataBridge(modules.db, null, sources, logger)
+      const sources = await DataBridge.buildDataBridgeSources(
+        modules.dbModule,
+        [
+          {
+            dataStoreTableName: "test_table",
+            sourceAlias: "main",
+            whereSchema: null,
+          },
+        ],
+      )
+      const dataBridge = new DataBridge(modules.dbModule, null, sources, logger)
 
       await dataBridge.setMany("main", [
         { columnName: "name", value: "four" },
         { columnName: "value", value: 40 },
       ])
 
-      const result = await modules.db
+      const result = await modules.dbModule.db
         .select({
           name: sql<string>`name`,
           value: sql<number>`value`,
@@ -372,25 +427,33 @@ describe(DataBridge.name, () => {
     })
 
     it("should update a row with multiple values based on iterator", async () => {
-      const sources = await DataBridge.buildDataBridgeSources(modules.db, [
-        {
-          dataStoreTableName: "test_table",
-          sourceAlias: "main",
-          whereSchema: null,
-        },
-      ])
+      const sources = await DataBridge.buildDataBridgeSources(
+        modules.dbModule,
+        [
+          {
+            dataStoreTableName: "test_table",
+            sourceAlias: "main",
+            whereSchema: null,
+          },
+        ],
+      )
       const iterator: ExecutionIterator = {
         type: ExecutionIteratorType.EntireSet,
         dataSourceName: "main",
       }
-      const dataBridge = new DataBridge(modules.db, iterator, sources, logger) // cursor at offset 0 (id=1)
+      const dataBridge = new DataBridge(
+        modules.dbModule,
+        iterator,
+        sources,
+        logger,
+      ) // cursor at offset 0 (id=1)
 
       await dataBridge.setMany("main", [
         { columnName: "name", value: "updated_one" },
         { columnName: "value", value: 11 },
       ])
 
-      const result = await modules.db
+      const result = await modules.dbModule.db
         .select({ name: sql<string>`name`, value: sql<number>`value` })
         .from(sql.raw("test_table"))
         .where(sql`id = 1`)
@@ -402,21 +465,29 @@ describe(DataBridge.name, () => {
 
   describe("delete", () => {
     it("should delete a row based on iterator", async () => {
-      const sources = await DataBridge.buildDataBridgeSources(modules.db, [
-        {
-          dataStoreTableName: "test_table",
-          sourceAlias: "main",
-          whereSchema: null,
-        },
-      ])
+      const sources = await DataBridge.buildDataBridgeSources(
+        modules.dbModule,
+        [
+          {
+            dataStoreTableName: "test_table",
+            sourceAlias: "main",
+            whereSchema: null,
+          },
+        ],
+      )
       const iterator: ExecutionIterator = {
         type: ExecutionIteratorType.EntireSet,
         dataSourceName: "main",
       }
-      const dataBridge = new DataBridge(modules.db, iterator, sources, logger)
+      const dataBridge = new DataBridge(
+        modules.dbModule,
+        iterator,
+        sources,
+        logger,
+      )
       await dataBridge.delete("main")
 
-      const result = await modules.db
+      const result = await modules.dbModule.db
         .select({ id: sql<number>`id` })
         .from(sql.raw("test_table"))
         .all()
@@ -425,27 +496,35 @@ describe(DataBridge.name, () => {
     })
 
     it("should not delete and log error if cursor is not on the source", async () => {
-      const sources = await DataBridge.buildDataBridgeSources(modules.db, [
-        {
-          dataStoreTableName: "test_table",
-          sourceAlias: "main",
-          whereSchema: null,
-        },
-        {
-          dataStoreTableName: "other_table",
-          sourceAlias: "other",
-          whereSchema: null,
-        },
-      ])
+      const sources = await DataBridge.buildDataBridgeSources(
+        modules.dbModule,
+        [
+          {
+            dataStoreTableName: "test_table",
+            sourceAlias: "main",
+            whereSchema: null,
+          },
+          {
+            dataStoreTableName: "other_table",
+            sourceAlias: "other",
+            whereSchema: null,
+          },
+        ],
+      )
       const iterator: ExecutionIterator = {
         type: ExecutionIteratorType.EntireSet,
         dataSourceName: "other",
       }
-      const dataBridge = new DataBridge(modules.db, iterator, sources, logger)
+      const dataBridge = new DataBridge(
+        modules.dbModule,
+        iterator,
+        sources,
+        logger,
+      )
       await dataBridge.delete("main")
 
       expect(logger.error).toHaveBeenCalled()
-      const result = await modules.db
+      const result = await modules.dbModule.db
         .select({ id: sql<number>`id` })
         .from(sql.raw("test_table"))
         .all()

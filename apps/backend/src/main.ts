@@ -32,12 +32,12 @@ async function main() {
     : process.env.DB_FILE_NAME ||
       (sea.isSea() ? `file:${path.join(cwd(), "data.db")}` : "file:data.db")
 
-  const db = await getDbModule({ dbUrl, logger })
+  const dbModule = await getDbModule({ dbUrl, logger })
 
-  const config = await getConfig(db)
+  const config = await getConfig(dbModule)
 
   const api = await getApiModule({
-    db,
+    dbModule,
     config,
     logger,
     events,
@@ -53,7 +53,7 @@ async function main() {
 
   logger.info("Setup complete")
 
-  return { config, db, api, logger }
+  return { config, dbModule, api, logger }
 }
 
 const cleanup: NodeJS.SignalsListener = (signal) => {

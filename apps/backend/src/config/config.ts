@@ -2,7 +2,7 @@ import { defaultPreferences } from "@web-scraper/common"
 import type { DbModule } from "../db/db.module"
 import { preferencesTable } from "../db/schema"
 
-export async function getConfig(db: DbModule) {
+export async function getConfig(dbModule: DbModule) {
   let preferences = getDefaultPreferences()
 
   const updatePreferences = <Key extends keyof typeof preferences>(
@@ -16,7 +16,7 @@ export async function getConfig(db: DbModule) {
     preferences = getDefaultPreferences()
   }
 
-  const userPreferences = await db.select().from(preferencesTable)
+  const userPreferences = await dbModule.db.select().from(preferencesTable)
   for (const preference of userPreferences) {
     updatePreferences(preference.key, preference.value as never)
   }

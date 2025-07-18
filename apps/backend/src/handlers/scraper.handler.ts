@@ -26,7 +26,7 @@ import type { EventsModule } from "../events/events.module"
 const executionQueue: Array<Scraper<{ iteration: number }>> = []
 
 type ScraperExecutorContext = {
-  db: DbModule
+  dbModule: DbModule
   logger: Logger | SimpleLogger
   events: EventsModule
   config: Config
@@ -105,7 +105,7 @@ export async function executeNewScraper(
     )
   }
 
-  const executionRow = await context.db
+  const executionRow = await context.dbModule.db
     .insert(scraperExecutionsTable)
     .values({
       scraperId: scraperData.id,
@@ -118,10 +118,10 @@ export async function executeNewScraper(
   setupScraperEvents(scraper, { ...context, logger }, executionRow)
 
   const dataBridge = new DataBridge(
-    context.db,
+    context.dbModule,
     iterator,
     await DataBridge.buildDataBridgeSources(
-      context.db,
+      context.dbModule,
       scraperData.dataSources,
     ),
     logger,
@@ -229,7 +229,7 @@ function setupScraperEvents(
   scraper.on("executionFinished", (executionInfo, { iteration }) => {
     const scraperExecutionInfo = executionInfo.get()
 
-    context.db
+    context.dbModule.db
       .insert(scraperExecutionIterationsTable)
       .values({
         iteration,

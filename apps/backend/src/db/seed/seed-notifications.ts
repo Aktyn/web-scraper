@@ -3,7 +3,7 @@ import type { InferInsertModel } from "drizzle-orm"
 import type { DbModule } from "../db.module"
 import { notificationsTable } from "../schema"
 
-export async function seedNotifications(db: DbModule) {
+export async function seedNotifications(db: DbModule["db"]) {
   const notifications: InferInsertModel<typeof notificationsTable>[] = []
 
   for (let i = 0; i < 50; i++) {
@@ -18,5 +18,8 @@ export async function seedNotifications(db: DbModule) {
     })
   }
 
-  await db.insert(notificationsTable).values(notifications)
+  await db
+    .insert(notificationsTable)
+    .values(notifications)
+    .onConflictDoNothing()
 }

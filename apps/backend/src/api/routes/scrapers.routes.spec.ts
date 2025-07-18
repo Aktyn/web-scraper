@@ -220,11 +220,11 @@ describe("Scrapers Routes", () => {
     })
 
     it("should return status 200 and an empty array if no scrapers exist", async () => {
-      let junctions = await modules.db
+      let junctions = await modules.dbModule.db
         .select({ count: count() })
         .from(scraperDataSourcesTable)
         .get()
-      let stores = await modules.db
+      let stores = await modules.dbModule.db
         .select({ count: count() })
         .from(userDataStoresTable)
         .get()
@@ -233,13 +233,13 @@ describe("Scrapers Routes", () => {
       expect(junctions?.count).toBeGreaterThan(0)
       expect(storesCount).toBeGreaterThan(0)
 
-      await modules.db.delete(scrapersTable)
+      await modules.dbModule.db.delete(scrapersTable)
 
-      junctions = await modules.db
+      junctions = await modules.dbModule.db
         .select({ count: count() })
         .from(scraperDataSourcesTable)
         .get()
-      stores = await modules.db
+      stores = await modules.dbModule.db
         .select({ count: count() })
         .from(userDataStoresTable)
         .get()
@@ -261,7 +261,7 @@ describe("Scrapers Routes", () => {
     })
 
     it("should filter scrapers by name", async () => {
-      const name = "New pepper alerts"
+      const name = "System actions"
       const response = await modules.api.inject({
         method: "GET",
         url: `/scrapers?name=${encodeURIComponent(name.toLowerCase())}`,
@@ -285,7 +285,7 @@ describe("Scrapers Routes", () => {
     })
 
     it("should return 500 if there is a database error", async () => {
-      vi.spyOn(modules.db, "select").mockRejectedValue(
+      vi.spyOn(modules.dbModule.db, "select").mockRejectedValue(
         new Error("Database error"),
       )
 
@@ -499,7 +499,7 @@ describe("Scrapers Routes", () => {
 
     it("should return status 409 if a scraper with the same name already exists", async () => {
       const newScraper: UpsertScraper = {
-        name: "New pepper alerts",
+        name: "System actions",
         description: "Duplicate name",
         instructions: [
           {

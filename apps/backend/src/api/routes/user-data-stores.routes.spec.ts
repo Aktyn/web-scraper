@@ -179,7 +179,7 @@ describe("User Data Stores Routes", () => {
     })
 
     it("should return status 200 and an empty array if no user data stores exist", async () => {
-      await modules.db.delete(userDataStoresTable)
+      await modules.dbModule.db.delete(userDataStoresTable)
 
       const response = await modules.api.inject({
         method: "GET",

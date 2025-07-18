@@ -176,6 +176,19 @@ export type Routes = {
     }
   }
 
+  "reset-database": {
+    post: {
+      body: null
+      response: ApiResponse<null>
+    }
+  }
+  "seed-database": {
+    post: {
+      body: null
+      response: ApiResponse<null>
+    }
+  }
+
   status: {
     get: {
       response: ApiResponse<Status>

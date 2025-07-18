@@ -28,8 +28,8 @@ export function initDbForCliCommand(
   return getDbModule({ dbUrl, logger })
 }
 
-export async function loadScraperByName(db: DbModule, name: string) {
-  const scraperResponse = await db
+export async function loadScraperByName(dbModule: DbModule, name: string) {
+  const scraperResponse = await dbModule.db
     .select()
     .from(scrapersTable)
     .where(sql`LOWER(${scrapersTable.name}) LIKE LOWER(${name})`)
@@ -39,7 +39,7 @@ export async function loadScraperByName(db: DbModule, name: string) {
     return null
   }
 
-  return await joinScraperWithDataSources(db, scraperResponse)
+  return await joinScraperWithDataSources(dbModule.db, scraperResponse)
 }
 
 export function retrieveJsonFromPathOrString<

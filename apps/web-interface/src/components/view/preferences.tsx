@@ -2,6 +2,7 @@ import { usePost } from "@/hooks/api/usePost"
 import { ListRestart } from "lucide-react"
 import { useRef, useState } from "react"
 import { ConfirmationDialog } from "../common/confirmation-dialog"
+import { DatabaseActions } from "../preferences/database-actions"
 import type { PreferencesTableInterface } from "../preferences/preferences-table"
 import { PreferencesTable } from "../preferences/preferences-table"
 import { Button } from "../shadcn/button"
@@ -18,12 +19,7 @@ export function Preferences() {
 
   return (
     <div className="size-full flex flex-col overflow-hidden">
-      <div
-        data-transition-direction="top"
-        className="view-transition flex flex-row items-center gap-2 p-2"
-      >
-        todo
-      </div>
+      <DatabaseActions />
       <Separator className="view-transition" />
       <div
         data-transition-direction="left"

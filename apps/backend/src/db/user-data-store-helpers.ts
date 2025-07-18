@@ -19,7 +19,7 @@ const { generateSQLiteDrizzleJson, generateSQLiteMigration } =
   getDrizzleKitApi()
 
 export async function createUserDataStore(
-  db: DbModule,
+  db: DbModule["db"],
   data: CreateUserDataStore & { tableName?: string },
 ) {
   const tableName =

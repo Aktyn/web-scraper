@@ -18,12 +18,12 @@ describe("view-helpers", () => {
 
   describe(createTemporaryView.name, () => {
     it("should create a temporary view with correct name and SQL", async () => {
-      vi.spyOn(modules.db, "run")
+      vi.spyOn(modules.dbModule.db, "run")
 
       const sourceTableName = "personal_credentials_random_string"
 
       const result = await createTemporaryView(
-        modules.db,
+        modules.dbModule,
         sourceTableName,
         whereSchemaToSql({
           column: "origin",
@@ -31,19 +31,19 @@ describe("view-helpers", () => {
           value: "%pepper.pl%",
         }),
       )
-      expect(modules.db.run).toHaveBeenCalledWith(expect.any(SQL))
+      expect(modules.dbModule.db.run).toHaveBeenCalledWith(expect.any(SQL))
       expect(result).toMatch(/^temporary_view_.*/)
     })
   })
 
   describe(removeTemporaryView.name, () => {
     it("should execute DROP VIEW SQL with proper identifier", async () => {
-      vi.spyOn(modules.db, "run")
+      vi.spyOn(modules.dbModule.db, "run")
 
       const viewName = "test_view"
 
-      await removeTemporaryView(modules.db, viewName)
-      expect(modules.db.run).toHaveBeenCalledWith(expect.any(SQL))
+      await removeTemporaryView(modules.dbModule, viewName)
+      expect(modules.dbModule.db.run).toHaveBeenCalledWith(expect.any(SQL))
     })
   })
 })

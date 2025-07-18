@@ -9,19 +9,23 @@ import { seedUserDataStores } from "./seed-user-data-stores"
 import { seedNotifications } from "./seed-notifications"
 import { seedRoutines } from "./seed-routines"
 
-export async function seed(db?: DbModule) {
+export async function seed(db?: DbModule["db"]) {
   if (!db) {
     const dbUrl = process.env.DB_FILE_NAME
     assert(!!dbUrl, "DB_FILE_NAME environment variable is not set")
-    db = await getDbModule({ dbUrl })
+    const dbModule = await getDbModule({ dbUrl })
+    db = dbModule.db
   }
 
-  await db.insert(preferencesTable).values(
-    Object.entries(defaultPreferences).map(([key, { value }]) => ({
-      key: key as keyof typeof defaultPreferences,
-      value: value,
-    })),
-  )
+  await db
+    .insert(preferencesTable)
+    .values(
+      Object.entries(defaultPreferences).map(([key, { value }]) => ({
+        key: key as keyof typeof defaultPreferences,
+        value: value,
+      })),
+    )
+    .onConflictDoNothing()
 
   await seedUserDataStores(db)
   await seedScrapers(db)

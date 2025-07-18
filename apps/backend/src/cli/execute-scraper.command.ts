@@ -21,7 +21,7 @@ export async function executeScraperCLI(
   commandArguments: CliArguments,
   { logger, events }: CliModuleContext,
 ) {
-  let db: DbModule | null = null
+  let dbModule: DbModule | null = null
 
   assert(!!commandArguments.scraper, "Missing --scraper argument")
 
@@ -30,9 +30,9 @@ export async function executeScraperCLI(
   )
 
   if (!scraper) {
-    db ??= await initDbForCliCommand(commandArguments, logger)
+    dbModule ??= await initDbForCliCommand(commandArguments, logger)
 
-    scraper = await loadScraperByName(db, commandArguments.scraper)
+    scraper = await loadScraperByName(dbModule, commandArguments.scraper)
   }
 
   assert(!!scraper, "Could not load scraper from given source")
@@ -41,8 +41,8 @@ export async function executeScraperCLI(
     ? retrieveJsonFromPathOrString<ExecutionIterator>(commandArguments.iterator)
     : null
 
-  db ??= await initDbForCliCommand(commandArguments, logger)
-  const config = await getConfig(db)
+  dbModule ??= await initDbForCliCommand(commandArguments, logger)
+  const config = await getConfig(dbModule)
 
   try {
     const executionId = await executeNewScraper(
@@ -51,7 +51,7 @@ export async function executeScraperCLI(
       scraper,
       iterator,
       {
-        db,
+        dbModule,
         logger,
         events,
         config,
@@ -59,7 +59,7 @@ export async function executeScraperCLI(
     )
 
     const result = executionId
-      ? await getScraperExecutionResult(db, executionId)
+      ? await getScraperExecutionResult(dbModule.db, executionId)
       : RoutineExecutionResult.Failed
 
     logger.info({ msg: "CLI scraper execution finished", result })

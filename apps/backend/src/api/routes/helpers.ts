@@ -10,7 +10,7 @@ import {
 import type { ApiModuleContext } from "../api.module"
 
 export async function joinScraperWithDataSources(
-  db: ApiModuleContext["db"],
+  db: ApiModuleContext["dbModule"]["db"],
   scraper: InferSelectModel<typeof scrapersTable>,
 ): Promise<ScraperType> {
   const dataSources = await db
@@ -27,7 +27,7 @@ export async function joinScraperWithDataSources(
 }
 
 export async function getScraperExecutionResult(
-  db: ApiModuleContext["db"],
+  db: ApiModuleContext["dbModule"]["db"],
   executionId: number,
   routineId?: InferSelectModel<typeof routineExecutionsTable>["routineId"],
 ) {

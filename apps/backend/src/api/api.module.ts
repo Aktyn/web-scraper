@@ -20,12 +20,12 @@ import * as routes from "./routes"
 
 declare module "fastify" {
   interface FastifyInstance {
-    db: DbModule
+    db: DbModule["db"]
   }
 }
 
 export type ApiModuleContext = {
-  db: DbModule
+  dbModule: DbModule
   config: Config
   logger: Logger | SimpleLogger
   events: EventsModule
@@ -42,10 +42,10 @@ export async function getApiModule(
   })
 
   const drizzlePlugin = fastifyPlugin((fastify) => {
-    fastify.decorate("db", context.db)
+    fastify.decorate("db", context.dbModule.db)
 
     fastify.addHook("onClose", () => {
-      context.db.$client.close()
+      context.dbModule.db.$client.close()
     })
   })
   fastify.register(drizzlePlugin)
@@ -54,8 +54,6 @@ export async function getApiModule(
     origin: "*",
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
   })
-
-  //TODO: plugin for query type coercion from zod schema
 
   fastify.setValidatorCompiler(validatorCompiler)
   fastify.setSerializerCompiler(serializerCompiler)

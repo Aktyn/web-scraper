@@ -47,7 +47,7 @@ function generateRandomExecutionInfo(): ScraperInstructionsExecutionInfo {
   return info
 }
 
-export async function seedScraperExecutions(db: DbModule) {
+export async function seedScraperExecutions(db: DbModule["db"]) {
   const scrapers = await db.select({ id: scrapersTable.id }).from(scrapersTable)
 
   if (!scrapers.length) {
@@ -82,6 +82,7 @@ export async function seedScraperExecutions(db: DbModule) {
           iterator,
           createdAt: new Date(new Date().getTime() - 60_000 * i),
         })
+        .onConflictDoNothing()
         .returning({ id: scraperExecutionsTable.id })
         .get()
 
@@ -90,13 +91,16 @@ export async function seedScraperExecutions(db: DbModule) {
       }
 
       const info = generateRandomExecutionInfo()
-      await db.insert(scraperExecutionIterationsTable).values({
-        executionId: newExecutions.id,
-        iteration: 1,
-        executionInfo: info,
-        success:
-          info.at(-1)?.type === ScraperInstructionsExecutionInfoType.Success,
-      })
+      await db
+        .insert(scraperExecutionIterationsTable)
+        .values({
+          executionId: newExecutions.id,
+          iteration: 1,
+          executionInfo: info,
+          success:
+            info.at(-1)?.type === ScraperInstructionsExecutionInfoType.Success,
+        })
+        .onConflictDoNothing()
     }
   }
 }

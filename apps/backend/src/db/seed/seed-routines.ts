@@ -9,7 +9,7 @@ import {
 import type { DbModule } from "../db.module"
 import { routinesTable, scrapersTable } from "../schema"
 
-export async function seedRoutines(db: DbModule) {
+export async function seedRoutines(db: DbModule["db"]) {
   const scrapers = await db.select({ id: scrapersTable.id }).from(scrapersTable)
 
   if (scrapers.length === 0) {
@@ -52,7 +52,7 @@ export async function seedRoutines(db: DbModule) {
     }
   })
 
-  await db.insert(routinesTable).values(routines)
+  await db.insert(routinesTable).values(routines).onConflictDoNothing()
 }
 
 const zeroDate = new Date(0)

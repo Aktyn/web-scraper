@@ -1,5 +1,6 @@
 export * from "./misc.routes"
 export * from "./notifications.routes"
+export * from "./preferences.routes"
 export * from "./scrapers.routes"
 export * from "./user-data-stores.routes"
 export * from "./routines.routes"

@@ -9,11 +9,11 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/shadcn/dialog"
-import type { ComponentProps } from "react"
+import type { ComponentProps, ReactNode } from "react"
 
 type ConfirmationDialogProps = ComponentProps<typeof Dialog> & {
   title: string
-  description: string
+  description: ReactNode
   confirmText?: string
   cancelText?: string
   onConfirm: () => void

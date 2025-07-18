@@ -64,7 +64,7 @@ export class DataBridge<
   private countCache = new Map<ExecutionIterator, number>()
 
   constructor(
-    private readonly db: DbModule,
+    private readonly dbModule: DbModule,
     private readonly iterator: ExecutionIterator | null,
     private readonly dataSources: SourcesType,
     private readonly logger: SimpleLogger,
@@ -73,7 +73,7 @@ export class DataBridge<
   async destroy() {
     for (const source of Object.values(this.dataSources)) {
       if (source.type === DataBridgeSourceType.TemporaryView) {
-        await removeTemporaryView(this.db, source.name)
+        await removeTemporaryView(this.dbModule, source.name)
       }
     }
   }
@@ -119,7 +119,7 @@ export class DataBridge<
     )
     const source = this.dataSources[dataSourceName]
 
-    const countResult = await this.db
+    const countResult = await this.dbModule.db
       .select({ count: count() })
       .from(sql.identifier(source.name).getSQL())
       .where(
@@ -194,7 +194,7 @@ export class DataBridge<
               ? dataBridgeSource.name
               : dataBridgeSource.originalTableName
 
-          const data = await this.db
+          const data = await this.dbModule.db
             .select({ columns: userDataStoresTable.columnDefinitions })
             .from(userDataStoresTable)
             .where(eq(userDataStoresTable.tableName, tableName))
@@ -228,7 +228,7 @@ export class DataBridge<
     const { source, column, sourceAlias } = this.parseKey(key)
     const cursor = this.cursor
 
-    let query = this.db
+    let query = this.dbModule.db
       .select({
         column: sql
           .identifier(column)
@@ -306,7 +306,7 @@ export class DataBridge<
       //NOTE: SQLITE_ENABLE_UPDATE_DELETE_LIMIT pragma must be enabled for sqlite (it should be enabled by default)
       const query = sql`UPDATE ${originalIdentifier} SET ${setClauses} WHERE ${sql.identifier("id")} IN (SELECT ${sql.identifier("id")} FROM ${sql.identifier(source.name)}${whereClause} LIMIT 1${offsetClause})`
 
-      const response = await this.db.run(query).execute()
+      const response = await this.dbModule.db.run(query).execute()
       if (!response.rowsAffected) {
         this.logger.warn(`No rows were updated for "${source.name}"`)
       }
@@ -318,7 +318,7 @@ export class DataBridge<
           : sql`${item.value}`,
       )
 
-      await this.db
+      await this.dbModule.db
         .run(
           sql`INSERT INTO ${originalIdentifier} (${sql.join(columns, sql`, `)}) VALUES (${sql.join(values, sql`, `)})`,
         )
@@ -357,7 +357,7 @@ export class DataBridge<
     //NOTE: SQLITE_ENABLE_UPDATE_DELETE_LIMIT pragma must be enabled for sqlite (it should be enabled by default)
     const query = sql`DELETE FROM ${originalIdentifier} WHERE ${sql.identifier("id")} IN (SELECT ${sql.identifier("id")} FROM ${sql.identifier(source.name)}${whereClause} LIMIT 1${offsetClause})`
 
-    await this.db.run(query).execute()
+    await this.dbModule.db.run(query).execute()
 
     this.countCache.clear()
   }
@@ -379,7 +379,7 @@ export class DataBridge<
   }
 
   static async buildDataBridgeSources(
-    db: DbModule,
+    dbModule: DbModule,
     dataSources: ScraperDataSource[],
   ) {
     const sources: Record<string, DataBridgeSource> = {}
@@ -389,7 +389,7 @@ export class DataBridge<
         ? {
             type: DataBridgeSourceType.TemporaryView,
             name: await createTemporaryView(
-              db,
+              dbModule,
               dataSource.dataStoreTableName,
               whereSchemaToSql(dataSource.whereSchema),
             ),

@@ -122,7 +122,7 @@ describe("Notifications Routes", () => {
       expect(payload.id).toBe(1)
       expect(payload.read).toBe(true)
 
-      const notificationInDb = await modules.db
+      const notificationInDb = await modules.dbModule.db
         .select()
         .from(notificationsTable)
         .where(eq(notificationsTable.id, 1))
@@ -142,7 +142,7 @@ describe("Notifications Routes", () => {
 
   describe("PATCH /notifications/read-all", () => {
     it("should return status 204 and mark all notifications as read", async () => {
-      const unreadNotificationsBefore = await modules.db
+      const unreadNotificationsBefore = await modules.dbModule.db
         .select()
         .from(notificationsTable)
         .where(eq(notificationsTable.read, false))
@@ -156,7 +156,7 @@ describe("Notifications Routes", () => {
 
       expect(response.statusCode).toBe(200)
 
-      const unreadNotificationsAfter = await modules.db
+      const unreadNotificationsAfter = await modules.dbModule.db
         .select()
         .from(notificationsTable)
         .where(eq(notificationsTable.read, false))
@@ -164,7 +164,7 @@ describe("Notifications Routes", () => {
       expect(unreadNotificationsAfter.length).toBe(0)
 
       const allNotifications =
-        await modules.db.query.notificationsTable.findMany()
+        await modules.dbModule.db.query.notificationsTable.findMany()
       expect(
         allNotifications.every((notification) => notification.read),
       ).toBeTruthy()
@@ -180,7 +180,7 @@ describe("Notifications Routes", () => {
 
       expect(response.statusCode).toBe(204)
 
-      const notificationInDb = await modules.db
+      const notificationInDb = await modules.dbModule.db
         .select()
         .from(notificationsTable)
         .where(eq(notificationsTable.id, 2))
