@@ -21,6 +21,7 @@
     "@web-scraper/common": "*",
     "ghost-cursor": "^1.4.1",
     "is-plain-object": "^5.0.0",
+    "jimp": "^1.6.0",
     "kind-of": "^6.0.3",
     "node-notifier": "^10.0.1",
     "ollama": "^0.5.16",
@@ -31,7 +32,6 @@
     "puppeteer-real-browser": "^1.4.2",
     "rebrowser-puppeteer": "^24.8.1",
     "shallow-clone": "^3.0.1",
-    "sharp": "^0.34.3",
     "zod": "^4.0.5"
   },
   "devDependencies": {

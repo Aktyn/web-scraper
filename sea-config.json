@@ -6,7 +6,6 @@
   "useCodeCache": false,
   "assets": {
     "libsql.node": "node_modules/@libsql/linux-x64-gnu/index.node",
-    "sharp.node": "node_modules/@img/sharp-linux-x64/lib/sharp-linux-x64.node",
     "node-file-dialog-x86_64.AppImage": "node_modules/node-file-dialog/python/dist/linux/node-file-dialog-x86_64.AppImage"
   }
 }

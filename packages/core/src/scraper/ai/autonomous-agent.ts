@@ -110,38 +110,6 @@ export class AutonomousAgent {
       const encodedImage = await ollama.encodeImage(resizedImageData)
 
       const transformCoordinates = async (coordinates: Coordinates) => {
-        // if (action.usePreciseLocalization) {
-        //   try {
-        //     const response = await this.localization.generateResponse(
-        //       element,
-        //       encodedImage,
-        //     )
-
-        //     const parsedOutput = coordinatesSchema.parse(JSON.parse(response))
-
-        //     const originalCoordinates = coordinates
-        //     coordinates = pick(parsedOutput, "x", "y")
-        //     this.logger.info({
-        //       msg: "Precise localization coordinates",
-        //       response,
-        //     })
-
-        //     if (!coordinatesInBounds(coordinates, resizedResolution)) {
-        //       this.logger.error({
-        //         msg: "Precise coordinates out of bounds, reverting to original coordinates",
-        //         coordinates,
-        //         resizedResolution,
-        //       })
-        //       coordinates = originalCoordinates
-        //     }
-        //   } catch (error) {
-        //     this.logger.error({
-        //       msg: "Failed to localize element",
-        //       error,
-        //     })
-        //   }
-        // }
-
         if (!coordinatesInBounds(coordinates, resizedResolution)) {
           this.logger.error({
             msg: "Coordinates out of bounds, skipping action",

@@ -17,11 +17,6 @@ if (sea.isSea()) {\
   const libsqlNodePath = path.join(__dirname, "libsql.node")\
   fs.writeFileSync(libsqlNodePath, Buffer.from(libsqlNode))\
 \
-  const sharpNode = sea.getAsset("sharp.node")\
-  fs.mkdirSync(path.join(__dirname, "lib"), { recursive: true })\
-  const sharpNodePath = path.join(__dirname, "lib", "sharp.node")\
-  fs.writeFileSync(sharpNodePath, Buffer.from(sharpNode))\
-\
   const nodeFileDialogAppImage = sea.getAsset("node-file-dialog-x86_64.AppImage")\
   const nodeFileDialogAppImagePath = path.join(__dirname, "node-file-dialog-x86_64.AppImage")\
   fs.writeFileSync(nodeFileDialogAppImagePath, Buffer.from(nodeFileDialogAppImage))\
@@ -30,8 +25,6 @@ if (sea.isSea()) {\
 ' ./apps/backend/dist/standalone-copy.js
 
 sed -i 's/return require(`@libsql\/${target}`);/return require("node:module").createRequire(__filename)(__dirname + "\/libsql");/g' ./apps/backend/dist/standalone-copy.js
-
-sed -i 's/sharp = require(path[0-9]*);/sharp = require("node:module").createRequire(__filename)(__dirname + "\/lib\/sharp");/g' ./apps/backend/dist/standalone-copy.js
 
 sed -i 's/var cmd = path[0-9]*.join("python", "dist");/var cmd = ".";/g' ./apps/backend/dist/standalone-copy.js
 

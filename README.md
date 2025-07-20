@@ -338,6 +338,10 @@ See below example for better understanding.
 
 #### CLI execution
 
+Web Scraper uses pino for logging.\
+You can pipe it to pino-pretty to make it more readable.\
+`./web-scraper | npx pino-pretty` or `./web-scraper | pino-pretty` if you have it installed globally.
+
 See [CLI](#cli) section for more details.
 
 ## Development setup

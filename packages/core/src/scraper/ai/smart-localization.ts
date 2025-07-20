@@ -1,21 +1,15 @@
-import {
-  defaultPreferences,
-  pick,
-  type SimpleLogger,
-} from "@web-scraper/common"
+import { defaultPreferences, type SimpleLogger } from "@web-scraper/common"
 import ollama, { type GenerateRequest } from "ollama"
 import { z } from "zod"
 import { checkModelAvailability, getAbsoluteCoordinates } from "./helpers"
 import { resizeScreenshot } from "./image-processing"
-import { coordinatesSchema } from "./schemas"
+import { getCoordinatesSchema } from "./schemas"
 
 type RequestOptions = Partial<Pick<GenerateRequest, "model" | "format">> & {
   systemPrompt?: string
 }
 
 export class SmartLocalization {
-  private static jsonSchema = z.toJSONSchema(coordinatesSchema)
-
   constructor(
     private readonly logger: SimpleLogger,
     private readonly requestOptions: RequestOptions = {},
@@ -27,12 +21,16 @@ export class SmartLocalization {
 
     const encodedImage = await ollama.encodeImage(resizedImageData)
 
-    const response = await this.generateResponse(prompt, encodedImage)
+    const coordinatesSchema = getCoordinatesSchema(resizedResolution)
+
+    const response = await this.generateResponse(
+      prompt,
+      encodedImage,
+      coordinatesSchema,
+    )
 
     try {
-      const parsedOutput = coordinatesSchema.parse(JSON.parse(response))
-
-      const coordinates = pick(parsedOutput, "x", "y")
+      const coordinates = coordinatesSchema.parse(JSON.parse(response))
 
       return getAbsoluteCoordinates(
         coordinates,
@@ -45,7 +43,11 @@ export class SmartLocalization {
     }
   }
 
-  async generateResponse(prompt: string, encodedImage: string) {
+  private async generateResponse(
+    prompt: string,
+    encodedImage: string,
+    coordinatesSchema: z.ZodObject,
+  ) {
     const model =
       this.requestOptions.model || defaultPreferences.localizationModel.value
 
@@ -57,12 +59,16 @@ export class SmartLocalization {
       )
     }
 
+    const schema = z.toJSONSchema(coordinatesSchema)
+    delete schema["$schema"]
+    delete schema["additionalProperties"]
+
     const { response } = await ollama.generate({
       model,
       system: this.requestOptions.systemPrompt,
       prompt: prompt,
       images: [encodedImage],
-      format: SmartLocalization.jsonSchema,
+      format: schema,
       stream: false,
       ...this.requestOptions,
     })

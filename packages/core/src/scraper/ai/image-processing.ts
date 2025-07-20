@@ -1,7 +1,7 @@
 import path from "node:path"
 import fs from "node:fs"
 import type { Viewport } from "rebrowser-puppeteer"
-import sharp from "sharp"
+import { Jimp, JimpMime, ResizeStrategy } from "jimp"
 
 export type Resolution = Pick<Viewport, "width" | "height">
 
@@ -44,16 +44,17 @@ export async function resizeScreenshot(imageData: Uint8Array): Promise<{
   originalResolution: Resolution
   resizedResolution: Resolution
 }> {
-  const image = sharp(imageData)
+  const image = await Jimp.fromBuffer(imageData)
 
-  const { width: originalWidth, height: originalHeight } =
-    await image.metadata()
+  const originalWidth = image.width
+  const originalHeight = image.height
   const { width: resizedWidth, height: resizedHeight } =
     calculateSmartResolution({ width: originalWidth, height: originalHeight })
 
-  const resized = image.resize(resizedWidth, resizedHeight, {
-    fit: "contain",
-    kernel: sharp.kernel.lanczos3,
+  const resized = image.resize({
+    w: resizedWidth,
+    h: resizedHeight,
+    mode: ResizeStrategy.HERMITE,
   })
 
   if (process.env.NODE_ENV === "development") {
@@ -62,14 +63,16 @@ export async function resizeScreenshot(imageData: Uint8Array): Promise<{
       if (!fs.existsSync(outputPath)) {
         fs.mkdirSync(outputPath, { recursive: true })
       }
-      await resized.toFile(path.join(outputPath, "ollama_resized.jpeg"))
+      await resized.write(
+        path.join(outputPath, "ollama_resized.jpeg") as `${string}.${string}`,
+      )
     } catch {
       // noop
     }
   }
 
   return {
-    resizedImageData: await resized.toBuffer(),
+    resizedImageData: await resized.getBuffer(JimpMime.jpeg),
     originalResolution: {
       width: originalWidth,
       height: originalHeight,

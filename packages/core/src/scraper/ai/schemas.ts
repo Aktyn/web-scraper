@@ -1,18 +1,22 @@
 import { z } from "zod"
+import type { Resolution } from "./image-processing"
 
 // ----- Localization schemas -----
 
-export const coordinatesSchema = z.object({
-  action: z.literal("click"),
-  x: z
-    .number()
-    .int()
-    .describe("The x coordinate, number of pixels from the left edge"),
-  y: z
-    .number()
-    .int()
-    .describe("The y coordinate, number of pixels from the top edge"),
-})
+export function getCoordinatesSchema(resolution: Resolution) {
+  return z.object({
+    x: z
+      .int()
+      .min(0)
+      .max(resolution.width)
+      .describe("The x coordinate, number of pixels from the left edge"),
+    y: z
+      .int()
+      .min(0)
+      .max(resolution.height)
+      .describe("The y coordinate, number of pixels from the top edge"),
+  })
+}
 
 // ----- Navigation schemas -----
 
@@ -33,14 +37,15 @@ const actions = [
     actionType: z
       .literal(NavigationActionType.ClickElement)
       .describe("Click at absolute coordinates in a web page"),
-    // element: z.string().describe("Text description of the element"),
     x: z
-      .number()
       .int()
+      .min(0)
+      .max(1316) //TODO: get this from the resized resolution
       .describe("The x coordinate, number of pixels from the left edge"),
     y: z
-      .number()
       .int()
+      .min(0)
+      .max(728) //TODO: get this from the resized resolution
       .describe("The y coordinate, number of pixels from the top edge"),
   }),
   z.object({
@@ -50,7 +55,6 @@ const actions = [
         "Use keyboard to write some text in a web element; should be preceded by a click action",
       ),
     text: z.string().describe("Text to write"),
-    // element: z.string().describe("Text description of the element"),
     pressEnter: z
       .boolean()
       .optional()
@@ -115,12 +119,11 @@ const actions = [
 export function getNavigationStepSchema(includeStorageActions = false) {
   const filteredActions = includeStorageActions
     ? actions
-    : (actions.filter(
-        (action) =>
-          [
-            NavigationActionType.FetchFromStorage,
-            NavigationActionType.SaveToStorage,
-          ].includes(action.shape.actionType.value), //TODO: make sure this works
+    : (actions.filter((action) =>
+        [
+          NavigationActionType.FetchFromStorage,
+          NavigationActionType.SaveToStorage,
+        ].includes(action.shape.actionType.value),
       ) as unknown as typeof actions)
 
   return z.object({
