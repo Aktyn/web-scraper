@@ -58,6 +58,7 @@ export async function executeNewScraper(
       "/usr/bin/chromium-browser",
     userDataDir:
       scraperData.userDataDirectory ||
+      context.config.preferences.defaultUserDataDirectory ||
       path.resolve(
         process.env.HOME || "~",
         "snap/chromium/common/chromium/Default",

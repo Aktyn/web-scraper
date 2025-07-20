@@ -94,6 +94,7 @@ export async function miscRoutes(
     },
     async (_request, reply) => {
       await dbModule.resetDatabase()
+      config.resetPreferences()
 
       return reply.status(200).send({
         data: null,

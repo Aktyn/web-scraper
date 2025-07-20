@@ -188,10 +188,16 @@ export async function performPageAction(
           ) ?? [],
         )
 
-        await pageContext.page.evaluate(
-          action.evaluator.code,
-          ...evaluationArguments,
-        )
+        let func: ((...args: unknown[]) => void) | string
+        try {
+          func = new Function(
+            "...args",
+            `return (${action.evaluator.code})(...args)`,
+          ) as never
+        } catch {
+          func = action.evaluator.code
+        }
+        await pageContext.page.evaluate(func, ...evaluationArguments)
       }
       break
 

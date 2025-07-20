@@ -120,24 +120,6 @@ export async function seedUserDataStores(db: DbModule["db"]) {
   }
 
   try {
-    const { table: dataMarkersTable } = await createUserDataStore(db, {
-      tableName: sanitizeTableName("data-store-Data markers"),
-      name: "Data markers",
-      columns: [
-        { name: "Name", type: SqliteColumnType.TEXT, notNull: true },
-        { name: "Content", type: SqliteColumnType.TEXT },
-      ],
-    })
-
-    await db
-      .insert(dataMarkersTable)
-      .values([{ Name: "Last pepper alert", Content: null }])
-      .onConflictDoNothing()
-  } catch {
-    // noop
-  }
-
-  try {
     await createUserDataStore(db, {
       tableName: sanitizeTableName("data-store-Brain fm accounts"),
       name: "Brain FM accounts",

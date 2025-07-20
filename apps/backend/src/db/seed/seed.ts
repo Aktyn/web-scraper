@@ -1,13 +1,14 @@
 import "dotenv/config"
 
-import { assert, defaultPreferences } from "@web-scraper/common"
+import { type defaultPreferences, assert } from "@web-scraper/common"
+import { getDefaultPreferences } from "../../config/config"
 import { type DbModule, getDbModule } from "../db.module"
 import { preferencesTable } from "../schema"
+import { seedNotifications } from "./seed-notifications"
+import { seedRoutines } from "./seed-routines"
 import { seedScraperExecutions } from "./seed-scraper-executions"
 import { seedScrapers } from "./seed-scrapers"
 import { seedUserDataStores } from "./seed-user-data-stores"
-import { seedNotifications } from "./seed-notifications"
-import { seedRoutines } from "./seed-routines"
 
 export async function seed(db?: DbModule["db"]) {
   if (!db) {
@@ -20,7 +21,7 @@ export async function seed(db?: DbModule["db"]) {
   await db
     .insert(preferencesTable)
     .values(
-      Object.entries(defaultPreferences).map(([key, { value }]) => ({
+      Object.entries(getDefaultPreferences()).map(([key, value]) => ({
         key: key as keyof typeof defaultPreferences,
         value: value,
       })),

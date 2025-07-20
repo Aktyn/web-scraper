@@ -1,9 +1,10 @@
 import { defaultPreferences } from "@web-scraper/common"
 import type { DbModule } from "../db/db.module"
 import { preferencesTable } from "../db/schema"
+import { getChromeExecutablePath, getUserDataDirectory } from "../utils"
 
 export async function getConfig(dbModule: DbModule) {
-  let preferences = getDefaultPreferences()
+  const preferences = getDefaultPreferences()
 
   const updatePreferences = <Key extends keyof typeof preferences>(
     key: Key,
@@ -13,7 +14,7 @@ export async function getConfig(dbModule: DbModule) {
   }
 
   const resetPreferences = () => {
-    preferences = getDefaultPreferences()
+    Object.assign(preferences, getDefaultPreferences())
   }
 
   const userPreferences = await dbModule.db.select().from(preferencesTable)
@@ -32,9 +33,16 @@ export async function getConfig(dbModule: DbModule) {
 export type Config = Awaited<ReturnType<typeof getConfig>>
 
 export function getDefaultPreferences() {
-  return Object.fromEntries(
+  const preferences = Object.fromEntries(
     Object.entries(defaultPreferences).map(([key, { value }]) => [key, value]),
   ) as {
     [key in keyof typeof defaultPreferences]: (typeof defaultPreferences)[key]["value"]
   }
+
+  Object.assign(preferences, {
+    chromeExecutablePath: getChromeExecutablePath(),
+    defaultUserDataDirectory: getUserDataDirectory(),
+  })
+
+  return preferences
 }

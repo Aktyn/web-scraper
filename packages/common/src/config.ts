@@ -9,6 +9,11 @@ export const defaultPreferences = {
     description:
       "Path to the Chrome executable. If not set, the default path will be used.",
   },
+  defaultUserDataDirectory: {
+    value: "",
+    description:
+      "Default user data directory to use for the browser (used if not specified in scraper). This is used for the browser to persist its data like cookies, local storage, etc.",
+  },
 
   proxyURL: {
     value: "",

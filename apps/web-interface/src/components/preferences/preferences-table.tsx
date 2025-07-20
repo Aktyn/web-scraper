@@ -101,7 +101,7 @@ export function PreferencesTable({
   return (
     <DataTable
       data-transition-direction="left"
-      className="view-transition delay-200 *:w-256 *:max-w-full overflow-hidden"
+      className="view-transition delay-200 *:max-w-full overflow-hidden"
       columns={columns}
       data={preferences}
       isLoading={isLoading || isStatusLoading}

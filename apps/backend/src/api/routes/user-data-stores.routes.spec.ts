@@ -128,28 +128,6 @@ describe("User Data Stores Routes", () => {
           },
           {
             tableName: expect.any(String),
-            name: "Data markers",
-            description: null,
-            recordsCount: 1,
-            columns: [
-              {
-                name: "id",
-                notNull: true,
-                type: SqliteColumnType.INTEGER,
-              },
-              {
-                name: "Name",
-                notNull: true,
-                type: SqliteColumnType.TEXT,
-              },
-              {
-                name: "Content",
-                type: SqliteColumnType.TEXT,
-              },
-            ],
-          },
-          {
-            tableName: expect.any(String),
             name: "Brain FM accounts",
             description: null,
             recordsCount: 0,
@@ -516,7 +494,7 @@ describe("User Data Stores Routes", () => {
       const getData = JSON.parse(
         getResponse.payload,
       ) as ApiPaginatedResponse<object>
-      expect(getData.data.length).toBe(4)
+      expect(getData.data.length).toBe(3)
     })
 
     it("should return status 404 if the data store does not exist", async () => {

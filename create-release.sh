@@ -25,14 +25,16 @@ VERSION=$(jq -r '.version' package.json)
 
 echo "New version: $VERSION"
 
-npm run build
-npm run build:sea
-
 git add .
 git commit -m "Release $VERSION"
 git tag v$VERSION
 git push --tag
 git push
+
+echo "Building everything"
+
+npm run build
+npm run build:sea
 
 echo "Creating release for tag v$VERSION"
 

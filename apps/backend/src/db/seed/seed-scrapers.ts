@@ -22,7 +22,6 @@ export async function seedScrapers(db: DbModule["db"]) {
     "data-store-Example test of saving page content",
   )
   const cryptoPricesTableName = sanitizeTableName("data-store-Crypto prices")
-  const dataMarkersTableName = sanitizeTableName("data-store-Data markers")
   const brainFmAccountsTableName = sanitizeTableName(
     "data-store-Brain FM accounts",
   )
@@ -30,9 +29,9 @@ export async function seedScrapers(db: DbModule["db"]) {
   try {
     await db.transaction(async (tx) => {
       const [
-        scraper1,
-        scraper2,
-        scraper3,
+        smallExampleScraper,
+        siteContentScraper,
+        updateCryptoPricesScraper,
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         _captchaTesterScraper,
         brainFmRegisterScraper,
@@ -102,7 +101,7 @@ export async function seedScrapers(db: DbModule["db"]) {
         .insert(scraperDataSourcesTable)
         .values([
           {
-            scraperId: scraper1.id,
+            scraperId: smallExampleScraper.id,
             sourceAlias: "foo",
             dataStoreTableName: personalCredentialsTableName, //Note: it has to be already seeded
             whereSchema: {
@@ -121,32 +120,12 @@ export async function seedScrapers(db: DbModule["db"]) {
             },
           },
           {
-            scraperId: scraper2.id,
-            sourceAlias: "user",
-            dataStoreTableName: personalCredentialsTableName, //Note: it has to be already seeded
-            whereSchema: {
-              column: "origin",
-              condition: SqliteConditionType.ILike,
-              value: "%pepper.pl%",
-            },
-          },
-          {
-            scraperId: scraper2.id,
-            sourceAlias: "marker",
-            dataStoreTableName: dataMarkersTableName, //Note: it has to be already seeded
-            whereSchema: {
-              column: "Name",
-              condition: SqliteConditionType.ILike,
-              value: "Last pepper alert",
-            },
-          },
-          {
-            scraperId: scraper2.id,
+            scraperId: siteContentScraper.id,
             sourceAlias: "Store",
             dataStoreTableName: exampleSiteContentTableName, //Note: it has to be already seeded
           },
           {
-            scraperId: scraper3.id,
+            scraperId: updateCryptoPricesScraper.id,
             sourceAlias: "crypto",
             dataStoreTableName: cryptoPricesTableName, //Note: it has to be already seeded
           },

@@ -61,7 +61,7 @@ async function getSpecialStringValue(
       }
       return await getExternalData(args[0].trim() as ScraperDataKey)
     case SpecialStringType.RandomString:
-      return randomString(args.at(0) ? parseInt(args[0]) : 16)
+      return randomString(args.at(0) ? Math.max(parseInt(args[0]), 1) : 16)
     default:
       throw new Error(`Unknown special string type: ${type}`)
   }

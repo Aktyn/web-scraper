@@ -2,9 +2,16 @@ import { defaultPreferences } from "@web-scraper/common"
 import { beforeEach, describe, expect, it } from "vitest"
 import { preferencesTable } from "../../db/schema"
 import { setup, type TestModules } from "../../test/setup"
+import { getDefaultPreferences } from "../../config/config"
 
 describe("Preferences Routes", () => {
   let modules: TestModules
+  const defaultPreferencesResponse = Object.entries(
+    getDefaultPreferences(),
+  ).map(([key, value]) => ({
+    key: key as keyof typeof defaultPreferences,
+    value: value as never,
+  }))
 
   beforeEach(async () => {
     modules = await setup()
@@ -23,6 +30,10 @@ describe("Preferences Routes", () => {
           { key: "headless", value: true },
           {
             key: "chromeExecutablePath",
+            value: "",
+          },
+          {
+            key: "defaultUserDataDirectory",
             value: "",
           },
           {
@@ -60,7 +71,7 @@ describe("Preferences Routes", () => {
       })
     })
 
-    it("should return status 200 and an empty array if no preferences exist", async () => {
+    it("should return status 200 and default preferences if no preferences exist", async () => {
       await modules.dbModule.db.delete(preferencesTable)
 
       const response = await modules.api.inject({
@@ -70,7 +81,7 @@ describe("Preferences Routes", () => {
 
       expect(response.statusCode).toBe(200)
       expect(JSON.parse(response.payload)).toEqual({
-        data: [],
+        data: defaultPreferencesResponse,
       })
     })
   })
@@ -129,7 +140,7 @@ describe("Preferences Routes", () => {
 
       expect(response.statusCode).toBe(200)
       expect(JSON.parse(response.payload)).toEqual({
-        data: [],
+        data: defaultPreferencesResponse,
       })
 
       const preferencesAfter = await modules.dbModule.db

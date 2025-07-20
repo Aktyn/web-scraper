@@ -73,7 +73,9 @@ main()
 
     const openWebInterface = () => {
       try {
-        exec(`open http://localhost:${modules.config.apiPort}`)
+        const port =
+          process.env.NODE_ENV === "development" ? 5173 : modules.config.apiPort
+        exec(`open http://localhost:${port}`)
       } catch (error) {
         modules.logger.error(error)
       }

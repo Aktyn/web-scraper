@@ -18,7 +18,7 @@ export function Preferences() {
   const [openConfirmationDialog, setOpenConfirmationDialog] = useState(false)
 
   return (
-    <div className="size-full flex flex-col overflow-hidden">
+    <div className="size-full *:w-256 max-w-full flex flex-col overflow-hidden">
       <DatabaseActions />
       <Separator className="view-transition" />
       <div

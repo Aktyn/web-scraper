@@ -47,22 +47,22 @@ export function DatabaseActions() {
         onOpenChange={setOpenSeedDatabaseDialog}
         title="Seed example data"
         description={
-          <div className="flex flex-col gap-2">
-            <p>
+          <span className="flex flex-col gap-2">
+            <span className="block">
               Are you sure you want to seed the database with example data?
               <br />
               This will insert example scrapers, routines etc.
               <br />
               This is useful for onboarding new users.
-            </p>
-            <div className="flex flex-row items-start gap-2 text-warning">
+            </span>
+            <span className="flex flex-row items-start gap-2 text-warning">
               <TriangleAlert />
-              <p>
+              <span className="block">
                 Seeding is best to perform on empty database, otherwise it will
                 conflict with existing data.
-              </p>
-            </div>
-          </div>
+              </span>
+            </span>
+          </span>
         }
         confirmText={isSeedingDatabase ? "Seeding..." : "Seed"}
         onConfirm={() => {

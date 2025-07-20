@@ -12,6 +12,12 @@ export async function preferencesRoutes(
   fastify: FastifyInstance,
   { config }: ApiModuleContext,
 ) {
+  const getPreferencesData = () =>
+    Object.entries(config.preferences).map(([key, value]) => ({
+      key: key as keyof typeof config.preferences,
+      value: value as never,
+    }))
+
   fastify.withTypeProvider<ZodTypeProvider>().get(
     "/preferences",
     {
@@ -23,9 +29,8 @@ export async function preferencesRoutes(
       },
     },
     async (_request, reply) => {
-      const preferences = await fastify.db.select().from(preferencesTable)
       return reply.status(200).send({
-        data: preferences,
+        data: getPreferencesData(),
       })
     },
   )
@@ -41,11 +46,10 @@ export async function preferencesRoutes(
     },
     async (_request, reply) => {
       await fastify.db.delete(preferencesTable)
-
       config.resetPreferences()
 
       return reply.status(200).send({
-        data: [],
+        data: getPreferencesData(),
       })
     },
   )
