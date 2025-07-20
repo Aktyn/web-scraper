@@ -38,4 +38,6 @@ npm run build:sea
 
 echo "Creating release for tag v$VERSION"
 
-gh release create v$VERSION ./sea/web-scraper --notes-from-tag --title "Release $VERSION"
+zip -j "./sea/web-scraper-v$VERSION.zip" "./sea/web-scraper"
+zip -r "./sea/web-scraper-v$VERSION.zip" "./sea/web" "./sea/portal-frontend"
+gh release create "v$VERSION" "./sea/web-scraper-v$VERSION.zip" --notes-from-tag --title "Release $VERSION"

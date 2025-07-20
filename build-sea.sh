@@ -70,8 +70,3 @@ echo "Copying portal frontend..."
 rm -rf ./sea/portal-frontend
 cp -r ./node_modules/puppeteer-extra-plugin-portal/dist/frontend ./sea/portal-frontend
 echo "... done copying portal frontend"
-
-echo ""
-echo "Running executable..."
-./sea/web-scraper | pino-pretty --colorize
-echo "... done running executable"
