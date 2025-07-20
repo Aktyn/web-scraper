@@ -27,7 +27,9 @@ import type {
 } from "@web-scraper/common"
 import { apiErrorResponseSchema } from "@web-scraper/common"
 
-const baseUrl = import.meta.env.VITE_API_URL_BASE.replace(/\/$/, "")
+const baseUrl = import.meta.env.DEV
+  ? new URL(import.meta.env.VITE_API_URL_BASE.replace(/\/$/, ""))
+  : new URL(window.location.origin)
 
 type Method = "get" | "post" | "put" | "delete" | "patch"
 
@@ -78,7 +80,7 @@ export const api = {
       : ""
 
     const response = await fetch(
-      `${baseUrl}${parametrizeRoute(route, params)}${queryString}`,
+      `${baseUrl.origin}${parametrizeRoute(route, params)}${queryString}`,
       {
         method: "GET",
         headers: {
@@ -95,7 +97,7 @@ export const api = {
     params?: RouteParameters<RoutePath>,
   ): Promise<Routes[RoutePath]["post"]["response"]> => {
     const response = await fetch(
-      `${baseUrl}${parametrizeRoute(route, params)}`,
+      `${baseUrl.origin}${parametrizeRoute(route, params)}`,
       {
         method: "POST",
         headers: {
@@ -113,7 +115,7 @@ export const api = {
     params?: RouteParameters<RoutePath>,
   ): Promise<Routes[RoutePath]["put"]["response"]> => {
     const response = await fetch(
-      `${baseUrl}${parametrizeRoute(route, params)}`,
+      `${baseUrl.origin}${parametrizeRoute(route, params)}`,
       {
         method: "PUT",
         headers: {
@@ -131,7 +133,7 @@ export const api = {
     params?: RouteParameters<RoutePath>,
   ): Promise<Routes[RoutePath]["patch"]["response"]> => {
     const response = await fetch(
-      `${baseUrl}${parametrizeRoute(route, params)}`,
+      `${baseUrl.origin}${parametrizeRoute(route, params)}`,
       {
         method: "PATCH",
         headers: {
@@ -148,7 +150,7 @@ export const api = {
     params?: RouteParameters<RoutePath>,
   ) => {
     const response = await fetch(
-      `${baseUrl}${parametrizeRoute(route, params)}`,
+      `${baseUrl.origin}${parametrizeRoute(route, params)}`,
       {
         method: "DELETE",
       },

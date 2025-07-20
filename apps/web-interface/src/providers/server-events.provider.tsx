@@ -101,7 +101,7 @@ export function ServerEventsProvider({ children }: PropsWithChildren) {
   )
 
   useEffect(() => {
-    const sseUrl = `${api.baseUrl}/subscribe`
+    const sseUrl = `${api.baseUrl.origin}/subscribe`
     const eventSource = new EventSource(sseUrl)
 
     eventSource.onopen = () => setStatus(ConnectionStatus.Open)
