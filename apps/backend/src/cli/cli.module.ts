@@ -27,9 +27,11 @@ export function getCliModule(context: CliModuleContext) {
 
         preHandleArgs(cliArgs, context)
 
-        executeScraperCLI(cliArgs, context).catch((error) =>
-          context.logger.error(error),
-        )
+        executeScraperCLI(cliArgs, context)
+          .catch((error) => context.logger.error(error))
+          .finally(() => {
+            process.exit(0)
+          })
       },
     )
     .example(

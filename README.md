@@ -143,7 +143,6 @@ This will make it easier to learn how to use Web Scraper.
 
 ![Preferences](images/preferences.webp)
 
-> [!NOTE]  
 > It might be necessary to set **chromeExecutablePath** as a path to the browser executable.\
 > Web Scraper will try to find the browser executable in the system and use it as default value for **chromeExecutablePath** but it might not work in some special cases (e.g. when browser is installed in a non-standard location).\
 Same goes for **defaultUserDataDirectory** which is where browser stores its data like cookies, local storage, etc.
@@ -201,7 +200,7 @@ In this example, the scraper only has access to rows where the cryptocurrency na
 #### Setup instructions
 
 This is the most crucial and most creative part of the scraper configuration.\
-Seed example scrapers to see how instructions are structured.\
+Seed example scrapers to see how instructions are structured.
 
 Properly configuring the entire scraper flow is rarely done in one go.\
 Rather, it is a trial-and-error process in which you constantly test and adjust the scraper flow until it works as expected.
@@ -216,7 +215,7 @@ It is recommended that you start with the **Navigate** action so that the scrape
 Many instructions performs an action on a specific element, such as clicking a button, filling in an input field, or reading the text content of an element.\
 To point to the element, you configure selector in the instructions form.\
 Most selector types are self-explanatory, but there is an advanced **CSS Query** selector.\
-It require a syntax of which you u can read here: [CSS Selectors](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_selectors)\
+It requires a syntax that you can read about here: [CSS Selectors](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_selectors)\
 You can copy selector of any element on the page by right-clicking on it in the Element Inspector (F12) and selecting **Copy** > **Copy selector**.
 
 <details>
@@ -249,7 +248,7 @@ This feature needs to be improved due to risk of scraper getting stuck in an inf
 
 Input fields in the instructions form support special strings that can be used to dynamically set the value of the field.\
 Special string has the following syntax: `{{type,arg1,arg2,...}}` where `type` is the type of the special string and `args` are the arguments for the special string.\
-The following special strings are currently supported:\
+The following special strings are currently supported:
 
 - **DataKey** - used to get value from a data store.\
 It receives a single argument that is a data key in the format of **dataSourceName.columnName** where **dataSourceName** is source alias.\
@@ -298,7 +297,7 @@ In each iteration, the scraper will work with a single row, meaning:
 If no iterator is configured, then:
 
 - The scraper will execute exactly once
-- The data will be fetched[^1] from the last row of the data source.
+- The data will be fetched[^1] from the last row of the data source
 - **Save data** and **Save data batch** instructions will insert new rows into the data source
 - **Delete data** instruction does not work without an iterator
 
