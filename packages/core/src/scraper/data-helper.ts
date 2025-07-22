@@ -28,12 +28,36 @@ export interface DataBridge {
 export async function getScraperValue(
   context: ScraperExecutionContext,
   value: ScraperValue,
-) {
+  stringifyRegex?: false,
+): Promise<string | number | RegExp | null>
+
+export async function getScraperValue(
+  context: ScraperExecutionContext,
+  value: ScraperValue,
+  stringifyRegex: true,
+): Promise<string | number | null>
+
+export async function getScraperValue(
+  context: ScraperExecutionContext,
+  value: ScraperValue,
+  stringifyRegex?: boolean,
+): Promise<string | number | RegExp | null> {
   switch (value.type) {
     case ScraperValueType.Literal:
-      return await replaceSpecialStrings(value.value, (key) =>
-        context.dataBridge.get(key),
-      )
+      if (typeof value.value === "string") {
+        return await replaceSpecialStrings(value.value, (key) =>
+          context.dataBridge.get(key),
+        )
+      } else if (stringifyRegex) {
+        return String(value.value)
+      } else {
+        const sourceRaw = await replaceSpecialStrings(
+          value.value.source,
+          (key) => context.dataBridge.get(key),
+        )
+        const regex = new RegExp(sourceRaw, value.value.flags)
+        return regex
+      }
 
     case ScraperValueType.Null:
       return null

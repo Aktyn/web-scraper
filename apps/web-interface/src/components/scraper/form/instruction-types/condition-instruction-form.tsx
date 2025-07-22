@@ -1,4 +1,3 @@
-import { FormInput } from "@/components/common/form/form-input"
 import { FormSelect } from "@/components/common/form/form-select"
 import {
   Accordion,
@@ -6,6 +5,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/shadcn/accordion"
+import { conditionTypeLabels } from "@/lib/dictionaries"
 import { ScraperConditionType, type UpsertScraper } from "@web-scraper/common"
 import { useWatch, type Control } from "react-hook-form"
 import { PageIndexField } from "../common/page-index-field"
@@ -13,11 +13,6 @@ import { mapToSelectOptions } from "../helpers"
 import { ScraperInstructionsForm } from "../scraper-instructions-form"
 import { ScraperSelectorsForm } from "./scraper-selectors-form"
 import { ScraperValueForm } from "./scraper-value-form"
-
-const conditionTypeLabels: { [key in ScraperConditionType]: string } = {
-  [ScraperConditionType.IsVisible]: "Element is visible",
-  [ScraperConditionType.TextEquals]: "Text equals",
-}
 
 const conditionTypeOptions = mapToSelectOptions(conditionTypeLabels)
 
@@ -46,7 +41,7 @@ export function ConditionInstructionForm({
             placeholder="Select condition type"
             options={conditionTypeOptions}
           />
-          {conditionType === ScraperConditionType.IsVisible && (
+          {conditionType === ScraperConditionType.IsElementVisible && (
             <PageIndexField
               control={control}
               fieldName={`${fieldName}.if.pageIndex`}
@@ -109,7 +104,7 @@ function ConditionFormByType({
   const conditionType = useWatch({ control, name: `${fieldName}.if.type` })
 
   switch (conditionType) {
-    case ScraperConditionType.IsVisible:
+    case ScraperConditionType.IsElementVisible:
       return (
         <div>
           <h6 className="font-medium mb-2">Element Selector</h6>
@@ -120,24 +115,23 @@ function ConditionFormByType({
         </div>
       )
 
-    case ScraperConditionType.TextEquals:
+    case ScraperConditionType.AreValuesEqual:
       return (
         <div className="space-y-4">
           <div>
-            <h6 className="font-medium mb-2">Value Selector</h6>
+            <h6 className="font-medium mb-2">First value selector</h6>
             <ScraperValueForm
               control={control}
-              fieldName={`${fieldName}.if.valueSelector`}
+              fieldName={`${fieldName}.if.firstValueSelector`}
             />
           </div>
-
-          <FormInput
-            control={control}
-            name={`${fieldName}.if.text`}
-            label="Expected Text"
-            placeholder="Expected text value or /regex/"
-            description="Text to compare against. Use /pattern/flags for regex."
-          />
+          <div>
+            <h6 className="font-medium mb-2">Second value selector</h6>
+            <ScraperValueForm
+              control={control}
+              fieldName={`${fieldName}.if.secondValueSelector`}
+            />
+          </div>
         </div>
       )
   }

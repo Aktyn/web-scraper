@@ -192,7 +192,7 @@ const scrapCryptoPricesInstructions: ScraperInstructions = [
   {
     type: ScraperInstructionType.Condition,
     if: {
-      type: ScraperConditionType.IsVisible,
+      type: ScraperConditionType.IsElementVisible,
       selectors: [
         { type: ElementSelectorType.Query, query: "p.coin-item-name" },
         {
@@ -269,7 +269,7 @@ const captchaTesterInstructions: ScraperInstructions = [
   {
     type: ScraperInstructionType.Condition,
     if: {
-      type: ScraperConditionType.IsVisible,
+      type: ScraperConditionType.IsElementVisible,
       selectors: [
         {
           type: ElementSelectorType.TextContent,

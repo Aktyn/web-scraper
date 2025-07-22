@@ -60,9 +60,12 @@ export function PageActionInstruction({
       </div>
 
       {pageUrl && (
-        <LabeledValue label="URL:" className="text-sm">
+        <LabeledValue
+          label="URL:"
+          className="text-sm *:[div]:contain-inline-size *:[div]:truncate"
+        >
           {typeof pageUrl === "string" ? (
-            <ExternalLink url={pageUrl} />
+            <ExternalLink url={pageUrl} className="truncate" />
           ) : (
             <div className="flex flex-row flex-wrap items-center gap-1 contain-inline-size">
               <ExternalLink url={pageUrl.from} />

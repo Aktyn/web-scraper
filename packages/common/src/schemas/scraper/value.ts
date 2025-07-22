@@ -1,6 +1,6 @@
 import z from "zod"
 import { scraperElementSelectorsSchema } from "./selectors"
-import { pageIndexSchema } from "./common"
+import { pageIndexSchema, serializableRegexSchema } from "./common"
 
 /** DataSourceName.ColumnName where data source name refers to table or view name or its alias */
 export type ScraperDataKey = `${string}.${string}`
@@ -33,7 +33,7 @@ export enum ScraperValueType {
 export const scraperValueSchema = z.discriminatedUnion("type", [
   z.object({
     type: z.literal(ScraperValueType.Literal),
-    value: z.string(),
+    value: z.union([z.string(), serializableRegexSchema]),
   }),
 
   z.object({

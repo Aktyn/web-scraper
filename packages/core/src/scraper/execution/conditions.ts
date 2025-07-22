@@ -1,5 +1,4 @@
 import {
-  replaceSpecialStrings,
   type ScraperCondition,
   ScraperConditionType,
 } from "@web-scraper/common"
@@ -13,7 +12,7 @@ export async function checkCondition(
 ) {
   try {
     switch (condition.type) {
-      case ScraperConditionType.IsVisible: {
+      case ScraperConditionType.IsElementVisible: {
         const handle = await getElementHandle(
           context,
           condition.selectors,
@@ -21,22 +20,26 @@ export async function checkCondition(
         )
         return !!(await handle?.isVisible())
       }
-      case ScraperConditionType.TextEquals: {
-        const value = await getScraperValue(context, condition.valueSelector)
-        if (value === null || value === undefined) {
-          return false
-        }
-        if (typeof condition.text === "string") {
-          return (
-            value ===
-            (await replaceSpecialStrings(condition.text, (key) =>
-              context.dataBridge.get(key),
-            ))
-          )
-        }
-        return new RegExp(condition.text.source, condition.text.flags).test(
-          value.toString(),
+      case ScraperConditionType.AreValuesEqual: {
+        const firstValue = await getScraperValue(
+          context,
+          condition.firstValueSelector,
         )
+        const secondValue = await getScraperValue(
+          context,
+          condition.secondValueSelector,
+        )
+
+        if (firstValue instanceof RegExp && secondValue instanceof RegExp) {
+          return String(firstValue) === String(secondValue)
+        } else if (firstValue instanceof RegExp) {
+          return firstValue.test(String(secondValue))
+        } else if (secondValue instanceof RegExp) {
+          return secondValue.test(String(firstValue))
+        } else {
+          // eslint-disable-next-line eqeqeq
+          return firstValue == secondValue
+        }
       }
     }
   } catch (error) {

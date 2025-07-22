@@ -11,6 +11,7 @@ import { scraperValueTypeLabels } from "@/lib/dictionaries"
 import { PageIndexField } from "../common/page-index-field"
 import { cn } from "@/lib/utils"
 import { palette } from "@/lib/palette"
+import { FormRegex } from "@/components/common/form/form-regex"
 
 const valueTypeOptions = mapToSelectOptions(scraperValueTypeLabels)
 
@@ -18,7 +19,8 @@ export type ScraperValueFieldName =
   | `instructions.${number}.value`
   | `${PageActionFieldName}.value`
   | `${PageActionFieldName}.evaluator.arguments.${number}`
-  | `${ConditionInstructionFieldName}.if.valueSelector`
+  | `${ConditionInstructionFieldName}.if.firstValueSelector`
+  | `${ConditionInstructionFieldName}.if.secondValueSelector`
 
 interface ScraperValueFormProps {
   control: Control<UpsertScraper>
@@ -91,12 +93,12 @@ function ValueFormByType({ control, fieldName }: ScraperValueFormProps) {
 
     case ScraperValueType.Literal:
       return (
-        <FormInput
+        <FormRegex
           control={control}
           name={`${fieldName}.value`}
-          label="Literal Value"
+          label="Literal value"
           placeholder="Enter literal value"
-          description="A static text value. It can be a string, number, boolean, or empty for null."
+          description="A static text value. It can be a string, number, boolean, or empty for null. Use /pattern/flags for regex."
         />
       )
 

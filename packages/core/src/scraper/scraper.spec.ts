@@ -142,7 +142,7 @@ describe(
         {
           type: ScraperInstructionType.Condition,
           if: {
-            type: ScraperConditionType.IsVisible,
+            type: ScraperConditionType.IsElementVisible,
             selectors: acceptCookiesButtonSelector,
           },
           then: [
@@ -168,7 +168,7 @@ describe(
         {
           type: ScraperInstructionType.Condition,
           if: {
-            type: ScraperConditionType.IsVisible,
+            type: ScraperConditionType.IsElementVisible,
             selectors: loginButtonSelector,
           },
           then: [
@@ -207,7 +207,7 @@ describe(
           instructionInfo: {
             type: ScraperInstructionType.Condition,
             condition: {
-              type: ScraperConditionType.IsVisible,
+              type: ScraperConditionType.IsElementVisible,
               selectors: [
                 {
                   type: ElementSelectorType.TextContent,
@@ -263,7 +263,7 @@ describe(
           instructionInfo: {
             type: ScraperInstructionType.Condition,
             condition: {
-              type: ScraperConditionType.IsVisible,
+              type: ScraperConditionType.IsElementVisible,
               selectors: [
                 {
                   type: ElementSelectorType.TextContent,
@@ -334,7 +334,7 @@ describe(
                   },
                   { type: ElementSelectorType.TagName, tagName: "button" },
                 ],
-                type: ScraperConditionType.IsVisible,
+                type: ScraperConditionType.IsElementVisible,
               },
               isMet: false,
               type: ScraperInstructionType.Condition,
@@ -371,7 +371,7 @@ describe(
                   },
                   { type: ElementSelectorType.TagName, tagName: "button" },
                 ],
-                type: ScraperConditionType.IsVisible,
+                type: ScraperConditionType.IsElementVisible,
               },
               isMet: true,
               type: ScraperInstructionType.Condition,
@@ -643,12 +643,15 @@ describe(
         {
           type: ScraperInstructionType.Condition,
           if: {
-            type: ScraperConditionType.TextEquals,
-            valueSelector: {
+            type: ScraperConditionType.AreValuesEqual,
+            firstValueSelector: {
               type: ScraperValueType.ExternalData,
               dataKey: "button.next",
             },
-            text: "first",
+            secondValueSelector: {
+              type: ScraperValueType.Literal,
+              value: "first",
+            },
           },
           then: [
             {
@@ -705,12 +708,15 @@ describe(
           instructionInfo: {
             type: ScraperInstructionType.Condition,
             condition: {
-              type: ScraperConditionType.TextEquals,
-              valueSelector: {
+              type: ScraperConditionType.AreValuesEqual,
+              firstValueSelector: {
                 type: ScraperValueType.ExternalData,
                 dataKey: "button.next",
               },
-              text: "first",
+              secondValueSelector: {
+                type: ScraperValueType.Literal,
+                value: "first",
+              },
             },
             isMet: false,
           },

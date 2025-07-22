@@ -141,7 +141,7 @@ function InstructionField({
     instruction?.type === ScraperInstructionType.PageAction
       ? palette[(instruction.pageIndex ?? 0) % palette.length]
       : instruction?.type === ScraperInstructionType.Condition &&
-          instruction.if?.type === ScraperConditionType.IsVisible
+          instruction.if?.type === ScraperConditionType.IsElementVisible
         ? palette[(instruction.if.pageIndex ?? 0) % palette.length]
         : palette[0]
 

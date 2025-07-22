@@ -243,7 +243,11 @@ async function executeInstructionByType(
           },
           context,
         )
-        const scraperValue = await getScraperValue(context, instruction.value)
+        const scraperValue = await getScraperValue(
+          context,
+          instruction.value,
+          true,
+        )
         await context.dataBridge.set(instruction.dataKey, scraperValue)
         context.executionInfo.push(
           {
@@ -277,7 +281,7 @@ async function executeInstructionByType(
         const items = await Promise.all(
           instruction.items.map(async (item) => ({
             columnName: item.columnName,
-            value: await getScraperValue(context, item.value),
+            value: await getScraperValue(context, item.value, true),
           })),
         )
 

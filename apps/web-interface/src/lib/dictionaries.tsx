@@ -4,6 +4,7 @@ import {
   PageActionType,
   RoutineStatus,
   SchedulerType,
+  ScraperConditionType,
   ScraperInstructionsExecutionInfoType,
   ScraperInstructionType,
   ScraperValueType,
@@ -80,6 +81,11 @@ export const pageActionTypeLabels: { [key in PageActionType]: ReactNode } = {
       </span>
     </div>
   ),
+}
+
+export const conditionTypeLabels: { [key in ScraperConditionType]: string } = {
+  [ScraperConditionType.IsElementVisible]: "Element is visible",
+  [ScraperConditionType.AreValuesEqual]: "Are values equal",
 }
 
 export const selectorTypeLabels: { [key in ElementSelectorType]: string } = {

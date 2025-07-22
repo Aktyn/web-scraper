@@ -78,7 +78,7 @@ describe("scraperInstructionsSchema", () => {
       {
         type: ScraperInstructionType.Condition,
         if: {
-          type: ScraperConditionType.IsVisible,
+          type: ScraperConditionType.IsElementVisible,
           selectors: [{ type: ElementSelectorType.TagName, tagName: "div" }],
         },
         then: [

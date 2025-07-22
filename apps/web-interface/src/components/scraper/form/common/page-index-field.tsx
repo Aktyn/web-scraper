@@ -15,7 +15,8 @@ type PageIndexFieldProps = {
     | `${PageActionFieldName}.value.pageIndex`
     | `${PageActionFieldName}.evaluator.arguments.${number}.pageIndex`
     | `${ConditionInstructionFieldName}.if.pageIndex`
-    | `${ConditionInstructionFieldName}.if.valueSelector.pageIndex`
+    | `${ConditionInstructionFieldName}.if.firstValueSelector.pageIndex`
+    | `${ConditionInstructionFieldName}.if.secondValueSelector.pageIndex`
 }
 
 export function PageIndexField(props: PageIndexFieldProps) {

@@ -33,7 +33,7 @@ export function ConditionInstruction({
   ...divProps
 }: ConditionInstructionProps) {
   const pageIndex =
-    condition.type === ScraperConditionType.IsVisible
+    condition.type === ScraperConditionType.IsElementVisible
       ? condition.pageIndex
       : undefined
   const tabColor = palette[(pageIndex ?? 0) % palette.length]
@@ -120,41 +120,32 @@ function pluralize(count: number, word: string) {
 }
 
 const iconsMap: { [key in ScraperConditionType]: IconName } = {
-  [ScraperConditionType.IsVisible]: "eye",
-  [ScraperConditionType.TextEquals]: "square-equal",
+  [ScraperConditionType.IsElementVisible]: "eye",
+  [ScraperConditionType.AreValuesEqual]: "square-equal",
 }
 
 function ConditionDetails({ condition }: { condition: ScraperCondition }) {
   switch (condition.type) {
-    case ScraperConditionType.IsVisible:
+    case ScraperConditionType.IsElementVisible:
       return (
         <LabeledValue label="Check if element is visible:">
           <ScraperSelector selectors={condition.selectors} />
         </LabeledValue>
       )
 
-    case ScraperConditionType.TextEquals: {
-      const textValue =
-        typeof condition.text === "string"
-          ? condition.text
-          : `/${condition.text.source}/${condition.text.flags}`
-
+    case ScraperConditionType.AreValuesEqual: {
       return (
-        <div className="space-y-3">
-          <div className="space-y-2">
-            <span className="text-sm text-muted-foreground">
-              Value to check:
-            </span>
-            <ScraperValue value={condition.valueSelector} />
-          </div>
-          <div className="flex items-center gap-2">
-            <span className="text-sm text-muted-foreground">
-              Expected text:
-            </span>
-            <span className="font-mono text-sm bg-muted px-2 py-1 rounded break-words">
-              {textValue}
-            </span>
-          </div>
+        <div className="flex flex-row flex-wrap gap-3">
+          {[condition.firstValueSelector, condition.secondValueSelector].map(
+            (selector, index) => (
+              <div key={index} className="space-y-2">
+                <span className="text-sm text-muted-foreground">
+                  {index === 0 ? "First" : "Second"} value:
+                </span>
+                <ScraperValue value={selector} />
+              </div>
+            ),
+          )}
         </div>
       )
     }

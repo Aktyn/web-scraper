@@ -64,12 +64,17 @@ const iconsMap: { [key in ScraperValueType]: IconName } = {
 
 function ValueDetails({ value }: { value: ScraperValue }) {
   switch (value.type) {
-    case ScraperValueType.Literal:
+    case ScraperValueType.Literal: {
+      const stringValue =
+        typeof value.value === "string" || !value.value
+          ? value.value
+          : `/${value.value.source}/${value.value.flags}`
       return (
         <LabeledValue label="Literal value:">
-          <pre className="break-words whitespace-normal">{value.value}</pre>
+          <pre className="break-words whitespace-normal">{stringValue}</pre>
         </LabeledValue>
       )
+    }
 
     case ScraperValueType.Null:
     case ScraperValueType.CurrentTimestamp:

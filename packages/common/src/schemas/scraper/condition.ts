@@ -1,25 +1,23 @@
 import { z } from "zod"
-import { pageIndexSchema, serializableRegexSchema } from "./common"
+import { pageIndexSchema } from "./common"
 import { scraperElementSelectorsSchema } from "./selectors"
 import { scraperValueSchema } from "./value"
 
 export enum ScraperConditionType {
-  IsVisible = "isVisible",
-  TextEquals = "textEquals",
-
-  //TODO: add data source condition
+  IsElementVisible = "isElementVisible",
+  AreValuesEqual = "areValuesEqual",
 }
 
 export const scraperConditionSchema = z.discriminatedUnion("type", [
   z.object({
-    type: z.literal(ScraperConditionType.IsVisible),
+    type: z.literal(ScraperConditionType.IsElementVisible),
     pageIndex: pageIndexSchema,
     selectors: scraperElementSelectorsSchema,
   }),
   z.object({
-    type: z.literal(ScraperConditionType.TextEquals),
-    valueSelector: scraperValueSchema,
-    text: z.union([z.string(), serializableRegexSchema]),
+    type: z.literal(ScraperConditionType.AreValuesEqual),
+    firstValueSelector: scraperValueSchema,
+    secondValueSelector: scraperValueSchema,
   }),
 ])
 
