@@ -3,6 +3,7 @@ import fs from "fs"
 import os from "os"
 import path from "path"
 import { IS_TEST_ENV } from "./test/is-test-env"
+import sea from "node:sea"
 
 function findInPath(executable: string) {
   try {
@@ -144,4 +145,22 @@ export function getUserDataDirectory() {
   }
 
   return null
+}
+
+export function cwd() {
+  if (IS_TEST_ENV) {
+    return path.join(__dirname, "..")
+  }
+
+  if (sea.isSea()) {
+    return __dirname
+  }
+
+  if ("__dirname" in globalThis) {
+    return path.join(globalThis["__dirname"], "..")
+  } else {
+    globalThis["__dirname"] = process.cwd()
+  }
+
+  return path.resolve(process.cwd())
 }

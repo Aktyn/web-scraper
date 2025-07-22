@@ -11,7 +11,7 @@ import { exec } from "node:child_process"
 import { startMonitoringRoutines } from "./routines-monitor"
 import sea from "node:sea"
 import path from "node:path"
-import { cwd } from "./cwd"
+import { cwd } from "./utils"
 import { getCliModule } from "./cli/cli.module"
 
 async function main() {

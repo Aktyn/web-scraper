@@ -1,7 +1,7 @@
 import pino from "pino"
 import fs from "fs"
 import path from "path"
-import { cwd } from "./cwd"
+import { cwd } from "./utils"
 
 export function getLogger() {
   const logsDirectory = path.join(cwd(), "logs")
