@@ -51,6 +51,7 @@ vi.mock("@web-scraper/core", async (importActual) => {
         super({
           id: 1,
           name: "test",
+          dumpError: () => void 0,
           ...options,
           logger: voidLogger,
           noInit: true,
@@ -319,8 +320,8 @@ describe("Scrapers Routes", () => {
     it("should return status 200 and a list of currently executing scrapers", async () => {
       const { Scraper } = await import("@web-scraper/core")
       const mockScraperInstances = [
-        new Scraper({ id: 1, name: "Test Scraper 1" }),
-        new Scraper({ id: 2, name: "Test Scraper 2" }),
+        new Scraper({ id: 1, name: "Test Scraper 1", dumpError: () => void 0 }),
+        new Scraper({ id: 2, name: "Test Scraper 2", dumpError: () => void 0 }),
       ]
       vi.spyOn(Scraper, "getInstances").mockReturnValue(mockScraperInstances)
 
@@ -343,9 +344,9 @@ describe("Scrapers Routes", () => {
     it("should handle pagination correctly", async () => {
       const { Scraper } = await import("@web-scraper/core")
       const mockScraperInstances = [
-        new Scraper({ id: 1, name: "Scraper 1" }),
-        new Scraper({ id: 2, name: "Scraper 2" }),
-        new Scraper({ id: 3, name: "Scraper 3" }),
+        new Scraper({ id: 1, name: "Scraper 1", dumpError: () => void 0 }),
+        new Scraper({ id: 2, name: "Scraper 2", dumpError: () => void 0 }),
+        new Scraper({ id: 3, name: "Scraper 3", dumpError: () => void 0 }),
       ]
       vi.spyOn(Scraper, "getInstances").mockReturnValue(mockScraperInstances)
 
