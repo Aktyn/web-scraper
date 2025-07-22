@@ -9,6 +9,9 @@ The initial idea was to develop an advanced testing tool for web projects.
 
 - [Web Scraper](#web-scraper)
   - [Table of Contents](#table-of-contents)
+  - [Examples](#examples)
+    - [Example recording of a scraper execution](#example-recording-of-a-scraper-execution)
+    - [Example recording of a scraper creation process](#example-recording-of-a-scraper-creation-process)
   - [Requirements](#requirements)
   - [System support](#system-support)
   - [Features and use cases](#features-and-use-cases)
@@ -37,6 +40,18 @@ The initial idea was to develop an advanced testing tool for web projects.
       - [CLI execution](#cli-execution)
   - [Development setup](#development-setup)
   - [Future plans](#future-plans)
+  
+## Examples
+
+### Example recording of a scraper execution
+
+<video width="640" height="256" controls>
+  <source src="recordings/scraper-execution.mp4" type="video/mp4">
+</video>
+
+### Example recording of a scraper creation process
+
+Coming soon!
 
 ## Requirements
 
