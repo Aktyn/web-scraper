@@ -20,6 +20,13 @@ export type ScraperPageContext = {
   pagePortalUrl: string | undefined
 }
 
+export type PageSnapshot = {
+  pageIndex: number
+  screenshotBase64: string
+  url: string
+  html: string
+}
+
 type ExecutionPagesOptions = {
   proxy?: string
   portalUrl?: string
@@ -143,5 +150,25 @@ export class ExecutionPages {
     }
 
     this.pages.clear()
+  }
+
+  getPageSnapshots(): Promise<PageSnapshot[]> {
+    return Promise.all(
+      Array.from(this.pages.entries()).map(async ([pageIndex, pageContext]) => {
+        const screenshotBase64 = await pageContext.page.screenshot({
+          encoding: "base64",
+          type: "jpeg",
+          quality: 100,
+          fullPage: true,
+        })
+
+        return {
+          pageIndex,
+          screenshotBase64,
+          url: pageContext.page.url(),
+          html: await pageContext.page.content(),
+        }
+      }),
+    )
   }
 }

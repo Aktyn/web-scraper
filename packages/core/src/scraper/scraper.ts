@@ -42,12 +42,13 @@ import puppeteer, {
 import { AutonomousAgent } from "./ai/autonomous-agent"
 import { SmartLocalization } from "./ai/smart-localization"
 import type { DataBridge } from "./data-helper"
-import { ExecutionPages } from "./execution/execution-pages"
+import { type PageSnapshot, ExecutionPages } from "./execution/execution-pages"
 import { executeInstructions } from "./execution/instructions"
 import { ScraperExecutionInfo } from "./execution/scraper-execution-info"
 
 type ScraperOptions = Pick<ScraperType, "id" | "name"> & {
   logger?: SimpleLogger
+  dumpError: (error: unknown, pageSnapshots: PageSnapshot[]) => void
 
   /** Used for testing purposes */
   noInit?: boolean
@@ -110,6 +111,7 @@ export class Scraper<
   }
 
   private readonly logger: SimpleLogger
+  private readonly dumpError: ScraperOptions["dumpError"]
   private readonly defaultViewport: Viewport
   private readonly localization: SmartLocalization
   private readonly agent: AutonomousAgent
@@ -128,12 +130,15 @@ export class Scraper<
     super()
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { id, name, logger, proxy, viewport, ...browserOptions } = options
+    const { id, name, logger, dumpError, proxy, viewport, ...browserOptions } =
+      options
 
     this.logger = logger ?? {
       ...console,
       fatal: console.error,
     }
+
+    this.dumpError = dumpError ?? (() => void 0)
 
     this.defaultViewport = {
       width: viewport?.width ?? defaultPreferences.viewportWidth.value,
@@ -487,6 +492,8 @@ export class Scraper<
           duration: Date.now() - startTime,
         },
       })
+
+      this.dumpError(error, await pages.getPageSnapshots())
     }
 
     executionInfo.flush()
@@ -498,21 +505,7 @@ export class Scraper<
     )
     this.state = ScraperState.Idle
 
-    // if (!options?.leavePageOpen) {
     await pages.closeAll()
-    //   await runUnsafe(async () => {
-    //     if (!this.browser) {
-    //       return
-    //     }
-
-    //     const pages = await this.browser.pages()
-    //     if (pages.length > 1) {
-    //       await page.close()
-    //     } else {
-    //       await page.goto(ExecutionPages.emptyPageUrl)
-    //     }
-    //   }, this.logger.error)
-    // }
 
     this.activeExecutionInfo = null
     this._currentlyExecutingInstruction = null

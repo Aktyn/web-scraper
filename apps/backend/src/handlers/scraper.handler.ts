@@ -10,7 +10,7 @@ import {
   type ScraperType,
   type SimpleLogger,
 } from "@web-scraper/common"
-import { Scraper } from "@web-scraper/core"
+import { type PageSnapshot, Scraper } from "@web-scraper/core"
 import type { InferSelectModel } from "drizzle-orm"
 import path from "node:path"
 import type { Logger } from "pino"
@@ -22,6 +22,8 @@ import {
   scraperExecutionsTable,
 } from "../db/schema/scraper-executions.schema"
 import type { EventsModule } from "../events/events.module"
+import { LOGS_DIRECTORY } from "../logger"
+import fs from "node:fs"
 
 const executionQueue: Array<Scraper<{ iteration: number }>> = []
 
@@ -53,6 +55,7 @@ export async function executeNewScraper(
     id,
     name,
     logger,
+    dumpError,
     executablePath:
       context.config.preferences.chromeExecutablePath ||
       "/usr/bin/chromium-browser",
@@ -258,4 +261,34 @@ function setupScraperEvents(
         }),
       )
   })
+}
+
+function dumpError(error: unknown, pageSnapshots: PageSnapshot[]) {
+  const secondsTimestamp = new Date()
+    .toISOString()
+    .replace(/(.*)T(.*)\.\d+Z/, "$1-$2")
+    .replace(/[-:]/g, "")
+  const errorDumpDirectory = path.join(
+    LOGS_DIRECTORY,
+    `error-${secondsTimestamp}`,
+  )
+
+  fs.mkdirSync(errorDumpDirectory, { recursive: true })
+
+  fs.writeFileSync(
+    path.join(errorDumpDirectory, "error.txt"),
+    error instanceof Error ? error.message : String(error),
+  )
+
+  for (const pageSnapshot of pageSnapshots) {
+    fs.writeFileSync(
+      path.join(errorDumpDirectory, `page-${pageSnapshot.pageIndex}.html`),
+      pageSnapshot.html,
+    )
+
+    fs.writeFileSync(
+      path.join(errorDumpDirectory, `page-${pageSnapshot.pageIndex}.jpg`),
+      Buffer.from(pageSnapshot.screenshotBase64, "base64"),
+    )
+  }
 }

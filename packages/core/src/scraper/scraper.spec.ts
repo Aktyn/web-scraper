@@ -83,6 +83,7 @@ describe(
         name: "test",
         headless: true,
         logger: voidLogger,
+        dumpError: () => void 0,
       })
     })
 

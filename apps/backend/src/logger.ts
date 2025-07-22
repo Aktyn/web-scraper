@@ -3,14 +3,14 @@ import fs from "fs"
 import path from "path"
 import { cwd } from "./utils"
 
-export function getLogger() {
-  const logsDirectory = path.join(cwd(), "logs")
-  if (!fs.existsSync(logsDirectory)) {
-    fs.mkdirSync(logsDirectory, { recursive: true })
-  }
+export const LOGS_DIRECTORY = path.join(cwd(), "logs")
+if (!fs.existsSync(LOGS_DIRECTORY)) {
+  fs.mkdirSync(LOGS_DIRECTORY, { recursive: true })
+}
 
+export function getLogger() {
   const today = new Date().toISOString().split("T")[0]
-  const logFile = path.join(logsDirectory, `${today}.log`)
+  const logFile = path.join(LOGS_DIRECTORY, `${today}.log`)
 
   const fileStream = fs.createWriteStream(logFile, { flags: "a" })
 
