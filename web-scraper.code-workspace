@@ -42,6 +42,7 @@
 			"libsql",
 			"LOCALAPPDATA",
 			"Monero",
+			"msvc",
 			"multistream",
 			"networkidle",
 			"notnull",

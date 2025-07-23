@@ -366,14 +366,13 @@ See scripts in the [package.json](./package.json) for more details.
 
 ## Future plans
 
-- [ ] Windows and macOS builds
-- [ ] Scrapers marketplace where users can share and download ready to use scrapers
-- [ ] Common behaviors like automatically accepting cookies, privacy policy, etc
-- [ ] Variables allowing to use scraped data as input in following instructions\
+- Scrapers marketplace where users can share and download ready to use scrapers
+- Common behaviors like automatically accepting cookies, privacy policy, etc
+- Variables allowing to use scraped data as input in following instructions\
 Currently, to achieve this, users have to use some "buffer" Data Store for temporarily storing data
-- [ ] More suitable LLM for web scraping and AI agent improvements
-- [ ] More condition types
-- [ ] More developed "special strings" feature
+- More suitable LLM for web scraping and AI agent improvements
+- More condition types
+- More developed "special strings" feature
 
 [^1]: ***fetching data*** refers to all the ways a scraper can read data from a data source, such as the **External data** type of **Value Selector** in the scraper instructions or the **DataKey** type of special string.
 [^2]: Web Scraper can display system notifications and run custom commands.

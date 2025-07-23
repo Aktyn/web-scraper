@@ -40,6 +40,12 @@ echo "Creating release for tag v$VERSION"
 
 (
   cd sea || exit
-  zip -r "web-scraper-linux-x64-v$VERSION.zip" web-scraper web portal-frontend
+  zip -r "web-scraper-linux-x64-v$VERSION.zip" web-scraper-linux web portal-frontend
+  zip -r "web-scraper-windows-x64-v$VERSION.zip" web-scraper-windows.exe web portal-frontend
+  zip -r "web-scraper-darwin-x64-v$VERSION.zip" web-scraper-darwin.app web portal-frontend
 )
-gh release create "v$VERSION" "sea/web-scraper-linux-x64-v$VERSION.zip" --notes-from-tag --title "Release $VERSION"
+gh release create "v$VERSION" \
+  "sea/web-scraper-linux-x64-v$VERSION.zip" \
+  "sea/web-scraper-windows-x64-v$VERSION.zip" \
+  "sea/web-scraper-darwin-x64-v$VERSION.zip" \
+  --notes-from-tag --title "Release $VERSION"

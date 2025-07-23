@@ -2,6 +2,33 @@
 
 # https://nodejs.org/api/single-executable-applications.html
 
+# Build for a specific target
+build_target() {
+  TARGET=$1
+  CONFIG_FILE=$2
+  POSTJECT_ARGS=$3
+
+  EXTENSION=""
+  if [ "$TARGET" == "windows" ]; then
+    EXTENSION=".exe"
+  fi
+  if [ "$TARGET" == "darwin" ]; then
+    EXTENSION=".app"
+  fi
+
+  echo ""
+  echo "Building SEA bundle for $TARGET..."
+  node --experimental-sea-config $CONFIG_FILE
+  echo "... done building SEA bundle for $TARGET"
+
+  echo ""
+  echo "Preparing executable for $TARGET..."
+  cp $(command -v node) sea/web-scraper-$TARGET$EXTENSION
+  npx postject sea/web-scraper-$TARGET$EXTENSION NODE_SEA_BLOB sea-prep.blob --sentinel-fuse NODE_SEA_FUSE_fce680ab2cc467b6e072b8b5df1996b2 $POSTJECT_ARGS
+  rm -f sea-prep.blob
+  echo "... done preparing executable for $TARGET"
+}
+
 echo "Copying bundled backend code..."
 cp -r ./apps/backend/dist/standalone.js ./apps/backend/dist/standalone-copy.js
 echo "... done copying bundled backend code"
@@ -17,14 +44,14 @@ if (sea.isSea()) {\
   const libsqlNodePath = path.join(__dirname, "libsql.node")\
   fs.writeFileSync(libsqlNodePath, Buffer.from(libsqlNode))\
 \
-  const nodeFileDialogAppImage = sea.getAsset("node-file-dialog-x86_64.AppImage")\
-  const nodeFileDialogAppImagePath = path.join(__dirname, "node-file-dialog-x86_64.AppImage")\
-  fs.writeFileSync(nodeFileDialogAppImagePath, Buffer.from(nodeFileDialogAppImage))\
-  exec("chmod +x " + nodeFileDialogAppImagePath)\
+  const nodeFileDialogAsset = sea.getAsset("node-file-dialog")\
+  const nodeFileDialogAssetPath = path.join(__dirname, "node-file-dialog")\
+  fs.writeFileSync(nodeFileDialogAssetPath, Buffer.from(nodeFileDialogAsset))\
+  exec("chmod +x " + nodeFileDialogAssetPath)\
 }\
 ' ./apps/backend/dist/standalone-copy.js
 
-sed -i 's/return require(`@libsql\/${target}`);/return require("node:module").createRequire(__filename)(__dirname + "\/libsql");/g' ./apps/backend/dist/standalone-copy.js
+sed -i 's/return require(`@libsql\/${target}`);/return require("node:module").createRequire(__filename)(__dirname + "\/libsql.node");/g' ./apps/backend/dist/standalone-copy.js
 
 sed -i 's/var cmd = path[0-9]*.join("python", "dist");/var cmd = ".";/g' ./apps/backend/dist/standalone-copy.js
 
@@ -36,21 +63,17 @@ sed -i 's/dep = require(name)();/dep = name === "puppeteer-extra-plugin-stealth\
 
 echo "... done adjusting backend code before SEA build"
 
-echo "Building SEA bundle..."
-node --experimental-sea-config sea-config.json
-echo "... done building SEA bundle"
+mkdir -p sea
 
+# Build for all targets
+build_target "linux" "sea-config-linux.json" ""
+build_target "windows" "sea-config-windows.json" ""
+build_target "darwin" "sea-config-darwin.json" "--macho-segment-name NODE_SEA"
+
+echo ""
 echo "Removing copy of bundled backend code..."
 rm -rf ./apps/backend/dist/standalone-copy.js
 echo "... done removing copy of bundled backend code"
-
-echo ""
-echo "Preparing executable..."
-mkdir -p sea
-cp $(command -v node) sea/web-scraper
-npx postject sea/web-scraper NODE_SEA_BLOB sea-prep.blob --sentinel-fuse NODE_SEA_FUSE_fce680ab2cc467b6e072b8b5df1996b2
-# additional argument needed for macOS: --macho-segment-name NODE_SEA
-echo "... done preparing executable"
 
 echo ""
 echo "Copying web interface..."

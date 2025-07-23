@@ -1,0 +1,11 @@
+{
+  "main": "./apps/backend/dist/standalone-copy.js",
+  "output": "sea-prep.blob",
+  "disableExperimentalSEAWarning": true,
+  "useSnapshot": false,
+  "useCodeCache": false,
+  "assets": {
+    "libsql.node": "./binaries/libsql-0.5.16/win32-x64-msvc.node",
+    "node-file-dialog": "./node_modules/node-file-dialog/python/dist/windows/dialog.exe"
+  }
+}
