@@ -45,9 +45,7 @@ The initial idea was to develop an advanced testing tool for web projects.
 
 ### Example recording of a scraper execution
 
-<video width="640" height="256" controls>
-  <source src="recordings/scraper-execution.mp4" type="video/mp4">
-</video>
+https://github.com/user-attachments/assets/fec945e2-6feb-4c30-acfd-2746c1ca863f
 
 ### Example recording of a scraper creation process
 
