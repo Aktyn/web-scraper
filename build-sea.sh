@@ -44,10 +44,13 @@ if (sea.isSea()) {\
   const libsqlNodePath = path.join(__dirname, "libsql.node")\
   fs.writeFileSync(libsqlNodePath, Buffer.from(libsqlNode))\
 \
-  const nodeFileDialogAsset = sea.getAsset("node-file-dialog")\
-  const nodeFileDialogAssetPath = path.join(__dirname, "node-file-dialog")\
-  fs.writeFileSync(nodeFileDialogAssetPath, Buffer.from(nodeFileDialogAsset))\
-  exec("chmod +x " + nodeFileDialogAssetPath)\
+  if (process.platform !== "darwin") {\
+    const nodeFileDialogAsset = sea.getAsset("node-file-dialog")\
+    const unpackedNodeFileDialogBinaryName = process.platform === "win32" ? "dialog.exe" : "node-file-dialog-x86_64.AppImage"\
+    const nodeFileDialogAssetPath = path.join(__dirname, unpackedNodeFileDialogBinaryName)\
+    fs.writeFileSync(nodeFileDialogAssetPath, Buffer.from(nodeFileDialogAsset))\
+    exec("chmod +x " + nodeFileDialogAssetPath)\
+  }\
 }\
 ' ./apps/backend/dist/standalone-copy.js
 
