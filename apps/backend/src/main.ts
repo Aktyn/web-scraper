@@ -53,7 +53,7 @@ async function main() {
 
   logger.info("Setup complete")
 
-  return { config, dbModule, api, logger }
+  return { logger, events, cli, dbModule, config, api }
 }
 
 const cleanup: NodeJS.SignalsListener = (signal) => {
@@ -81,7 +81,7 @@ main()
       }
     }
 
-    if (process.env.NODE_ENV !== "development") {
+    if (process.env.NODE_ENV !== "development" && !modules.cli.noOpen) {
       openWebInterface()
     }
 
