@@ -45,7 +45,7 @@ export function getCliModule(context: CliModuleContext) {
 
   const cliArguments = args.parse(process.argv, {
     version: false,
-    name: "Web Scraper",
+    name: "web-scraper",
     mainColor: [],
     subColor: [],
     mri: {},

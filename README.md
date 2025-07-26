@@ -98,7 +98,7 @@ You can use an in-memory database for testing or any other use case that doesn't
 
 Thanks to the CLI, this project can be used as an automated testing tool for any local or external website.
 <details>
-  <summary><b>Examples</b></summary>
+  <summary style="margin-bottom: 1em;"><b>Examples</b></summary>
 
 - Execute a scraper from the database by name:\
 **`web-scraper execute-scraper --scraper "My Scraper" --silent`**\
@@ -111,6 +111,8 @@ Note *`--silent`* flag. It is used to avoid printing logs to the console. Only s
 **`web-scraper execute-scraper --scraper "My Scraper" --inMemoryDatabase`**
 
 </details>
+
+See full list of CLI options with `web-scraper --help` command.
 
 ### AI
 

@@ -9,6 +9,10 @@ export const cliOptions = {
     description: "Use in-memory database",
     defaultValue: false,
   },
+  noOpen: {
+    description: "Prevents opening of web interface on startup",
+    defaultValue: false,
+  },
   scraper: {
     description: `Scraper to execute. Can be a name of an existing scraper, path to JSON file or stringified JSON object. (${executeScraperCommandDisclaimer})`,
     defaultValue: undefined as string | undefined,
