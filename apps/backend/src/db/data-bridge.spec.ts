@@ -128,30 +128,58 @@ describe(DataBridge.name, () => {
   })
 
   describe("isLastIteration", () => {
-    it("should be true when no iterator is provided", async () => {
+    const dataSources: ScraperDataSource[] = [
+      {
+        dataStoreTableName: "test_table",
+        sourceAlias: "filtered_source",
+        whereSchema: {
+          column: "value",
+          condition: SqliteConditionType.GreaterThan,
+          value: 15,
+        },
+      },
+    ]
+
+    it("should iterate exactly once when no iterator is provided", async () => {
       const dataBridge = new DataBridge(modules.dbModule, null, {}, logger)
+      expect(await dataBridge.isLastIteration()).toBe(false)
+      expect(await dataBridge.nextIteration()).toBe(true)
+      expect(await dataBridge.nextIteration()).toBe(false)
       expect(await dataBridge.isLastIteration()).toBe(true)
     })
 
     it("should handle Range iterator with a single number", async () => {
       const iterator: ExecutionIterator = {
         type: ExecutionIteratorType.Range,
-        dataSourceName: "main",
+        dataSourceName: "filtered_source",
         identifier: "id",
         range: 5,
       }
-      const dataBridge = new DataBridge(modules.dbModule, iterator, {}, logger)
-      expect(await dataBridge.isLastIteration()).toBe(true)
+
+      const dataBridge = new DataBridge(
+        modules.dbModule,
+        iterator,
+        await DataBridge.buildDataBridgeSources(modules.dbModule, dataSources),
+        logger,
+      )
+      expect(await dataBridge.nextIteration()).toBe(true)
+      expect(await dataBridge.isLastIteration()).toBe(false)
     })
 
     it("should handle Range iterator with start, end, and step", async () => {
       const iterator: ExecutionIterator = {
         type: ExecutionIteratorType.Range,
-        dataSourceName: "main",
+        dataSourceName: "filtered_source",
         identifier: "id",
         range: { start: 1, end: 5, step: 2 },
       }
-      const dataBridge = new DataBridge(modules.dbModule, iterator, {}, logger)
+      const dataBridge = new DataBridge(
+        modules.dbModule,
+        iterator,
+        await DataBridge.buildDataBridgeSources(modules.dbModule, dataSources),
+        logger,
+      )
+      await dataBridge.nextIteration()
       expect(await dataBridge.isLastIteration()).toBe(false)
       await dataBridge.nextIteration() // currentIteration = 2, value = 3
       expect(await dataBridge.isLastIteration()).toBe(false)
@@ -181,6 +209,7 @@ describe(DataBridge.name, () => {
         sources,
         logger,
       )
+      await dataBridge.nextIteration() // 1 of 3
       expect(await dataBridge.isLastIteration()).toBe(false) // 1 of 3
       await dataBridge.nextIteration() // 2 of 3
       expect(await dataBridge.isLastIteration()).toBe(false)
@@ -227,6 +256,7 @@ describe(DataBridge.name, () => {
         sources,
         logger,
       )
+      await dataBridge.nextIteration()
       expect(await dataBridge.get("main.name")).toBe("one")
       await dataBridge.nextIteration()
       expect(await dataBridge.get("main.name")).toBe("two")
@@ -262,6 +292,7 @@ describe(DataBridge.name, () => {
         sources,
         logger,
       )
+      await dataBridge.nextIteration()
       expect(await dataBridge.get("main.name")).toBe("two")
       await dataBridge.nextIteration()
       expect(await dataBridge.get("main.name")).toBe("three")
@@ -381,7 +412,10 @@ describe(DataBridge.name, () => {
         sources,
         logger,
       )
-      await dataBridge.nextIteration() // cursor at offset 1 (id=2)
+
+      // move cursor at offset 1 (id=2)
+      await dataBridge.nextIteration()
+      await dataBridge.nextIteration()
 
       await dataBridge.set("main.name", "updated_two")
 
