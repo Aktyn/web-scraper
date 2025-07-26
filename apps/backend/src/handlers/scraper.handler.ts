@@ -131,7 +131,7 @@ export async function executeNewScraper(
     logger,
   )
 
-  do {
+  while (await dataBridge.nextIteration()) {
     try {
       await scraper.execute(scraperData.instructions, dataBridge, {
         metadata: {
@@ -155,7 +155,7 @@ export async function executeNewScraper(
         },
       })
     }
-  } while (await dataBridge.nextIteration())
+  }
 
   context.events.emit("notification", {
     type: NotificationType.ScraperFinished,

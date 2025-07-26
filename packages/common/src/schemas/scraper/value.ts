@@ -27,6 +27,7 @@ export enum ScraperValueType {
   ElementTextContent = "elementTextContent",
   ElementAttribute = "elementAttribute",
 
+  //TODO: current url (basically recreate logic of CurrentURL special string)
   //TODO: Evaluate which returns value from executing js code in page context
 }
 

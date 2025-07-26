@@ -104,7 +104,7 @@ export const whereSchema: z.ZodType<WhereSchema> = z.union([
 
 export function whereSchemaToSql(where: WhereSchema): string {
   if ("condition" in where) {
-    const column = where.column
+    const column = sanitizeColumnName(where.column)
 
     switch (where.condition) {
       case SqliteConditionType.Equals:
@@ -209,4 +209,15 @@ function formatValue(value: string | number | boolean | Date): string {
     return `'${value.toISOString()}'`
   }
   throw new Error(`Unsupported value type: ${typeof value}`)
+}
+
+export function sanitizeColumnName(name: string) {
+  if (name.startsWith('"')) {
+    name = name.slice(1)
+  }
+  if (name.endsWith('"')) {
+    name = name.slice(0, -1)
+  }
+  name = name.replace(/"/g, '\\"')
+  return `"${name}"`
 }

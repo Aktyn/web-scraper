@@ -149,7 +149,7 @@ export async function getElementHandle(
         return elements.at(0) ?? null
       },
       JSON.stringify(
-        await replaceSpecialStringsInSelectors(selectors, context.dataBridge),
+        await replaceSpecialStringsInSelectors(context, selectors),
       ),
       ElementSelectorType,
     )

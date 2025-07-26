@@ -60,7 +60,7 @@ export class DataBridge<
   SourcesType extends Record<SourceAlias, DataBridgeSource>,
 > implements DataBridgeInterface
 {
-  private currentIteration = 1
+  private currentIteration = 0
   private countCache = new Map<ExecutionIterator, number>()
 
   constructor(
@@ -80,13 +80,18 @@ export class DataBridge<
 
   async isLastIteration() {
     if (!this.iterator) {
+      return this.currentIteration > 0
+    }
+
+    const countResult = await this.countIteratorDataSource()
+    if (!countResult) {
       return true
     }
 
     switch (this.iterator.type) {
       case ExecutionIteratorType.Range:
         if (typeof this.iterator.range === "number") {
-          return true
+          return this.currentIteration >= countResult
         } else {
           return (
             this.iterator.range.start +
@@ -96,10 +101,7 @@ export class DataBridge<
         }
       case ExecutionIteratorType.EntireSet:
       case ExecutionIteratorType.FilteredSet: {
-        const countResult = await this.countIteratorDataSource()
-        return typeof countResult === "number"
-          ? this.currentIteration >= countResult
-          : null
+        return this.currentIteration >= countResult
       }
     }
   }
@@ -141,9 +143,17 @@ export class DataBridge<
   }
 
   async nextIteration() {
-    if (await this.isLastIteration()) {
+    try {
+      if (await this.isLastIteration()) {
+        return false
+      }
+    } catch (error) {
+      this.logger.error(
+        `Error checking if last iteration: ${error instanceof Error ? error.message : String(error)}`,
+      )
       return false
     }
+
     this.currentIteration++
     return true
   }

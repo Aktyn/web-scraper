@@ -10,6 +10,7 @@ import {
 } from "@web-scraper/common"
 import { getElementHandle } from "./execution/selectors"
 import type { ScraperExecutionContext } from "./execution/helpers"
+import { buildSpecialStringContext } from "./helpers"
 
 export type DataBridgeValue = string | number | null
 
@@ -45,15 +46,16 @@ export async function getScraperValue(
   switch (value.type) {
     case ScraperValueType.Literal:
       if (typeof value.value === "string") {
-        return await replaceSpecialStrings(value.value, (key) =>
-          context.dataBridge.get(key),
+        return await replaceSpecialStrings(
+          value.value,
+          buildSpecialStringContext(context),
         )
       } else if (stringifyRegex) {
         return String(value.value)
       } else {
         const sourceRaw = await replaceSpecialStrings(
           value.value.source,
-          (key) => context.dataBridge.get(key),
+          buildSpecialStringContext(context),
         )
         const regex = new RegExp(sourceRaw, value.value.flags)
         return regex
@@ -111,8 +113,9 @@ export async function getScraperValue(
       }
       return await handle?.evaluate(
         (el, attributeName) => el.getAttribute(attributeName),
-        await replaceSpecialStrings(value.attributeName, (key) =>
-          context.dataBridge.get(key),
+        await replaceSpecialStrings(
+          value.attributeName,
+          buildSpecialStringContext(context),
         ),
       )
     }
@@ -121,8 +124,8 @@ export async function getScraperValue(
 
 /** Replaces special strings (e.g. "{{dataSourceName.columnName}}") in ScraperElementSelectors with actual data from the data bridge. */
 export async function replaceSpecialStringsInSelectors(
+  context: ScraperExecutionContext,
   selectors: ScraperElementSelectors,
-  dataBridge: DataBridge,
 ) {
   return await Promise.all(
     selectors.map(async (selector) => {
@@ -130,8 +133,9 @@ export async function replaceSpecialStringsInSelectors(
         case ElementSelectorType.Query:
           return {
             ...selector,
-            query: await replaceSpecialStrings(selector.query, (key) =>
-              dataBridge.get(key),
+            query: await replaceSpecialStrings(
+              selector.query,
+              buildSpecialStringContext(context),
             ),
           }
         case ElementSelectorType.TextContent:
@@ -139,8 +143,9 @@ export async function replaceSpecialStringsInSelectors(
             ...selector,
             text:
               typeof selector.text === "string"
-                ? await replaceSpecialStrings(selector.text, (key) =>
-                    dataBridge.get(key),
+                ? await replaceSpecialStrings(
+                    selector.text,
+                    buildSpecialStringContext(context),
                   )
                 : selector.text,
           }
@@ -153,12 +158,14 @@ export async function replaceSpecialStringsInSelectors(
               await Promise.all(
                 Object.entries(selector.attributes).map(
                   async ([attributeName, value]) => [
-                    await replaceSpecialStrings(attributeName, (key) =>
-                      dataBridge.get(key),
+                    await replaceSpecialStrings(
+                      attributeName,
+                      buildSpecialStringContext(context),
                     ),
                     typeof value === "string"
-                      ? await replaceSpecialStrings(value, (key) =>
-                          dataBridge.get(key),
+                      ? await replaceSpecialStrings(
+                          value,
+                          buildSpecialStringContext(context),
                         )
                       : value,
                   ],

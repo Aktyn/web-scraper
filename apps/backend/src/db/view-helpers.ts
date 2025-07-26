@@ -12,9 +12,7 @@ export async function createTemporaryView(
 
   await dbModule.db
     .run(
-      sql.raw(
-        `CREATE TEMPORARY VIEW IF NOT EXISTS ${viewName} AS SELECT * FROM ${sourceTableName} WHERE ${whereSQL}`,
-      ),
+      sql`CREATE TEMPORARY VIEW IF NOT EXISTS ${sql.identifier(viewName)} AS SELECT * FROM ${sql.identifier(sourceTableName)} WHERE ${sql.raw(whereSQL)}`,
     )
     .execute()
   return viewName

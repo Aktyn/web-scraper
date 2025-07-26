@@ -1,7 +1,8 @@
-import { randomString } from "@web-scraper/common"
+import { type SpecialStringContext, randomString } from "@web-scraper/common"
 import fs from "fs"
 import path from "path"
 import type { Page } from "rebrowser-puppeteer"
+import type { ScraperExecutionContext } from "./execution/helpers"
 
 export async function saveScreenshot(page: Page, fileNamePrefix: string) {
   const screenshot = await page.screenshot({
@@ -21,4 +22,15 @@ export async function saveScreenshot(page: Page, fileNamePrefix: string) {
   )
 
   await fs.promises.writeFile(screenshotPath, screenshot)
+}
+
+export function buildSpecialStringContext(
+  context: Pick<ScraperExecutionContext, "logger" | "pages" | "dataBridge">,
+): SpecialStringContext {
+  return {
+    logger: context.logger,
+    getExternalData: (key) => context.dataBridge.get(key),
+    getPageUrl: (pageIndex) =>
+      context.pages.getPage(pageIndex ?? 0, false)?.url() ?? null,
+  }
 }

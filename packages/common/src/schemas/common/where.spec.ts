@@ -13,7 +13,7 @@ describe(whereSchemaToSql.name, () => {
         condition: SqliteConditionType.Equals,
         value: "John",
       }
-      expect(whereSchemaToSql(where)).toBe("name = 'John'")
+      expect(whereSchemaToSql(where)).toBe("\"name\" = 'John'")
     })
 
     it("should handle notEquals condition", () => {
@@ -22,7 +22,7 @@ describe(whereSchemaToSql.name, () => {
         condition: SqliteConditionType.NotEquals,
         value: "inactive",
       }
-      expect(whereSchemaToSql(where)).toBe("status != 'inactive'")
+      expect(whereSchemaToSql(where)).toBe("\"status\" != 'inactive'")
     })
 
     it("should handle greaterThan condition with number", () => {
@@ -31,7 +31,7 @@ describe(whereSchemaToSql.name, () => {
         condition: SqliteConditionType.GreaterThan,
         value: 25,
       }
-      expect(whereSchemaToSql(where)).toBe("age > 25")
+      expect(whereSchemaToSql(where)).toBe('"age" > 25')
     })
 
     it("should handle greaterThanOrEqual condition", () => {
@@ -40,7 +40,7 @@ describe(whereSchemaToSql.name, () => {
         condition: SqliteConditionType.GreaterThanOrEqual,
         value: 90,
       }
-      expect(whereSchemaToSql(where)).toBe("score >= 90")
+      expect(whereSchemaToSql(where)).toBe('"score" >= 90')
     })
 
     it("should handle lessThan condition", () => {
@@ -49,7 +49,7 @@ describe(whereSchemaToSql.name, () => {
         condition: SqliteConditionType.LessThan,
         value: 100,
       }
-      expect(whereSchemaToSql(where)).toBe("count < 100")
+      expect(whereSchemaToSql(where)).toBe('"count" < 100')
     })
 
     it("should handle lessThanOrEqual condition", () => {
@@ -58,7 +58,7 @@ describe(whereSchemaToSql.name, () => {
         condition: SqliteConditionType.LessThanOrEqual,
         value: 50.99,
       }
-      expect(whereSchemaToSql(where)).toBe("price <= 50.99")
+      expect(whereSchemaToSql(where)).toBe('"price" <= 50.99')
     })
 
     it("should handle like condition", () => {
@@ -67,7 +67,7 @@ describe(whereSchemaToSql.name, () => {
         condition: SqliteConditionType.Like,
         value: "%test%",
       }
-      expect(whereSchemaToSql(where)).toBe("description LIKE '%test%'")
+      expect(whereSchemaToSql(where)).toBe("\"description\" LIKE '%test%'")
     })
 
     it("should handle notLike condition", () => {
@@ -76,7 +76,7 @@ describe(whereSchemaToSql.name, () => {
         condition: SqliteConditionType.NotLike,
         value: "%spam%",
       }
-      expect(whereSchemaToSql(where)).toBe("title NOT LIKE '%spam%'")
+      expect(whereSchemaToSql(where)).toBe("\"title\" NOT LIKE '%spam%'")
     })
 
     it("should handle iLike condition (case insensitive)", () => {
@@ -85,7 +85,9 @@ describe(whereSchemaToSql.name, () => {
         condition: SqliteConditionType.ILike,
         value: "%JOHN%",
       }
-      expect(whereSchemaToSql(where)).toBe("LOWER(name) LIKE LOWER('%JOHN%')")
+      expect(whereSchemaToSql(where)).toBe(
+        "LOWER(\"name\") LIKE LOWER('%JOHN%')",
+      )
     })
 
     it("should handle notILike condition", () => {
@@ -95,7 +97,7 @@ describe(whereSchemaToSql.name, () => {
         value: "%SPAM%",
       }
       expect(whereSchemaToSql(where)).toBe(
-        "LOWER(email) NOT LIKE LOWER('%SPAM%')",
+        "LOWER(\"email\") NOT LIKE LOWER('%SPAM%')",
       )
     })
 
@@ -105,14 +107,14 @@ describe(whereSchemaToSql.name, () => {
         condition: SqliteConditionType.Equals,
         value: true,
       }
-      expect(whereSchemaToSql(where)).toBe("active = 1")
+      expect(whereSchemaToSql(where)).toBe('"active" = 1')
 
       const where2: WhereSchema = {
         column: "deleted",
         condition: SqliteConditionType.Equals,
         value: false,
       }
-      expect(whereSchemaToSql(where2)).toBe("deleted = 0")
+      expect(whereSchemaToSql(where2)).toBe('"deleted" = 0')
     })
 
     it("should handle Date values", () => {
@@ -123,7 +125,7 @@ describe(whereSchemaToSql.name, () => {
         value: date,
       }
       expect(whereSchemaToSql(where)).toBe(
-        "created_at > '2023-01-01T00:00:00.000Z'",
+        "\"created_at\" > '2023-01-01T00:00:00.000Z'",
       )
     })
 
@@ -133,7 +135,7 @@ describe(whereSchemaToSql.name, () => {
         condition: SqliteConditionType.Equals,
         value: "It's a test",
       }
-      expect(whereSchemaToSql(where)).toBe("description = 'It''s a test'")
+      expect(whereSchemaToSql(where)).toBe("\"description\" = 'It''s a test'")
     })
   })
 
@@ -144,7 +146,9 @@ describe(whereSchemaToSql.name, () => {
         condition: SqliteConditionType.In,
         value: ["active", "pending"],
       }
-      expect(whereSchemaToSql(where)).toBe("status IN ('active', 'pending')")
+      expect(whereSchemaToSql(where)).toBe(
+        "\"status\" IN ('active', 'pending')",
+      )
     })
 
     it("should handle notIn condition", () => {
@@ -153,7 +157,7 @@ describe(whereSchemaToSql.name, () => {
         condition: SqliteConditionType.NotIn,
         value: [1, 2, 3],
       }
-      expect(whereSchemaToSql(where)).toBe("id NOT IN (1, 2, 3)")
+      expect(whereSchemaToSql(where)).toBe('"id" NOT IN (1, 2, 3)')
     })
 
     it("should handle mixed types in array", () => {
@@ -162,7 +166,7 @@ describe(whereSchemaToSql.name, () => {
         condition: SqliteConditionType.In,
         value: [1, "test", true],
       }
-      expect(whereSchemaToSql(where)).toBe("value IN (1, 'test', 1)")
+      expect(whereSchemaToSql(where)).toBe("\"value\" IN (1, 'test', 1)")
     })
 
     it("should throw error for in condition without array", () => {
@@ -194,7 +198,7 @@ describe(whereSchemaToSql.name, () => {
         column: "deleted_at",
         condition: SqliteConditionType.IsNull,
       }
-      expect(whereSchemaToSql(where)).toBe("deleted_at IS NULL")
+      expect(whereSchemaToSql(where)).toBe('"deleted_at" IS NULL')
     })
 
     it("should handle isNotNull condition", () => {
@@ -202,7 +206,7 @@ describe(whereSchemaToSql.name, () => {
         column: "email",
         condition: SqliteConditionType.IsNotNull,
       }
-      expect(whereSchemaToSql(where)).toBe("email IS NOT NULL")
+      expect(whereSchemaToSql(where)).toBe('"email" IS NOT NULL')
     })
   })
 
@@ -213,7 +217,7 @@ describe(whereSchemaToSql.name, () => {
         condition: SqliteConditionType.Between,
         value: { from: 18, to: 65 },
       }
-      expect(whereSchemaToSql(where)).toBe("age BETWEEN 18 AND 65")
+      expect(whereSchemaToSql(where)).toBe('"age" BETWEEN 18 AND 65')
     })
 
     it("should handle notBetween condition", () => {
@@ -222,7 +226,7 @@ describe(whereSchemaToSql.name, () => {
         condition: SqliteConditionType.NotBetween,
         value: { from: 0, to: 50 },
       }
-      expect(whereSchemaToSql(where)).toBe("score NOT BETWEEN 0 AND 50")
+      expect(whereSchemaToSql(where)).toBe('"score" NOT BETWEEN 0 AND 50')
     })
 
     it("should handle between with dates", () => {
@@ -234,7 +238,7 @@ describe(whereSchemaToSql.name, () => {
         value: { from, to },
       }
       expect(whereSchemaToSql(where)).toBe(
-        "created_at BETWEEN '2023-01-01T00:00:00.000Z' AND '2023-12-31T23:59:59.999Z'",
+        "\"created_at\" BETWEEN '2023-01-01T00:00:00.000Z' AND '2023-12-31T23:59:59.999Z'",
       )
     })
 
@@ -277,7 +281,9 @@ describe(whereSchemaToSql.name, () => {
           },
         ],
       }
-      expect(whereSchemaToSql(where)).toBe("(age > 25 AND status = 'active')")
+      expect(whereSchemaToSql(where)).toBe(
+        '("age" > 25 AND "status" = \'active\')',
+      )
     })
 
     it("should handle OR condition with multiple clauses", () => {
@@ -296,7 +302,7 @@ describe(whereSchemaToSql.name, () => {
         ],
       }
       expect(whereSchemaToSql(where)).toBe(
-        "(role = 'admin' OR role = 'editor')",
+        "(\"role\" = 'admin' OR \"role\" = 'editor')",
       )
     })
 
@@ -311,7 +317,7 @@ describe(whereSchemaToSql.name, () => {
         ],
         negate: true,
       }
-      expect(whereSchemaToSql(where)).toBe("NOT age > 25")
+      expect(whereSchemaToSql(where)).toBe('NOT "age" > 25')
     })
 
     it("should handle negated OR condition", () => {
@@ -325,7 +331,7 @@ describe(whereSchemaToSql.name, () => {
         ],
         negate: true,
       }
-      expect(whereSchemaToSql(where)).toBe("NOT role = 'admin'")
+      expect(whereSchemaToSql(where)).toBe("NOT \"role\" = 'admin'")
     })
 
     it("should handle nested logical conditions", () => {
@@ -371,7 +377,7 @@ describe(whereSchemaToSql.name, () => {
         ],
       }
       expect(whereSchemaToSql(where)).toBe(
-        "(active = 1 AND ((type = 'premium' AND balance > 1000) OR (type = 'basic' AND verified = 1)))",
+        '("active" = 1 AND (("type" = \'premium\' AND "balance" > 1000) OR ("type" = \'basic\' AND "verified" = 1)))',
       )
     })
 
@@ -399,7 +405,7 @@ describe(whereSchemaToSql.name, () => {
           },
         ],
       }
-      expect(whereSchemaToSql(where)).toBe("age > 30")
+      expect(whereSchemaToSql(where)).toBe('"age" > 30')
     })
 
     it("should handle single OR clause without parens", () => {
@@ -412,7 +418,7 @@ describe(whereSchemaToSql.name, () => {
           },
         ],
       }
-      expect(whereSchemaToSql(where)).toBe("status = 'inactive'")
+      expect(whereSchemaToSql(where)).toBe("\"status\" = 'inactive'")
     })
 
     it("should throw error for invalid where schema", () => {

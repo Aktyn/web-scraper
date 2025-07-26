@@ -6,7 +6,6 @@ import {
   PageActionType,
   pick,
   randomInt,
-  SystemActionType,
   wait,
 } from "@web-scraper/common"
 import type { ScrollOptions } from "ghost-cursor"
@@ -16,7 +15,7 @@ import ollama, {
   type Message,
 } from "ollama"
 import { z } from "zod"
-import { performSystemAction } from "../../system-actions"
+import { systemActions } from "../../system-actions"
 import type { DataBridge, DataBridgeValue } from "../data-helper"
 import type { ScraperPageContext } from "../execution/execution-pages"
 import { preciseClick } from "../execution/page-actions"
@@ -375,10 +374,7 @@ export class AutonomousAgent {
         break
 
       case NavigationActionType.ShowNotification:
-        performSystemAction({
-          type: SystemActionType.ShowNotification,
-          message: action.content,
-        })
+        systemActions.showNotification(action.content)
         break
 
       case NavigationActionType.Answer: {

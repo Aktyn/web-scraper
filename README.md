@@ -263,6 +263,9 @@ Input fields in the instructions form support special strings that can be used t
 Special string has the following syntax: `{{type,arg1,arg2,...}}` where `type` is the type of the special string and `args` are the arguments for the special string.\
 The following special strings are currently supported:
 
+<details>
+  <summary style="margin-bottom: 1em; margin-top: -1em;">Click to expand</summary>
+
 - **DataKey** - used to get value from a data store.\
 It receives a single argument that is a data key in the format of **dataSourceName.columnName** where **dataSourceName** is source alias.\
 Examples: `{{DataKey,prices.Cryptocurrency}}`
@@ -271,6 +274,13 @@ Examples: `{{DataKey,prices.Cryptocurrency}}`
 It receives an optional argument for the length of the string.\
 If no argument is provided, the default length of 16 is used.\
 Examples: `{{RandomString}}`, `{{RandomString,14}}`
+
+- **CurrentUrl** - used to get information about current URL of the page.\
+It receives one of [URL instance](https://developer.mozilla.org/en-US/docs/Web/API/URL#instance_properties) properties as first argument and an optional second argument for the page index.\
+If no argument is provided, the default page index of 0 is used (first page).\
+Examples: `{{CurrentUrl,href}}`, `{{CurrentUrl,origin,1}}`
+
+</details>
 
 ![Info](images/special-string.webp)
 

@@ -1,17 +1,18 @@
 import {
-  type SimpleLogger,
   type PageAction,
   PageActionType,
+  type SimpleLogger,
   replaceSpecialStrings,
   wait,
 } from "@web-scraper/common"
 import { randomInt } from "crypto"
+import type { Coordinates } from "../ai/helpers"
 import { getScraperValue } from "../data-helper"
 import { detectAndSolveCaptcha } from "./captcha-solver"
 import type { ScraperPageContext } from "./execution-pages"
 import { type ScraperExecutionContext, getGhostClickOptions } from "./helpers"
 import { getElementHandle } from "./selectors"
-import type { Coordinates } from "../ai/helpers"
+import { buildSpecialStringContext } from "../helpers"
 
 export async function performPageAction(
   context: ScraperExecutionContext,
@@ -27,8 +28,9 @@ export async function performPageAction(
     case PageActionType.Navigate:
       try {
         await pageContext.page.goto(
-          await replaceSpecialStrings(action.url, (key) =>
-            context.dataBridge.get(key),
+          await replaceSpecialStrings(
+            action.url,
+            buildSpecialStringContext(context),
           ),
           {
             timeout: 30_000,

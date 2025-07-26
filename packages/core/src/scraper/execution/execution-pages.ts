@@ -133,9 +133,14 @@ export class ExecutionPages {
     return pageContext
   }
 
-  async getPage(index: number) {
-    const pageContext = await this.get(index)
-    return pageContext.page
+  getPage(index: number, init?: true): Promise<Page>
+  getPage(index: number, init: false): Page | null
+  getPage(index: number, init = true) {
+    if (init) {
+      return this.get(index).then((pageContext) => pageContext.page)
+    } else {
+      return this.pages.get(index)?.page ?? null
+    }
   }
 
   async closeAll() {

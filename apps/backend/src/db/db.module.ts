@@ -1,12 +1,12 @@
 import type { SimpleLogger } from "@web-scraper/common"
+import { sql } from "drizzle-orm"
 import { drizzle } from "drizzle-orm/libsql"
 import fs from "fs"
-import { getDrizzleKitApi } from "./helpers"
-import * as schema from "./schema"
 import type { Logger } from "pino"
 import { IS_TEST_ENV } from "../test/is-test-env"
+import { getDrizzleKitApi } from "./helpers"
+import * as schema from "./schema"
 import { seed } from "./seed/seed"
-import { sql } from "drizzle-orm"
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
 const { pushSQLiteSchema } = getDrizzleKitApi()

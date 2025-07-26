@@ -2,6 +2,8 @@ import {
   ElementSelectorType,
   replaceSpecialStrings,
   type ScraperElementSelectors,
+  type SimpleLogger,
+  type SpecialStringContext,
 } from "@web-scraper/common"
 import { describe, expect, it } from "vitest"
 import {
@@ -9,6 +11,22 @@ import {
   type DataBridgeValue,
   replaceSpecialStringsInSelectors,
 } from "./data-helper"
+import type { ExecutionPages } from "./execution/execution-pages"
+import type { ScraperExecutionContext } from "./execution/helpers"
+
+const voidLogger = Object.entries(console).reduce(
+  (acc, [key, value]) => {
+    if (typeof value === "function") {
+      acc[key as keyof SimpleLogger] = () => {}
+    } else {
+      acc[key as keyof SimpleLogger] = value as never
+    }
+    return acc
+  },
+  {
+    fatal: console.error,
+  } as SimpleLogger,
+)
 
 const mockStore = new Map<string, DataBridgeValue>([
   ["user.name", "test-user"],
@@ -53,20 +71,28 @@ const mockDataBridge: DataBridge = {
   },
 }
 
+const mockSpecialStringContext: SpecialStringContext = {
+  logger: voidLogger,
+  getExternalData: (key) => mockDataBridge.get(key),
+  getPageUrl: (_pageIndex?: number) => "http://mock-url.com",
+}
+
 describe("data-helper", () => {
   describe(replaceSpecialStrings.name, () => {
     it("should return the same string if no special strings are present", async () => {
       const input = "This is a simple string."
-      const result = await replaceSpecialStrings(input, (key) =>
-        mockDataBridge.get(key),
+      const result = await replaceSpecialStrings(
+        input,
+        mockSpecialStringContext,
       )
       expect(result).toBe(input)
     })
 
     it("should replace a single special string with its value from the data bridge", async () => {
       const input = "Welcome, {{DataKey,user.name}}!"
-      const result = await replaceSpecialStrings(input, (key) =>
-        mockDataBridge.get(key),
+      const result = await replaceSpecialStrings(
+        input,
+        mockSpecialStringContext,
       )
       expect(result).toBe("Welcome, test-user!")
     })
@@ -74,8 +100,9 @@ describe("data-helper", () => {
     it("should replace multiple special strings", async () => {
       const input =
         "Product: {{DataKey,product.name}}, Price: ${{DataKey,product.price}}, User: {{DataKey,user.name}}"
-      const result = await replaceSpecialStrings(input, (key) =>
-        mockDataBridge.get(key),
+      const result = await replaceSpecialStrings(
+        input,
+        mockSpecialStringContext,
       )
       expect(result).toBe(
         "Product: Super Product, Price: $99.99, User: test-user",
@@ -84,8 +111,9 @@ describe("data-helper", () => {
 
     it("should replace a special string with an empty string if the key is not in the data bridge", async () => {
       const input = "This key {{DataKey,nonexistent.key}} does not exist."
-      const result = await replaceSpecialStrings(input, (key) =>
-        mockDataBridge.get(key),
+      const result = await replaceSpecialStrings(
+        input,
+        mockSpecialStringContext,
       )
       expect(result).toBe("This key  does not exist.")
     })
@@ -93,22 +121,32 @@ describe("data-helper", () => {
     it("should handle a mix of existing and non-existing keys", async () => {
       const input =
         "User: {{DataKey,user.name}}, Status: {{DataKey,user.status}}"
-      const result = await replaceSpecialStrings(input, (key) =>
-        mockDataBridge.get(key),
+      const result = await replaceSpecialStrings(
+        input,
+        mockSpecialStringContext,
       )
       expect(result).toBe("User: test-user, Status: ")
     })
 
     it("should handle recursive replacement", async () => {
       const input = "Greeting: {{DataKey,user.greeting}}"
-      const result = await replaceSpecialStrings(input, (key) =>
-        mockDataBridge.get(key),
+      const result = await replaceSpecialStrings(
+        input,
+        mockSpecialStringContext,
       )
       expect(result).toBe("Greeting: Hello test-user")
     })
   })
 
   describe(replaceSpecialStringsInSelectors.name, () => {
+    const mockContext = {
+      logger: voidLogger,
+      dataBridge: mockDataBridge,
+      pages: {
+        getPage: () => ({ url: () => "http://mock-url.com" }),
+      } as unknown as ExecutionPages,
+    } as ScraperExecutionContext
+
     it("should replace special strings in various selector types", async () => {
       const selectors: ScraperElementSelectors = [
         {
@@ -135,8 +173,8 @@ describe("data-helper", () => {
       ]
 
       const result = await replaceSpecialStringsInSelectors(
+        mockContext,
         selectors,
-        mockDataBridge,
       )
 
       expect(result).toEqual([
@@ -178,8 +216,8 @@ describe("data-helper", () => {
       ]
 
       const result = await replaceSpecialStringsInSelectors(
+        mockContext,
         selectors,
-        mockDataBridge,
       )
 
       expect(result).toEqual([
