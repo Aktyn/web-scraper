@@ -29,7 +29,7 @@
     "puppeteer-extra-plugin-adblocker": "^2.13.6",
     "puppeteer-extra-plugin-portal": "^3.2.1",
     "puppeteer-extra-plugin-stealth": "^2.11.2",
-    "puppeteer-real-browser": "^1.4.2",
+    "puppeteer-real-browser": "^1.4.3",
     "rebrowser-puppeteer": "^24.8.1",
     "shallow-clone": "^3.0.1",
     "zod": "^4.0.5"
