@@ -24,28 +24,28 @@
     "jimp": "^1.6.0",
     "kind-of": "^6.0.3",
     "node-notifier": "^10.0.1",
-    "ollama": "^0.5.16",
+    "ollama": "^0.5.17",
     "puppeteer-extra": "^3.3.6",
     "puppeteer-extra-plugin-adblocker": "^2.13.6",
     "puppeteer-extra-plugin-portal": "^3.2.1",
     "puppeteer-extra-plugin-stealth": "^2.11.2",
-    "puppeteer-real-browser": "^1.4.2",
+    "puppeteer-real-browser": "^1.4.3",
     "rebrowser-puppeteer": "^24.8.1",
     "shallow-clone": "^3.0.1",
-    "zod": "^4.0.5"
+    "zod": "^4.0.17"
   },
   "devDependencies": {
-    "@eslint/js": "^9.31.0",
-    "@types/node": "^24.0.14",
-    "eslint": "^9.31.0",
-    "eslint-config-prettier": "^10.1.5",
+    "@eslint/js": "^9.33.0",
+    "@types/node": "^24.3.0",
+    "eslint": "^9.33.0",
+    "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-import": "^2.32.0",
-    "eslint-plugin-prettier": "^5.5.1",
+    "eslint-plugin-prettier": "^5.5.4",
     "globals": "^16.3.0",
     "pptr-mock-server": "^1.5.0",
     "prettier": "^3.6.2",
-    "typescript": "^5.8.3",
-    "typescript-eslint": "^8.37.0",
+    "typescript": "^5.9.2",
+    "typescript-eslint": "^8.39.1",
     "vitest": "^3.2.4"
   }
 }

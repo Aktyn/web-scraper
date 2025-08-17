@@ -626,6 +626,7 @@ export async function scrapersRoutes(
         params: paramsWithScraperIdSchema,
         response: {
           200: getApiResponseSchema(z.null()),
+          400: apiErrorResponseSchema,
           404: apiErrorResponseSchema,
         },
       },

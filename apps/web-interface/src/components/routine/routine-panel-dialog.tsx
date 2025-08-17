@@ -1,4 +1,8 @@
-import { RoutineStatus, type Routine } from "@web-scraper/common"
+import {
+  RoutineStatus,
+  SubscriptionMessageType,
+  type Routine,
+} from "@web-scraper/common"
 import { useEffect, useState, type ComponentProps } from "react"
 import {
   Dialog,
@@ -13,6 +17,7 @@ import { Button } from "../shadcn/button"
 import { Edit, Pause, Play } from "lucide-react"
 import { RoutineFormDialog } from "./routine-form-dialog"
 import { usePost } from "@/hooks/api/usePost"
+import { ServerEventsProvider } from "@/providers/server-events.provider"
 
 type ScraperPanelDialogProps = {
   routine: Routine
@@ -35,6 +40,15 @@ export function RoutinePanelDialog({
   useEffect(() => {
     setRoutine(routineSource)
   }, [routineSource])
+
+  ServerEventsProvider.useMessages(
+    SubscriptionMessageType.RoutineUpdated,
+    (message) => {
+      if (message.routine.id === routine.id) {
+        setRoutine(message.routine)
+      }
+    },
+  )
 
   return (
     <>

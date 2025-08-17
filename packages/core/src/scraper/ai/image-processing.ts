@@ -44,7 +44,7 @@ export async function resizeScreenshot(imageData: Uint8Array): Promise<{
   originalResolution: Resolution
   resizedResolution: Resolution
 }> {
-  const image = await Jimp.fromBuffer(imageData)
+  const image = await Jimp.fromBuffer(imageData.buffer as ArrayBuffer)
 
   const originalWidth = image.width
   const originalHeight = image.height

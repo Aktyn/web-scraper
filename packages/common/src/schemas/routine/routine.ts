@@ -39,7 +39,7 @@ export const routineSchema = z.object({
   scheduler: schedulerSchema,
   nextScheduledExecutionAt: timestampSchema.nullable(),
   lastExecutionAt: timestampSchema.nullable(),
-  previousExecutionsCount: z.number().int().min(0),
+  previousExecutionsCount: z.number().int().nonnegative(),
   pauseAfterNumberOfFailedExecutions: z.number().int().min(1).nullable(),
   createdAt: timestampSchema,
   updatedAt: timestampSchema,

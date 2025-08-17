@@ -180,7 +180,7 @@ export type Routes = {
 
   "reset-database": {
     post: {
-      body: null
+      body: { removeSecondaryData: boolean }
       response: ApiResponse<null>
     }
   }

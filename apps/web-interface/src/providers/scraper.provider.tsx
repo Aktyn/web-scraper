@@ -74,9 +74,9 @@ export function ScraperProvider({
         }
         break
       case ScraperEventType.ExecutionStarted:
-        toast.info("Scraper execution started", {
-          description: `Scraper "${scraper.name}" is now executing.`,
-        })
+        // toast.info("Scraper execution started", {
+        //   description: `Scraper "${scraper.name}" is now executing.`,
+        // })
         setPartialExecutionInfo([]) // Reset partial execution info on new execution
         break
       case ScraperEventType.ExecutionUpdate:
@@ -91,9 +91,9 @@ export function ScraperProvider({
       case ScraperEventType.ExecutionFinished:
         setPartialExecutionInfo(message.event.executionInfo)
         setCurrentlyExecutingInstruction(null)
-        toast.info("Scraper execution finished", {
-          description: `Scraper "${scraper.name}" has finished executing.`,
-        })
+        // toast.info("Scraper execution finished", {
+        //   description: `Scraper "${scraper.name}" has finished executing.`,
+        // })
         break
       case ScraperEventType.ExecutionError:
         setPartialExecutionInfo(message.event.executionInfo ?? [])

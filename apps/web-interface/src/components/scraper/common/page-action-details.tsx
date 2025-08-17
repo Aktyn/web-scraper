@@ -112,7 +112,7 @@ export function PageActionDetails({ action }: { action: PageAction }) {
       return (
         <div className="flex flex-row flex-wrap items-start gap-2 gap-x-4">
           <LabeledValue label="Code:">
-            <Code className="overflow-hidden max-h-32">
+            <Code className="overflow-hidden max-h-32 whitespace-pre-wrap mask-b-from-25">
               {action.evaluator.code}
             </Code>
             <div className="flex flex-row flex-wrap items-center gap-2">
@@ -123,7 +123,9 @@ export function PageActionDetails({ action }: { action: PageAction }) {
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent className="w-auto max-w-2xl" align="start">
-                  <Code>{action.evaluator.code}</Code>
+                  <Code className="whitespace-pre-wrap">
+                    {action.evaluator.code}
+                  </Code>
                 </PopoverContent>
               </Popover>
               <CopyButton value={action.evaluator.code} />

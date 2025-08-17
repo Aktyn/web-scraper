@@ -122,7 +122,7 @@ export function RoutinePanel({
                 <span>Total executions</span>
               </div>
               <p className="text-xs font-normal text-muted-foreground">
-                Number of times the routine has been executed.
+                Number of times the routine has been executed
               </p>
             </div>
           }
@@ -139,7 +139,7 @@ export function RoutinePanel({
                   <span>Last execution date</span>
                 </div>
                 <p className="text-xs font-normal text-muted-foreground">
-                  Date and time of the last execution of the routine.
+                  Date and time of the last execution of the routine
                 </p>
               </div>
             }

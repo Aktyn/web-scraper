@@ -87,14 +87,23 @@ export async function miscRoutes(
     "/reset-database",
     {
       schema: {
+        body: z.object({
+          removeSecondaryData: z.boolean().default(false),
+        }),
         response: {
           200: getApiResponseSchema(z.null()),
         },
       },
     },
-    async (_request, reply) => {
-      await dbModule.resetDatabase()
-      config.resetPreferences()
+    async (request, reply) => {
+      const { removeSecondaryData } = request.body
+
+      if (removeSecondaryData) {
+        await dbModule.clearDynamicData()
+      } else {
+        await dbModule.resetDatabase()
+        config.resetPreferences()
+      }
 
       return reply.status(200).send({
         data: null,

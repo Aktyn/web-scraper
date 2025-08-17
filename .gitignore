@@ -1,5 +1,6 @@
 .directory
 .vscode/
+.idea/
 node_modules
 
 coverage/

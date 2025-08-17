@@ -3,6 +3,8 @@ import { ConfirmationDialog } from "../common/confirmation-dialog"
 import { Button } from "../shadcn/button"
 import { usePost } from "@/hooks/api/usePost"
 import { useState } from "react"
+import { Label } from "../shadcn/label"
+import { Switch } from "../shadcn/switch"
 
 export function DatabaseActions() {
   const { postItem: resetDatabase, isPosting: isResettingDatabase } =
@@ -12,6 +14,7 @@ export function DatabaseActions() {
 
   const [openResetDatabaseDialog, setOpenResetDatabaseDialog] = useState(false)
   const [openSeedDatabaseDialog, setOpenSeedDatabaseDialog] = useState(false)
+  const [removeSecondaryData, setRemoveSecondaryData] = useState(false)
 
   return (
     <div
@@ -23,14 +26,42 @@ export function DatabaseActions() {
         onOpenChange={setOpenResetDatabaseDialog}
         title="Reset database"
         description="Are you sure you want to reset the database? This will remove all records and data stores from the database. Make sure to backup database file before resetting."
-        confirmText={isResettingDatabase ? "Resetting..." : "Reset"}
+        content={
+          <div className="flex flex-row items-center gap-2">
+            <Switch
+              id="reset-secondary-data"
+              checked={removeSecondaryData}
+              onCheckedChange={setRemoveSecondaryData}
+            />
+            <Label
+              htmlFor="reset-secondary-data"
+              className="cursor-pointer flex flex-col items-start gap-1"
+            >
+              Remove only secondary data
+              <span className="text-muted-foreground text-xs">
+                This will delete only dynamic data like notifications and
+                execution history.
+                <br />
+                The scrapers, routines, data stores, and preferences will not be
+                affected.
+              </span>
+            </Label>
+          </div>
+        }
+        confirmText={
+          isResettingDatabase
+            ? "Resetting..."
+            : removeSecondaryData
+              ? "Remove secondary data"
+              : "Reset"
+        }
         variant="destructive"
         onConfirm={() => {
           if (isResettingDatabase) {
             return
           }
 
-          resetDatabase(null)
+          resetDatabase({ removeSecondaryData })
             .then(() => {
               setOpenResetDatabaseDialog(false)
             })

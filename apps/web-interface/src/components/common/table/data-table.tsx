@@ -84,7 +84,9 @@ export function DataTable<TData, TValue>({
     const scrollHeight = container.scrollHeight
     const clientHeight = container.clientHeight
 
-    setShowBackToTop(scrollTop > clientHeight * 2)
+    setShowBackToTop(
+      scrollTop > clientHeight * 2 && scrollTop < scrollHeight - clientHeight,
+    )
 
     if (
       hasMore &&
@@ -232,17 +234,20 @@ export function DataTable<TData, TValue>({
         <ScrollBar orientation="horizontal" />
       </ScrollArea>
 
-      {showBackToTop && (
-        <Button
-          onClick={scrollToTop}
-          className="absolute bottom-4 right-4 z-20 rounded-full pr-4! backdrop-blur-sm"
-          size="sm"
-          variant="outline"
-        >
-          <ChevronUp />
-          <span>Back to top</span>
-        </Button>
-      )}
+      <Button
+        onClick={scrollToTop}
+        className={cn(
+          "absolute bottom-4 right-4 z-20 rounded-full pr-4! backdrop-blur-sm transition-[opacity,translate]",
+          showBackToTop
+            ? "pointer-events-auto opacity-100 translate-y-0"
+            : "pointer-events-none opacity-0 translate-y-4",
+        )}
+        size="sm"
+        variant="outline"
+      >
+        <ChevronUp />
+        <span>Back to top</span>
+      </Button>
     </div>
   )
 }

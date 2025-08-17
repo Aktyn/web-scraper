@@ -1,11 +1,13 @@
 import { z } from "zod"
 import { notificationSchema } from "../notification/notification"
 import { scraperEventSchema } from "../scraper/execution"
+import { routineSchema } from "../routine"
 
 export enum SubscriptionMessageType {
   SubscriptionInitialized = "subscriptionInitialized",
   ScraperEvent = "scraperEvent",
   Notification = "notification",
+  RoutineUpdated = "routineUpdated",
 }
 
 const subscriptionInitialized = z.object({
@@ -28,10 +30,16 @@ const notification = z.object({
   notification: notificationSchema,
 })
 
+const routineUpdated = z.object({
+  type: z.literal(SubscriptionMessageType.RoutineUpdated),
+  routine: routineSchema,
+})
+
 export const subscriptionMessageSchema = z.discriminatedUnion("type", [
   subscriptionInitialized,
   scraperEvent,
   notification,
+  routineUpdated,
 ])
 
 export type SubscriptionMessage = z.infer<typeof subscriptionMessageSchema>

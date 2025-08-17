@@ -14,6 +14,7 @@ import type { ComponentProps, ReactNode } from "react"
 type ConfirmationDialogProps = ComponentProps<typeof Dialog> & {
   title: string
   description: ReactNode
+  content?: ReactNode
   confirmText?: string
   cancelText?: string
   onConfirm: () => void
@@ -24,6 +25,7 @@ type ConfirmationDialogProps = ComponentProps<typeof Dialog> & {
 export function ConfirmationDialog({
   title,
   description,
+  content,
   confirmText = "Confirm",
   cancelText = "Cancel",
   onConfirm,
@@ -40,6 +42,7 @@ export function ConfirmationDialog({
           <DialogTitle>{title}</DialogTitle>
           <DialogDescription>{description}</DialogDescription>
         </DialogHeader>
+        {content}
         <DialogFooter>
           <DialogClose asChild>
             <Button variant="outline">{cancelText}</Button>

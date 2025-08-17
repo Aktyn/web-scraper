@@ -11,6 +11,7 @@ import {
   RoutineStatus,
   runUnsafeAsync,
   scheduledScraperExecutionSchema,
+  SubscriptionMessageType,
   upsertRoutineSchema,
 } from "@web-scraper/common"
 import { Scraper } from "@web-scraper/core"
@@ -69,6 +70,10 @@ export async function routinesRoutes(
             routineExecutionsTable.routineId,
             routinesTable.id,
           )} order by ${desc(routineExecutionsTable.createdAt)} limit 1)`,
+          previousExecutionsCount: sql<number>`(select count(*) from ${routineExecutionsTable} where ${eq(
+            routineExecutionsTable.routineId,
+            routinesTable.id,
+          )})`,
         })
         .from(routinesTable)
         .innerJoin(scrapersTable, eq(routinesTable.scraperId, scrapersTable.id))
@@ -78,8 +83,11 @@ export async function routinesRoutes(
 
       const data: Routine[] = routines
         .slice(0, pageSize)
-        .map(({ routine, lastExecutionAt, scraper }) =>
-          parseRoutineFromDb({ ...routine, lastExecutionAt }, scraper),
+        .map(({ routine, lastExecutionAt, previousExecutionsCount, scraper }) =>
+          parseRoutineFromDb(
+            { ...routine, lastExecutionAt, previousExecutionsCount },
+            scraper,
+          ),
         )
 
       return reply.status(200).send({
@@ -115,6 +123,10 @@ export async function routinesRoutes(
             routineExecutionsTable.routineId,
             id,
           )} order by ${desc(routineExecutionsTable.createdAt)} limit 1)`,
+          previousExecutionsCount: sql<number>`(select count(*) from ${routineExecutionsTable} where ${eq(
+            routineExecutionsTable.routineId,
+            id,
+          )})`,
         })
         .from(routinesTable)
         .innerJoin(scrapersTable, eq(routinesTable.scraperId, scrapersTable.id))
@@ -127,10 +139,14 @@ export async function routinesRoutes(
         })
       }
 
-      const { routine, scraper, lastExecutionAt } = routineResult
+      const { routine, scraper, lastExecutionAt, previousExecutionsCount } =
+        routineResult
 
       return reply.status(200).send({
-        data: parseRoutineFromDb({ ...routine, lastExecutionAt }, scraper),
+        data: parseRoutineFromDb(
+          { ...routine, lastExecutionAt, previousExecutionsCount },
+          scraper,
+        ),
       })
     },
   )
@@ -210,6 +226,10 @@ export async function routinesRoutes(
             routineExecutionsTable.routineId,
             id,
           )} order by ${desc(routineExecutionsTable.createdAt)} limit 1)`,
+          previousExecutionsCount: sql<number>`(select count(*) from ${routineExecutionsTable} where ${eq(
+            routineExecutionsTable.routineId,
+            id,
+          )})`,
         })
         .from(routinesTable)
         .where(eq(routinesTable.id, id))
@@ -251,7 +271,11 @@ export async function routinesRoutes(
 
       return reply.status(200).send({
         data: parseRoutineFromDb(
-          { ...updatedRoutine, lastExecutionAt: routine.lastExecutionAt },
+          {
+            ...updatedRoutine,
+            lastExecutionAt: routine.lastExecutionAt,
+            previousExecutionsCount: routine.previousExecutionsCount,
+          },
           scraper,
         ),
       })
@@ -297,6 +321,7 @@ export async function routinesRoutes(
         params: paramsWithRoutineIdSchema,
         response: {
           200: getApiResponseSchema(routineSchema),
+          400: apiErrorResponseSchema,
           404: apiErrorResponseSchema,
           409: apiErrorResponseSchema,
         },
@@ -340,6 +365,7 @@ export async function routinesRoutes(
 
       const { data, error } = await handleRoutineStatusChange(
         fastify.db,
+        events,
         id,
         RoutineStatus.Executing,
         [RoutineStatus.Active],
@@ -356,7 +382,9 @@ export async function routinesRoutes(
         .get()
 
       if (error) {
-        return reply.status(error.statusCode).send({ error: error.message })
+        return reply
+          .status(error.statusCode as 400)
+          .send({ error: error.message })
       }
 
       const scraperData = await joinScraperWithDataSources(
@@ -369,6 +397,7 @@ export async function routinesRoutes(
           () =>
             handleRoutineExecutionFinished(
               fastify.db,
+              events,
               logger,
               newRoutineExecution,
               executionId,
@@ -417,6 +446,7 @@ export async function routinesRoutes(
       const { id } = request.params
       const { data, error } = await handleRoutineStatusChange(
         fastify.db,
+        events,
         id,
         RoutineStatus.Paused,
         [RoutineStatus.Active],
@@ -424,7 +454,9 @@ export async function routinesRoutes(
       )
 
       if (error) {
-        return reply.status(error.statusCode).send({ error: error.message })
+        return reply
+          .status(error.statusCode as 409)
+          .send({ error: error.message })
       }
 
       return reply.status(200).send({ data })
@@ -447,6 +479,7 @@ export async function routinesRoutes(
       const { id } = request.params
       const { data, error } = await handleRoutineStatusChange(
         fastify.db,
+        events,
         id,
         RoutineStatus.Active,
         [
@@ -457,7 +490,9 @@ export async function routinesRoutes(
       )
 
       if (error) {
-        return reply.status(error.statusCode).send({ error: error.message })
+        return reply
+          .status(error.statusCode as 409)
+          .send({ error: error.message })
       }
 
       return reply.status(200).send({ data })
@@ -520,13 +555,14 @@ const zeroDate = new Date(0)
 function parseRoutineFromDb(
   routine: InferSelectModel<typeof routinesTable> & {
     lastExecutionAt: number | null
+    previousExecutionsCount?: number
   },
   scraper: Pick<InferSelectModel<typeof scrapersTable>, "name">,
 ) {
   return {
+    previousExecutionsCount: 0,
     ...routine,
     scraperName: scraper.name,
-    previousExecutionsCount: 0,
     nextScheduledExecutionAt:
       routine.nextScheduledExecutionAt.getTime() || null,
     lastExecutionAt: routine.lastExecutionAt ?? null,
@@ -537,6 +573,7 @@ function parseRoutineFromDb(
 
 async function handleRoutineStatusChange(
   db: ApiModuleContext["dbModule"]["db"],
+  events: ApiModuleContext["events"],
   routineId: number,
   newStatus: RoutineStatus,
   allowedCurrentStatuses: RoutineStatus[],
@@ -552,6 +589,10 @@ async function handleRoutineStatusChange(
         routineExecutionsTable.routineId,
         routineId,
       )} order by ${desc(routineExecutionsTable.createdAt)} limit 1)`,
+      previousExecutionsCount: sql<number>`(select count(*) from ${routineExecutionsTable} where ${eq(
+        routineExecutionsTable.routineId,
+        routineId,
+      )})`,
     })
     .from(routinesTable)
     .innerJoin(scrapersTable, eq(routinesTable.scraperId, scrapersTable.id))
@@ -562,7 +603,8 @@ async function handleRoutineStatusChange(
     return { error: { statusCode: 404, message: "Routine not found" } }
   }
 
-  const { routine, scraper, lastExecutionAt } = routineResult
+  const { routine, scraper, lastExecutionAt, previousExecutionsCount } =
+    routineResult
 
   if (
     routine.status === RoutineStatus.Executing &&
@@ -601,13 +643,22 @@ async function handleRoutineStatusChange(
     .where(eq(routinesTable.id, routineId))
     .returning()
 
-  return {
-    data: parseRoutineFromDb({ ...updatedRoutine, lastExecutionAt }, scraper),
-  }
+  const data = parseRoutineFromDb(
+    { ...updatedRoutine, lastExecutionAt, previousExecutionsCount },
+    scraper,
+  )
+
+  events.emit("broadcast", {
+    type: SubscriptionMessageType.RoutineUpdated,
+    routine: data,
+  })
+
+  return { data }
 }
 
 async function handleRoutineExecutionFinished(
   db: ApiModuleContext["dbModule"]["db"],
+  events: ApiModuleContext["events"],
   logger: ApiModuleContext["logger"],
   routineExecution: InferSelectModel<typeof routineExecutionsTable>,
   executionId?: number,
@@ -629,6 +680,7 @@ async function handleRoutineExecutionFinished(
 
   const { data, error } = await handleRoutineStatusChange(
     db,
+    events,
     routineExecution.routineId,
     RoutineStatus.Active,
     [RoutineStatus.Executing],
@@ -671,6 +723,14 @@ async function handleRoutineExecutionFinished(
         .update(routinesTable)
         .set({ status: RoutineStatus.PausedDueToMaxNumberOfFailedExecutions })
         .where(eq(routinesTable.id, data.id))
+
+      events.emit("broadcast", {
+        type: SubscriptionMessageType.RoutineUpdated,
+        routine: {
+          ...data,
+          status: RoutineStatus.PausedDueToMaxNumberOfFailedExecutions,
+        },
+      })
     }
   }
 }

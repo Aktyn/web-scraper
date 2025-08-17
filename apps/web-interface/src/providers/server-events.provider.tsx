@@ -47,8 +47,11 @@ export function ServerEventsProvider({ children }: PropsWithChildren) {
       case SubscriptionMessageType.SubscriptionInitialized:
         console.info("SSE connection initialized")
         break
+
       case SubscriptionMessageType.ScraperEvent:
+      case SubscriptionMessageType.RoutineUpdated:
         break
+
       case SubscriptionMessageType.Notification:
         switch (message.notification.type) {
           case NotificationType.ScraperFinished:
@@ -61,6 +64,7 @@ export function ServerEventsProvider({ children }: PropsWithChildren) {
             break
         }
         break
+
       default:
         console.warn(
           "Unknown message type:",

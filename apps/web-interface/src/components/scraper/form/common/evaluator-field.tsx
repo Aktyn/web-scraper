@@ -47,7 +47,7 @@ export function EvaluatorField({ control, fieldName }: EvaluatorFieldProps) {
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="w-auto max-w-2xl" align="start">
-                <Code>{code ?? ""}</Code>
+                <Code className="whitespace-pre-wrap">{code ?? ""}</Code>
               </PopoverContent>
             </Popover>
           </div>

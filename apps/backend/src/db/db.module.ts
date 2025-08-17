@@ -1,4 +1,4 @@
-import type { SimpleLogger } from "@web-scraper/common"
+import { type SimpleLogger } from "@web-scraper/common"
 import { sql } from "drizzle-orm"
 import { drizzle } from "drizzle-orm/libsql"
 import fs from "fs"
@@ -79,13 +79,24 @@ export async function getDbModule({ dbUrl, logger }: DatabaseModuleContext) {
     await push.apply()
   }
 
+  const clearDynamicData = async () => {
+    logger?.info("Clearing dynamic data")
+
+    await db.transaction(async (tx) => {
+      await tx.run(sql`delete from ${schema.notificationsTable}`)
+      await tx.run(sql`delete from ${schema.scraperExecutionIterationsTable}`)
+      await tx.run(sql`delete from ${schema.scraperExecutionsTable}`)
+      await tx.run(sql`delete from ${schema.routineExecutionsTable}`)
+    })
+  }
+
   const seedDatabase = async () => {
     logger?.info("Seeding database")
 
     await seed(db)
   }
 
-  return { db, resetDatabase, seedDatabase }
+  return { db, resetDatabase, clearDynamicData, seedDatabase }
 }
 
 export type DbModule = Awaited<ReturnType<typeof getDbModule>>

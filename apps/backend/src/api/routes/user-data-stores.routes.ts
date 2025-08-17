@@ -488,6 +488,7 @@ export async function userDataStoresRoutes(
         body: exportUserDataStoreSchema,
         response: {
           200: getApiResponseSchema(z.null()),
+          400: apiErrorResponseSchema,
           404: apiErrorResponseSchema,
         },
       },
@@ -587,7 +588,7 @@ export async function userDataStoresRoutes(
 
       const storeDataResponse = await fastify.db
         .run(
-          sql`SELECT * FROM ${sql.identifier(tableName)} LIMIT ${pageSize} OFFSET ${page * pageSize}`,
+          sql`SELECT * FROM ${sql.identifier(tableName)} LIMIT ${pageSize + 1} OFFSET ${page * pageSize}`,
         )
         .execute()
 
