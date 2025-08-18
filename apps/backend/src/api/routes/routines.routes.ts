@@ -13,9 +13,11 @@ import {
   scheduledScraperExecutionSchema,
   SubscriptionMessageType,
   upsertRoutineSchema,
+  routineQuerySchema,
 } from "@web-scraper/common"
 import { Scraper } from "@web-scraper/core"
 import {
+  type SQL,
   type InferSelectModel,
   and,
   asc,
@@ -50,7 +52,7 @@ export async function routinesRoutes(
     "/routines",
     {
       schema: {
-        querystring: apiPaginationQuerySchema,
+        querystring: routineQuerySchema,
         response: {
           200: getApiPaginatedResponseSchema(routineSchema),
           400: apiErrorResponseSchema,
@@ -58,15 +60,84 @@ export async function routinesRoutes(
       },
     },
     async (request, reply) => {
-      const { page, pageSize } = request.query
+      const {
+        page,
+        pageSize,
+        status,
+        scraperName,
+        description,
+        sortBy,
+        sortOrder,
+        createdAtFrom,
+        createdAtTo,
+        updatedAtFrom,
+        updatedAtTo,
+      } = request.query
+
+      const filters = []
+      if (status) {
+        filters.push(eq(routinesTable.status, status))
+      }
+      if (scraperName) {
+        filters.push(
+          sql`LOWER(${scrapersTable.name}) LIKE LOWER(${"%" + scraperName + "%"})`,
+        )
+      }
+      if (description) {
+        filters.push(
+          sql`LOWER(${routinesTable.description}) LIKE LOWER(${"%" + description + "%"})`,
+        )
+      }
+      if (createdAtFrom) {
+        filters.push(
+          sql`${routinesTable.createdAt} >= ${new Date(createdAtFrom)}`,
+        )
+      }
+      if (createdAtTo) {
+        filters.push(
+          sql`${routinesTable.createdAt} <= ${new Date(createdAtTo)}`,
+        )
+      }
+      if (updatedAtFrom) {
+        filters.push(
+          sql`${routinesTable.updatedAt} >= ${new Date(updatedAtFrom)}`,
+        )
+      }
+      if (updatedAtTo) {
+        filters.push(
+          sql`${routinesTable.updatedAt} <= ${new Date(updatedAtTo)}`,
+        )
+      }
+
+      const orderDirection = sortOrder === "asc" ? asc : desc
+      let orderBy: SQL<unknown>
+
+      switch (sortBy) {
+        case "scraperName":
+          orderBy = orderDirection(scrapersTable.name)
+          break
+        case "status":
+          orderBy = orderDirection(routinesTable.status)
+          break
+        case "description":
+          orderBy = orderDirection(routinesTable.description)
+          break
+        case "createdAt":
+          orderBy = orderDirection(routinesTable.createdAt)
+          break
+        case "updatedAt":
+          orderBy = orderDirection(routinesTable.updatedAt)
+          break
+        case undefined:
+          orderBy = desc(routinesTable.updatedAt)
+          break
+      }
 
       const routines = await fastify.db
         .select({
           routine: routinesTable,
           scraper: scrapersTable,
-          lastExecutionAt: sql<number>`(select ${
-            routineExecutionsTable.createdAt
-          } from ${routineExecutionsTable} where ${eq(
+          lastExecutionAt: sql<number>`(select ${routineExecutionsTable.createdAt} from ${routineExecutionsTable} where ${eq(
             routineExecutionsTable.routineId,
             routinesTable.id,
           )} order by ${desc(routineExecutionsTable.createdAt)} limit 1)`,
@@ -77,7 +148,8 @@ export async function routinesRoutes(
         })
         .from(routinesTable)
         .innerJoin(scrapersTable, eq(routinesTable.scraperId, scrapersTable.id))
-        .orderBy(desc(routinesTable.updatedAt))
+        .where(filters.length > 0 ? and(...filters) : undefined)
+        .orderBy(orderBy)
         .limit(pageSize + 1)
         .offset(page * pageSize)
 
@@ -117,9 +189,7 @@ export async function routinesRoutes(
         .select({
           routine: routinesTable,
           scraper: scrapersTable,
-          lastExecutionAt: sql<number>`(select ${
-            routineExecutionsTable.createdAt
-          } from ${routineExecutionsTable} where ${eq(
+          lastExecutionAt: sql<number>`(select ${routineExecutionsTable.createdAt} from ${routineExecutionsTable} where ${eq(
             routineExecutionsTable.routineId,
             id,
           )} order by ${desc(routineExecutionsTable.createdAt)} limit 1)`,
@@ -220,9 +290,7 @@ export async function routinesRoutes(
       const routine = await fastify.db
         .select({
           ...getTableColumns(routinesTable),
-          lastExecutionAt: sql<number>`(select ${
-            routineExecutionsTable.createdAt
-          } from ${routineExecutionsTable} where ${eq(
+          lastExecutionAt: sql<number>`(select ${routineExecutionsTable.createdAt} from ${routineExecutionsTable} where ${eq(
             routineExecutionsTable.routineId,
             id,
           )} order by ${desc(routineExecutionsTable.createdAt)} limit 1)`,
@@ -583,9 +651,7 @@ async function handleRoutineStatusChange(
     .select({
       routine: routinesTable,
       scraper: scrapersTable,
-      lastExecutionAt: sql<number>`(select ${
-        routineExecutionsTable.createdAt
-      } from ${routineExecutionsTable} where ${eq(
+      lastExecutionAt: sql<number>`(select ${routineExecutionsTable.createdAt} from ${routineExecutionsTable} where ${eq(
         routineExecutionsTable.routineId,
         routineId,
       )} order by ${desc(routineExecutionsTable.createdAt)} limit 1)`,

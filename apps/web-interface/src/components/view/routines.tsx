@@ -2,15 +2,20 @@ import { useDelete } from "@/hooks/api/useDelete"
 import { useInfiniteGet } from "@/hooks/api/useInfiniteGet"
 import { cn } from "@/lib/utils"
 import { ServerEventsProvider } from "@/providers/server-events.provider"
-import type { ColumnDef } from "@tanstack/react-table"
-import type { Routine } from "@web-scraper/common"
-import { ScraperEventType, SubscriptionMessageType } from "@web-scraper/common"
+import type { ColumnDef, SortingState } from "@tanstack/react-table"
+import type { Routine, RoutineQuery } from "@web-scraper/common"
+import {
+  ScraperEventType,
+  SubscriptionMessageType,
+  RoutineStatus,
+} from "@web-scraper/common"
 import { Edit, MonitorPlay, Plus, Trash } from "lucide-react"
 import { useMemo, useState } from "react"
 import { ConfirmationDialog } from "../common/confirmation-dialog"
 import { TimestampValue } from "../common/label/timestamp-value"
 import { NullBadge } from "../common/null-badge"
 import { DataTable } from "../common/table/data-table"
+import { DataTableColumnHeader } from "../common/table/data-table-column-header"
 import { RefreshButton } from "../common/table/refresh-button"
 import { RoutineFormDialog } from "../routine/routine-form-dialog"
 import { RoutinePanelDialog } from "../routine/routine-panel-dialog"
@@ -27,8 +32,23 @@ import {
 import { Button } from "../shadcn/button"
 import { Tooltip, TooltipContent, TooltipTrigger } from "../shadcn/tooltip"
 import { TermInfo } from "../info/term-info"
+import { routineStatusLabels } from "@/lib/dictionaries"
 
 export function Routines() {
+  const [sorting, setSorting] = useState<SortingState>([])
+  const [filters, setFilters] = useState<
+    Pick<
+      RoutineQuery,
+      | "status"
+      | "scraperName"
+      | "description"
+      | "createdAtFrom"
+      | "createdAtTo"
+      | "updatedAtFrom"
+      | "updatedAtTo"
+    >
+  >({})
+
   const {
     data: routines,
     isLoading,
@@ -36,7 +56,11 @@ export function Routines() {
     hasMore,
     loadMore,
     refresh,
-  } = useInfiniteGet("/routines")
+  } = useInfiniteGet("/routines", undefined, {
+    ...filters,
+    sortBy: sorting[0]?.id as RoutineQuery["sortBy"],
+    sortOrder: sorting[0] ? (sorting[0].desc ? "desc" : "asc") : undefined,
+  })
 
   const { deleteItem, isDeleting } = useDelete("/routines/:id")
 
@@ -88,7 +112,23 @@ export function Routines() {
     () => [
       {
         accessorKey: "status",
-        header: "Status",
+        header: ({ column }) => (
+          <DataTableColumnHeader
+            column={column}
+            title="Status"
+            filterType={DataTableColumnHeader.FilterType.Select}
+            options={Object.values(RoutineStatus).map((status) => ({
+              label: routineStatusLabels[status],
+              value: status,
+            }))}
+            onFilterChange={(status) =>
+              setFilters((prev) => ({
+                ...prev,
+                status: (status as RoutineStatus) ?? undefined,
+              }))
+            }
+          />
+        ),
         cell: ({ row }) => (
           <RoutineStatusBadge
             status={row.original.status}
@@ -98,7 +138,19 @@ export function Routines() {
       },
       {
         accessorKey: "scraperName",
-        header: "Scraper",
+        header: ({ column }) => (
+          <DataTableColumnHeader
+            column={column}
+            title="Scraper"
+            filterType={DataTableColumnHeader.FilterType.Text}
+            onFilterChange={(scraperName) =>
+              setFilters((prev) => ({
+                ...prev,
+                scraperName: scraperName ?? undefined,
+              }))
+            }
+          />
+        ),
         cell: ({ row }) => (
           <div className="flex flex-row items-center gap-2">
             <span>{row.original.scraperName}</span>
@@ -108,7 +160,19 @@ export function Routines() {
       },
       {
         accessorKey: "description",
-        header: "Description",
+        header: ({ column }) => (
+          <DataTableColumnHeader
+            column={column}
+            title="Description"
+            filterType={DataTableColumnHeader.FilterType.Text}
+            onFilterChange={(description) =>
+              setFilters((prev) => ({
+                ...prev,
+                description: description ?? undefined,
+              }))
+            }
+          />
+        ),
         cell: ({ row }) =>
           row.original.description ? (
             <span className="inline-block whitespace-normal max-h-24 overflow-y-auto">
@@ -130,12 +194,38 @@ export function Routines() {
       },
       {
         accessorKey: "createdAt",
-        header: "Created at",
+        header: ({ column }) => (
+          <DataTableColumnHeader
+            column={column}
+            title="Created at"
+            filterType={DataTableColumnHeader.FilterType.Date}
+            onFilterChange={(value) =>
+              setFilters((prev) => ({
+                ...prev,
+                createdAtFrom: value?.from,
+                createdAtTo: value?.to,
+              }))
+            }
+          />
+        ),
         cell: ({ row }) => <TimestampValue value={row.original.createdAt} />,
       },
       {
         accessorKey: "updatedAt",
-        header: "Updated at",
+        header: ({ column }) => (
+          <DataTableColumnHeader
+            column={column}
+            title="Updated at"
+            filterType={DataTableColumnHeader.FilterType.Date}
+            onFilterChange={(value) =>
+              setFilters((prev) => ({
+                ...prev,
+                updatedAtFrom: value?.from,
+                updatedAtTo: value?.to,
+              }))
+            }
+          />
+        ),
         cell: ({ row }) => (
           <TimestampValue
             className={cn(
@@ -223,6 +313,10 @@ export function Routines() {
           setRoutineToView(row.original)
           setRoutineViewOpen(true)
         }}
+        state={{
+          sorting,
+        }}
+        onSortingChange={setSorting}
       />
 
       <Accordion

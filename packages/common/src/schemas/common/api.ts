@@ -43,3 +43,5 @@ export const apiErrorResponseSchema = z.object({
 })
 
 export type ApiErrorResponse = z.infer<typeof apiErrorResponseSchema>
+
+export const sortOrderSchema = z.enum(["asc", "desc"]).optional()

@@ -2,7 +2,9 @@ import { useDelete } from "@/hooks/api/useDelete"
 import { useInfiniteGet } from "@/hooks/api/useInfiniteGet"
 import { useStateToRef } from "@/hooks/useStateToRef"
 import { cn, formatDateTime } from "@/lib/utils"
+import type { SortingState } from "@tanstack/react-table"
 import { type ColumnDef } from "@tanstack/react-table"
+import type { UserDataStoreRecordsQuery } from "@web-scraper/common"
 import {
   SqliteColumnType,
   type UserDataStore,
@@ -20,6 +22,7 @@ import { Button } from "../shadcn/button"
 import { Tooltip, TooltipContent, TooltipTrigger } from "../shadcn/tooltip"
 import { DataStoreFormDialog } from "./data-store-form-dialog"
 import { DataStoreRecordDialog } from "./data-store-record-dialog"
+import { DataTableColumnHeader } from "../common/table/data-table-column-header"
 
 export interface DataStoreTableInterface {
   refresh: () => void
@@ -51,13 +54,25 @@ export function DataStoreTable({
   > | null>(null)
 
   const [editDialogOpen, setEditDialogOpen] = useState(false)
-
   const [eraseDialogOpen, setEraseDialogOpen] = useState(false)
 
+  const [sorting, setSorting] = useState<SortingState>([])
+  const [filters, setFilters] = useState<
+    UserDataStoreRecordsQuery["textFilters"]
+  >({})
+
   const { data, isLoading, isLoadingMore, hasMore, loadMore, refresh } =
-    useInfiniteGet("/user-data-stores/:tableName/records", {
-      tableName: store.tableName,
-    })
+    useInfiniteGet(
+      "/user-data-stores/:tableName/records",
+      {
+        tableName: store.tableName,
+      },
+      {
+        ...filters,
+        sortBy: sorting[0]?.id,
+        sortOrder: sorting[0] ? (sorting[0].desc ? "desc" : "asc") : undefined,
+      },
+    )
 
   const { deleteItem: deleteAllRecords, isDeleting: isDeletingAllRecords } =
     useDelete("/user-data-stores/:tableName/records")
@@ -108,8 +123,24 @@ export function DataStoreTable({
         accessorKey: column.name,
         header:
           column.name === "id"
-            ? "ID"
-            : () => <ColumnNameLabel column={column} />,
+            ? ({ column: columnContext }) => (
+                <DataTableColumnHeader column={columnContext} title="ID" />
+              )
+            : column.type === SqliteColumnType.TEXT
+              ? ({ column: columnContext }) => (
+                  <DataTableColumnHeader
+                    column={columnContext}
+                    title={<ColumnNameLabel column={column} />}
+                    filterType={DataTableColumnHeader.FilterType.Text}
+                    onFilterChange={(name) =>
+                      setFilters((prev) => ({
+                        ...prev,
+                        name: name ?? undefined,
+                      }))
+                    }
+                  />
+                )
+              : () => <ColumnNameLabel column={column} />,
         cell: ({ row }) => {
           const value = row.original[column.name]
           if (value === null) {
@@ -221,6 +252,10 @@ export function DataStoreTable({
           isLoading={isLoading || isLoadingMore}
           hasMore={hasMore}
           onLoadMore={loadMore}
+          state={{
+            sorting,
+          }}
+          onSortingChange={setSorting}
         />
       </div>
 

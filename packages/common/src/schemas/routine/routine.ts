@@ -1,6 +1,10 @@
-import { z } from "zod"
-import { durationSchema, timestampSchema } from "../common"
+import {
+  durationSchema,
+  timestampSchema,
+  apiPaginationQuerySchema,
+} from "../common"
 import { executionIteratorSchema } from "../iterator"
+import { z } from "zod"
 
 export enum SchedulerType {
   Interval = "interval",
@@ -59,6 +63,22 @@ export const upsertRoutineSchema = routineSchema.omit({
 })
 
 export type UpsertRoutine = z.infer<typeof upsertRoutineSchema>
+
+export const routineQuerySchema = apiPaginationQuerySchema.extend({
+  sortBy: z
+    .enum(["status", "scraperName", "description", "createdAt", "updatedAt"])
+    .optional(),
+  sortOrder: z.enum(["asc", "desc"]).optional(),
+  status: z.nativeEnum(RoutineStatus).optional(),
+  scraperName: z.string().min(1).optional(),
+  description: z.string().min(1).optional(),
+  createdAtFrom: timestampSchema.optional(),
+  createdAtTo: timestampSchema.optional(),
+  updatedAtFrom: timestampSchema.optional(),
+  updatedAtTo: timestampSchema.optional(),
+})
+
+export type RoutineQuery = z.infer<typeof routineQuerySchema>
 
 export function calculateNextScheduledExecutionAt(
   routine: Pick<Routine, "status" | "scheduler">,

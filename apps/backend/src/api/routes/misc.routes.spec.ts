@@ -23,6 +23,9 @@ describe("Misc Routes", () => {
 
       const response = await modules.api.inject({
         method: "POST",
+        body: {
+          removeSecondaryData: false,
+        },
         url: "/reset-database",
       })
 
@@ -42,6 +45,9 @@ describe("Misc Routes", () => {
       // First reset the database to have a clean state
       await modules.api.inject({
         method: "POST",
+        body: {
+          removeSecondaryData: false,
+        },
         url: "/reset-database",
       })
 

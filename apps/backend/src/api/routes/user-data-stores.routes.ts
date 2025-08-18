@@ -1,7 +1,6 @@
 import {
   type UserDataStoreColumn,
   apiErrorResponseSchema,
-  apiPaginationQuerySchema,
   createUserDataStoreSchema,
   exportUserDataStoreSchema,
   getApiPaginatedResponseSchema,
@@ -9,18 +8,20 @@ import {
   importUserDataStoreSchema,
   paramsWithTableNameSchema,
   updateUserDataStoreSchema,
+  userDataStoreQuerySchema,
+  userDataStoreRecordsQuerySchema,
   userDataStoreSchema,
 } from "@web-scraper/common"
-import { and, eq, ne, sql } from "drizzle-orm"
+import { and, asc, desc, eq, ne, sql } from "drizzle-orm"
 import type { FastifyInstance } from "fastify"
 import type { ZodTypeProvider } from "fastify-type-provider-zod"
+import fs from "fs"
 import z from "zod"
-import { userDataStoresTable, scraperDataSourcesTable } from "../../db/schema"
+import { scraperDataSourcesTable, userDataStoresTable } from "../../db/schema"
 import { createUserDataStore } from "../../db/user-data-store-helpers"
 //@ts-expect-error No types for this package
 import dialog from "node-file-dialog"
 import path from "path"
-import fs from "fs"
 import type { ApiModuleContext } from "../api.module"
 
 export async function userDataStoresRoutes(
@@ -82,7 +83,7 @@ export async function userDataStoresRoutes(
     "/user-data-stores",
     {
       schema: {
-        querystring: apiPaginationQuerySchema,
+        querystring: userDataStoreQuerySchema,
         response: {
           200: getApiPaginatedResponseSchema(userDataStoreSchema),
           400: apiErrorResponseSchema,
@@ -90,34 +91,56 @@ export async function userDataStoresRoutes(
       },
     },
     async (request, reply) => {
-      const { page, pageSize } = request.query
+      const { page, pageSize, name, description, sortBy, sortOrder } =
+        request.query
 
-      const stores = await fastify.db
-        .select()
+      const filters = []
+      if (name) {
+        filters.push(
+          sql`LOWER(${userDataStoresTable.name}) LIKE LOWER(${"%" + name + "%"})`,
+        )
+      }
+      if (description) {
+        filters.push(
+          sql`LOWER(${userDataStoresTable.description}) LIKE LOWER(${"%" + description + "%"})`,
+        )
+      }
+
+      const orderDirection = sortOrder === "asc" ? asc : desc
+      const orderBy = sortBy
+        ? [orderDirection(userDataStoresTable[sortBy])]
+        : []
+
+      const rows = await fastify.db
+        .select({
+          tableName: userDataStoresTable.tableName,
+          name: userDataStoresTable.name,
+          description: userDataStoresTable.description,
+          columns: userDataStoresTable.columnDefinitions,
+        })
         .from(userDataStoresTable)
+        .where(filters.length > 0 ? and(...filters) : undefined)
+        .orderBy(...orderBy)
         .limit(pageSize + 1)
         .offset(page * pageSize)
 
-      const userDataStores = await Promise.all(
-        stores.map(async (store) => {
-          const countResult = await fastify.db
+      const stores = await Promise.all(
+        rows.map(async (row) => ({
+          ...row,
+          recordsCount: await fastify.db
             .run(
-              sql`SELECT COUNT(*) as count FROM ${sql.identifier(store.tableName)}`,
+              sql`SELECT COUNT(*) as count FROM ${sql.identifier(row.tableName)}`,
             )
             .execute()
-          return {
-            ...store,
-            recordsCount: Number(countResult.rows.at(0)?.count ?? 0),
-            columns: store.columnDefinitions,
-          }
-        }),
+            .then((res) => Number(res.rows.at(0)?.count ?? 0)),
+        })),
       )
 
       return reply.status(200).send({
-        data: userDataStores.slice(0, pageSize),
+        data: stores.slice(0, pageSize),
         page,
         pageSize,
-        hasMore: userDataStores.length > pageSize,
+        hasMore: stores.length > pageSize,
       })
     },
   )
@@ -575,7 +598,7 @@ export async function userDataStoresRoutes(
     {
       schema: {
         params: paramsWithTableNameSchema,
-        querystring: apiPaginationQuerySchema,
+        querystring: userDataStoreRecordsQuerySchema,
         response: {
           200: getApiPaginatedResponseSchema(z.record(z.string(), z.unknown())),
           400: apiErrorResponseSchema,
@@ -584,11 +607,20 @@ export async function userDataStoresRoutes(
     },
     async (request, reply) => {
       const { tableName } = request.params
-      const { page, pageSize } = request.query
+      const { page, pageSize, textFilters, sortBy, sortOrder } = request.query
+
+      const filters = []
+      for (const key in textFilters) {
+        if (textFilters[key]) {
+          filters.push(
+            sql`LOWER(${sql.identifier(key)}) LIKE LOWER(${"%" + textFilters[key] + "%"})`,
+          )
+        }
+      }
 
       const storeDataResponse = await fastify.db
         .run(
-          sql`SELECT * FROM ${sql.identifier(tableName)} LIMIT ${pageSize + 1} OFFSET ${page * pageSize}`,
+          sql`SELECT * FROM ${sql.identifier(tableName)} WHERE ${filters.length > 0 ? and(...filters) : sql`1 = 1`} ORDER BY ${sortBy ? sql.identifier(sortBy) : sql`id`} ${sql.raw(sortOrder === "asc" ? "ASC" : "DESC")} LIMIT ${pageSize + 1} OFFSET ${page * pageSize}`,
         )
         .execute()
 

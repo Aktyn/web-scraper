@@ -1,7 +1,11 @@
 import z from "zod"
+import {
+  apiPaginationQuerySchema,
+  sortOrderSchema,
+  timestampSchema,
+} from "../common"
 import { scraperDataSourceSchema } from "./data-source"
 import { scraperInstructionsSchema } from "./instructions"
-import { apiPaginationQuerySchema, timestampSchema } from "../common"
 
 export const scraperSchema = z.object({
   id: z.number().int().min(1),
@@ -30,6 +34,13 @@ export const paramsWithScraperIdSchema = z.object({
 
 export const scraperQuerySchema = apiPaginationQuerySchema.extend({
   name: z.string().optional(),
+  description: z.string().optional(),
+  sortBy: z.enum(["name", "description", "createdAt", "updatedAt"]).optional(),
+  sortOrder: sortOrderSchema,
+  createdAtFrom: timestampSchema.optional(),
+  createdAtTo: timestampSchema.optional(),
+  updatedAtFrom: timestampSchema.optional(),
+  updatedAtTo: timestampSchema.optional(),
 })
 
 export type ScraperQuery = z.infer<typeof scraperQuerySchema>

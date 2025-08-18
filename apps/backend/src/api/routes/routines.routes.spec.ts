@@ -81,6 +81,78 @@ describe("Routines Routes", () => {
       expect(routine2).toBeDefined()
       expect(routine2.lastExecutionAt).toBeNull()
     })
+
+    it("should filter routines by status", async () => {
+      await modules.dbModule.db
+        .update(routinesTable)
+        .set({ status: RoutineStatus.Active })
+        .where(eq(routinesTable.id, 1))
+
+      const response = await modules.api.inject({
+        method: "GET",
+        url: `/routines?status=${RoutineStatus.Active}`,
+      })
+
+      const payload = JSON.parse(response.payload)
+      expect(response.statusCode).toBe(200)
+      expect(payload.data.length).toBe(1)
+      expect(payload.data[0].status).toBe(RoutineStatus.Active)
+    })
+
+    it("should filter routines by scraperName", async () => {
+      const response = await modules.api.inject({
+        method: "GET",
+        url: "/routines?scraperName=Site",
+      })
+
+      const payload = JSON.parse(response.payload)
+      expect(response.statusCode).toBe(200)
+      expect(payload.data.length).toBe(1)
+      expect(payload.data[0].scraperName).toBe("Site content scraper")
+    })
+
+    it("should filter routines by description", async () => {
+      await modules.dbModule.db
+        .update(routinesTable)
+        .set({ description: "test description" })
+        .where(eq(routinesTable.id, 1))
+
+      const response = await modules.api.inject({
+        method: "GET",
+        url: "/routines?description=test",
+      })
+
+      const payload = JSON.parse(response.payload)
+      expect(response.statusCode).toBe(200)
+      expect(payload.data.length).toBe(1)
+      expect(payload.data[0].description).toBe("test description")
+    })
+
+    it("should sort routines by createdAt ascending", async () => {
+      const response = await modules.api.inject({
+        method: "GET",
+        url: "/routines?sortBy=createdAt&sortOrder=asc",
+      })
+
+      const payload = JSON.parse(response.payload)
+      expect(response.statusCode).toBe(200)
+      const createdAts = payload.data.map((r: Routine) => r.createdAt)
+      const sorted = [...createdAts].sort((a, b) => a - b)
+      expect(createdAts).toEqual(sorted)
+    })
+
+    it("should sort routines by scraperName descending", async () => {
+      const response = await modules.api.inject({
+        method: "GET",
+        url: "/routines?sortBy=scraperName&sortOrder=desc",
+      })
+
+      const payload = JSON.parse(response.payload)
+      expect(response.statusCode).toBe(200)
+      const names = payload.data.map((r: Routine) => r.scraperName)
+      const sorted = [...names].sort((a, b) => b.localeCompare(a))
+      expect(names).toEqual(sorted)
+    })
   })
 
   describe("GET /routines/:id", () => {

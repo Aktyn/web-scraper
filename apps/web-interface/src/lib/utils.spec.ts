@@ -1,4 +1,4 @@
-import { cn, formatDateTime, formatDuration } from "./utils"
+import { cn, formatDateTime, formatDuration, quickHash } from "./utils"
 import { describe, it, expect } from "vitest"
 
 describe(cn.name, () => {
@@ -92,5 +92,20 @@ describe(formatDuration.name, () => {
   it("throws on unknown minimalUnit", () => {
     // @ts-expect-error Testing unknown minimalUnit
     expect(() => formatDuration(1000, "foo")).toThrow()
+  })
+})
+
+describe(quickHash.name, () => {
+  it("should generate a consistent hash for the same input", () => {
+    const input = "test"
+    const hash1 = quickHash(input)
+    const hash2 = quickHash(input)
+    expect(hash1).toBe(hash2)
+  })
+
+  it("should generate different hashes for different inputs", () => {
+    const hash1 = quickHash("test1")
+    const hash2 = quickHash("test2")
+    expect(hash1).not.toBe(hash2)
   })
 })

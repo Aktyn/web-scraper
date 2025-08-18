@@ -285,6 +285,172 @@ describe("Scrapers Routes", () => {
       expect(nonExistentData.hasMore).toBe(false)
     })
 
+    it("should filter scrapers by description", async () => {
+      const description = "A unique test description for filtering"
+
+      await modules.api.inject({
+        method: "POST",
+        url: "/scrapers",
+        payload: {
+          name: "Scraper with unique description",
+          description: description,
+          instructions: [],
+          dataSources: [],
+          userDataDirectory: null,
+        },
+      })
+
+      const response = await modules.api.inject({
+        method: "GET",
+        url: `/scrapers?description=${encodeURIComponent(description.toLowerCase())}`,
+      })
+
+      expect(response.statusCode).toBe(200)
+      const data = JSON.parse(response.payload)
+      expect(data.data.length).toBe(1)
+      expect(data.data[0].description).toBe(description)
+      expect(data.hasMore).toBe(false)
+
+      const nonExistentResponse = await modules.api.inject({
+        method: "GET",
+        url: "/scrapers?description=non-existent-description",
+      })
+
+      expect(nonExistentResponse.statusCode).toBe(200)
+      const nonExistentData = JSON.parse(nonExistentResponse.payload)
+      expect(nonExistentData.data.length).toBe(0)
+      expect(nonExistentData.hasMore).toBe(false)
+    })
+
+    it("should sort scrapers by name in ascending order", async () => {
+      const response = await modules.api.inject({
+        method: "GET",
+        url: "/scrapers?sortBy=name&sortOrder=asc",
+      })
+
+      expect(response.statusCode).toBe(200)
+      const data = JSON.parse(response.payload)
+      expect(data.data.length).toBeGreaterThan(1)
+      const names = data.data.map((s: { name: string }) => s.name)
+      expect(names).toEqual([...names].sort())
+    })
+
+    it("should sort scrapers by name in descending order", async () => {
+      const response = await modules.api.inject({
+        method: "GET",
+        url: "/scrapers?sortBy=name&sortOrder=desc",
+      })
+
+      expect(response.statusCode).toBe(200)
+      const data = JSON.parse(response.payload)
+      expect(data.data.length).toBeGreaterThan(1)
+      const names = data.data.map((s: { name: string }) => s.name)
+      expect(names).toEqual([...names].sort().reverse())
+    })
+
+    it("should sort scrapers by description in ascending order", async () => {
+      const response = await modules.api.inject({
+        method: "GET",
+        url: "/scrapers?sortBy=description&sortOrder=asc",
+      })
+
+      expect(response.statusCode).toBe(200)
+      const data = JSON.parse(response.payload)
+      expect(data.data.length).toBeGreaterThan(1)
+      const descriptions = data.data.map((s: { description: string | null }) =>
+        s.description === null ? "" : s.description,
+      )
+      expect(descriptions).toEqual([...descriptions].sort())
+    })
+
+    it("should sort scrapers by description in descending order", async () => {
+      const response = await modules.api.inject({
+        method: "GET",
+        url: "/scrapers?sortBy=description&sortOrder=desc",
+      })
+
+      expect(response.statusCode).toBe(200)
+      const data = JSON.parse(response.payload)
+      expect(data.data.length).toBeGreaterThan(1)
+      const descriptions = data.data.map((s: { description: string | null }) =>
+        s.description === null ? "" : s.description,
+      )
+      expect(descriptions).toEqual([...descriptions].sort().reverse())
+    })
+
+    it("should sort scrapers by createdAt in ascending order", async () => {
+      const response = await modules.api.inject({
+        method: "GET",
+        url: "/scrapers?sortBy=createdAt&sortOrder=asc",
+      })
+
+      expect(response.statusCode).toBe(200)
+      const data = JSON.parse(response.payload)
+      expect(data.data.length).toBeGreaterThan(1)
+      const createdAts = data.data.map(
+        (s: { createdAt: number }) => s.createdAt,
+      )
+      expect(createdAts).toEqual([...createdAts].sort((a, b) => a - b))
+    })
+
+    it("should sort scrapers by createdAt in descending order", async () => {
+      const response = await modules.api.inject({
+        method: "GET",
+        url: "/scrapers?sortBy=createdAt&sortOrder=desc",
+      })
+
+      expect(response.statusCode).toBe(200)
+      const data = JSON.parse(response.payload)
+      expect(data.data.length).toBeGreaterThan(1)
+      const createdAts = data.data.map(
+        (s: { createdAt: number }) => s.createdAt,
+      )
+      expect(createdAts).toEqual([...createdAts].sort((a, b) => b - a))
+    })
+
+    it("should sort scrapers by updatedAt in ascending order", async () => {
+      const response = await modules.api.inject({
+        method: "GET",
+        url: "/scrapers?sortBy=updatedAt&sortOrder=asc",
+      })
+
+      expect(response.statusCode).toBe(200)
+      const data = JSON.parse(response.payload)
+      expect(data.data.length).toBeGreaterThan(1)
+      const updatedAts = data.data.map(
+        (s: { updatedAt: number }) => s.updatedAt,
+      )
+      expect(updatedAts).toEqual([...updatedAts].sort((a, b) => a - b))
+    })
+
+    it("should sort scrapers by updatedAt in descending order", async () => {
+      const response = await modules.api.inject({
+        method: "GET",
+        url: "/scrapers?sortBy=updatedAt&sortOrder=desc",
+      })
+
+      expect(response.statusCode).toBe(200)
+      const data = JSON.parse(response.payload)
+      expect(data.data.length).toBeGreaterThan(1)
+      const updatedAts = data.data.map(
+        (s: { updatedAt: number }) => s.updatedAt,
+      )
+      expect(updatedAts).toEqual([...updatedAts].sort((a, b) => b - a))
+    })
+
+    it("should filter and sort scrapers", async () => {
+      const name = "System actions"
+      const response = await modules.api.inject({
+        method: "GET",
+        url: `/scrapers?name=${encodeURIComponent(name.toLowerCase())}&sortBy=name&sortOrder=asc`,
+      })
+
+      expect(response.statusCode).toBe(200)
+      const data = JSON.parse(response.payload)
+      expect(data.data.length).toBe(1)
+      expect(data.data[0].name).toBe(name)
+    })
+
     it("should return 500 if there is a database error", async () => {
       vi.spyOn(modules.dbModule.db, "select").mockRejectedValue(
         new Error("Database error"),

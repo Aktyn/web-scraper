@@ -19,9 +19,17 @@ import { RefreshButton } from "../common/table/refresh-button"
 import { DataStoreDialog } from "../data-store/data-store-dialog"
 import { DataStoreFormDialog } from "../data-store/data-store-form-dialog"
 import { TermInfo } from "../info/term-info"
+import { DataTableColumnHeader } from "../common/table/data-table-column-header"
+import { type SortingState } from "@tanstack/react-table"
+import { type UserDataStoreQuery } from "@web-scraper/common"
 
 export function DataStores() {
   const { unpinDataStore } = usePinnedDataStores()
+
+  const [sorting, setSorting] = useState<SortingState>([])
+  const [filters, setFilters] = useState<
+    Pick<UserDataStoreQuery, "name" | "description">
+  >({})
 
   const {
     data: dataStores,
@@ -30,7 +38,11 @@ export function DataStores() {
     hasMore,
     loadMore,
     refresh,
-  } = useInfiniteGet("/user-data-stores")
+  } = useInfiniteGet("/user-data-stores", undefined, {
+    ...filters,
+    sortBy: sorting[0]?.id as UserDataStoreQuery["sortBy"],
+    sortOrder: sorting[0] ? (sorting[0].desc ? "desc" : "asc") : undefined,
+  })
 
   const { deleteItem, isDeleting } = useDelete("/user-data-stores/:tableName")
 
@@ -70,14 +82,35 @@ export function DataStores() {
     () => [
       {
         accessorKey: "name",
-        header: "Name",
+        header: ({ column }) => (
+          <DataTableColumnHeader
+            column={column}
+            title="Name"
+            filterType={DataTableColumnHeader.FilterType.Text}
+            onFilterChange={(name) =>
+              setFilters((prev) => ({ ...prev, name: name ?? undefined }))
+            }
+          />
+        ),
         cell: ({ row }) => (
           <div className="font-medium">{row.original.name}</div>
         ),
       },
       {
         accessorKey: "description",
-        header: "Description",
+        header: ({ column }) => (
+          <DataTableColumnHeader
+            column={column}
+            title="Description"
+            filterType={DataTableColumnHeader.FilterType.Text}
+            onFilterChange={(description) =>
+              setFilters((prev) => ({
+                ...prev,
+                description: description ?? undefined,
+              }))
+            }
+          />
+        ),
         cell: ({ row }) => row.original.description ?? <NullBadge />,
       },
       {
@@ -161,6 +194,10 @@ export function DataStores() {
           setStoreToView(row.original)
           setDataStoreTableOpen(true)
         }}
+        state={{
+          sorting,
+        }}
+        onSortingChange={setSorting}
       />
 
       <ConfirmationDialog

@@ -172,6 +172,120 @@ describe("User Data Stores Routes", () => {
         hasMore: false,
       })
     })
+
+    it("should filter user data stores by name", async () => {
+      const response = await modules.api.inject({
+        method: "GET",
+        url: "/user-data-stores?name=personal",
+      })
+
+      expect(response.statusCode).toBe(200)
+      const payload = JSON.parse(response.payload)
+      expect(payload.data).toHaveLength(1)
+      expect(payload.data[0].name).toBe("Personal credentials")
+    })
+
+    it("should filter user data stores by description", async () => {
+      const response = await modules.api.inject({
+        method: "GET",
+        url: "/user-data-stores?description=various",
+      })
+
+      expect(response.statusCode).toBe(200)
+      const payload = JSON.parse(response.payload)
+      expect(payload.data).toHaveLength(1)
+      expect(payload.data[0].name).toBe("Personal credentials")
+    })
+
+    it("should filter by name and description", async () => {
+      const response = await modules.api.inject({
+        method: "GET",
+        url: "/user-data-stores?name=test&description=saving",
+      })
+
+      expect(response.statusCode).toBe(200)
+      const payload = JSON.parse(response.payload)
+      expect(payload.data).toHaveLength(1)
+      expect(payload.data[0].name).toBe("Example test of saving page content")
+    })
+
+    it("should sort user data stores by name in ascending order", async () => {
+      const response = await modules.api.inject({
+        method: "GET",
+        url: "/user-data-stores?sortBy=name&sortOrder=asc",
+      })
+
+      expect(response.statusCode).toBe(200)
+      const payload = JSON.parse(response.payload)
+      expect(payload.data.map((d: { name: string }) => d.name)).toEqual([
+        "Brain FM accounts",
+        "Crypto prices",
+        "Example test of saving page content",
+        "Personal credentials",
+      ])
+    })
+
+    it("should sort user data stores by name in descending order", async () => {
+      const response = await modules.api.inject({
+        method: "GET",
+        url: "/user-data-stores?sortBy=name&sortOrder=desc",
+      })
+
+      expect(response.statusCode).toBe(200)
+      const payload = JSON.parse(response.payload)
+      expect(payload.data.map((d: { name: string }) => d.name)).toEqual([
+        "Personal credentials",
+        "Example test of saving page content",
+        "Crypto prices",
+        "Brain FM accounts",
+      ])
+    })
+
+    it("should sort user data stores by description in ascending order", async () => {
+      const response = await modules.api.inject({
+        method: "GET",
+        url: "/user-data-stores?sortBy=description&sortOrder=asc",
+      })
+
+      expect(response.statusCode).toBe(200)
+      const payload = JSON.parse(response.payload)
+      expect(payload.data.map((d: { name: string }) => d.name)).toEqual([
+        "Crypto prices",
+        "Brain FM accounts",
+        "Example test of saving page content",
+        "Personal credentials",
+      ])
+    })
+
+    it("should sort user data stores by description in descending order", async () => {
+      const response = await modules.api.inject({
+        method: "GET",
+        url: "/user-data-stores?sortBy=description&sortOrder=desc",
+      })
+
+      expect(response.statusCode).toBe(200)
+      const payload = JSON.parse(response.payload)
+      expect(payload.data.map((d: { name: string }) => d.name)).toEqual([
+        "Personal credentials",
+        "Example test of saving page content",
+        "Crypto prices",
+        "Brain FM accounts",
+      ])
+    })
+
+    it("should filter and sort user data stores", async () => {
+      const response = await modules.api.inject({
+        method: "GET",
+        url: "/user-data-stores?name=crypto&sortBy=name&sortOrder=asc",
+      })
+
+      expect(response.statusCode).toBe(200)
+      const payload = JSON.parse(response.payload)
+      expect(payload.data).toHaveLength(1)
+      expect(payload.data.map((d: { name: string }) => d.name)).toEqual([
+        "Crypto prices",
+      ])
+    })
   })
 
   describe("GET /user-data-stores/:tableName", () => {
@@ -214,7 +328,7 @@ describe("User Data Stores Routes", () => {
     it("should return status 200 and store data from the database", async () => {
       const response = await modules.api.inject({
         method: "GET",
-        url: "/user-data-stores/data_store_personal_credentials/records",
+        url: "/user-data-stores/data_store_personal_credentials/records?sortBy=id&sortOrder=asc",
       })
 
       expect(response.statusCode).toBe(200)
@@ -733,7 +847,7 @@ describe("User Data Stores Routes", () => {
       // Verify data is imported
       const recordsResponse = await modules.api.inject({
         method: "GET",
-        url: "/user-data-stores/data_store_personal_credentials/records",
+        url: "/user-data-stores/data_store_personal_credentials/records?sortBy=ID&sortOrder=asc",
       })
       const { data } = JSON.parse(recordsResponse.payload)
       expect(data).toHaveLength(3)

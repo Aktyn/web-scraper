@@ -16,7 +16,7 @@ export function TermInfo({ term, ...iconProps }: TermInfoProps) {
       <TooltipTrigger asChild>
         <Info
           {...iconProps}
-          className={cn("inline size-5", iconProps.className)}
+          className={cn("inline size-5 min-w-5", iconProps.className)}
         />
       </TooltipTrigger>
       <TooltipContent className="whitespace-pre-wrap max-w-128">

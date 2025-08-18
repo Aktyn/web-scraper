@@ -9,6 +9,7 @@ import {
   TableRow,
 } from "@/components/shadcn/table"
 import { cn } from "@/lib/utils"
+import type { TableState } from "@tanstack/react-table"
 import {
   type ColumnDef,
   type ExpandedState,
@@ -17,6 +18,8 @@ import {
   getExpandedRowModel,
   type Row,
   useReactTable,
+  type SortingState,
+  type OnChangeFn,
 } from "@tanstack/react-table"
 import { ChevronUp } from "lucide-react"
 import type { ReactNode } from "react"
@@ -41,6 +44,8 @@ type DataTableProps<TData, TValue> = {
   onRowClick?: (row: Row<TData>) => void
   tableProps?: ComponentProps<"table">
   noDataMessage?: ReactNode
+  state?: Partial<TableState>
+  onSortingChange?: OnChangeFn<SortingState>
 } & ComponentProps<"div">
 
 export function DataTable<TData, TValue>({
@@ -54,6 +59,8 @@ export function DataTable<TData, TValue>({
   onRowClick,
   tableProps,
   noDataMessage = "No results",
+  state,
+  onSortingChange,
   ...containerProps
 }: DataTableProps<TData, TValue>) {
   const [showBackToTop, setShowBackToTop] = useState(false)
@@ -69,11 +76,14 @@ export function DataTable<TData, TValue>({
     columns,
     state: {
       expanded,
+      ...state,
     },
     onExpandedChange: setExpanded,
     getCoreRowModel: getCoreRowModel(),
     getExpandedRowModel: getExpandedRowModel(),
     getRowCanExpand: getRowCanExpand ?? (SubComponent ? () => true : undefined),
+    manualSorting: true,
+    onSortingChange,
   })
 
   const handleScroll = useCallback(() => {
@@ -159,7 +169,12 @@ export function DataTable<TData, TValue>({
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id} className="hover:bg-inherit">
                 {headerGroup.headers.map((header) => (
-                  <TableHead key={header.id}>
+                  <TableHead
+                    key={header.id}
+                    data-sorting={
+                      state?.sorting?.[header.column.getSortIndex()]?.desc
+                    }
+                  >
                     {header.isPlaceholder
                       ? null
                       : flexRender(

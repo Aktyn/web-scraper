@@ -1,29 +1,32 @@
 import type {
-  ApiResponse,
-  UserPreferences,
-  ApiPaginationQuery,
-  ApiPaginatedResponse,
-  UserDataStore,
-  CreateUserDataStore,
-  UpdateUserDataStore,
-  UpsertUserDataStoreRecord,
-  ScraperType,
-  UpsertScraper,
-  ScraperExecutionStatus,
-  ScraperExecutionInfo,
   ApiErrorResponse,
+  ApiPaginatedResponse,
+  ApiPaginationQuery,
+  ApiResponse,
+  CreateUserDataStore,
   ExecutingScraperInfo,
   ExecutionIterator,
-  Notification,
-  ListScraperExecutionsQuery,
-  NotificationQuery,
-  Status,
-  Routine,
-  UpsertRoutine,
-  ScraperQuery,
-  ScheduledScraperExecution,
   ExportUserDataStore,
   ImportUserDataStore,
+  ListScraperExecutionsQuery,
+  Notification,
+  NotificationQuery,
+  Routine,
+  RoutineQuery,
+  ScheduledScraperExecution,
+  ScraperExecutionInfo,
+  ScraperExecutionStatus,
+  ScraperQuery,
+  ScraperType,
+  Status,
+  UpdateUserDataStore,
+  UpsertRoutine,
+  UpsertScraper,
+  UpsertUserDataStoreRecord,
+  UserDataStore,
+  UserDataStoreQuery,
+  UserDataStoreRecordsQuery,
+  UserPreferences,
 } from "@web-scraper/common"
 import { apiErrorResponseSchema } from "@web-scraper/common"
 
@@ -199,7 +202,7 @@ export type Routes = {
 
   "user-data-stores": {
     get: {
-      querystring: Partial<ApiPaginationQuery>
+      querystring: Partial<UserDataStoreQuery>
       response: ApiPaginatedResponse<UserDataStore>
     }
     post: {
@@ -236,7 +239,7 @@ export type Routes = {
 
   "user-data-stores/:tableName/records": {
     get: {
-      querystring: Partial<ApiPaginationQuery>
+      querystring: Partial<UserDataStoreRecordsQuery>
       response: ApiPaginatedResponse<Record<string, unknown>>
     }
     post: {
@@ -325,7 +328,7 @@ export type Routes = {
 
   routines: {
     get: {
-      querystring: Partial<ApiPaginationQuery>
+      querystring: Partial<RoutineQuery>
       response: ApiPaginatedResponse<Routine>
     }
     post: {

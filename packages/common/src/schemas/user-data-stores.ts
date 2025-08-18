@@ -1,4 +1,5 @@
 import z from "zod"
+import { apiPaginationQuerySchema, sortOrderSchema } from "./common/api"
 
 export enum SqliteColumnType {
   TEXT = "TEXT",
@@ -115,3 +116,22 @@ export const exportUserDataStoreSchema = z.object({
 })
 
 export type ExportUserDataStore = z.infer<typeof exportUserDataStoreSchema>
+
+export const userDataStoreQuerySchema = apiPaginationQuerySchema.extend({
+  name: z.string().optional(),
+  description: z.string().optional(),
+  sortBy: z.enum(["name", "description"]).optional(),
+  sortOrder: sortOrderSchema,
+})
+
+export type UserDataStoreQuery = z.infer<typeof userDataStoreQuerySchema>
+
+export const userDataStoreRecordsQuerySchema = apiPaginationQuerySchema.extend({
+  sortBy: z.string().optional(),
+  sortOrder: sortOrderSchema,
+  textFilters: z.record(z.string(), z.string().optional()).optional(),
+})
+
+export type UserDataStoreRecordsQuery = z.infer<
+  typeof userDataStoreRecordsQuerySchema
+>

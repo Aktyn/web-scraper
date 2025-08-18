@@ -17,7 +17,7 @@ import {
   type UpsertScraper,
 } from "@web-scraper/common"
 import { Scraper } from "@web-scraper/core"
-import { asc, desc, eq, sql } from "drizzle-orm"
+import { and, asc, desc, eq, sql } from "drizzle-orm"
 import type { FastifyInstance } from "fastify"
 import type { ZodTypeProvider } from "fastify-type-provider-zod"
 import fs from "node:fs"
@@ -94,7 +94,57 @@ export async function scrapersRoutes(
       },
     },
     async (request, reply) => {
-      const { page, pageSize, name } = request.query
+      const {
+        page,
+        pageSize,
+        name,
+        description,
+        sortBy,
+        sortOrder,
+        createdAtFrom,
+        createdAtTo,
+        updatedAtFrom,
+        updatedAtTo,
+      } = request.query
+
+      const filters = []
+      if (name) {
+        filters.push(
+          sql`LOWER(${scrapersTable.name}) LIKE LOWER(${"%" + name + "%"})`,
+        )
+      }
+      if (description) {
+        filters.push(
+          sql`LOWER(${scrapersTable.description}) LIKE LOWER(${"%" + description + "%"})`,
+        )
+      }
+      if (createdAtFrom) {
+        filters.push(
+          sql`${scrapersTable.createdAt} >= ${new Date(createdAtFrom)}`,
+        )
+      }
+      if (createdAtTo) {
+        filters.push(
+          sql`${scrapersTable.createdAt} <= ${new Date(createdAtTo)}`,
+        )
+      }
+      if (updatedAtFrom) {
+        filters.push(
+          sql`${scrapersTable.updatedAt} >= ${new Date(updatedAtFrom)}`,
+        )
+      }
+      if (updatedAtTo) {
+        filters.push(
+          sql`${scrapersTable.updatedAt} <= ${new Date(updatedAtTo)}`,
+        )
+      }
+
+      const orderDirection = sortOrder === "asc" ? asc : desc
+      const orderBy = sortBy
+        ? orderDirection(scrapersTable[sortBy])
+        : desc(
+            sql`COALESCE(MAX(${scraperExecutionsTable.createdAt}), ${scrapersTable.updatedAt})`,
+          )
 
       const scrapers = await fastify.db
         .select({ scraper: scrapersTable })
@@ -103,16 +153,8 @@ export async function scrapersRoutes(
           scraperExecutionsTable,
           eq(scrapersTable.id, scraperExecutionsTable.scraperId),
         )
-        .where(
-          name
-            ? sql`LOWER(${scrapersTable.name}) LIKE LOWER(${"%" + name + "%"})`
-            : undefined,
-        )
-        .orderBy(
-          desc(
-            sql`COALESCE(MAX(${scraperExecutionsTable.createdAt}), ${scrapersTable.updatedAt})`,
-          ),
-        )
+        .where(filters.length > 0 ? and(...filters) : undefined)
+        .orderBy(orderBy)
         .groupBy(scrapersTable.id)
         .limit(pageSize + 1)
         .offset(page * pageSize)

@@ -1,30 +1,36 @@
 import { useDelete } from "@/hooks/api/useDelete"
 import { useInfiniteGet } from "@/hooks/api/useInfiniteGet"
-import { type ColumnDef } from "@tanstack/react-table"
-import { type ScraperType } from "@web-scraper/common"
+import { usePost } from "@/hooks/api/usePost"
+import { cn } from "@/lib/utils"
+import { type ColumnDef, type SortingState } from "@tanstack/react-table"
+import { type ScraperQuery, type ScraperType } from "@web-scraper/common"
 import { Copy, Edit, FileUp, History, Plus, Trash } from "lucide-react"
 import { useMemo, useState } from "react"
 import { ConfirmationDialog } from "../common/confirmation-dialog"
 import { TimestampValue } from "../common/label/timestamp-value"
 import { NullBadge } from "../common/null-badge"
 import { DataTable } from "../common/table/data-table"
+import { DataTableColumnHeader } from "../common/table/data-table-column-header"
 import { RefreshButton } from "../common/table/refresh-button"
+import { TermInfo } from "../info/term-info"
+import { ScraperExecutionHistory } from "../scraper/execution/scraper-execution-history"
 import { ScraperFormDialog } from "../scraper/scraper-form-dialog"
 import { ScraperPanelDialog } from "../scraper/scraper-panel-dialog"
-import { Button } from "../shadcn/button"
-import { Tooltip, TooltipContent, TooltipTrigger } from "../shadcn/tooltip"
-import { cn } from "@/lib/utils"
-import { usePost } from "@/hooks/api/usePost"
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
 } from "../shadcn/accordion"
-import { ScraperExecutionHistory } from "../scraper/execution/scraper-execution-history"
-import { TermInfo } from "../info/term-info"
+import { Button } from "../shadcn/button"
+import { Tooltip, TooltipContent, TooltipTrigger } from "../shadcn/tooltip"
 
 export function Scrapers() {
+  const [sorting, setSorting] = useState<SortingState>([])
+  const [filters, setFilters] = useState<
+    Pick<ScraperQuery, "name" | "description">
+  >({})
+
   const {
     data: scrapers,
     isLoading,
@@ -32,7 +38,11 @@ export function Scrapers() {
     hasMore,
     loadMore,
     refresh,
-  } = useInfiniteGet("/scrapers")
+  } = useInfiniteGet("/scrapers", undefined, {
+    ...filters,
+    sortBy: sorting[0]?.id as ScraperQuery["sortBy"],
+    sortOrder: sorting[0] ? (sorting[0].desc ? "desc" : "asc") : undefined,
+  })
 
   const { deleteItem, isDeleting } = useDelete("/scrapers/:id")
   const { postItem: importScraper, isPosting: importingScraper } = usePost(
@@ -75,24 +85,71 @@ export function Scrapers() {
     () => [
       {
         accessorKey: "name",
-        header: "Name",
+        header: ({ column }) => (
+          <DataTableColumnHeader
+            column={column}
+            title="Name"
+            filterType={DataTableColumnHeader.FilterType.Text}
+            onFilterChange={(name) =>
+              setFilters((prev) => ({ ...prev, name: name ?? undefined }))
+            }
+          />
+        ),
         cell: ({ row }) => (
           <div className="font-medium">{row.original.name}</div>
         ),
       },
       {
         accessorKey: "description",
-        header: "Description",
+        header: ({ column }) => (
+          <DataTableColumnHeader
+            column={column}
+            title="Description"
+            filterType={DataTableColumnHeader.FilterType.Text}
+            onFilterChange={(description) =>
+              setFilters((prev) => ({
+                ...prev,
+                description: description ?? undefined,
+              }))
+            }
+          />
+        ),
         cell: ({ row }) => row.original.description ?? <NullBadge />,
       },
       {
         accessorKey: "createdAt",
-        header: "Created at",
+        header: ({ column }) => (
+          <DataTableColumnHeader
+            column={column}
+            title="Created at"
+            filterType={DataTableColumnHeader.FilterType.Date}
+            onFilterChange={(value) =>
+              setFilters((prev) => ({
+                ...prev,
+                createdAtFrom: value?.from,
+                createdAtTo: value?.to,
+              }))
+            }
+          />
+        ),
         cell: ({ row }) => <TimestampValue value={row.original.createdAt} />,
       },
       {
         accessorKey: "updatedAt",
-        header: "Updated at",
+        header: ({ column }) => (
+          <DataTableColumnHeader
+            column={column}
+            title="Updated at"
+            filterType={DataTableColumnHeader.FilterType.Date}
+            onFilterChange={(value) =>
+              setFilters((prev) => ({
+                ...prev,
+                updatedAtFrom: value?.from,
+                updatedAtTo: value?.to,
+              }))
+            }
+          />
+        ),
         cell: ({ row }) => (
           <TimestampValue
             className={cn(
@@ -208,6 +265,10 @@ export function Scrapers() {
           setScraperToView(row.original)
           setScraperViewOpen(true)
         }}
+        state={{
+          sorting,
+        }}
+        onSortingChange={setSorting}
       />
 
       <Accordion
