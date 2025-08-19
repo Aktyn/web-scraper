@@ -7,15 +7,34 @@ import {
   type ScraperInstructionsExecutionInfo,
   ScraperInstructionsExecutionInfoType,
   ScraperInstructionType,
+  ScraperState,
   ScraperValueType,
   type SimpleLogger,
+  wait,
 } from "@web-scraper/common"
 import mockServer from "pptr-mock-server"
 import type { ResponseOptions } from "pptr-mock-server/dist/handle-request"
 import type { Page } from "rebrowser-puppeteer"
-import { afterEach, beforeEach, describe, expect, it } from "vitest"
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 import type { DataBridge, DataBridgeValue } from "./data-helper"
+import { checkNetworkConnection } from "./helpers"
 import { Scraper } from "./scraper"
+
+vi.mock("@web-scraper/common", async (importOriginal) => {
+  const actual = await importOriginal()
+  return {
+    ...(actual as object),
+    wait: vi.fn().mockResolvedValue(undefined),
+  }
+})
+
+vi.mock("./helpers", async (importOriginal) => {
+  const actual = await importOriginal()
+  return {
+    ...(actual as object),
+    checkNetworkConnection: vi.fn().mockResolvedValue(true),
+  }
+})
 
 const mockBaseUrl = "http://127.0.0.1:1337"
 
@@ -1436,6 +1455,65 @@ describe(
 
         // Verify data was saved then deleted
         expect(await mockDataBridge.get("test.combined")).toBeNull()
+      }, 60_000)
+    })
+
+    describe("network connection handling", () => {
+      it("should wait for network connection if offline and then proceed", async () => {
+        vi.mocked(checkNetworkConnection)
+          .mockResolvedValueOnce(false)
+          .mockResolvedValueOnce(true)
+
+        const states: ScraperState[] = []
+        scraper.on("stateChange", (state) => {
+          states.push(state)
+        })
+
+        const setupInterceptor = async (page: Page) => {
+          const mockRequest = await mockServer.init(page as never, {
+            baseAppUrl: mockBaseUrl,
+            baseApiUrl: mockBaseUrl + "/api",
+          })
+
+          const responseConfig: ResponseOptions = {
+            body: () => `<div>Hello</div>`,
+            contentType: "text/html",
+          }
+          mockRequest.on("get", `${mockBaseUrl}/api`, 200, responseConfig)
+        }
+
+        const mockInstructions: ScraperInstructions = [
+          {
+            type: ScraperInstructionType.PageAction,
+            action: {
+              type: PageActionType.Navigate,
+              url: `${mockBaseUrl}/api`,
+            },
+          },
+        ]
+
+        const executionInfo = await scraper.execute(
+          mockInstructions,
+          mockDataBridge,
+          {
+            pageMiddleware: setupInterceptor,
+          },
+        )
+
+        expect(states).toEqual([
+          ScraperState.WaitingForNetwork,
+          ScraperState.Executing,
+          ScraperState.Idle,
+        ])
+
+        expect(executionInfo.get()).toEqual(
+          expect.arrayContaining([
+            expect.objectContaining({
+              type: ScraperInstructionsExecutionInfoType.Success,
+            }),
+          ]),
+        )
+        expect(vi.mocked(wait)).toHaveBeenCalledWith(10_000)
       }, 60_000)
     })
   },

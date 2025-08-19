@@ -142,9 +142,7 @@ export async function scrapersRoutes(
       const orderDirection = sortOrder === "asc" ? asc : desc
       const orderBy = sortBy
         ? orderDirection(scrapersTable[sortBy])
-        : desc(
-            sql`COALESCE(MAX(${scraperExecutionsTable.createdAt}), ${scrapersTable.updatedAt})`,
-          )
+        : desc(scrapersTable.updatedAt)
 
       const scrapers = await fastify.db
         .select({ scraper: scrapersTable })
@@ -256,6 +254,7 @@ export async function scrapersRoutes(
         description,
         instructions,
         userDataDirectory,
+        allowOfflineExecution,
         dataSources,
       } = request.body
 
@@ -276,6 +275,7 @@ export async function scrapersRoutes(
         description: description ?? null,
         instructions,
         userDataDirectory: userDataDirectory ?? null,
+        allowOfflineExecution,
         dataSources,
       })
 
@@ -305,6 +305,7 @@ export async function scrapersRoutes(
         description,
         instructions,
         userDataDirectory,
+        allowOfflineExecution,
         dataSources,
       } = request.body
 
@@ -342,6 +343,7 @@ export async function scrapersRoutes(
             description: description ?? null,
             instructions,
             userDataDirectory: userDataDirectory ?? null,
+            allowOfflineExecution: !!allowOfflineExecution,
           })
           .where(eq(scrapersTable.id, id))
           .returning()

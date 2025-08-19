@@ -14,6 +14,9 @@ export enum ScraperState {
   /** Scraper has been destroyed, either due to an error, user intervention or it finished all its executions */
   Exited = "exited",
 
+  /** Scraper is waiting for network connection */
+  WaitingForNetwork = "waiting_for_network",
+
   //TODO: awaiting user action, e.g. captcha
 }
 

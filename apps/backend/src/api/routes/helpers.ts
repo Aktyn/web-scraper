@@ -20,6 +20,7 @@ export async function joinScraperWithDataSources(
 
   return {
     ...scraper,
+    allowOfflineExecution: !!scraper.allowOfflineExecution,
     createdAt: scraper.createdAt.getTime(),
     updatedAt: scraper.updatedAt.getTime(),
     dataSources,

@@ -32,6 +32,7 @@ import {
   AccordionTrigger,
 } from "../shadcn/accordion"
 import { TermInfo } from "../info/term-info"
+import { FormSwitch } from "../common/form/form-switch"
 
 interface ScraperFormDialogProps {
   open: boolean
@@ -60,6 +61,7 @@ export function ScraperFormDialog({
           name: editScraper.name,
           description: editScraper.description,
           userDataDirectory: editScraper.userDataDirectory,
+          allowOfflineExecution: editScraper.allowOfflineExecution,
           dataSources: editScraper.dataSources,
           instructions: editScraper.instructions,
         }
@@ -67,6 +69,7 @@ export function ScraperFormDialog({
           name: "",
           description: "",
           userDataDirectory: "",
+          allowOfflineExecution: false,
           dataSources: [],
           instructions: [
             {
@@ -96,6 +99,7 @@ export function ScraperFormDialog({
           name: editScraper.name,
           description: editScraper.description,
           userDataDirectory: editScraper.userDataDirectory,
+          allowOfflineExecution: editScraper.allowOfflineExecution,
           dataSources: editScraper.dataSources,
           instructions: editScraper.instructions,
         })
@@ -104,6 +108,7 @@ export function ScraperFormDialog({
           name: "",
           description: "",
           userDataDirectory: "",
+          allowOfflineExecution: false,
           dataSources: [],
           instructions: [
             {
@@ -197,6 +202,13 @@ export function ScraperFormDialog({
                   label="User Data Directory (optional)"
                   placeholder="e.g., /path/to/custom/userData"
                   description="Custom Chrome user data directory path."
+                />
+
+                <FormSwitch
+                  control={form.control}
+                  name="allowOfflineExecution"
+                  label="Allow offline execution"
+                  description={`Enable this option to allow the scraper to run without an internet connection.\nBy default, execution will be paused or delayed if an internet connection is unavailable.`}
                 />
               </div>
 

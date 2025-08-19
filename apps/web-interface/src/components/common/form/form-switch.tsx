@@ -51,7 +51,11 @@ export function FormSwitch<
               disabled={disabled ?? switchProps?.disabled}
             />
           </FormControl>
-          {description && <FormDescription>{description}</FormDescription>}
+          {description && (
+            <FormDescription className="whitespace-pre-wrap">
+              {description}
+            </FormDescription>
+          )}
           <FormMessage />
         </FormItem>
       )}

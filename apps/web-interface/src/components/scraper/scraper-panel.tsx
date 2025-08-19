@@ -17,6 +17,7 @@ import type { ScraperExecutionPanelRef } from "./execution/scraper-execution-pan
 import { ScraperExecutionPanel } from "./execution/scraper-execution-panel"
 import { ScraperDataSource } from "./scraper-data-source"
 import { ScraperInstructionsTree } from "./scraper-instructions-tree"
+import { Check } from "lucide-react"
 
 type ScraperPanelProps = {
   scraper: ScraperType
@@ -36,34 +37,48 @@ export function ScraperPanel({ scraper }: ScraperPanelProps) {
       <div className="flex flex-col gap-4">
         <ScraperExecutionPanel ref={executionPanelRef} />
 
-        {scraper.userDataDirectory && (
+        {(scraper.userDataDirectory || scraper.allowOfflineExecution) && (
           <>
             <Separator />
-            <LabeledValue
-              label={
-                <div className="space-x-1">
-                  <span>Custom</span>
-                  <b>userData</b>
-                  <span>directory</span>
-                </div>
-              }
-            >
-              <div className="flex flex-row items-center gap-2 overflow-hidden contain-inline-size">
-                <pre dir="rtl" className="truncate leading-none">
-                  {scraper.userDataDirectory.split("/").map((part, index) => (
-                    <Fragment key={index}>
-                      {index > 0 && (
-                        <span className="text-muted-foreground mx-0.5">
-                          &lrm;/
-                        </span>
-                      )}
-                      {part}
-                    </Fragment>
-                  ))}
-                </pre>
-                <CopyButton value={scraper.userDataDirectory} />
-              </div>
-            </LabeledValue>
+            <div className="flex flex-row items-start gap-x-8 gap-y-2">
+              {scraper.userDataDirectory && (
+                <LabeledValue
+                  label={
+                    <div className="space-x-1">
+                      <span>Custom</span>
+                      <b>userData</b>
+                      <span>directory</span>
+                    </div>
+                  }
+                >
+                  <div className="flex flex-row items-center gap-2 overflow-hidden contain-inline-size">
+                    <pre dir="rtl" className="truncate leading-none">
+                      {scraper.userDataDirectory
+                        .split("/")
+                        .map((part, index) => (
+                          <Fragment key={index}>
+                            {index > 0 && (
+                              <span className="text-muted-foreground mx-0.5">
+                                &lrm;/
+                              </span>
+                            )}
+                            {part}
+                          </Fragment>
+                        ))}
+                    </pre>
+                    <CopyButton value={scraper.userDataDirectory} />
+                  </div>
+                </LabeledValue>
+              )}
+              {scraper.allowOfflineExecution && (
+                <LabeledValue label="Offline execution">
+                  <div className="flex flex-row items-center gap-2 p-1.5">
+                    <Check className="size-4" />
+                    <span>Allowed</span>
+                  </div>
+                </LabeledValue>
+              )}
+            </div>
           </>
         )}
 

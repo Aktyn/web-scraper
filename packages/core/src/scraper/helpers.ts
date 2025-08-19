@@ -1,4 +1,5 @@
 import { type SpecialStringContext, randomString } from "@web-scraper/common"
+import dns from "dns"
 import fs from "fs"
 import path from "path"
 import type { Page } from "rebrowser-puppeteer"
@@ -33,4 +34,27 @@ export function buildSpecialStringContext(
     getPageUrl: (pageIndex) =>
       context.pages.getPage(pageIndex ?? 0, false)?.url() ?? null,
   }
+}
+
+export async function checkNetworkConnection(): Promise<boolean> {
+  const hostnames = ["google.com", "cloudflare.com", "facebook.com"]
+
+  for (const hostname of hostnames) {
+    try {
+      await new Promise<void>((resolve, reject) => {
+        dns.lookup(hostname, (err) => {
+          if (err) {
+            reject(err)
+          } else {
+            resolve()
+          }
+        })
+      })
+      return true
+    } catch {
+      // Continue to the next hostname if the current one fails
+    }
+  }
+
+  return false
 }

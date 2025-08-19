@@ -14,8 +14,8 @@ import "puppeteer-extra-plugin-stealth/evasions/sourceurl"
 import "puppeteer-extra-plugin-stealth/evasions/user-agent-override"
 import "puppeteer-extra-plugin-stealth/evasions/webgl.vendor"
 import "puppeteer-extra-plugin-stealth/evasions/window.outerdimensions"
-import "puppeteer-extra-plugin-user-preferences"
 import "puppeteer-extra-plugin-user-data-dir"
+import "puppeteer-extra-plugin-user-preferences"
 
 import {
   assert,
@@ -27,6 +27,7 @@ import {
   ScraperState,
   type ScraperType,
   type SimpleLogger,
+  wait,
 } from "@web-scraper/common"
 import EventEmitter from "node:events"
 import AdblockerPlugin from "puppeteer-extra-plugin-adblocker"
@@ -42,9 +43,10 @@ import puppeteer, {
 import { AutonomousAgent } from "./ai/autonomous-agent"
 import { SmartLocalization } from "./ai/smart-localization"
 import type { DataBridge } from "./data-helper"
-import { type PageSnapshot, ExecutionPages } from "./execution/execution-pages"
+import { ExecutionPages, type PageSnapshot } from "./execution/execution-pages"
 import { executeInstructions } from "./execution/instructions"
 import { ScraperExecutionInfo } from "./execution/scraper-execution-info"
+import { checkNetworkConnection } from "./helpers"
 
 type ScraperOptions = Pick<ScraperType, "id" | "name"> & {
   logger?: SimpleLogger
@@ -69,6 +71,12 @@ type ScraperOptions = Pick<ScraperType, "id" | "name"> & {
 } & Partial<LaunchOptions>
 
 type Metadata = Record<string, unknown>
+
+type CommonExecutionOptions<MetadataType extends Metadata | undefined> = {
+  pageMiddleware?: (page: Page) => void | Promise<void>
+  metadata?: MetadataType
+  allowOfflineExecution?: boolean
+}
 
 interface ScraperEvents<MetadataType extends Metadata | undefined = undefined> {
   destroy: () => void
@@ -388,25 +396,14 @@ export class Scraper<
     instructions: ScraperInstructions,
     dataBridge: DataBridge,
     options?: MetadataType extends undefined
-      ?
-          | {
-              pageMiddleware?: (page: Page) => void | Promise<void>
-              metadata?: MetadataType
-            }
-          | undefined
-      : {
-          pageMiddleware?: (page: Page) => void | Promise<void>
-          metadata: MetadataType
-        },
+      ? CommonExecutionOptions<MetadataType> | undefined
+      : CommonExecutionOptions<MetadataType>,
   ): Promise<ScraperExecutionInfo>
 
   async execute(
     instructions: ScraperInstructions,
     dataBridge: DataBridge,
-    options: {
-      pageMiddleware?: (page: Page) => void | Promise<void>
-      metadata?: MetadataType
-    } = {},
+    options: CommonExecutionOptions<MetadataType> = {},
   ) {
     const executionInfo = new ScraperExecutionInfo(instructions, dataBridge)
     this.activeExecutionInfo = executionInfo
@@ -427,6 +424,22 @@ export class Scraper<
         },
       })
       return executionInfo
+    }
+
+    if (!options.allowOfflineExecution) {
+      if (!(await checkNetworkConnection())) {
+        this.logger.warn(
+          "No network connection available and offline execution is not allowed",
+        )
+
+        this.state = ScraperState.WaitingForNetwork
+
+        do {
+          await wait(10_000)
+        } while (!(await checkNetworkConnection()))
+
+        this.logger.info("Network connection restored")
+      }
     }
 
     this.emit("executionStarted")

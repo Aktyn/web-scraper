@@ -35,6 +35,14 @@ export function ScraperStateWidget({
         </div>
       )
 
+    case ScraperState.WaitingForNetwork:
+      return (
+        <div className="flex flex-row items-center justify-center gap-2 text-info">
+          <Hourglass className="animate-spin ease-bounce duration-2000 inline" />
+          <span className="font-semibold">Waiting for network</span>
+        </div>
+      )
+
     case ScraperState.Idle:
       return <LoaderCircle className="animate-spin inline" />
 

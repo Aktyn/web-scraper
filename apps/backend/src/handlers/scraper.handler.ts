@@ -10,8 +10,9 @@ import {
   type ScraperType,
   type SimpleLogger,
 } from "@web-scraper/common"
-import { type PageSnapshot, Scraper } from "@web-scraper/core"
+import { Scraper, type PageSnapshot } from "@web-scraper/core"
 import type { InferSelectModel } from "drizzle-orm"
+import fs from "node:fs"
 import path from "node:path"
 import type { Logger } from "pino"
 import type { Config } from "../config/config"
@@ -23,7 +24,6 @@ import {
 } from "../db/schema/scraper-executions.schema"
 import type { EventsModule } from "../events/events.module"
 import { LOGS_DIRECTORY } from "../logger"
-import fs from "node:fs"
 
 const executionQueue: Array<Scraper<{ iteration: number }>> = []
 
@@ -137,6 +137,7 @@ export async function executeNewScraper(
         metadata: {
           iteration: dataBridge.iteration,
         },
+        allowOfflineExecution: scraperData.allowOfflineExecution,
       })
 
       logger.info("Scraper execution finished")

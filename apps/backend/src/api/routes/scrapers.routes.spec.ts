@@ -209,6 +209,7 @@ describe("Scrapers Routes", () => {
             description: expect.toBeOneOf([null, expect.any(String)]),
             instructions: expect.any(Array),
             userDataDirectory: expect.toBeOneOf([null, expect.any(String)]),
+            allowOfflineExecution: false,
             dataSources: expect.any(Array),
             createdAt: expect.any(Number),
             updatedAt: expect.any(Number),
@@ -566,6 +567,7 @@ describe("Scrapers Routes", () => {
           description: expect.toBeOneOf([null, expect.any(String)]),
           instructions: expect.any(Array),
           userDataDirectory: expect.toBeOneOf([null, expect.any(String)]),
+          allowOfflineExecution: false,
           dataSources: expect.any(Array),
           createdAt: expect.any(Number),
           updatedAt: expect.any(Number),
@@ -601,6 +603,7 @@ describe("Scrapers Routes", () => {
           },
         ],
         userDataDirectory: "/test/directory",
+        allowOfflineExecution: false,
         dataSources: [
           {
             dataStoreTableName: "data_store_personal_credentials",
@@ -650,6 +653,7 @@ describe("Scrapers Routes", () => {
         ],
         dataSources: [],
         userDataDirectory: null,
+        allowOfflineExecution: false,
       }
 
       const response = await modules.api.inject({
@@ -679,6 +683,7 @@ describe("Scrapers Routes", () => {
         ],
         dataSources: [],
         userDataDirectory: null,
+        allowOfflineExecution: false,
       }
 
       const response = await modules.api.inject({
@@ -716,7 +721,7 @@ describe("Scrapers Routes", () => {
       const scraperId = listData.data[0].id
 
       const updateData: UpsertScraper = {
-        name: "Updated Pepper Alerts",
+        name: "Updated Pepper Alerts [edited]",
         description: "Updated description",
         instructions: [
           {
@@ -728,6 +733,7 @@ describe("Scrapers Routes", () => {
           },
         ],
         userDataDirectory: "/updated/directory",
+        allowOfflineExecution: false,
         dataSources: [
           {
             dataStoreTableName: "data_store_personal_credentials",
@@ -747,7 +753,7 @@ describe("Scrapers Routes", () => {
       const responseData = JSON.parse(response.payload)
       expect(responseData.data).toMatchObject({
         id: scraperId,
-        name: "Updated Pepper Alerts",
+        name: "Updated Pepper Alerts [edited]",
         description: "Updated description",
         instructions: [
           {
@@ -759,6 +765,7 @@ describe("Scrapers Routes", () => {
           },
         ],
         userDataDirectory: "/updated/directory",
+        allowOfflineExecution: false,
         dataSources: [
           {
             dataStoreTableName: "data_store_personal_credentials",
@@ -791,6 +798,7 @@ describe("Scrapers Routes", () => {
         ],
         dataSources: [],
         userDataDirectory: null,
+        allowOfflineExecution: false,
       }
 
       const response = await modules.api.inject({
@@ -812,6 +820,7 @@ describe("Scrapers Routes", () => {
         description: null,
         dataSources: [],
         userDataDirectory: null,
+        allowOfflineExecution: false,
         instructions: [
           {
             type: ScraperInstructionType.PageAction,
@@ -832,62 +841,6 @@ describe("Scrapers Routes", () => {
       expect(response.statusCode).toBe(404)
       expect(JSON.parse(response.payload)).toEqual({
         error: "Scraper not found",
-      })
-    })
-
-    it("should return status 409 if updating to a name that already exists", async () => {
-      await modules.api.inject({
-        method: "POST",
-        url: "/scrapers",
-        payload: {
-          name: "Another Scraper",
-          description: "Another test scraper",
-          instructions: [
-            {
-              type: ScraperInstructionType.PageAction,
-              action: {
-                type: PageActionType.Navigate,
-                url: "https://example.com",
-              },
-            },
-          ],
-          dataSources: [],
-          userDataDirectory: null,
-        } satisfies UpsertScraper,
-      })
-
-      const listResponse = await modules.api.inject({
-        method: "GET",
-        url: "/scrapers",
-      })
-      const listData = JSON.parse(listResponse.payload)
-      const originalScraperId = listData.data[1].id
-
-      const updateData: UpsertScraper = {
-        name: "Another Scraper",
-        description: "Another test scraper",
-        instructions: [
-          {
-            type: ScraperInstructionType.PageAction,
-            action: {
-              type: PageActionType.Navigate,
-              url: "https://example.com",
-            },
-          },
-        ],
-        dataSources: [],
-        userDataDirectory: null,
-      }
-
-      const response = await modules.api.inject({
-        method: "PUT",
-        url: `/scrapers/${originalScraperId}`,
-        payload: updateData,
-      })
-
-      expect(response.statusCode).toBe(409)
-      expect(JSON.parse(response.payload)).toEqual({
-        error: "A scraper with this name already exists",
       })
     })
 

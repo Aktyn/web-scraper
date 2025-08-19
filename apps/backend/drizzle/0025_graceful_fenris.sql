@@ -1,0 +1,1 @@
+ALTER TABLE `scrapers` ADD `allow_offline_execution` integer DEFAULT false;

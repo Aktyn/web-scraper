@@ -13,6 +13,7 @@ export const scraperSchema = z.object({
   description: z.string().nullable(),
   instructions: scraperInstructionsSchema,
   userDataDirectory: z.string().nullable(),
+  allowOfflineExecution: z.boolean().default(false),
   dataSources: z.array(scraperDataSourceSchema),
   createdAt: timestampSchema,
   updatedAt: timestampSchema,
