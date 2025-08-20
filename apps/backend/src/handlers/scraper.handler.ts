@@ -282,14 +282,18 @@ function dumpError(error: unknown, pageSnapshots: PageSnapshot[]) {
   )
 
   for (const pageSnapshot of pageSnapshots) {
-    fs.writeFileSync(
-      path.join(errorDumpDirectory, `page-${pageSnapshot.pageIndex}.html`),
-      pageSnapshot.html,
-    )
+    if (pageSnapshot.html) {
+      fs.writeFileSync(
+        path.join(errorDumpDirectory, `page-${pageSnapshot.pageIndex}.html`),
+        pageSnapshot.html,
+      )
+    }
 
-    fs.writeFileSync(
-      path.join(errorDumpDirectory, `page-${pageSnapshot.pageIndex}.jpg`),
-      Buffer.from(pageSnapshot.screenshotBase64, "base64"),
-    )
+    if (pageSnapshot.screenshotBase64) {
+      fs.writeFileSync(
+        path.join(errorDumpDirectory, `page-${pageSnapshot.pageIndex}.jpg`),
+        Buffer.from(pageSnapshot.screenshotBase64, "base64"),
+      )
+    }
   }
 }

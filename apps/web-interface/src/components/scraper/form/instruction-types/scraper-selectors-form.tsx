@@ -6,12 +6,19 @@ import {
   TooltipTrigger,
 } from "@/components/shadcn/tooltip"
 import { selectorTypeLabels } from "@/lib/dictionaries"
+import type { SerializableRegex } from "@web-scraper/common"
 import {
   ElementSelectorType,
   TAG_NAMES,
   type UpsertScraper,
 } from "@web-scraper/common"
-import { ArrowDownFromLine, ArrowUpFromLine, Plus, Trash2 } from "lucide-react"
+import {
+  ArrowDownFromLine,
+  ArrowUpFromLine,
+  Plus,
+  Regex,
+  Trash2,
+} from "lucide-react"
 import {
   useFieldArray,
   useFormContext,
@@ -201,7 +208,14 @@ function AttributesForm({ control, fieldName }: AttributesFormProps) {
   const attributes = useWatch({ control, name: attributesFieldName }) ?? {}
 
   const [newAttributeKey, setNewAttributeKey] = useState("")
-  const [newAttributeValue, setNewAttributeValue] = useState("")
+  const [newAttributeValue, setNewAttributeValue] = useState<
+    string | SerializableRegex
+  >("")
+
+  const stringValue =
+    typeof newAttributeValue === "string" || !newAttributeValue
+      ? newAttributeValue
+      : `/${newAttributeValue.source}/${newAttributeValue.flags}`
 
   const handleAddAttribute = () => {
     if (newAttributeKey.trim() === "") return
@@ -230,7 +244,7 @@ function AttributesForm({ control, fieldName }: AttributesFormProps) {
           Object.entries(attributes).map(([key]) => (
             <div key={key} className="flex items-center gap-2">
               <div className="flex-1">
-                <FormInput
+                <FormRegex
                   control={control}
                   name={`${attributesFieldName}.${key}`}
                   label={
@@ -274,14 +288,36 @@ function AttributesForm({ control, fieldName }: AttributesFormProps) {
           />
         </div>
         <div className="flex-1 flex flex-col gap-1">
-          <Label>Attribute value</Label>
+          <Label className="flex items-center gap-1">
+            {typeof newAttributeValue !== "string" && (
+              <Regex className="size-3.5 inline text-muted-foreground" />
+            )}
+            <span>Attribute value</span>
+          </Label>
           <Input
-            value={newAttributeValue}
-            onChange={(e) => setNewAttributeValue(e.target.value)}
+            value={stringValue}
+            onChange={(event) => {
+              let transformedValue: string | SerializableRegex =
+                event.target.value
+
+              const matchResult = transformedValue.match(
+                /^\/(.*)\/([dgimsuvy]*)$/,
+              )
+              if (matchResult && matchResult.length >= 3) {
+                const [, source, flags] = matchResult
+                transformedValue = { source, flags }
+              }
+              setNewAttributeValue(transformedValue)
+            }}
             placeholder="Value or /regex/"
           />
         </div>
-        <Button type="button" variant="secondary" onClick={handleAddAttribute}>
+        <Button
+          type="button"
+          variant="secondary"
+          onClick={handleAddAttribute}
+          disabled={!newAttributeKey || !newAttributeValue}
+        >
           <Plus className="size-4" />
           Add
         </Button>

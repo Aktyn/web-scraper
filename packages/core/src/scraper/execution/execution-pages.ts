@@ -1,6 +1,8 @@
 import useProxy from "@lem0-packages/puppeteer-page-proxy"
 import {
   assert,
+  runUnsafe,
+  runUnsafeAsync,
   ScraperInstructionsExecutionInfoType,
   type SimpleLogger,
 } from "@web-scraper/common"
@@ -22,9 +24,9 @@ export type ScraperPageContext = {
 
 export type PageSnapshot = {
   pageIndex: number
-  screenshotBase64: string
-  url: string
-  html: string
+  screenshotBase64: string | null
+  url: string | null
+  html: string | null
 }
 
 type ExecutionPagesOptions = {
@@ -160,18 +162,20 @@ export class ExecutionPages {
   getPageSnapshots(): Promise<PageSnapshot[]> {
     return Promise.all(
       Array.from(this.pages.entries()).map(async ([pageIndex, pageContext]) => {
-        const screenshotBase64 = await pageContext.page.screenshot({
-          encoding: "base64",
-          type: "jpeg",
-          quality: 100,
-          fullPage: true,
-        })
+        const screenshotBase64 = await runUnsafeAsync(() =>
+          pageContext.page.screenshot({
+            encoding: "base64",
+            type: "jpeg",
+            quality: 100,
+            fullPage: true,
+          }),
+        )
 
         return {
           pageIndex,
           screenshotBase64,
-          url: pageContext.page.url(),
-          html: await pageContext.page.content(),
+          url: runUnsafe(() => pageContext.page.url()),
+          html: await runUnsafeAsync(() => pageContext.page.content()),
         }
       }),
     )
