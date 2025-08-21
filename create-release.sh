@@ -5,6 +5,13 @@
 
 set -e # Exit on any error
 
+if ! command -v gh &> /dev/null
+then
+    echo "GitHub CLI (gh) is not installed. Please install it to continue."
+    echo "For installation instructions, visit: https://github.com/cli/cli#installation"
+    exit 1
+fi
+
 type=$1 # major, minor, patch
 
 if [ -z "$type" ]; then
