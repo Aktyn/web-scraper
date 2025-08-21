@@ -12,6 +12,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "../shadcn/tooltip"
 import { Footer } from "./footer"
 import { NavigationMenu } from "./navigation-menu"
 import { ExecutingScrapersCompactInfo } from "../scraper/executing-scrapers-compact-info"
+import { QuickSettings } from "../common/quick-settings"
 
 const { ConnectionStatus } = ServerEventsProvider
 
@@ -77,7 +78,21 @@ export function Sidebar() {
         <PinnedDataStores />
         <ExecutingScrapersCompactInfo />
       </ScrollArea>
-      <Separator />
+      <Separator
+        className={cn(
+          "transition-opacity",
+          isOpen ? "opacity-70" : "opacity-0",
+        )}
+      />
+      <div
+        className={cn(
+          "transition-opacity",
+          isOpen ? "opacity-100" : "opacity-0",
+        )}
+      >
+        <QuickSettings />
+      </div>
+      <Separator className="opacity-70" />
       <Footer isOpen={isOpen} />
     </aside>
   )

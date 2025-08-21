@@ -11,6 +11,10 @@ import { Routines } from "./components/view/routines"
 import { Scrapers } from "./components/view/scrapers"
 import { cn } from "./lib/utils"
 import { PinnedDataStoresProvider } from "./providers/pinned-data-stores.provider"
+import {
+  QuickSettingsProvider,
+  useQuickSettings,
+} from "./providers/quick-settings.provider"
 import { ServerEventsProvider } from "./providers/server-events.provider"
 import { useView, ViewProvider } from "./providers/view.provider"
 
@@ -18,38 +22,51 @@ export default function App() {
   return (
     <ServerEventsProvider>
       <ViewProvider>
-        <PinnedDataStoresProvider>
-          <TooltipProvider delayDuration={0} skipDelayDuration={0}>
-            <Sidebar />
-            <Main />
-            <Toaster
-              position="top-center"
-              duration={10_000}
-              visibleToasts={16}
-              expand
-              richColors
-              style={{ zIndex: 99 }}
-              swipeDirections={["top", "bottom"]}
-              className="pointer-events-auto z-99"
-              toastOptions={{
-                className: "backdrop-blur-sm shadow-md!",
-                classNames: {
-                  title: "font-semibold! text-sm!",
-                  description: "font-normal text-sm",
-                  success:
-                    "border-success! text-success-foreground-light! bg-success/40!",
-                  error:
-                    "border-destructive! text-destructive-foreground! bg-destructive/40!",
-                  warning:
-                    "border-warning! text-warning-foreground! bg-warning/40!",
-                  info: "border-info! text-info-foreground! bg-info/40!",
-                },
-              }}
-            />
-          </TooltipProvider>
-        </PinnedDataStoresProvider>
+        <QuickSettingsProvider>
+          <PinnedDataStoresProvider>
+            <TooltipProvider delayDuration={0} skipDelayDuration={0}>
+              <Sidebar />
+              <Main />
+              <ConditionalToaster />
+            </TooltipProvider>
+          </PinnedDataStoresProvider>
+        </QuickSettingsProvider>
       </ViewProvider>
     </ServerEventsProvider>
+  )
+}
+
+function ConditionalToaster() {
+  const { settings } = useQuickSettings()
+
+  if (!settings.enableToasts) {
+    return null
+  }
+
+  return (
+    <Toaster
+      position="top-center"
+      duration={10_000}
+      visibleToasts={16}
+      expand
+      richColors
+      style={{ zIndex: 99 }}
+      swipeDirections={["top", "bottom"]}
+      className="pointer-events-auto z-99"
+      toastOptions={{
+        className: "backdrop-blur-sm shadow-md!",
+        classNames: {
+          title: "font-semibold! text-sm!",
+          description: "font-normal text-sm",
+          success:
+            "border-success! text-success-foreground-light! bg-success/40!",
+          error:
+            "border-destructive! text-destructive-foreground! bg-destructive/40!",
+          warning: "border-warning! text-warning-foreground! bg-warning/40!",
+          info: "border-info! text-info-foreground! bg-info/40!",
+        },
+      }}
+    />
   )
 }
 

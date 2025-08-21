@@ -39,6 +39,7 @@ export default tseslint.config(
             "badgeVariants",
             "useFormField",
             "useView",
+            "useQuickSettings",
             "usePinnedDataStores",
           ],
         },

@@ -1,3 +1,4 @@
+import type { ReactNode } from "react"
 import { createContext, useContext, useEffect, useState } from "react"
 
 enum View {
@@ -15,7 +16,7 @@ const ViewContext = createContext({
   setView: (_view: View) => {},
 })
 
-export function ViewProvider({ children }: { children: React.ReactNode }) {
+export function ViewProvider({ children }: { children: ReactNode }) {
   const [view, setView] = useState(getViewFromQueryParams())
 
   useEffect(() => {
