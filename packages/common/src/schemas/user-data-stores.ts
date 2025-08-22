@@ -129,7 +129,7 @@ export type UserDataStoreQuery = z.infer<typeof userDataStoreQuerySchema>
 export const userDataStoreRecordsQuerySchema = apiPaginationQuerySchema.extend({
   sortBy: z.string().optional(),
   sortOrder: sortOrderSchema,
-  textFilters: z.record(z.string(), z.string().optional()).optional(),
+  textFilters: z.string().optional(),
 })
 
 export type UserDataStoreRecordsQuery = z.infer<

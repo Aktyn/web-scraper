@@ -610,12 +610,19 @@ export async function userDataStoresRoutes(
       const { page, pageSize, textFilters, sortBy, sortOrder } = request.query
 
       const filters = []
-      for (const key in textFilters) {
-        if (textFilters[key]) {
-          filters.push(
-            sql`LOWER(${sql.identifier(key)}) LIKE LOWER(${"%" + textFilters[key] + "%"})`,
-          )
+      try {
+        const filtersRecord: Record<string, string | undefined> = JSON.parse(
+          textFilters ?? "{}",
+        )
+        for (const key in filtersRecord) {
+          if (filtersRecord[key]) {
+            filters.push(
+              sql`LOWER(${sql.identifier(key)}) LIKE LOWER(${"%" + filtersRecord[key] + "%"})`,
+            )
+          }
         }
+      } catch {
+        // noop
       }
 
       const storeDataResponse = await fastify.db

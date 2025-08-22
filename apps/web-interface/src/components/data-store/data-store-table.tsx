@@ -4,7 +4,6 @@ import { useStateToRef } from "@/hooks/useStateToRef"
 import { cn, formatDateTime } from "@/lib/utils"
 import type { SortingState } from "@tanstack/react-table"
 import { type ColumnDef } from "@tanstack/react-table"
-import type { UserDataStoreRecordsQuery } from "@web-scraper/common"
 import {
   SqliteColumnType,
   type UserDataStore,
@@ -16,13 +15,13 @@ import { type ReactNode, useImperativeHandle, useMemo, useState } from "react"
 import { ConfirmationDialog } from "../common/confirmation-dialog"
 import { NullBadge } from "../common/null-badge"
 import { DataTable } from "../common/table/data-table"
+import { DataTableColumnHeader } from "../common/table/data-table-column-header"
 import { RefreshButton } from "../common/table/refresh-button"
 import { Badge } from "../shadcn/badge"
 import { Button } from "../shadcn/button"
 import { Tooltip, TooltipContent, TooltipTrigger } from "../shadcn/tooltip"
 import { DataStoreFormDialog } from "./data-store-form-dialog"
 import { DataStoreRecordDialog } from "./data-store-record-dialog"
-import { DataTableColumnHeader } from "../common/table/data-table-column-header"
 
 export interface DataStoreTableInterface {
   refresh: () => void
@@ -57,9 +56,7 @@ export function DataStoreTable({
   const [eraseDialogOpen, setEraseDialogOpen] = useState(false)
 
   const [sorting, setSorting] = useState<SortingState>([])
-  const [filters, setFilters] = useState<
-    UserDataStoreRecordsQuery["textFilters"]
-  >({})
+  const [filters, setFilters] = useState<Record<string, string | undefined>>({})
 
   const { data, isLoading, isLoadingMore, hasMore, loadMore, refresh } =
     useInfiniteGet(
@@ -68,7 +65,7 @@ export function DataStoreTable({
         tableName: store.tableName,
       },
       {
-        ...filters,
+        textFilters: JSON.stringify(filters ?? {}),
         sortBy: sorting[0]?.id,
         sortOrder: sorting[0] ? (sorting[0].desc ? "desc" : "asc") : undefined,
       },
@@ -132,10 +129,10 @@ export function DataStoreTable({
                     column={columnContext}
                     title={<ColumnNameLabel column={column} />}
                     filterType={DataTableColumnHeader.FilterType.Text}
-                    onFilterChange={(name) =>
+                    onFilterChange={(value) =>
                       setFilters((prev) => ({
                         ...prev,
-                        name: name ?? undefined,
+                        [column.name]: value ?? undefined,
                       }))
                     }
                   />
