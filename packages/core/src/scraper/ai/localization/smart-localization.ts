@@ -1,9 +1,11 @@
 import { defaultPreferences, type SimpleLogger } from "@web-scraper/common"
 import ollama, { type GenerateRequest } from "ollama"
-import { z } from "zod"
-import { checkModelAvailability, getAbsoluteCoordinates } from "./helpers"
-import { resizeScreenshot } from "./image-processing"
-import { getCoordinatesSchema } from "./schemas"
+import type { z } from "zod"
+import type { ScraperPageContext } from "../../execution/execution-pages"
+import { schemaToJson } from "../common/schema-to-json"
+import { ScreenshotTool } from "../common/screenshot-tool"
+import { checkModelAvailability } from "../helpers"
+import { getCoordinatesSchema } from "./schema"
 
 type RequestOptions = Partial<Pick<GenerateRequest, "model" | "format">> & {
   systemPrompt?: string
@@ -15,13 +17,17 @@ export class SmartLocalization {
     private readonly requestOptions: RequestOptions = {},
   ) {}
 
-  async localize(prompt: string, viewportData: Uint8Array) {
-    const { resizedImageData, originalResolution, resizedResolution } =
-      await resizeScreenshot(viewportData)
+  async localize(prompt: string, pageContext: ScraperPageContext) {
+    const screenshotTool = new ScreenshotTool(pageContext.page, this.logger)
 
-    const encodedImage = await ollama.encodeImage(resizedImageData)
+    const { resized } = await screenshotTool.takeScreenshot()
 
-    const coordinatesSchema = getCoordinatesSchema(resizedResolution)
+    const encodedImage = await ollama.encodeImage(resized.data)
+
+    const coordinatesSchema = getCoordinatesSchema(
+      resized.width,
+      resized.height,
+    )
 
     const response = await this.generateResponse(
       prompt,
@@ -32,11 +38,7 @@ export class SmartLocalization {
     try {
       const coordinates = coordinatesSchema.parse(JSON.parse(response))
 
-      return getAbsoluteCoordinates(
-        coordinates,
-        originalResolution,
-        resizedResolution,
-      )
+      return screenshotTool.transformCoordinates(coordinates)
     } catch (error) {
       this.logger.error(error)
       return null
@@ -59,7 +61,7 @@ export class SmartLocalization {
       )
     }
 
-    const schema = z.toJSONSchema(coordinatesSchema)
+    const schema = schemaToJson(coordinatesSchema)
     delete schema["$schema"]
     delete schema["additionalProperties"]
 

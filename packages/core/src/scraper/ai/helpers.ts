@@ -1,5 +1,4 @@
 import ollama from "ollama"
-import type { Resolution } from "./image-processing"
 
 /** This function will throw an error if ollama is not installed */
 export async function checkModelAvailability(modelName: string) {
@@ -9,33 +8,5 @@ export async function checkModelAvailability(modelName: string) {
     (model) =>
       model.name.toLowerCase() === modelName.toLowerCase() ||
       model.model.toLowerCase() === modelName.toLowerCase(),
-  )
-}
-
-export type Coordinates = {
-  x: number
-  y: number
-}
-
-export function getAbsoluteCoordinates(
-  coordinates: Coordinates,
-  originalResolution: Resolution,
-  resizedResolution: Resolution,
-) {
-  return {
-    x: (coordinates.x * originalResolution.width) / resizedResolution.width,
-    y: (coordinates.y * originalResolution.height) / resizedResolution.height,
-  }
-}
-
-export function coordinatesInBounds(
-  coordinates: Coordinates,
-  resolution: Resolution,
-) {
-  return (
-    coordinates.x >= 0 &&
-    coordinates.x <= resolution.width &&
-    coordinates.y >= 0 &&
-    coordinates.y <= resolution.height
   )
 }

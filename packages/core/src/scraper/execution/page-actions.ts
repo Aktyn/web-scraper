@@ -1,4 +1,5 @@
 import {
+  type Coordinates,
   type PageAction,
   PageActionType,
   type SimpleLogger,
@@ -6,7 +7,6 @@ import {
   wait,
 } from "@web-scraper/common"
 import { randomInt } from "crypto"
-import type { Coordinates } from "../ai/helpers"
 import { getScraperValue } from "../data-helper"
 import { detectAndSolveCaptcha } from "./captcha-solver"
 import type { ScraperPageContext } from "./execution-pages"
@@ -86,11 +86,7 @@ export async function performPageAction(
     case PageActionType.SmartClick: {
       const coordinates = await context.ai.localization.localize(
         action.aiPrompt,
-        await pageContext.page.screenshot({
-          type: "jpeg",
-          quality: 80,
-          fullPage: false,
-        }),
+        pageContext,
       )
 
       if (!coordinates) {
@@ -220,15 +216,15 @@ export async function performPageAction(
         task: action.task,
       })
 
-      const answer = await context.ai.navigation.run(
+      const finalNotes = await context.ai.navigation.run(
         action,
         pageContext,
         context.dataBridge,
         (commonAction) => performPageAction(context, commonAction, pageContext),
       )
 
-      //TODO: handle answer somehow
-      context.logger.info({ msg: "Autonomous agent completed", answer })
+      //TODO: log finalNotes
+      context.logger.info({ msg: "Autonomous agent completed", finalNotes })
 
       break
     }

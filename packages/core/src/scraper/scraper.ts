@@ -40,8 +40,8 @@ import puppeteer, {
   type Page,
   type Viewport,
 } from "rebrowser-puppeteer"
-import { AutonomousAgent } from "./ai/autonomous-agent"
-import { SmartLocalization } from "./ai/smart-localization"
+import { AutonomousAgent } from "./ai/agent/autonomous-agent"
+import { SmartLocalization } from "./ai/localization/smart-localization"
 import type { DataBridge } from "./data-helper"
 import { ExecutionPages, type PageSnapshot } from "./execution/execution-pages"
 import { executeInstructions } from "./execution/instructions"
@@ -180,9 +180,11 @@ export class Scraper<
           })
         : this.logger
 
-    this.agent = new AutonomousAgent(navigationLogger, {
-      model: options.navigationModel,
-    })
+    this.agent = new AutonomousAgent(
+      navigationLogger,
+      { model: options.navigationModel },
+      this.localization,
+    )
 
     assert(
       !Scraper.instances.has(this.identifier),

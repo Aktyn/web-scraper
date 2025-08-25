@@ -6,3 +6,5 @@ export type SimpleLogger = {
 }
 
 export type ExtendArray<T> = T extends Array<unknown> ? T : Array<T> | T
+
+export type Coordinates = { x: number; y: number }

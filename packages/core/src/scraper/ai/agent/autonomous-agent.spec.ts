@@ -1,21 +1,24 @@
 import { describe, it, expect } from "vitest"
-import { tooManyActionRepetitions } from "./autonomous-agent"
-import { type NavigationStep, NavigationActionType } from "./schemas"
+import {
+  type ActionsHistory,
+  tooManyActionRepetitions,
+} from "./autonomous-agent"
+import { AgentActionType } from "./schema"
 
-const actionA: NavigationStep["actions"][number] = {
-  actionType: NavigationActionType.ClickElement,
-  x: 0,
-  y: 0,
+const actionA: ActionsHistory[number] = {
+  actionType: AgentActionType.Click,
+  elementDescription: "Element 1 description",
+  feedback: [],
 }
-const actionB: NavigationStep["actions"][number] = {
-  actionType: NavigationActionType.ClickElement,
-  x: 10,
-  y: 10,
+const actionB: ActionsHistory[number] = {
+  actionType: AgentActionType.Click,
+  elementDescription: "Element 2 description",
+  feedback: [],
 }
-const actionC: NavigationStep["actions"][number] = {
-  actionType: NavigationActionType.ClickElement,
-  x: 20,
-  y: 20,
+const actionC: ActionsHistory[number] = {
+  actionType: AgentActionType.Click,
+  elementDescription: "Element 3 description",
+  feedback: [],
 }
 
 describe(tooManyActionRepetitions.name, () => {
