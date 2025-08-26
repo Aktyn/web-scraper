@@ -52,7 +52,7 @@
   },
   "devDependencies": {
     "@babel/plugin-proposal-explicit-resource-management": "^7.27.4",
-    "@eslint/js": "^9.33.0",
+    "@eslint/js": "^9.34.0",
     "@tailwindcss/vite": "^4.1.12",
     "@types/node": "^24.3.0",
     "@types/react": "^19.1.10",
