@@ -57,8 +57,7 @@ export async function executeNewScraper(
     logger,
     dumpError,
     executablePath:
-      context.config.preferences.chromeExecutablePath ||
-      "/usr/bin/chromium-browser",
+      context.config.preferences.chromeExecutablePath || "/usr/bin/chromium",
     userDataDir:
       scraperData.userDataDirectory ||
       context.config.preferences.defaultUserDataDirectory ||
