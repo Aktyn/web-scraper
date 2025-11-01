@@ -1,6 +1,6 @@
 {
   "name": "@web-scraper/common",
-  "version": "3.0.18",
+  "version": "3.0.19",
   "private": true,
   "main": "dist/index.js",
   "types": "src/index.ts",
