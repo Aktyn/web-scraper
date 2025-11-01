@@ -1,6 +1,6 @@
 {
   "name": "web-scraper",
-  "version": "3.0.16",
+  "version": "3.0.17",
   "private": true,
   "type": "module",
   "author": "Radosław Krajewski (Aktyn) <aktyn3@gmail.com>",
