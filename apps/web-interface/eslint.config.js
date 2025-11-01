@@ -73,6 +73,7 @@ export default tseslint.config(
       "@typescript-eslint/no-non-null-assertion": "off",
       "@typescript-eslint/switch-exhaustiveness-check": "error",
       "object-shorthand": ["error", "always"],
+      "react-hooks/set-state-in-effect": "off"
     },
   },
 )

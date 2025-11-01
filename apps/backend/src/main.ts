@@ -45,6 +45,7 @@ async function main() {
 
   api.listen({ port: config.apiPort }, (err, address) => {
     if (err) {
+      //@ts-expect-error Incorrect fastify logger types
       api.log.error(err)
       process.exit(1)
     }
@@ -75,7 +76,7 @@ main()
       try {
         const port =
           process.env.NODE_ENV === "development" ? 5173 : modules.config.apiPort
-        exec(`open http://localhost:${port}`)
+        exec(`xdg-open http://localhost:${port}`)
       } catch (error) {
         modules.logger.error(error)
       }
