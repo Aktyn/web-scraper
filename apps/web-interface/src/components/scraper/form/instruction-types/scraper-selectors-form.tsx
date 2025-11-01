@@ -55,6 +55,8 @@ export function ScraperSelectorsForm({
   control,
   fieldName,
 }: ScraperSelectorFormProps) {
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  //@ts-ignore
   const { fields, append, remove, move } = useFieldArray({
     control,
     name: fieldName,
@@ -160,6 +162,9 @@ function SelectorFormByType({ control, fieldName }: SelectorFormByTypeProps) {
   const selectorType = useWatch({ control, name: `${fieldName}.type` })
 
   switch (selectorType) {
+    case undefined:
+      return null
+
     case ElementSelectorType.Query:
       return (
         <FormInput
@@ -175,6 +180,7 @@ function SelectorFormByType({ control, fieldName }: SelectorFormByTypeProps) {
       return (
         <FormRegex
           control={control}
+          //@ts-expect-error TODO: adjust to recent package version
           name={`${fieldName}.text`}
           label={selectorTypeLabels[selectorType]}
           placeholder="Button text or /regex/"
@@ -246,6 +252,7 @@ function AttributesForm({ control, fieldName }: AttributesFormProps) {
               <div className="flex-1">
                 <FormRegex
                   control={control}
+                  //@ts-expect-error TODO: adjust to recent package version
                   name={`${attributesFieldName}.${key}`}
                   label={
                     <>

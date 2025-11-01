@@ -87,6 +87,7 @@ function ValueFormByType({ control, fieldName }: ScraperValueFormProps) {
   const valueType = useWatch({ control, name: `${fieldName}.type` })
 
   switch (valueType) {
+    case undefined:
     case ScraperValueType.Null:
     case ScraperValueType.CurrentTimestamp:
       return null
@@ -95,6 +96,7 @@ function ValueFormByType({ control, fieldName }: ScraperValueFormProps) {
       return (
         <FormRegex
           control={control}
+          //@ts-expect-error TODO: adjust to recent package version
           name={`${fieldName}.value`}
           label="Literal value"
           placeholder="Enter literal value"
