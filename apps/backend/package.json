@@ -1,6 +1,6 @@
 {
   "name": "@web-scraper/backend",
-  "version": "3.0.17",
+  "version": "3.0.18",
   "private": true,
   "type": "commonjs",
   "main": "dist/main.js",
