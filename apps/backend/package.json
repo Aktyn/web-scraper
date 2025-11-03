@@ -45,7 +45,7 @@
     "@types/args": "^5.0.4",
     "@types/node": "^24.9.2",
     "drizzle-erd": "^0.0.1-alpha.11",
-    "esbuild": "^0.25.11",
+    "esbuild": "^0.25.12",
     "eslint": "^9.39.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-import": "^2.32.0",
