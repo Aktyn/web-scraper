@@ -55,6 +55,8 @@ type ScraperOptions = Pick<ScraperType, "id" | "name"> & {
   /** Used for testing purposes */
   noInit?: boolean
 
+  disableRealBrowser?: boolean
+
   proxy?: string
 
   plugins?: {
@@ -137,9 +139,17 @@ export class Scraper<
   constructor(private readonly options: Readonly<ScraperOptions>) {
     super()
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { id, name, logger, dumpError, proxy, viewport, ...browserOptions } =
-      options
+    const {
+      id,
+      name,
+      logger,
+      dumpError,
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      proxy,
+      viewport,
+      disableRealBrowser,
+      ...browserOptions
+    } = options
 
     this.logger = logger ?? {
       ...console,
@@ -194,14 +204,14 @@ export class Scraper<
     Scraper.instances.set(this.identifier, this)
 
     if (!options.noInit) {
-      this.init(browserOptions).catch((error) => {
+      this.init(browserOptions, disableRealBrowser).catch((error) => {
         this.logger.error(error)
         void this.destroy()
       })
     }
   }
 
-  private init(options: Partial<LaunchOptions>) {
+  private init(options: Partial<LaunchOptions>, disableRealBrowser?: boolean) {
     if (this.browser) {
       return Promise.resolve(this.browser)
     }
@@ -238,7 +248,8 @@ export class Scraper<
       const launchPromise =
         process.env.TEST === "true" ||
         process.env.VITEST === "true" ||
-        process.env.CI === "true"
+        process.env.CI === "true" ||
+        disableRealBrowser
           ? puppeteer.launch(launchOptions)
           : puppeteerRealBrowser
               .connect({
@@ -448,7 +459,10 @@ export class Scraper<
     this.state = ScraperState.Executing
 
     if (!this.browser) {
-      this.browser = await this.init(this.options)
+      this.browser = await this.init(
+        this.options,
+        this.options.disableRealBrowser,
+      )
     }
 
     assert(!this.destroyed, "Cannot execute scraper because it is destroyed")

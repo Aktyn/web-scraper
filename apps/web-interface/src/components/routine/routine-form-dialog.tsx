@@ -60,8 +60,10 @@ export function RoutineFormDialog({
 
   const isEditing = !!editRoutine && editRoutine.id !== -1
 
-  const form = useForm<UpsertRoutine>({
-    resolver: standardSchemaResolver(upsertRoutineSchema),
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- react-hook-form type compatibility
+  const form = useForm<UpsertRoutine, any, UpsertRoutine>({
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- standardSchemaResolver type inference issue
+    resolver: standardSchemaResolver(upsertRoutineSchema) as any,
     defaultValues: editRoutine
       ? {
           ...editRoutine,
@@ -300,7 +302,8 @@ export function RoutineFormDialog({
 }
 
 type DateTimePickerFormFieldProps = {
-  control: Control<UpsertRoutine>
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- react-hook-form type compatibility
+  control: Control<UpsertRoutine, any, any>
   name: `scheduler.startAt` | `scheduler.endAt`
   label: string
   clearable?: boolean

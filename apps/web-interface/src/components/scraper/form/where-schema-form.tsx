@@ -23,12 +23,12 @@ type WhereSchemaFormProps = {
   columns: UserDataStoreColumn[]
 } & (
   | {
-      control: Control<UpsertScraper>
+      control: Control<UpsertScraper, any, any> // eslint-disable-line @typescript-eslint/no-explicit-any -- react-hook-form type compatibility
       name: `dataSources.${number}.whereSchema`
       dataSourceIndex: number
     }
   | {
-      control: Control<ExecutionIterator>
+      control: Control<ExecutionIterator, any, any> // eslint-disable-line @typescript-eslint/no-explicit-any -- react-hook-form type compatibility
       name: "where"
     }
 )
@@ -133,7 +133,8 @@ export function WhereSchemaForm({
 }
 
 type LogicalGroupFormProps = {
-  control: Control<UpsertScraper | ExecutionIterator>
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- react-hook-form type compatibility
+  control: Control<UpsertScraper | ExecutionIterator, any, any>
   name: `dataSources.${number}.whereSchema` | "where"
   columns: UserDataStoreColumn[]
   onRemove: () => void
@@ -326,7 +327,8 @@ function LogicalGroupItem({
 const conditionOptions = mapToSelectOptions(conditionLabels)
 
 type ConditionFormProps = {
-  control: Control<UpsertScraper | ExecutionIterator>
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- react-hook-form type compatibility
+  control: Control<UpsertScraper | ExecutionIterator, any, any>
   name: `dataSources.${number}.whereSchema` | "where"
   columns: UserDataStoreColumn[]
   onRemove: () => void
@@ -552,7 +554,8 @@ function ConditionForm({
 }
 
 type ArrayValueFormProps = {
-  control: Control<UpsertScraper | ExecutionIterator>
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- react-hook-form type compatibility
+  control: Control<UpsertScraper | ExecutionIterator, any, any>
   name: `dataSources.${number}.whereSchema.value` | "where.value"
   inputType: string
   isBooleanColumn: boolean

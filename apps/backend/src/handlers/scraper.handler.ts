@@ -66,6 +66,7 @@ export async function executeNewScraper(
         "snap/chromium/common/chromium/Default",
       ),
     headless: context.config.preferences.headless,
+    disableRealBrowser: context.config.preferences.disableRealBrowser,
     proxy: context.config.preferences.proxyURL,
     plugins: {
       portalUrl: context.config.preferences.portalURL,

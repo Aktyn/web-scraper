@@ -75,12 +75,12 @@ vi.mock("@web-scraper/core", async (importActual) => {
             },
             type: ScraperInstructionType.PageAction,
           },
-          duration: 3000,
+          duration: 3_000,
         })
         executionInfo.push({
           type: ScraperInstructionsExecutionInfoType.Success,
           summary: {
-            duration: 4000,
+            duration: 4_000,
           },
         })
         return executionInfo

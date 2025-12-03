@@ -58,8 +58,7 @@ type Cursor<SourcesType extends Record<SourceAlias, DataBridgeSource>> = {
 
 export class DataBridge<
   SourcesType extends Record<SourceAlias, DataBridgeSource>,
-> implements DataBridgeInterface
-{
+> implements DataBridgeInterface {
   private currentIteration = 0
   private countCache = new Map<ExecutionIterator, number>()
 

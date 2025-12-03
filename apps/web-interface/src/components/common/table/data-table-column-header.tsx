@@ -33,8 +33,11 @@ enum FilterType {
   Select,
 }
 
-interface DataTableColumnHeaderProps<TData, TValue, Type extends FilterType>
-  extends Omit<ComponentProps<"div">, "title"> {
+interface DataTableColumnHeaderProps<
+  TData,
+  TValue,
+  Type extends FilterType,
+> extends Omit<ComponentProps<"div">, "title"> {
   column: Column<TData, TValue>
   title: ReactNode
   filterType?: Type

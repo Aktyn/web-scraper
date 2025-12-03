@@ -9,7 +9,8 @@ import { WhereSchemaForm } from "./where-schema-form"
 interface ScraperDataSourceFormProps<
   TFieldValues extends FieldValues = FieldValues,
 > {
-  control: Control<TFieldValues>
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- react-hook-form type compatibility
+  control: Control<TFieldValues, any, any>
   index: number
   dataStores: UserDataStore[]
 }

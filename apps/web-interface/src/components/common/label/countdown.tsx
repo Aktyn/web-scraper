@@ -2,6 +2,7 @@ import { formatDuration } from "@/lib/utils"
 import { useEffect, useState } from "react"
 
 export function Countdown({ timestamp }: { timestamp: number }) {
+  // eslint-disable-next-line react-hooks/purity
   const [now, setNow] = useState(Date.now())
 
   useEffect(() => {

@@ -62,11 +62,16 @@ export function RoutinePanel({
             {routine.nextScheduledExecutionAt ? (
               <div className="flex flex-row items-baseline gap-1">
                 {formatDateTime(routine.nextScheduledExecutionAt)}
-                {routine.nextScheduledExecutionAt < Date.now() + 120_000 && (
-                  <span className="text-sm text-muted-foreground">
-                    (<Countdown timestamp={routine.nextScheduledExecutionAt} />)
-                  </span>
-                )}
+                {
+                  /* eslint-disable-next-line react-hooks/purity */
+                  routine.nextScheduledExecutionAt < Date.now() + 120_000 && (
+                    <span className="text-sm text-muted-foreground">
+                      (
+                      <Countdown timestamp={routine.nextScheduledExecutionAt} />
+                      )
+                    </span>
+                  )
+                }
               </div>
             ) : (
               "No more executions scheduled"

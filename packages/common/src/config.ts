@@ -4,6 +4,11 @@ export const defaultPreferences = {
     description:
       "Starts the browser in headless mode. Set to false to see the browser window during scraper execution.",
   },
+  disableRealBrowser: {
+    value: false,
+    description:
+      "Disables the real browser. Set to true to use default puppeteer package instead of real browser.",
+  },
   chromeExecutablePath: {
     value: "",
     description:

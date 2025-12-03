@@ -44,8 +44,12 @@ export function IteratorFormDialog({
   onChange,
   dataSources,
 }: IteratorFormDialogProps) {
-  const form = useForm<ExecutionIterator>({
-    resolver: standardSchemaResolver(executionIteratorSchema),
+  const form = useForm<
+    ExecutionIterator,
+    any, // eslint-disable-line @typescript-eslint/no-explicit-any -- react-hook-form type compatibility
+    ExecutionIterator
+  >({
+    resolver: standardSchemaResolver(executionIteratorSchema) as any, // eslint-disable-line @typescript-eslint/no-explicit-any -- standardSchemaResolver type inference issue
     defaultValues: iterator ?? {
       type: ExecutionIteratorType.Range,
       dataSourceName: "",
@@ -187,7 +191,11 @@ export function IteratorFormDialog({
 function IteratorWhereSchemaForm({
   dataSources,
 }: Pick<IteratorFormDialogProps, "dataSources">) {
-  const { control } = useFormContext<ExecutionIterator>()
+  const { control } = useFormContext<
+    ExecutionIterator,
+    any, // eslint-disable-line @typescript-eslint/no-explicit-any -- react-hook-form type compatibility
+    ExecutionIterator
+  >()
   const { columns } = useDataSourceColumns(dataSources)
 
   return <WhereSchemaForm control={control} name="where" columns={columns} />
@@ -196,7 +204,11 @@ function IteratorWhereSchemaForm({
 function RangeFields({
   dataSources,
 }: Pick<IteratorFormDialogProps, "dataSources">) {
-  const { control } = useFormContext<ExecutionIterator>()
+  const { control } = useFormContext<
+    ExecutionIterator,
+    any, // eslint-disable-line @typescript-eslint/no-explicit-any -- react-hook-form type compatibility
+    ExecutionIterator
+  >()
   const range = useWatch({ control, name: "range" })
 
   const [rangeType, setRangeType] = useState<"number" | "object">(
@@ -299,7 +311,11 @@ function RangeFields({
 }
 
 function useDataSourceColumns(dataSources: ScraperDataSource[]) {
-  const { control } = useFormContext<ExecutionIterator>()
+  const { control } = useFormContext<
+    ExecutionIterator,
+    any, // eslint-disable-line @typescript-eslint/no-explicit-any -- react-hook-form type compatibility
+    ExecutionIterator
+  >()
   const selectedDataSourceName = useWatch({ control, name: "dataSourceName" })
 
   const selectedDataSource = useMemo(

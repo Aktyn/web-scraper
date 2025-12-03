@@ -54,8 +54,10 @@ export function ScraperFormDialog({
   const isEditing = !!editScraper && editScraper.id !== -1
   const dataStores = dataStoresResponse?.data || []
 
-  const form = useForm<UpsertScraper>({
-    resolver: standardSchemaResolver(upsertScraperSchema),
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- react-hook-form type compatibility
+  const form = useForm<UpsertScraper, any, UpsertScraper>({
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- standardSchemaResolver type inference issue
+    resolver: standardSchemaResolver(upsertScraperSchema) as any,
     defaultValues: editScraper
       ? {
           name: editScraper.name,

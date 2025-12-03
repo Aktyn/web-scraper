@@ -45,7 +45,6 @@ async function main() {
 
   api.listen({ port: config.apiPort }, (err, address) => {
     if (err) {
-      //@ts-expect-error Incorrect fastify logger types
       api.log.error(err)
       process.exit(1)
     }

@@ -5,8 +5,9 @@ import * as SliderPrimitive from "@radix-ui/react-slider"
 
 import { cn } from "@/lib/utils"
 
-interface DualRangeSliderProps
-  extends React.ComponentProps<typeof SliderPrimitive.Root> {
+interface DualRangeSliderProps extends React.ComponentProps<
+  typeof SliderPrimitive.Root
+> {
   labelPosition?: "top" | "bottom"
   label?: (value: number | undefined) => React.ReactNode
 }

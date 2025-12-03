@@ -21,8 +21,8 @@ type DurationFieldName<TFieldValues extends FieldValues> = FieldPathByValue<
 
 export function FormInterval<
   TFieldValues extends FieldValues = FieldValues,
-  TName extends
-    DurationFieldName<TFieldValues> = DurationFieldName<TFieldValues>,
+  TName extends DurationFieldName<TFieldValues> =
+    DurationFieldName<TFieldValues>,
 >({
   control,
   name,
