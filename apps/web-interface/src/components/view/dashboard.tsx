@@ -55,7 +55,7 @@ function RecentlyExecutedScrapers() {
     pageSize: 16,
   })
 
-  const refreshTimeout = useRef<NodeJS.Timeout | null>(null)
+  const refreshTimeout = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   ServerEventsProvider.useMessages(
     SubscriptionMessageType.ScraperEvent,
@@ -164,7 +164,7 @@ function ScraperCard({ onClick }: ScraperCardProps) {
     page: 0,
   })
 
-  const refreshTimeout = useRef<NodeJS.Timeout | null>(null)
+  const refreshTimeout = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   ServerEventsProvider.useMessages(
     SubscriptionMessageType.ScraperEvent,

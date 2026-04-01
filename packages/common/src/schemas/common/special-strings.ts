@@ -33,7 +33,7 @@ export async function replaceSpecialStrings(
   text: string,
   context: SpecialStringContext,
 ): Promise<string> {
-  let match: RegExpMatchArray | null = null
+  let match: RegExpMatchArray | null
 
   //Search and replace all special strings
   while ((match = text.match(/\{\{([^,}]+),?([^}]+)?}\}/))) {

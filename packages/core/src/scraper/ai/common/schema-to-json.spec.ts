@@ -34,7 +34,7 @@ describe(schemaToJson.name, () => {
     expect(jsonSchema).toStrictEqual({
       type: "array",
       items: {
-        anyOf: [
+        oneOf: [
           {
             type: "object",
             properties: {

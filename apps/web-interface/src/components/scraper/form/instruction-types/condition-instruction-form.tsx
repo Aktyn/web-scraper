@@ -19,7 +19,8 @@ const conditionTypeOptions = mapToSelectOptions(conditionTypeLabels)
 export type ConditionInstructionFieldName = `instructions.${number}`
 
 interface ConditionInstructionFormProps {
-  control: Control<UpsertScraper>
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  control: Control<UpsertScraper & Record<string, any>, any, any>
   fieldName: ConditionInstructionFieldName
 }
 

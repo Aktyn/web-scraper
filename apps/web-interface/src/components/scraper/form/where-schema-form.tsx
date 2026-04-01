@@ -39,7 +39,8 @@ export function WhereSchemaForm({
   columns,
 }: WhereSchemaFormProps) {
   const control = _control as unknown as Control<
-    UpsertScraper | ExecutionIterator
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (UpsertScraper | ExecutionIterator) & Record<string, any>
   >
 
   const { setValue } = useFormContext<UpsertScraper | ExecutionIterator>()
@@ -133,8 +134,14 @@ export function WhereSchemaForm({
 }
 
 type LogicalGroupFormProps = {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- react-hook-form type compatibility
-  control: Control<UpsertScraper | ExecutionIterator, any, any>
+  control: Control<
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (UpsertScraper | ExecutionIterator) & Record<string, any>,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    any,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    any
+  >
   name: `dataSources.${number}.whereSchema` | "where"
   columns: UserDataStoreColumn[]
   onRemove: () => void
@@ -327,8 +334,14 @@ function LogicalGroupItem({
 const conditionOptions = mapToSelectOptions(conditionLabels)
 
 type ConditionFormProps = {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- react-hook-form type compatibility
-  control: Control<UpsertScraper | ExecutionIterator, any, any>
+  control: Control<
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (UpsertScraper | ExecutionIterator) & Record<string, any>,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    any,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    any
+  >
   name: `dataSources.${number}.whereSchema` | "where"
   columns: UserDataStoreColumn[]
   onRemove: () => void
@@ -554,8 +567,14 @@ function ConditionForm({
 }
 
 type ArrayValueFormProps = {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- react-hook-form type compatibility
-  control: Control<UpsertScraper | ExecutionIterator, any, any>
+  control: Control<
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (UpsertScraper | ExecutionIterator) & Record<string, any>,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    any,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    any
+  >
   name: `dataSources.${number}.whereSchema.value` | "where.value"
   inputType: string
   isBooleanColumn: boolean
@@ -624,7 +643,7 @@ function ArrayValueForm({
               variant="ghost"
               size="sm"
               onClick={() => remove(index)}
-              className="text-destructive hover:text-destructive flex-shrink-0"
+              className="text-destructive hover:text-destructive shrink-0"
             >
               <Trash2 className="size-4" />
             </Button>

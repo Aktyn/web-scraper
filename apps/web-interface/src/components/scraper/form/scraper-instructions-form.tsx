@@ -55,7 +55,7 @@ const defaultInstruction = {
 } as const satisfies ScraperInstructions[number]
 
 interface ScraperInstructionsFormProps {
-  control: Control<UpsertScraper, any, any> // eslint-disable-line @typescript-eslint/no-explicit-any -- react-hook-form type compatibility
+  control: Control<UpsertScraper & Record<string, any>, any, any> // eslint-disable-line @typescript-eslint/no-explicit-any -- react-hook-form type compatibility
   name?: string
   condition?: "then" | "else"
 }
@@ -112,7 +112,7 @@ export function ScraperInstructionsForm({
 
 type InstructionFieldProps = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any -- react-hook-form type compatibility
-  control: Control<UpsertScraper, any, any>
+  control: Control<UpsertScraper & Record<string, any>, any, any>
   fieldName: `instructions.${number}`
   index: number
   fieldsCount: number
@@ -313,7 +313,7 @@ const systemActionTypeOptions = mapToSelectOptions(systemActionTypeLabels)
 
 type InstructionFormProps = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any -- react-hook-form type compatibility
-  control: Control<UpsertScraper, any, any>
+  control: Control<UpsertScraper & Record<string, any>, any, any>
   fieldName: `instructions.${number}`
 }
 

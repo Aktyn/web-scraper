@@ -19,7 +19,7 @@
     "@lem0-packages/puppeteer-page-proxy": "^1.4.1",
     "@types/node-notifier": "^8.0.5",
     "@web-scraper/common": "*",
-    "ghost-cursor": "^1.4.1",
+    "ghost-cursor": "^1.4.2",
     "is-plain-object": "^5.0.0",
     "jimp": "^1.6.0",
     "kind-of": "^6.0.3",
@@ -32,20 +32,20 @@
     "puppeteer-real-browser": "^1.4.4",
     "rebrowser-puppeteer": "^24.8.1",
     "shallow-clone": "^3.0.1",
-    "zod": "^4.1.13"
+    "zod": "^4.3.6"
   },
   "devDependencies": {
-    "@eslint/js": "^9.39.1",
-    "@types/node": "^24.10.1",
-    "eslint": "^9.39.1",
+    "@eslint/js": "^10.0.1",
+    "@types/node": "^25.5.0",
+    "eslint": "^10.1.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-import": "^2.32.0",
-    "eslint-plugin-prettier": "^5.5.4",
-    "globals": "^16.5.0",
+    "eslint-plugin-prettier": "^5.5.5",
+    "globals": "^17.4.0",
     "pptr-mock-server": "^1.5.0",
-    "prettier": "^3.7.4",
-    "typescript": "^5.9.3",
-    "typescript-eslint": "^8.48.1",
-    "vitest": "^4.0.15"
+    "prettier": "^3.8.1",
+    "typescript": "^6.0.2",
+    "typescript-eslint": "^8.58.0",
+    "vitest": "^4.1.2"
   }
 }

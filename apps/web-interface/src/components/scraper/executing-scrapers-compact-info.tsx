@@ -21,7 +21,7 @@ export function ExecutingScrapersCompactInfo() {
     pageSize: 1024,
   })
 
-  const refreshTimeout = useRef<NodeJS.Timeout | null>(null)
+  const refreshTimeout = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   ServerEventsProvider.useMessages(
     SubscriptionMessageType.ScraperEvent,

@@ -10,7 +10,7 @@ interface ScraperDataSourceFormProps<
   TFieldValues extends FieldValues = FieldValues,
 > {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any -- react-hook-form type compatibility
-  control: Control<TFieldValues, any, any>
+  control: Control<TFieldValues & Record<string, any>, any, any>
   index: number
   dataStores: UserDataStore[]
 }

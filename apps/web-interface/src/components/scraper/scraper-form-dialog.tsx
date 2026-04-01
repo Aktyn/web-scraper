@@ -55,35 +55,37 @@ export function ScraperFormDialog({
   const dataStores = dataStoresResponse?.data || []
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any -- react-hook-form type compatibility
-  const form = useForm<UpsertScraper, any, UpsertScraper>({
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- standardSchemaResolver type inference issue
-    resolver: standardSchemaResolver(upsertScraperSchema) as any,
-    defaultValues: editScraper
-      ? {
-          name: editScraper.name,
-          description: editScraper.description,
-          userDataDirectory: editScraper.userDataDirectory,
-          allowOfflineExecution: editScraper.allowOfflineExecution,
-          dataSources: editScraper.dataSources,
-          instructions: editScraper.instructions,
-        }
-      : {
-          name: "",
-          description: "",
-          userDataDirectory: "",
-          allowOfflineExecution: false,
-          dataSources: [],
-          instructions: [
-            {
-              type: ScraperInstructionType.PageAction,
-              action: {
-                type: PageActionType.Navigate,
-                url: "",
+  const form = useForm<UpsertScraper & Record<string, any>, any, UpsertScraper>(
+    {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any -- standardSchemaResolver type inference issue
+      resolver: standardSchemaResolver(upsertScraperSchema) as any,
+      defaultValues: editScraper
+        ? {
+            name: editScraper.name,
+            description: editScraper.description,
+            userDataDirectory: editScraper.userDataDirectory,
+            allowOfflineExecution: editScraper.allowOfflineExecution,
+            dataSources: editScraper.dataSources,
+            instructions: editScraper.instructions,
+          }
+        : {
+            name: "",
+            description: "",
+            userDataDirectory: "",
+            allowOfflineExecution: false,
+            dataSources: [],
+            instructions: [
+              {
+                type: ScraperInstructionType.PageAction,
+                action: {
+                  type: PageActionType.Navigate,
+                  url: "",
+                },
               },
-            },
-          ],
-        },
-  })
+            ],
+          },
+    },
+  )
 
   const {
     fields: dataSourceFields,

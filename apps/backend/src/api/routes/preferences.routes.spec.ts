@@ -28,6 +28,7 @@ describe("Preferences Routes", () => {
       expect(JSON.parse(response.payload)).toEqual({
         data: [
           { key: "headless", value: true },
+          { key: "disableRealBrowser", value: false },
           {
             key: "chromeExecutablePath",
             value: "",

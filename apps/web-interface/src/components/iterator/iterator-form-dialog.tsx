@@ -241,14 +241,14 @@ function RangeFields({
         className="grid grid-cols-2 *:[label]:transition-colors"
       >
         <Label
-          className="font-normal flex items-center gap-2 border rounded-md p-4 has-[:checked]:bg-primary/25 has-[:checked]:text-foreground-lighter has-[:checked]:border-primary"
+          className="font-normal flex items-center gap-2 border rounded-md p-4 has-checked:bg-primary/25 has-checked:text-foreground-lighter has-checked:border-primary"
           htmlFor="number"
         >
           <RadioGroupItem value="number" id="number" />
           Specific identifier value
         </Label>
         <Label
-          className="font-normal flex items-center gap-2 border rounded-md p-4 has-[:checked]:bg-primary/25 has-[:checked]:text-foreground-lighter has-[:checked]:border-primary"
+          className="font-normal flex items-center gap-2 border rounded-md p-4 has-checked:bg-primary/25 has-checked:text-foreground-lighter has-checked:border-primary"
           htmlFor="range"
         >
           <RadioGroupItem value="object" id="range" />

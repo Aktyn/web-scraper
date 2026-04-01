@@ -158,6 +158,7 @@ export class AutonomousAgent {
       }
 
       //TODO: wait for https://github.com/ollama/ollama/issues/12362 to use cloud models
+      //TODO: no more waiting... rewrite logic to use tools instead of structured output
       const agentActions = agentSchema.safeParse(
         JSON.parse(response.message.content),
       )
