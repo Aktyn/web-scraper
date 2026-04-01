@@ -53,19 +53,19 @@ export const defaultPreferences = {
   },
 
   localizationModel: {
-    value: "qwen2.5vl:32b",
+    value: "qwen3.5:27b",
     description:
-      "Ollama model to use for the localization AI. If not set, the default model will be used (qwen2.5vl:32b). See https://ollama.com/search for list of available models. Ollama must be installed and running in order to use this feature. The model must be already available in Ollama.",
+      "Ollama model to use for the localization AI. If not set, the default model will be used (qwen3.5:27b). See https://ollama.com/search for list of available models. The chosen model must support tools and vision. Ollama must be installed and running in order to use this feature. The model must be already available in Ollama.",
   },
   localizationSystemPrompt: {
     value:
-      "Localize an element on the GUI image according to user's instructions and output a click position.",
+      "You are a precise element localization system. Your task is to analyze a screenshot of a web page and determine the exact coordinates of an element based on the user's instructions. Use the return_coordinates tool with the pixel coordinates of the element. Do not output any additional text or explanations.",
     description:
       "System prompt for the localization AI. If not set, no system message will be sent to the AI which may result in less accurate localization.",
   },
 
   navigationModel: {
-    value: "qwen2.5vl:32b",
+    value: "qwen3.5:27b",
     description:
       "Same as localizationModel, but for running autonomous agents (page navigation).",
   },

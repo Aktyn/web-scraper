@@ -181,7 +181,7 @@ export class Scraper<
       model: options.localizationModel,
     })
 
-    const navigationLogger =
+    const navigationLogger: SimpleLogger =
       "child" in this.logger && typeof this.logger.child === "function"
         ? this.logger.child({
             scraper: `${id}-${name}`,

@@ -3,52 +3,31 @@
   "envMode": "loose",
   "tasks": {
     "build": {
-      "dependsOn": [
-        "^build"
-      ],
-      "outputs": [
-        "dist/**",
-        "lib/**",
-        "!**/node_modules/**"
-      ]
+      "dependsOn": ["^build"],
+      "outputs": ["dist/**", "lib/**", "!**/node_modules/**"]
     },
     "build:standalone": {
       "cache": false,
-      "dependsOn": [
-        "^build"
-      ],
-      "outputs": [
-        "dist/standalone.js"
-      ]
+      "dependsOn": ["^build"],
+      "outputs": ["dist/standalone.js"]
     },
     "start": {
-      "dependsOn": [
-        "^build",
-        "build"
-      ],
+      "dependsOn": ["^build", "build"],
       "cache": false,
       "persistent": true
     },
     "lint": {},
     "test": {
-      "dependsOn": [
-        "^build"
-      ]
+      "dependsOn": ["^build"]
     },
     "test:coverage": {
-      "dependsOn": [
-        "^build"
-      ]
+      "dependsOn": ["^build"]
     },
     "test:watch": {
-      "dependsOn": [
-        "^build"
-      ]
+      "dependsOn": ["^build"]
     },
     "typecheck": {
-      "dependsOn": [
-        "^build"
-      ]
+      "dependsOn": ["^build"]
     },
     "dev": {
       "cache": false,
@@ -56,3 +35,4 @@
     }
   }
 }
+

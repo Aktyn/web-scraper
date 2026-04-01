@@ -74,7 +74,8 @@
 		"npm.packageManager": "npm",
 		"vitest.maximumConfigs": 4,
 		"typescript.tsdk": "Root/node_modules/typescript/lib",
-		"npm.scriptRunner": "npm"
+		"npm.scriptRunner": "npm",
+		"betterOpenEditors.PackagePatterns": "**/apps/*\n**/packages/*"
 	},
 	"launch": {
 		"version": "3.0.1",
