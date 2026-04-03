@@ -1,12 +1,13 @@
 // @ts-check
 
 import * as esbuild from "esbuild";
-import { createRequire } from "module";
+import { createRequire } from "node:module";
 import fs from "node:fs";
 
 const require = createRequire(import.meta.url);
 
-// This plugin is to exclude .node files from the bundle
+// This plugin excludes .node files from the bundle
+/** @type {import("esbuild").Plugin} */
 const nativeNodeModulesPlugin = {
   name: 'native-node-modules',
   setup(build) {
@@ -25,6 +26,17 @@ const entryPoints = ["src/main.ts"];
 
 const external = [
   ...Object.keys(pkg.devDependencies || {}),
+  "@aws-sdk/client-rds-data",
+  "@neondatabase/serverless",
+  "@electric-sql/pglite",
+  "@planetscale/database",
+  "@vercel/postgres",
+  "better-sqlite3",
+  "pg",
+  "postgres",
+  "mysql2",
+  "sqlite3",
+  "bun:sqlite"
 ];
 
 const outfile = "dist/standalone.js";
@@ -38,6 +50,9 @@ await esbuild.build({
   outfile,
   external,
   logLevel: "info",
+  logOverride: {
+    "empty-import-meta": "silent",
+  },
   plugins: [nativeNodeModulesPlugin],
 });
 
