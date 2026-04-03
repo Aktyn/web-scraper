@@ -85,7 +85,6 @@ export const pageActionSchema = z.discriminatedUnion("type", [
     task: z.string().min(1, { error: "Task description is required" }),
     useGhostCursor: z.boolean().optional(),
     maximumSteps: z.number().int().min(1).max(256).optional(),
-    // usePreciseLocalization: z.boolean().optional(),
   }),
 ])
 

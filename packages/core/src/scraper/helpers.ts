@@ -26,13 +26,16 @@ export async function saveScreenshot(page: Page, fileNamePrefix: string) {
 }
 
 export function buildSpecialStringContext(
-  context: Pick<ScraperExecutionContext, "logger" | "pages" | "dataBridge">,
+  context: Partial<
+    Pick<ScraperExecutionContext, "logger" | "pages" | "dataBridge">
+  >,
 ): SpecialStringContext {
   return {
     logger: context.logger,
-    getExternalData: (key) => context.dataBridge.get(key),
+    getExternalData: (key) =>
+      context.dataBridge?.get(key) ?? Promise.resolve(null),
     getPageUrl: (pageIndex) =>
-      context.pages.getPage(pageIndex ?? 0, false)?.url() ?? null,
+      context.pages?.getPage(pageIndex ?? 0, false)?.url() ?? null,
   }
 }
 

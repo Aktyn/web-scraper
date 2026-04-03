@@ -124,7 +124,9 @@ export async function getScraperValue(
 
 /** Replaces special strings (e.g. "{{dataSourceName.columnName}}") in ScraperElementSelectors with actual data from the data bridge. */
 export async function replaceSpecialStringsInSelectors(
-  context: ScraperExecutionContext,
+  context: Partial<
+    Pick<ScraperExecutionContext, "logger" | "pages" | "dataBridge">
+  >,
   selectors: ScraperElementSelectors,
 ) {
   return await Promise.all(

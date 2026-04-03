@@ -1,6 +1,7 @@
 import type { ActionsHistory } from "./autonomous-agent"
 import { AgentActionType, type AgentActions } from "./schema"
 
+//TODO: summarize with separate LLM request
 export function summarizeAgentActions(actions: ActionsHistory) {
   const partialSummaries: string[] = []
 

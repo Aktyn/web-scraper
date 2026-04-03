@@ -46,6 +46,11 @@ export class ScreenshotTool {
     return { original: this.original, resized: this.resized }
   }
 
+  /**
+   * Transforms coordinates from resized screenshot to original screenshot
+   * @param coordinates Coordinates in resized screenshot
+   * @returns Coordinates in original screenshot
+   */
   transformCoordinates(coordinates: Coordinates) {
     if (!this.original || !this.resized) {
       this.logger.error({

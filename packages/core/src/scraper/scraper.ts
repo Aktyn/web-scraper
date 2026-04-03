@@ -190,11 +190,9 @@ export class Scraper<
           })
         : this.logger
 
-    this.agent = new AutonomousAgent(
-      navigationLogger,
-      { model: options.navigationModel },
-      this.localization,
-    )
+    this.agent = new AutonomousAgent(navigationLogger, {
+      model: options.navigationModel,
+    })
 
     assert(
       !Scraper.instances.has(this.identifier),

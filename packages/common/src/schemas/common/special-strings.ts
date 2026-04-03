@@ -24,7 +24,7 @@ export enum SpecialStringType {
 }
 
 export type SpecialStringContext = {
-  logger: SimpleLogger
+  logger?: SimpleLogger
   getExternalData: (key: ScraperDataKey) => Promise<string | number | null>
   getPageUrl: (pageIndex?: number) => string | null
 }
@@ -85,13 +85,13 @@ async function getSpecialStringValue(
 
       let pageIndex = pageIndexArg ? parseInt(pageIndexArg) : 0
       if (isNaN(pageIndex)) {
-        context.logger.warn(`Invalid page index argument: ${pageIndexArg}`)
+        context.logger?.warn(`Invalid page index argument: ${pageIndexArg}`)
         pageIndex = 0
       }
 
       const pageUrl = context.getPageUrl(pageIndex)
       if (!pageUrl) {
-        context.logger.warn(
+        context.logger?.warn(
           `Incorrect "${SpecialStringType.CurrentUrl}" "pageIndex" argument; there is no opened page with index = ${pageIndex}`,
         )
         return null

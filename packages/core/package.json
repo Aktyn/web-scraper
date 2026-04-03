@@ -32,11 +32,13 @@
     "puppeteer-real-browser": "^1.4.4",
     "rebrowser-puppeteer": "^24.8.1",
     "shallow-clone": "^3.0.1",
+    "sizzle": "^2.3.10",
     "zod": "^4.3.6"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
     "@types/node": "^25.5.0",
+    "@types/sizzle": "^2.3.10",
     "eslint": "^10.1.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-import": "^2.32.0",

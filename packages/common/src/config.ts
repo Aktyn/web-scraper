@@ -67,7 +67,7 @@ export const defaultPreferences = {
   navigationModel: {
     value: "qwen3.5:27b",
     description:
-      "Same as localizationModel, but for running autonomous agents (page navigation).",
+      "Similar to localizationModel, but for running autonomous agents (page navigation).",
   },
 } as const satisfies Record<
   string,

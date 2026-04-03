@@ -1,5 +1,6 @@
 import {
   type Coordinates,
+  ElementSelectorType,
   type PageAction,
   PageActionType,
   type SimpleLogger,
@@ -8,11 +9,11 @@ import {
 } from "@web-scraper/common"
 import { randomInt } from "crypto"
 import { getScraperValue } from "../data-helper"
+import { buildSpecialStringContext } from "../helpers"
 import { detectAndSolveCaptcha } from "./captcha-solver"
 import type { ScraperPageContext } from "./execution-pages"
 import { type ScraperExecutionContext, getGhostClickOptions } from "./helpers"
-import { getElementHandle } from "./selectors"
-import { buildSpecialStringContext } from "../helpers"
+import { evaluateHandle, getElementHandle } from "./selectors"
 
 export async function performPageAction(
   context: ScraperExecutionContext,
@@ -216,7 +217,7 @@ export async function performPageAction(
         task: action.task,
       })
 
-      const finalNotes = await context.ai.navigation.run(
+      const answer = await context.ai.navigation.run(
         action,
         pageContext,
         context.dataBridge,
@@ -224,7 +225,7 @@ export async function performPageAction(
       )
 
       //TODO: log finalNotes
-      context.logger.info({ msg: "Autonomous agent completed", finalNotes })
+      context.logger.info({ msg: "Autonomous agent completed", answer })
 
       break
     }
@@ -243,13 +244,12 @@ export async function performPageAction(
   }
 }
 
-type PreciseClickOptions = Partial<{
+export type PreciseClickOptions = Partial<{
   useGhostCursor: boolean
   waitForNavigation: boolean
   abortController: AbortController
 }>
 
-//TODO: add PreciseClick to pageActionSchema
 /** Click on the page at the given coordinates */
 export async function preciseClick(
   pageContext: ScraperPageContext,
@@ -287,4 +287,43 @@ export async function preciseClick(
       })
     }
   }
+}
+
+/** Find element by query and click it */
+export async function findAndClick(
+  pageContext: ScraperPageContext,
+  query: string,
+  options: PreciseClickOptions,
+  logger: SimpleLogger,
+) {
+  const handle = await evaluateHandle(pageContext.page, {}, [
+    {
+      type: ElementSelectorType.Query,
+      query,
+    },
+  ])
+
+  const point = await handle.asElement()?.clickablePoint()
+  if (!point) {
+    logger.warn({ msg: "Element not found", query })
+    return false
+  }
+  await preciseClick(pageContext, point, options, logger)
+  return true
+}
+
+/** Find element by query and focus it */
+export async function findAndFocus(
+  pageContext: ScraperPageContext,
+  query: string,
+) {
+  const handle = await evaluateHandle(pageContext.page, {}, [
+    {
+      type: ElementSelectorType.Query,
+      query,
+    },
+  ])
+
+  await handle.asElement()?.focus()
+  return true
 }

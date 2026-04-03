@@ -6,12 +6,7 @@ import {
   ScraperInstructionsExecutionInfoType,
   type SimpleLogger,
 } from "@web-scraper/common"
-import {
-  createCursor,
-  getRandomPagePoint,
-  installMouseHelper,
-  type GhostCursor,
-} from "ghost-cursor"
+import { getRandomPagePoint, GhostCursor } from "ghost-cursor"
 import type { Browser, Page, Viewport } from "rebrowser-puppeteer"
 import type { ScraperExecutionInfo } from "./scraper-execution-info"
 
@@ -99,11 +94,17 @@ export class ExecutionPages {
       })
     }
 
-    const cursor = createCursor(page, await getRandomPagePoint(page), true)
+    const cursor = new GhostCursor(page, {
+      start: await getRandomPagePoint(page),
+      performRandomMoves: true,
+      visible: process.env.NODE_ENV === "development",
+    })
     cursor.toggleRandomMove(true)
-    if (process.env.NODE_ENV === "development") {
-      await installMouseHelper(page)
-    }
+
+    // `visible` property should not handle the below logic
+    // if (process.env.NODE_ENV === "development") {
+    // await installMouseHelper(page)
+    // }
 
     if (this.options.pageMiddleware) {
       await this.options.pageMiddleware(page)

@@ -1,5 +1,7 @@
 import { z } from "zod"
 
+//TODO: this file should be no longer needed; delete it
+
 export enum AgentActionType {
   AddNote = "add_note",
 
