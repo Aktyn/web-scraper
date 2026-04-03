@@ -61,13 +61,13 @@ describe("Preferences Routes", () => {
             key: "viewportHeight",
             value: 1080,
           },
-          { key: "localizationModel", value: "qwen2.5vl:32b" },
+          { key: "localizationModel", value: "qwen3.5:27b" },
           {
             key: "localizationSystemPrompt",
             value:
-              "Localize an element on the GUI image according to user's instructions and output a click position.",
+              "You are a precise element localization system. Your task is to analyze a screenshot of a web page and determine the exact coordinates of an element based on the user's instructions. Use the return_coordinates tool with the pixel coordinates of the element. Do not output any additional text or explanations.",
           },
-          { key: "navigationModel", value: "qwen2.5vl:32b" },
+          { key: "navigationModel", value: "qwen3.5:27b" },
         ],
       })
     })
