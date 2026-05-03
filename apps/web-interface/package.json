@@ -51,8 +51,8 @@
     "zod": "^4.3.6"
   },
   "devDependencies": {
-    "@babel/plugin-proposal-explicit-resource-management": "^7.27.4",
     "@eslint/js": "^10.0.1",
+    "@rolldown/plugin-babel": "^0.2.3",
     "@tailwindcss/vite": "^4.2.2",
     "@types/node": "^25.5.0",
     "@types/react": "^19.2.14",
