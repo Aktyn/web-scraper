@@ -59,6 +59,7 @@ It might be necessary to provide path to the browser executable in the settings.
 User must also make sure that proper model is pulled and ready to use in Ollama.\
 By default, the project uses [qwen2.5vl:32b](https://ollama.com/library/qwen2.5vl) model. It can be changed via Web Scraper preferences.
 - Optionally some SQL and HTML/JavaScript knowledge will be helpful to fully utilize the project potential.
+- `libappindicator` library is required for the system tray to work on Linux.\
 
 ## System support
 
