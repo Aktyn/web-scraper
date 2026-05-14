@@ -17,16 +17,9 @@ build_target() {
   fi
 
   echo ""
-  echo "Building SEA bundle for $TARGET..."
-  node --experimental-sea-config $CONFIG_FILE
-  echo "... done building SEA bundle for $TARGET"
-
-  echo ""
-  echo "Preparing executable for $TARGET..."
-  cp $(command -v node) sea/web-scraper-$TARGET$EXTENSION
-  npx postject sea/web-scraper-$TARGET$EXTENSION NODE_SEA_BLOB sea-prep.blob --sentinel-fuse NODE_SEA_FUSE_fce680ab2cc467b6e072b8b5df1996b2 $POSTJECT_ARGS
-  rm -f sea-prep.blob
-  echo "... done preparing executable for $TARGET"
+  echo "Building SEA for $TARGET..."
+  node --build-sea $CONFIG_FILE
+  echo "... done building SEA for $TARGET"
 }
 
 echo "Copying bundled backend code..."

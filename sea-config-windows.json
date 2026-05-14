@@ -1,6 +1,6 @@
 {
   "main": "./apps/backend/dist/standalone-copy.js",
-  "output": "sea-prep.blob",
+  "output": "./sea/web-scraper-windows.exe",
   "disableExperimentalSEAWarning": true,
   "useSnapshot": false,
   "useCodeCache": false,
