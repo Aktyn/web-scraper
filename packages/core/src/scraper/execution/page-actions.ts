@@ -8,12 +8,20 @@ import {
   wait,
 } from "@web-scraper/common"
 import { randomInt } from "crypto"
+import type { Page } from "playwright"
 import { getScraperValue } from "../data-helper"
 import { buildSpecialStringContext } from "../helpers"
 import { detectAndSolveCaptcha } from "./captcha-solver"
 import type { ScraperPageContext } from "./execution-pages"
-import { type ScraperExecutionContext, getGhostClickOptions } from "./helpers"
+import type { ScraperExecutionContext } from "./helpers"
 import { evaluateHandle, getElementHandle } from "./selectors"
+
+type PlaywrightGotoOptions = {
+  referer?: string
+  timeout?: number
+  waitUntil?: "load" | "domcontentloaded" | "networkidle" | "commit"
+  signal?: AbortSignal
+}
 
 export async function performPageAction(
   context: ScraperExecutionContext,
@@ -28,16 +36,17 @@ export async function performPageAction(
       break
     case PageActionType.Navigate:
       try {
+        const navOptions: PlaywrightGotoOptions = {
+          timeout: 30_000,
+          waitUntil: "networkidle",
+          signal: context.abortController.signal,
+        }
         await pageContext.page.goto(
           await replaceSpecialStrings(
             action.url,
             buildSpecialStringContext(context),
           ),
-          {
-            timeout: 30_000,
-            waitUntil: "networkidle0",
-            signal: context.abortController.signal,
-          },
+          navOptions,
         )
       } catch (error) {
         context.logger.warn({ msg: "Navigation failed", error })
@@ -53,15 +62,16 @@ export async function performPageAction(
       )
 
       if (action.useGhostCursor) {
-        pageContext.cursor.toggleRandomMove(false)
-
-        await pageContext.cursor.scrollIntoView(handle, {
-          scrollSpeed: 80,
+        const box = await handle.boundingBox()
+        if (!box) {
+          context.logger.warn({ msg: "Element not visible for clicking" })
+          break
+        }
+        await humanMoveTo(pageContext.page, {
+          x: box.x + box.width / 2,
+          y: box.y + box.height / 2,
         })
-        await wait(1_000)
-        await pageContext.cursor.click(handle, getGhostClickOptions())
-
-        pageContext.cursor.toggleRandomMove(true)
+        await humanClick(pageContext.page)
       } else {
         await handle.click({
           delay: randomInt(1, 4),
@@ -70,9 +80,8 @@ export async function performPageAction(
 
       if (action.waitForNavigation) {
         try {
-          await pageContext.page.waitForNavigation({
-            waitUntil: "networkidle0",
-            signal: context.abortController.signal,
+          await pageContext.page.waitForURL("**", {
+            waitUntil: "networkidle",
             timeout: 20_000,
           })
         } catch (error) {
@@ -100,7 +109,7 @@ export async function performPageAction(
       context.logger.info({ msg: "Localization result", coordinates })
 
       await preciseClick(
-        pageContext,
+        pageContext.page,
         coordinates,
         {
           useGhostCursor: action.useGhostCursor,
@@ -128,20 +137,20 @@ export async function performPageAction(
 
       const value = await getScraperValue(context, action.value)
       if (value) {
+        await handle.fill("")
         await handle.type(value.toString(), {
           delay: randomInt(1, 4),
         })
       }
 
       if (action.pressEnter) {
-        await handle.press("Enter")
+        await pageContext.page.keyboard.press("Enter")
       }
 
       if (action.waitForNavigation) {
         try {
-          await pageContext.page.waitForNavigation({
-            waitUntil: "networkidle0",
-            signal: context.abortController.signal,
+          await pageContext.page.waitForURL("**", {
+            waitUntil: "networkidle",
             timeout: 20_000,
           })
         } catch (error) {
@@ -155,13 +164,16 @@ export async function performPageAction(
     }
 
     case PageActionType.ScrollToTop:
-      await pageContext.cursor.scrollTo("top", {
-        scrollSpeed: 50,
+      await pageContext.page.evaluate(() => {
+        window.scrollTo({ top: 0, behavior: "instant" })
       })
       break
     case PageActionType.ScrollToBottom:
-      await pageContext.cursor.scrollTo("bottom", {
-        scrollSpeed: 50,
+      await pageContext.page.evaluate(() => {
+        window.scrollTo({
+          top: document.body.scrollHeight,
+          behavior: "instant",
+        })
       })
       break
     case PageActionType.ScrollToElement: {
@@ -172,8 +184,8 @@ export async function performPageAction(
         true,
       )
 
-      await pageContext.cursor.scrollIntoView(handle, {
-        scrollSpeed: 50,
+      await handle.evaluate((el) => {
+        el.scrollIntoView({ behavior: "instant", block: "center" })
       })
 
       break
@@ -252,32 +264,24 @@ export type PreciseClickOptions = Partial<{
 
 /** Click on the page at the given coordinates */
 export async function preciseClick(
-  pageContext: ScraperPageContext,
+  page: Page,
   coordinates: Coordinates,
   options: PreciseClickOptions,
   logger: SimpleLogger,
 ) {
   if (options.useGhostCursor) {
-    pageContext.cursor.toggleRandomMove(false)
-
-    await pageContext.cursor.moveTo(coordinates, {
-      randomizeMoveDelay: true,
-      moveDelay: 3_000,
-    })
-    await pageContext.cursor.click(undefined, getGhostClickOptions())
-
-    pageContext.cursor.toggleRandomMove(true)
+    await humanMoveTo(page, coordinates)
+    await humanClick(page)
   } else {
-    await pageContext.page.mouse.click(coordinates.x, coordinates.y, {
+    await page.mouse.click(coordinates.x, coordinates.y, {
       delay: randomInt(1, 4),
     })
   }
 
   if (options.waitForNavigation) {
     try {
-      await pageContext.page.waitForNavigation({
-        waitUntil: "networkidle0",
-        signal: options.abortController?.signal,
+      await page.waitForURL("**", {
+        waitUntil: "networkidle",
         timeout: 20_000,
       })
     } catch (error) {
@@ -303,12 +307,19 @@ export async function findAndClick(
     },
   ])
 
-  const point = await handle.asElement()?.clickablePoint()
-  if (!point) {
+  if (!handle) {
     logger.warn({ msg: "Element not found", query })
     return false
   }
-  await preciseClick(pageContext, point, options, logger)
+
+  const box = await handle.boundingBox()
+  if (!box) {
+    logger.warn({ msg: "Element not visible", query })
+    return false
+  }
+
+  const coordinates = { x: box.x + box.width / 2, y: box.y + box.height / 2 }
+  await preciseClick(pageContext.page, coordinates, options, logger)
   return true
 }
 
@@ -324,6 +335,27 @@ export async function findAndFocus(
     },
   ])
 
-  await handle.asElement()?.focus()
+  if (!handle) return false
+
+  await handle.focus()
   return true
+}
+
+async function humanMoveTo(page: Page, to: Coordinates) {
+  const mouse = page.mouse
+  const steps = 3
+  for (let i = 1; i <= steps; i++) {
+    const progress = i / steps
+    const x = Math.random() * 20 - 10
+    const y = Math.random() * 20 - 10
+    await mouse.move(to.x * progress + x, to.y * progress + y, { steps: 5 })
+    await wait(randomInt(5, 20))
+  }
+}
+
+async function humanClick(page: Page) {
+  await wait(randomInt(50, 150))
+  await page.mouse.down()
+  await wait(randomInt(20, 80))
+  await page.mouse.up()
 }

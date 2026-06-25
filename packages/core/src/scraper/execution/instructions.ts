@@ -16,7 +16,6 @@ import { checkCondition } from "./conditions"
 import { ExecutionPages } from "./execution-pages"
 import type { ScraperExecutionContext } from "./helpers"
 import { performPageAction } from "./page-actions"
-import type { Cookie } from "rebrowser-puppeteer"
 
 /**
  * Executes instructions in a scraper execution context.
@@ -192,11 +191,18 @@ async function executeInstructionByType(
           domain: instruction.domain,
         })
 
-        const cookies = await context.pages.browser.cookies()
+        const browser = context.pages.browser
+        const browserContext = await browser.newContext()
+        const cookies = await browserContext.cookies()
 
         const domainCookies = filterCookiesByDomain(cookies, instruction.domain)
 
-        await context.pages.browser.deleteCookie(...domainCookies)
+        if (typeof instruction.domain === "string") {
+          const url = new URL(instruction.domain)
+          await browserContext.clearCookies({ domain: url.hostname })
+        } else {
+          await browserContext.clearCookies()
+        }
 
         lastInstructionInfo = pushInstructionInfo(
           {
@@ -369,7 +375,8 @@ async function executeInstructionByType(
       break
   }
 
-  lastInstructionInfo.duration = Date.now() - instructionStartTime
+  if (lastInstructionInfo)
+    lastInstructionInfo.duration = Date.now() - instructionStartTime
 }
 
 function pushInstructionInfo<T extends ScraperInstructionInfo>(
@@ -388,7 +395,7 @@ function pushInstructionInfo<T extends ScraperInstructionInfo>(
 }
 
 function filterCookiesByDomain(
-  cookies: Cookie[],
+  cookies: Array<{ domain: string; name: string; value: string }>,
   domain: string | SerializableRegex,
 ) {
   if (typeof domain === "string") {

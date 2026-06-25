@@ -1,6 +1,5 @@
 import { wait } from "@web-scraper/common"
-import type { SerializedAXNode } from "rebrowser-puppeteer"
-import { getGhostClickOptions, type ScraperExecutionContext } from "./helpers"
+import type { ScraperExecutionContext } from "./helpers"
 import type { ScraperPageContext } from "./execution-pages"
 
 const MAX_ATTEMPTS = 5
@@ -68,60 +67,29 @@ async function solveCloudflareChallenge(
 ) {
   context.logger.info("Solving Cloudflare challenge")
 
-  const traverse = async (
-    nodes: SerializedAXNode[],
-    level = 0,
-  ): Promise<boolean> => {
-    if (!nodes.length) {
-      return false
-    }
+  const checkbox = pageContext.page.locator(
+    'input[type="checkbox"], .cf-turnstile, [id*="turnstile"]',
+  )
 
-    let clicked = false
+  try {
+    const count = await checkbox.count()
+    if (count > 0) {
+      context.logger.info("Clicking checkbox to solve captcha")
+      await checkbox.first().click({ force: true })
 
-    for (const node of nodes) {
-      if (node.role === "checkbox" && node.name === "Verify you are human") {
-        const handle = await node.elementHandle()
-
-        if (handle) {
-          context.logger.info("Clicking checkbox to solve captcha")
-
-          pageContext.cursor.toggleRandomMove(false)
-          await pageContext.cursor.click(handle, getGhostClickOptions())
-          pageContext.cursor.toggleRandomMove(true)
-
-          clicked = true
-
-          try {
-            await pageContext.page.waitForNavigation({
-              timeout: 20_000,
-              waitUntil: "networkidle0",
-              signal: context.abortController.signal,
-            })
-          } catch {
-            // noop
-          }
-        }
+      try {
+        await pageContext.page.waitForURL("**", {
+          timeout: 20_000,
+          waitUntil: "networkidle",
+        })
+      } catch {
+        // noop
       }
-
-      clicked ||= await traverse(node.children ?? [], level + 1)
-    }
-
-    return clicked
-  }
-
-  const snapshot = await pageContext.page.accessibility.snapshot({
-    includeIframes: true,
-  })
-  if (snapshot) {
-    const clicked = await traverse([snapshot])
-
-    if (clicked) {
-      context.logger.info("Captcha checkbox has been clicked")
     } else {
-      context.logger.info("Captcha checkbox has not been clicked")
+      context.logger.info("Captcha checkbox not found via locator")
     }
-  } else {
-    context.logger.warn("No accessibility snapshot found")
+  } catch (error) {
+    context.logger.warn({ msg: "Failed to click captcha checkbox", error })
   }
 
   if (context.abortController.signal.aborted) {
@@ -131,9 +99,8 @@ async function solveCloudflareChallenge(
   await wait(15_000)
 
   try {
-    await pageContext.page.waitForNetworkIdle({
+    await pageContext.page.waitForLoadState("networkidle", {
       timeout: 20_000,
-      signal: context.abortController.signal,
     })
   } catch {
     // noop

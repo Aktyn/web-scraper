@@ -25,7 +25,6 @@ import {
   useState,
 } from "react"
 import { ScraperExecutionInfo } from "./scraper-execution-info"
-import { ScraperPagePortals } from "./scraper-page-portals"
 import { ScraperStateWidget } from "./scraper-state-widget"
 
 export type ScraperExecutionPanelRef = {
@@ -119,10 +118,6 @@ export function ScraperExecutionPanel({ ref }: ScraperExecutionPanelProps) {
           executionInfo={partialExecutionInfo}
           currentlyExecutingInstruction={currentlyExecutingInstruction}
         />
-      )}
-
-      {state === ScraperState.Executing && (
-        <ScraperPagePortals executionInfo={partialExecutionInfo} />
       )}
     </div>
   )

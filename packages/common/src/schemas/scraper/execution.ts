@@ -44,18 +44,6 @@ const scraperExecutionErrorEventSchema = z.object({
   executionInfo: scraperInstructionsExecutionInfoSchema.nullable(),
 })
 
-//TODO: remove commented type
-// z.ZodDiscriminatedUnion<
-//   "type",
-//   [
-//     typeof scraperStateChangeEventSchema,
-//     typeof scraperExecutionStartedEventSchema,
-//     typeof scraperExecutionUpdateEventSchema,
-//     typeof scraperExecutingInstructionEventSchema,
-//     typeof scraperExecutionFinishedEventSchema,
-//     typeof scraperExecutionErrorEventSchema,
-//   ]
-// >
 export const scraperEventSchema = z.discriminatedUnion("type", [
   scraperStateChangeEventSchema,
   scraperExecutionStartedEventSchema,

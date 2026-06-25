@@ -4,15 +4,10 @@ export const defaultPreferences = {
     description:
       "Starts the browser in headless mode. Set to false to see the browser window during scraper execution.",
   },
-  disableRealBrowser: {
-    value: false,
-    description:
-      "Disables the real browser. Set to true to use default puppeteer package instead of real browser.",
-  },
-  chromeExecutablePath: {
+  browserExecutablePath: {
     value: "",
     description:
-      "Path to the Chrome executable. If not set, the default path will be used.",
+      "Path to the browser executable. If not set, the default path will be used.",
   },
   defaultUserDataDirectory: {
     value: "",
@@ -24,21 +19,6 @@ export const defaultPreferences = {
     value: "",
     description:
       "Proxy URL to use for the browser. If not set, no proxy will be used.",
-  },
-  portalURL: {
-    value: "http://localhost:3000",
-    description:
-      "URL for the portal feature to work. If not set, the portal will not be used. This feature is using puppeteer-extra-plugin-portal package.",
-  },
-
-  useAdblockerPlugin: {
-    value: true,
-    description: "Use the puppeteer-extra-plugin-adblocker package.",
-  },
-
-  useStealthPlugin: {
-    value: true,
-    description: "Use the puppeteer-extra-plugin-stealth package.",
   },
 
   viewportWidth: {

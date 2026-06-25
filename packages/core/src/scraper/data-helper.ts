@@ -97,7 +97,7 @@ export async function getScraperValue(
         )
         return null
       }
-      return await handle?.evaluate((el) => el.textContent)
+      return await handle.evaluate((el) => el.textContent)
     }
     case ScraperValueType.ElementAttribute: {
       const handle = await getElementHandle(
@@ -111,7 +111,7 @@ export async function getScraperValue(
         )
         return null
       }
-      return await handle?.evaluate(
+      return await handle.evaluate(
         (el, attributeName) => el.getAttribute(attributeName),
         await replaceSpecialStrings(
           value.attributeName,

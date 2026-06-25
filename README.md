@@ -2,7 +2,7 @@
 
 <img src="images/icon.png" alt="Web Scraper" width="192" />
 
-This is a highly customizable, Puppeteer-based scraper with experimental AI features.\
+This is a highly customizable, Playwright-based scraper with experimental AI features.\
 The initial idea was to develop an advanced testing tool for web projects.
 
 ## Table of Contents
@@ -19,7 +19,6 @@ The initial idea was to develop an advanced testing tool for web projects.
     - [Routines](#routines)
     - [CLI](#cli)
     - [AI](#ai)
-    - [Portal](#portal)
   - [Getting started](#getting-started)
     - [Web interface](#web-interface)
     - [Preferences](#preferences)
@@ -130,14 +129,6 @@ I'm still working on improving the agent's capabilities.
 
 I'm planning to integrate more suitable LLM in the future: [Holo1](https://huggingface.co/Hcompany/Holo1-7B)
 
-### Portal
-
-By default, scrapers run in headless mode which means that the browser is not visible to the user. This should not be changed although there is an option to run the browser in non-headless mode.
-
-User can spy on the scraper through a portal (a small iframe in the Web UI).\
-Useful for testing new scrapers or debugging existing ones.\
-It is also possible to interact with the page through the portal.
-
 ## Getting started
 
 ### Web interface
@@ -159,8 +150,8 @@ This will make it easier to learn how to use Web Scraper.
 
 ![Preferences](images/preferences.webp)
 
-> It might be necessary to set **chromeExecutablePath** as a path to the browser executable.\
-> Web Scraper will try to find the browser executable in the system and use it as default value for **chromeExecutablePath** but it might not work in some special cases (e.g. when browser is installed in a non-standard location).\
+> It might be necessary to set **browserExecutablePath** as a path to the browser executable.\
+> Web Scraper will try to find the browser executable in the system and use it as default value for **browserExecutablePath** but it might not work in some special cases (e.g. when browser is installed in a non-standard location).\
 Same goes for **defaultUserDataDirectory** which is where browser stores its data like cookies, local storage, etc.
 
 > **defaultUserDataDirectory** can be set per scraper allowing user to create scrapers that use different browser data directories and also scrapers that don't use any data directory at all for a clean run each time.

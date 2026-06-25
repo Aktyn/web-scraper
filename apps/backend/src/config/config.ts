@@ -1,7 +1,7 @@
 import { defaultPreferences } from "@web-scraper/common"
 import type { DbModule } from "../db/db.module"
 import { preferencesTable } from "../db/schema"
-import { getChromeExecutablePath, getUserDataDirectory } from "../utils"
+import { getBrowserExecutablePath, getUserDataDirectory } from "../utils"
 
 export async function getConfig(dbModule: DbModule) {
   const preferences = getDefaultPreferences()
@@ -40,7 +40,7 @@ export function getDefaultPreferences() {
   }
 
   Object.assign(preferences, {
-    chromeExecutablePath: getChromeExecutablePath(),
+    browserExecutablePath: getBrowserExecutablePath(),
     defaultUserDataDirectory: getUserDataDirectory(),
   })
 

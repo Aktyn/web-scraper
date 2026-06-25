@@ -3,7 +3,7 @@ import {
   type ScraperElementSelectors,
   type SerializableRegex,
 } from "@web-scraper/common"
-import type { ElementHandle, Page } from "rebrowser-puppeteer"
+import type { Locator, Page } from "playwright"
 import { replaceSpecialStringsInSelectors } from "../data-helper"
 import type { ScraperExecutionContext } from "./helpers"
 import { readFileSync } from "fs"
@@ -24,13 +24,26 @@ export async function evaluateHandle(
     Pick<ScraperExecutionContext, "logger" | "pages" | "dataBridge">
   >,
   selectors: ScraperElementSelectors,
-) {
-  return await page.evaluateHandle(
-    (
-      selectorsStringified: string,
-      elementSelectorType: typeof ElementSelectorType,
-      sizzleCodeRaw: string,
-    ) => {
+): Promise<Locator | null> {
+  const replacedSelectors = await replaceSpecialStringsInSelectors(
+    context,
+    selectors,
+  )
+
+  // Pass the enum values as a plain object to avoid SSR serialization issues
+  const selectorTypeValues = {
+    Query: ElementSelectorType.Query,
+    TagName: ElementSelectorType.TagName,
+    TextContent: ElementSelectorType.TextContent,
+    Attributes: ElementSelectorType.Attributes,
+  }
+
+  const handle = await page.evaluateHandle(
+    ([selectorsStringified, selectorTypeValues, sizzleCodeRaw]: readonly [
+      string,
+      Record<string, ElementSelectorType>,
+      string,
+    ]) => {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const win = window as any
       if (!win.Sizzle && sizzleCodeRaw) {
@@ -39,8 +52,6 @@ export async function evaluateHandle(
         document.head.appendChild(script)
       }
       const Sizzle = win.Sizzle
-
-      // -- [START] Helper functions and variables --
 
       function compareText(
         text: string | null,
@@ -74,13 +85,11 @@ export async function evaluateHandle(
       }
 
       const typeOrder = [
-        elementSelectorType.Query,
-        elementSelectorType.TagName,
-        elementSelectorType.TextContent,
-        elementSelectorType.Attributes,
+        selectorTypeValues.Query,
+        selectorTypeValues.TagName,
+        selectorTypeValues.TextContent,
+        selectorTypeValues.Attributes,
       ]
-
-      // -- [END] Helper functions and variables --
 
       const selectors: ScraperElementSelectors =
         JSON.parse(selectorsStringified)
@@ -92,55 +101,69 @@ export async function evaluateHandle(
       )
 
       for (const selector of sortedSelectors) {
+        // eslint-disable-next-line @typescript-eslint/switch-exhaustiveness-check
         switch (selector.type) {
-          case elementSelectorType.Query:
+          case selectorTypeValues.Query: {
+            const query = (
+              selector as { type: ElementSelectorType.Query; query: string }
+            ).query
             if (!elements) {
               if (Sizzle) {
-                elements = Sizzle(selector.query) as HTMLElement[]
+                elements = Sizzle(query) as HTMLElement[]
               } else {
-                elements = Array.from(document.querySelectorAll(selector.query))
+                elements = Array.from(document.querySelectorAll(query))
               }
             } else {
               if (Sizzle) {
-                elements = Sizzle.matches(
-                  selector.query,
-                  elements,
-                ) as HTMLElement[]
+                elements = Sizzle.matches(query, elements) as HTMLElement[]
               } else {
-                elements = elements.filter((element) =>
-                  element.matches(selector.query),
-                )
+                elements = elements.filter((element) => element.matches(query))
               }
             }
             break
-          case elementSelectorType.TagName: {
+          }
+          case selectorTypeValues.TagName: {
+            const tagName = (
+              selector as { type: ElementSelectorType.TagName; tagName: string }
+            ).tagName
             if (!elements) {
-              elements = Array.from(document.querySelectorAll(selector.tagName))
+              elements = Array.from(document.querySelectorAll(tagName))
             } else {
               elements = elements.filter(
                 (element) =>
-                  element.tagName.toLowerCase() ===
-                  selector.tagName.toLowerCase(),
+                  element.tagName.toLowerCase() === tagName.toLowerCase(),
               )
             }
             break
           }
-          case elementSelectorType.TextContent: {
+          case selectorTypeValues.TextContent: {
+            const text = (
+              selector as {
+                type: ElementSelectorType.TextContent
+                text: string | SerializableRegex
+              }
+            ).text
             if (!elements) {
               elements = Array.from(document.querySelectorAll("*"))
             } else {
               elements = elements.filter((element) =>
-                matchTextContent(element, selector.text),
+                matchTextContent(element, text),
               )
             }
             break
           }
-          case elementSelectorType.Attributes: {
+          case selectorTypeValues.Attributes: {
+            const attributes = (
+              selector as {
+                type: ElementSelectorType.Attributes
+                attributes: Record<string, string | SerializableRegex>
+              }
+            ).attributes
             if (!elements) {
               elements = Array.from(document.querySelectorAll("*"))
             } else {
               elements = elements.filter((element) =>
-                matchArguments(element, selector.attributes),
+                matchArguments(element, attributes),
               )
             }
             break
@@ -148,7 +171,10 @@ export async function evaluateHandle(
         }
       }
 
-      elements = (elements ?? []).filter((element) => element.checkVisibility())
+      elements = (elements ?? []).filter((element) => {
+        const el = element as HTMLElement
+        return el.offsetParent !== null || el.getClientRects().length > 0
+      })
 
       if (elements.length > 1) {
         throw new Error(
@@ -157,29 +183,41 @@ export async function evaluateHandle(
       }
       return elements.at(0) ?? null
     },
-    JSON.stringify(await replaceSpecialStringsInSelectors(context, selectors)),
-    ElementSelectorType,
-    sizzleCode,
+    [
+      JSON.stringify(replacedSelectors),
+      selectorTypeValues,
+      sizzleCode,
+    ] as const,
   )
+
+  const element = handle.asElement()
+  if (!element) return null
+
+  // Create a locator from the element using a unique data attribute
+  await element.evaluate((el) => {
+    el.setAttribute("data-web-scraper-handle", "true")
+  })
+
+  return page.locator('[data-web-scraper-handle="true"]').first()
 }
 
 export async function getElementHandle(
   context: ScraperExecutionContext,
-  selector: ScraperElementSelectors,
+  selectors: ScraperElementSelectors,
   pageIndex: number,
-): Promise<ElementHandle<Element> | null>
+): Promise<Locator | null>
 export async function getElementHandle(
   context: ScraperExecutionContext,
-  selector: ScraperElementSelectors,
+  selectors: ScraperElementSelectors,
   pageIndex: number,
   required: false,
-): Promise<ElementHandle<Element> | null>
+): Promise<Locator | null>
 export async function getElementHandle(
   context: ScraperExecutionContext,
-  selector: ScraperElementSelectors,
+  selectors: ScraperElementSelectors,
   pageIndex: number,
   required: true,
-): Promise<ElementHandle<Element>>
+): Promise<Locator>
 
 /** Expects a single element to be selected. */
 export async function getElementHandle(
@@ -190,15 +228,13 @@ export async function getElementHandle(
 ) {
   const page = await context.pages.getPage(pageIndex)
 
-  const elementHandle = (
-    await evaluateHandle(page, context, selectors)
-  )?.asElement() as ElementHandle<Element> | null
+  const element = await evaluateHandle(page, context, selectors)
 
-  if (required && !elementHandle) {
+  if (required && !element) {
     throw new Error(
       "Expected a single element to be found. Found no element matching the condition",
     )
   }
 
-  return elementHandle ?? null
+  return element ?? null
 }

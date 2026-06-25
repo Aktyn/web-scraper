@@ -28,9 +28,8 @@ describe("Preferences Routes", () => {
       expect(JSON.parse(response.payload)).toEqual({
         data: [
           { key: "headless", value: true },
-          { key: "disableRealBrowser", value: false },
           {
-            key: "chromeExecutablePath",
+            key: "browserExecutablePath",
             value: "",
           },
           {
@@ -40,18 +39,6 @@ describe("Preferences Routes", () => {
           {
             key: "proxyURL",
             value: "",
-          },
-          {
-            key: "portalURL",
-            value: "http://localhost:3000",
-          },
-          {
-            key: "useAdblockerPlugin",
-            value: true,
-          },
-          {
-            key: "useStealthPlugin",
-            value: true,
           },
           {
             key: "viewportWidth",

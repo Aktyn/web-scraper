@@ -57,7 +57,7 @@ export async function executeNewScraper(
     logger,
     dumpError,
     executablePath:
-      context.config.preferences.chromeExecutablePath || "/usr/bin/chromium",
+      context.config.preferences.browserExecutablePath || "/usr/bin/chromium",
     userDataDir:
       scraperData.userDataDirectory ||
       context.config.preferences.defaultUserDataDirectory ||
@@ -66,13 +66,7 @@ export async function executeNewScraper(
         "snap/chromium/common/chromium/Default",
       ),
     headless: context.config.preferences.headless,
-    disableRealBrowser: context.config.preferences.disableRealBrowser,
     proxy: context.config.preferences.proxyURL,
-    plugins: {
-      portalUrl: context.config.preferences.portalURL,
-      adblocker: context.config.preferences.useAdblockerPlugin,
-      stealth: context.config.preferences.useStealthPlugin,
-    },
     viewport: {
       width: context.config.preferences.viewportWidth,
       height: context.config.preferences.viewportHeight,

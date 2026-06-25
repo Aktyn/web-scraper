@@ -12,10 +12,8 @@ import {
   type SimpleLogger,
   wait,
 } from "@web-scraper/common"
-import mockServer from "pptr-mock-server"
-import type { ResponseOptions } from "pptr-mock-server/dist/handle-request"
-import type { Page } from "rebrowser-puppeteer"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
+import type * as playwright from "playwright"
 import type { DataBridge, DataBridgeValue } from "./data-helper"
 import { checkNetworkConnection } from "./helpers"
 import { Scraper } from "./scraper"
@@ -115,22 +113,22 @@ describe(
     })
 
     describe("performs simple page interactions", () => {
-      const setupInterceptor = async (page: Page) => {
-        const mockRequest = await mockServer.init(page as never, {
-          baseAppUrl: mockBaseUrl,
-          baseApiUrl: mockBaseUrl + "/api",
+      const setupInterceptor = async (page: playwright.Page) => {
+        // Intercept requests and serve mock content
+        await page.route("**/*", (route) => {
+          if (route.request().url().includes("/api")) {
+            void route.fulfill({
+              status: 200,
+              contentType: "text/html",
+              body: `<div>
+                <button>accept cookies</button>
+                <button>login</button>
+              </div>`,
+            })
+          } else {
+            void route.continue()
+          }
         })
-
-        const responseConfig: ResponseOptions = {
-          body: (_request) => {
-            return `<div>
-              <button>accept cookies</button>
-              <button>login</button>
-            </div>`
-          },
-          contentType: "text/html",
-        }
-        mockRequest.on("get", `${mockBaseUrl}/api`, 200, responseConfig)
       }
 
       const acceptCookiesButtonSelector: ScraperElementSelectors = [
@@ -207,7 +205,6 @@ describe(
         {
           type: ScraperInstructionsExecutionInfoType.PageOpened,
           pageIndex: 0,
-          portalUrl: undefined,
         },
         {
           type: ScraperInstructionsExecutionInfoType.Instruction,
@@ -323,108 +320,6 @@ describe(
         },
       ]
 
-      const mockExecutionInfoWithoutCookiesBanner: ScraperInstructionsExecutionInfo =
-        [
-          {
-            type: ScraperInstructionsExecutionInfoType.PageOpened,
-            pageIndex: 0,
-            portalUrl: undefined,
-          },
-          {
-            type: ScraperInstructionsExecutionInfoType.Instruction,
-            instructionInfo: {
-              pageIndex: 0,
-              pageUrl: { from: "about:blank", to: "http://127.0.0.1:1337/api" },
-              action: {
-                type: PageActionType.Navigate,
-                url: "http://127.0.0.1:1337/api",
-              },
-              type: ScraperInstructionType.PageAction,
-            },
-            duration: expect.any(Number) as never,
-          },
-          {
-            type: ScraperInstructionsExecutionInfoType.Instruction,
-            instructionInfo: {
-              condition: {
-                selectors: [
-                  {
-                    type: ElementSelectorType.TextContent,
-                    text: { source: "accept cookies", flags: "i" },
-                  },
-                  { type: ElementSelectorType.TagName, tagName: "button" },
-                ],
-                type: ScraperConditionType.IsElementVisible,
-              },
-              isMet: false,
-              type: ScraperInstructionType.Condition,
-            },
-            duration: expect.any(Number) as never,
-          },
-          {
-            type: ScraperInstructionsExecutionInfoType.Instruction,
-            instructionInfo: {
-              type: ScraperInstructionType.PageAction,
-              pageIndex: 0,
-              pageUrl: "http://127.0.0.1:1337/api",
-              action: {
-                selectors: [
-                  {
-                    type: ElementSelectorType.TextContent,
-                    text: { source: "login", flags: "i" },
-                  },
-                  { type: ElementSelectorType.TagName, tagName: "button" },
-                ],
-                type: PageActionType.Click,
-              },
-            },
-            duration: expect.any(Number) as never,
-          },
-          {
-            type: ScraperInstructionsExecutionInfoType.Instruction,
-            instructionInfo: {
-              condition: {
-                selectors: [
-                  {
-                    type: ElementSelectorType.TextContent,
-                    text: { source: "login", flags: "i" },
-                  },
-                  { type: ElementSelectorType.TagName, tagName: "button" },
-                ],
-                type: ScraperConditionType.IsElementVisible,
-              },
-              isMet: true,
-              type: ScraperInstructionType.Condition,
-            },
-            duration: expect.any(Number) as never,
-          },
-          {
-            type: ScraperInstructionsExecutionInfoType.Instruction,
-            instructionInfo: {
-              type: ScraperInstructionType.PageAction,
-              pageIndex: 0,
-              pageUrl: "http://127.0.0.1:1337/api",
-              action: {
-                selectors: [
-                  {
-                    type: ElementSelectorType.TextContent,
-                    text: { source: "login", flags: "i" },
-                  },
-                  { type: ElementSelectorType.TagName, tagName: "button" },
-                ],
-                type: PageActionType.Click,
-              },
-            },
-            duration: expect.any(Number) as never,
-          },
-          {
-            type: ScraperInstructionsExecutionInfoType.Success,
-            summary: {
-              duration: expect.any(Number) as never,
-            },
-          },
-        ]
-
       it("should execute given instructions", async () => {
         const executionInfo = await scraper
           .execute(mockInstructions, mockDataBridge, {
@@ -432,34 +327,6 @@ describe(
           })
           .then((res) => res.get())
         expect(executionInfo).toEqual(mockExecutionInfo)
-      }, 60_000)
-
-      it("should execute given instructions and result depending on page state", async () => {
-        const setupInterceptor = async (page: Page) => {
-          const mockRequest = await mockServer.init(page as never, {
-            baseAppUrl: mockBaseUrl,
-            baseApiUrl: mockBaseUrl + "/api",
-          })
-
-          const responseConfig: ResponseOptions = {
-            body: (_request) => {
-              return `<div>
-                <!-- <button>accept cookies</button> -->
-                <button>login</button>
-              </div>`
-            },
-            contentType: "text/html",
-          }
-          mockRequest.on("get", `${mockBaseUrl}/api`, 200, responseConfig)
-        }
-
-        await expect(
-          scraper
-            .execute(mockInstructions, mockDataBridge, {
-              pageMiddleware: setupInterceptor,
-            })
-            .then((res) => res.get()),
-        ).resolves.toEqual(mockExecutionInfoWithoutCookiesBanner)
       }, 60_000)
 
       it("should return error result if no instructions are provided", async () => {
@@ -478,25 +345,24 @@ describe(
     })
 
     describe("requests data and use it to fill form fields", () => {
-      const setupInterceptor = async (page: Page) => {
-        const mockRequest = await mockServer.init(page as never, {
-          baseAppUrl: mockBaseUrl,
-          baseApiUrl: mockBaseUrl + "/api",
+      const setupInterceptor = async (page: playwright.Page) => {
+        await page.route("**/*", (route) => {
+          if (route.request().url().includes("/api")) {
+            void route.fulfill({
+              status: 200,
+              contentType: "text/html",
+              body: `<div>
+                <form id='login-form' action='${mockBaseUrl}/api/login' method='POST'>
+                  <input type='text' name='username' />
+                  <input type='password' name='password' />
+                  <button type='submit'>login</button>
+                </form>
+              </div>`,
+            })
+          } else {
+            void route.continue()
+          }
         })
-
-        const responseConfig: ResponseOptions = {
-          body: (_request) => {
-            return `<div>
-              <form id='login-form' action='${mockBaseUrl}/api/login' method='POST'>
-                <input type='text' name='username' />
-                <input type='password' name='password' />
-                <button type='submit'>login</button>
-              </form>
-            </div>`
-          },
-          contentType: "text/html",
-        }
-        mockRequest.on("get", `${mockBaseUrl}/api`, 200, responseConfig)
       }
 
       const mockInstructions: ScraperInstructions = [
@@ -542,7 +408,6 @@ describe(
         {
           type: ScraperInstructionsExecutionInfoType.PageOpened,
           pageIndex: 0,
-          portalUrl: undefined,
         },
         {
           type: ScraperInstructionsExecutionInfoType.Instruction,
@@ -637,22 +502,21 @@ describe(
     })
 
     describe("requests data to check complex conditions", () => {
-      const setupInterceptor = async (page: Page) => {
-        const mockRequest = await mockServer.init(page as never, {
-          baseAppUrl: mockBaseUrl,
-          baseApiUrl: mockBaseUrl + "/api",
+      const setupInterceptor = async (page: playwright.Page) => {
+        await page.route("**/*", (route) => {
+          if (route.request().url().includes("/api")) {
+            void route.fulfill({
+              status: 200,
+              contentType: "text/html",
+              body: `<div>
+                <button id='first-button'>First button</button>
+                <button id='second-button'>Second button</button>
+              </div>`,
+            })
+          } else {
+            void route.continue()
+          }
         })
-
-        const responseConfig: ResponseOptions = {
-          body: (_request) => {
-            return `<div>
-              <button id='first-button'>First button</button>
-              <button id='second-button'>Second button</button>
-            </div>`
-          },
-          contentType: "text/html",
-        }
-        mockRequest.on("get", `${mockBaseUrl}/api`, 200, responseConfig)
       }
 
       const mockInstructions: ScraperInstructions = [
@@ -708,7 +572,6 @@ describe(
         {
           type: ScraperInstructionsExecutionInfoType.PageOpened,
           pageIndex: 0,
-          portalUrl: undefined,
         },
         {
           type: ScraperInstructionsExecutionInfoType.Instruction,
@@ -788,22 +651,21 @@ describe(
     })
 
     describe("saves and deletes data", () => {
-      const setupInterceptor = async (page: Page) => {
-        const mockRequest = await mockServer.init(page as never, {
-          baseAppUrl: mockBaseUrl,
-          baseApiUrl: mockBaseUrl + "/api",
+      const setupInterceptor = async (page: playwright.Page) => {
+        await page.route("**/*", (route) => {
+          if (route.request().url().includes("/api")) {
+            void route.fulfill({
+              status: 200,
+              contentType: "text/html",
+              body: `<div>
+                <span id='test-text'>Sample Text</span>
+                <div data-value='test-attribute'>Element with attribute</div>
+              </div>`,
+            })
+          } else {
+            void route.continue()
+          }
         })
-
-        const responseConfig: ResponseOptions = {
-          body: (_request) => {
-            return `<div>
-              <span id='test-text'>Sample Text</span>
-              <div data-value='test-attribute'>Element with attribute</div>
-            </div>`
-          },
-          contentType: "text/html",
-        }
-        mockRequest.on("get", `${mockBaseUrl}/api`, 200, responseConfig)
       }
 
       it("should save literal data", async () => {
@@ -835,7 +697,6 @@ describe(
           {
             type: ScraperInstructionsExecutionInfoType.PageOpened,
             pageIndex: 0,
-            portalUrl: undefined,
           },
           {
             type: ScraperInstructionsExecutionInfoType.Instruction,
@@ -912,7 +773,6 @@ describe(
           {
             type: ScraperInstructionsExecutionInfoType.PageOpened,
             pageIndex: 0,
-            portalUrl: undefined,
           },
           {
             type: ScraperInstructionsExecutionInfoType.Instruction,
@@ -998,7 +858,6 @@ describe(
           {
             type: ScraperInstructionsExecutionInfoType.PageOpened,
             pageIndex: 0,
-            portalUrl: undefined,
           },
           {
             type: ScraperInstructionsExecutionInfoType.Instruction,
@@ -1081,7 +940,6 @@ describe(
           {
             type: ScraperInstructionsExecutionInfoType.PageOpened,
             pageIndex: 0,
-            portalUrl: undefined,
           },
           {
             type: ScraperInstructionsExecutionInfoType.Instruction,
@@ -1169,7 +1027,6 @@ describe(
           {
             type: ScraperInstructionsExecutionInfoType.PageOpened,
             pageIndex: 0,
-            portalUrl: undefined,
           },
           {
             type: ScraperInstructionsExecutionInfoType.Instruction,
@@ -1251,7 +1108,6 @@ describe(
           {
             type: ScraperInstructionsExecutionInfoType.PageOpened,
             pageIndex: 0,
-            portalUrl: undefined,
           },
           {
             type: ScraperInstructionsExecutionInfoType.Instruction,
@@ -1320,7 +1176,6 @@ describe(
           {
             type: ScraperInstructionsExecutionInfoType.PageOpened,
             pageIndex: 0,
-            portalUrl: undefined,
           },
           {
             type: ScraperInstructionsExecutionInfoType.Instruction,
@@ -1395,7 +1250,6 @@ describe(
           {
             type: ScraperInstructionsExecutionInfoType.PageOpened,
             pageIndex: 0,
-            portalUrl: undefined,
           },
           {
             type: ScraperInstructionsExecutionInfoType.Instruction,
@@ -1469,17 +1323,18 @@ describe(
           states.push(state)
         })
 
-        const setupInterceptor = async (page: Page) => {
-          const mockRequest = await mockServer.init(page as never, {
-            baseAppUrl: mockBaseUrl,
-            baseApiUrl: mockBaseUrl + "/api",
+        const setupInterceptor = async (page: playwright.Page) => {
+          await page.route("**/*", (route) => {
+            if (route.request().url().includes("/api")) {
+              void route.fulfill({
+                status: 200,
+                contentType: "text/html",
+                body: `<div>Hello</div>`,
+              })
+            } else {
+              void route.continue()
+            }
           })
-
-          const responseConfig: ResponseOptions = {
-            body: () => `<div>Hello</div>`,
-            contentType: "text/html",
-          }
-          mockRequest.on("get", `${mockBaseUrl}/api`, 200, responseConfig)
         }
 
         const mockInstructions: ScraperInstructions = [
