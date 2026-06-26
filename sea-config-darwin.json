@@ -5,6 +5,7 @@
   "useSnapshot": false,
   "useCodeCache": false,
   "assets": {
-    "libsql.node": "./binaries/libsql-0.5.16/darwin-x64.node"
+    "libsql.node": "./binaries/libsql-0.5.16/darwin-x64.node",
+    "tray-bin": "./node_modules/node-systray-v2/traybin/tray_darwin_release"
   }
 }

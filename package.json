@@ -42,5 +42,8 @@
     "esbuild@0.18.20": true,
     "esbuild@0.25.11": true,
     "esbuild@0.27.0": true
+  },
+  "dependencies": {
+    "chromium-bidi": "^16.0.1"
   }
 }

@@ -6,6 +6,7 @@
   "useCodeCache": false,
   "assets": {
     "libsql.node": "./binaries/libsql-0.5.16/win32-x64-msvc.node",
-    "node-file-dialog": "./node_modules/node-file-dialog/python/dist/windows/dialog.exe"
+    "node-file-dialog": "./node_modules/node-file-dialog/python/dist/windows/dialog.exe",
+    "tray-bin": "./node_modules/node-systray-v2/traybin/tray_windows_release.exe"
   }
 }

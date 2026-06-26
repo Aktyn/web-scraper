@@ -6,6 +6,7 @@
   "useCodeCache": false,
   "assets": {
     "libsql.node": "./binaries/libsql-0.5.16/linux-x64-gnu.node",
-    "node-file-dialog": "./node_modules/node-file-dialog/python/dist/linux/node-file-dialog-x86_64.AppImage"
+    "node-file-dialog": "./node_modules/node-file-dialog/python/dist/linux/node-file-dialog-x86_64.AppImage",
+    "tray-bin": "./node_modules/node-systray-v2/traybin/tray_linux_release"
   }
 }

@@ -2,7 +2,7 @@ import path from "path"
 import react, { reactCompilerPreset } from "@vitejs/plugin-react"
 import { defineConfig } from "vitest/config"
 import tailwindcss from "@tailwindcss/vite"
-import babel from '@rolldown/plugin-babel'
+import babel from "@rolldown/plugin-babel"
 
 // https://vite.dev/config/
 export default defineConfig({
