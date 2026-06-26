@@ -66,8 +66,7 @@ sed -i 's|require.resolve("./chromium/appIcon.png")|require("path").join(__dirna
 # Fix vite recorder require.resolve
 sed -i 's|require.resolve("../../vite/recorder/" + uri)|require("path").join(__dirname, "..", "..", "vite", "recorder", uri)|g' ./apps/backend/dist/standalone-copy.js
 
-# Fix tray binary path - in SEA, binaries are extracted to __dirname/traybin
-sed -i 's|const binPath = path7.resolve(`${getDirName()}/../traybin/${binName}`);|const binPath = path7.resolve(path7.join(__dirname, "traybin", binName));|g' ./apps/backend/dist/standalone-copy.js
+# Tray binary path and require("../package.json") are already patched in build.mjs fixCode()
 
 echo "... done adjusting backend code before SEA build"
 

@@ -81,5 +81,13 @@ function fixCode(code) {
     .replace(/require\("kind-of", "typeOf"\);/g, 'utils2.typeOf = require_kind_of();')
     .replace(/require\("is-plain-object", "isObject"\);/g, 'utils2.isObject = require_is_plain_object().isPlainObject;')
     .replace(/require\("shallow-clone", "clone"\);/g, 'utils2.clone = require_shallow_clone();')
-    .replace(/require_for_own\(\);/g, 'utils2.forOwn = require_for_own();');
+    .replace(/require_for_own\(\);/g, 'utils2.forOwn = require_for_own();')
+    .replace(
+      /const binPath = path7\.resolve\(`${getDirName\(\)}\/\.\.\/traybin\/${binName}`\);/,
+      'const binPath = path7.resolve(path7.join(__dirname, "traybin", binName));'
+    )
+    .replace(
+      /const pkg = require2\("\.\.\/package\.json"\);/,
+      'const pkg = { name: "web-scraper", version: "' + pkg.version + '" };'
+    );
 }
