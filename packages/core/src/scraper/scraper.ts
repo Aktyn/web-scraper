@@ -216,12 +216,15 @@ export class Scraper<
         // "--accept-language=en-US",
         // "--ignore-certificate-errors",
         // "--disable-web-security",
+        // "--no-sandbox",
+        // "--disable-setuid-sandbox",
         process.env.CI ? "--no-sandbox" : undefined,
       ].filter((arg) => typeof arg === "string"),
       executablePath,
       proxy: options.proxy ? { server: options.proxy } : undefined,
       // viewport: { width: 1920, height: 1080 },
       env: {
+        ...process.env,
         STEALTHFOX_SEED: "44",
         STEALTHFOX_TIMEZONE: "Europe/Warsaw",
       },
@@ -240,7 +243,6 @@ export class Scraper<
       const launchPromise = options.userDataDir
         ? browserType
             .launchPersistentContext(options.userDataDir, launchOptions)
-            // .launch(launchOptions)
             .then((ctx) => ctx.browser())
         : browserType.launch(launchOptions)
 
@@ -441,7 +443,6 @@ export class Scraper<
     const startTime = Date.now()
 
     const pages = new ExecutionPages(this.browser, {
-      proxy: this.options.proxy,
       viewport: this.defaultViewport,
       logger: this.logger,
       executionInfo,

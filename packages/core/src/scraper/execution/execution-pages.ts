@@ -21,7 +21,6 @@ export type PageSnapshot = {
 }
 
 type ExecutionPagesOptions = {
-  proxy?: string
   viewport: { width: number; height: number }
   logger: SimpleLogger
   executionInfo: ScraperExecutionInfo
