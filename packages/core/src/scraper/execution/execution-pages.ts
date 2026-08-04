@@ -35,10 +35,25 @@ export class ExecutionPages {
   constructor(
     public readonly browser: Browser,
     private readonly options: ExecutionPagesOptions,
-  ) {}
+  ) {
+    const defaultContext = this.browser.contexts()[0]
+    if (defaultContext) {
+      const initialPages = defaultContext.pages()
+      let index = 0
+      for (const page of initialPages) {
+        this.pages.set(index, {
+          index: index,
+          page,
+        })
+        index++
+      }
+    }
+  }
 
   private async openPage() {
-    const context = await this.browser.newContext({ viewport: null })
+    const context =
+      this.browser.contexts()[0] ??
+      (await this.browser.newContext({ viewport: null }))
     assert(!!context, "Cannot create browser context")
 
     const page = await context.newPage()

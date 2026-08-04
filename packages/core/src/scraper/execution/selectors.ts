@@ -143,13 +143,10 @@ export async function evaluateHandle(
                 text: string | SerializableRegex
               }
             ).text
-            if (!elements) {
-              elements = Array.from(document.querySelectorAll("*"))
-            } else {
-              elements = elements.filter((element) =>
-                matchTextContent(element, text),
-              )
-            }
+
+            elements = (
+              elements ?? Array.from(document.querySelectorAll("*"))
+            ).filter((element) => matchTextContent(element, text))
             break
           }
           case selectorTypeValues.Attributes: {
@@ -159,26 +156,37 @@ export async function evaluateHandle(
                 attributes: Record<string, string | SerializableRegex>
               }
             ).attributes
-            if (!elements) {
-              elements = Array.from(document.querySelectorAll("*"))
-            } else {
-              elements = elements.filter((element) =>
-                matchArguments(element, attributes),
-              )
-            }
+
+            elements = (
+              elements ?? Array.from(document.querySelectorAll("*"))
+            ).filter((element) => matchArguments(element, attributes))
             break
           }
         }
       }
 
-      elements = (elements ?? []).filter((element) => {
-        const el = element as HTMLElement
-        return el.offsetParent !== null || el.getClientRects().length > 0
-      })
+      elements = Array.from(new Set(elements ?? [])).filter(
+        (element, _, array) => {
+          const el = element
+
+          // Filter out elements already containing selected elements
+          if (
+            array.some(
+              (potentialChild) =>
+                element !== potentialChild && element.contains(potentialChild),
+            )
+          ) {
+            return false
+          }
+
+          return el.offsetParent !== null || el.getClientRects().length > 0
+        },
+      )
 
       if (elements.length > 1) {
         throw new Error(
-          "Expected a single element to be found. Found multiple elements matching the conditions",
+          "Expected a single element to be found. Found multiple elements matching the conditions" +
+            ` ${elements.map((el) => el.tagName).join(", ")}`,
         )
       }
       return elements.at(0) ?? null
@@ -191,7 +199,9 @@ export async function evaluateHandle(
   )
 
   const element = handle.asElement()
-  if (!element) return null
+  if (!element) {
+    return null
+  }
 
   // Create a locator from the element using a unique data attribute
   await element.evaluate((el) => {

@@ -138,7 +138,7 @@ export async function performPageAction(
       const value = await getScraperValue(context, action.value)
       if (value) {
         await handle.fill("")
-        await handle.type(value.toString(), {
+        await handle.pressSequentially(value.toString(), {
           delay: randomInt(1, 4),
         })
       }

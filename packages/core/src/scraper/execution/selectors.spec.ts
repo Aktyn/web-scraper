@@ -53,7 +53,7 @@ describe("selectors", () => {
   })
 
   afterAll(async () => {
-    await browser.close()
+    await browser?.close()
   })
 
   beforeEach(async () => {

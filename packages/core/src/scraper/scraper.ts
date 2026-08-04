@@ -206,7 +206,7 @@ export class Scraper<
       options?.headless ??
       (!process.env.DISPLAY && !process.env.WAYLAND_DISPLAY)
     const executablePath = options.executablePath || "/usr/bin/chromium"
-    // "/home/aktyn/.cache/invisible-playwright/firefox-13/firefox"
+    // "~/.cache/invisible-playwright/firefox-13/firefox"
     const launchOptions: BrowserLaunchOptions = {
       headless,
       args: [
@@ -222,7 +222,7 @@ export class Scraper<
       ].filter((arg) => typeof arg === "string"),
       executablePath,
       proxy: options.proxy ? { server: options.proxy } : undefined,
-      // viewport: { width: 1920, height: 1080 },
+      viewport: this.defaultViewport,
       env: {
         ...process.env,
         STEALTHFOX_SEED: "44",
