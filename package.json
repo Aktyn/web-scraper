@@ -34,10 +34,8 @@
   "devDependencies": {
     "@tsconfig/recommended": "^1.0.13",
     "prettier": "^3.9.6",
-    "turbo": "^2.10.8"
-  },
-  "overrides": {
-    "zod-validation-error": "^4.0.2"
+    "turbo": "^2.10.8",
+    "zod-validation-error": "^5.0.0"
   },
   "packageManager": "npm@11.6.2",
   "allowScripts": {
