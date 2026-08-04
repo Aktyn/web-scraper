@@ -87,7 +87,7 @@ export function ScraperExecutionPanel({ ref }: ScraperExecutionPanelProps) {
           )}
           <div className="flex flex-row items-center gap-4">
             <Button
-              className="flex-grow"
+              className="grow"
               variant="default"
               onClick={() => execute(iterator)}
               disabled={sendingExecutionRequest}
@@ -201,7 +201,7 @@ export function ScrollableScraperExecutionInfo({
     >
       <Button
         variant="ghost"
-        className="z-20 absolute inset-y-0 left-0 w-6 h-full bg-gradient-to-r from-background to-transparent"
+        className="z-20 absolute inset-y-0 left-0 w-6 h-full bg-linear-to-r from-background to-transparent"
         onClick={() => scrollHorizontal("left")}
       >
         <ChevronLeft />
@@ -219,7 +219,7 @@ export function ScrollableScraperExecutionInfo({
       />
       <Button
         variant="ghost"
-        className="z-20 absolute inset-y-0 right-0 w-6 h-full bg-gradient-to-l from-background to-transparent"
+        className="z-20 absolute inset-y-0 right-0 w-6 h-full bg-linear-to-l from-background to-transparent"
         onClick={() => scrollHorizontal("right")}
       >
         <ChevronRight />
@@ -310,7 +310,9 @@ function ExecutionConditionsMap({
     )
   }, [executionInfo, rowRef])
 
-  const [connectors, setConnectors] = useState(updateConnectors())
+  const [connectors, setConnectors] = useState<
+    Array<{ isMet: boolean; xLeft: number; xRight: number }>
+  >([])
 
   useEffect(() => {
     const timeout = setTimeout(() => {
@@ -339,7 +341,7 @@ function ExecutionConditionsMap({
             width: `${xRight - xLeft}px`,
           }}
         >
-          <span className="block w-auto mx-auto -translate-y-[50%] leading-none px-2 backdrop-blur-xs font-semibold">
+          <span className="block w-auto mx-auto translate-y-[-50%] leading-none px-2 backdrop-blur-xs font-semibold">
             {isMet ? "THEN" : "ELSE"}
           </span>
         </div>

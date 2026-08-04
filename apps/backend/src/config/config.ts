@@ -36,7 +36,9 @@ export function getDefaultPreferences() {
   const preferences = Object.fromEntries(
     Object.entries(defaultPreferences).map(([key, { value }]) => [key, value]),
   ) as {
-    [key in keyof typeof defaultPreferences]: (typeof defaultPreferences)[key]["value"]
+    [
+      key in keyof typeof defaultPreferences
+    ]: (typeof defaultPreferences)[key]["value"]
   }
 
   Object.assign(preferences, {

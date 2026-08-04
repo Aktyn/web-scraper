@@ -9,7 +9,7 @@ import {
 import { useDelete } from "@/hooks/api/useDelete"
 import { useInfiniteGet } from "@/hooks/api/useInfiniteGet"
 import { usePinnedDataStores } from "@/providers/pinned-data-stores.provider"
-import type { ColumnDef } from "@tanstack/react-table"
+import type { LegacyColumnDef as ColumnDef } from "@tanstack/react-table/legacy"
 import type { UserDataStore } from "@web-scraper/common"
 import { Edit, Plus, Trash } from "lucide-react"
 import { useMemo, useState } from "react"
@@ -161,7 +161,7 @@ export function DataStores() {
   )
 
   return (
-    <div className="size-full *:w-256 *:max-w-full">
+    <div className="size-full *:w-5xl *:max-w-full">
       <div
         data-transition-direction="top"
         className="view-transition p-2 flex flex-row items-center gap-2"

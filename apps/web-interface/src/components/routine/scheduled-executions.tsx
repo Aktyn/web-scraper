@@ -3,7 +3,7 @@ import { useInfiniteGet } from "@/hooks/api/useInfiniteGet"
 import { usePost } from "@/hooks/api/usePost"
 import { cn, formatDateTime } from "@/lib/utils"
 import { ServerEventsProvider } from "@/providers/server-events.provider"
-import type { ColumnDef } from "@tanstack/react-table"
+import type { LegacyColumnDef as ColumnDef } from "@tanstack/react-table/legacy"
 import {
   ScraperEventType,
   SubscriptionMessageType,

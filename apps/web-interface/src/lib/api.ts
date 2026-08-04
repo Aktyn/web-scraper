@@ -45,8 +45,9 @@ export type RoutesWithMethod<MethodType extends Method> = {
 export type RouteParameters<RoutePath extends keyof Routes> =
   RoutePath extends `${string}/:${infer Param}/${infer Rest}`
     ? {
-        [key in Param]: string | number
-        //@ts-expect-error Hacky type enforcement
+        [key in Param]:
+          string | number
+          //@ts-expect-error Hacky type enforcement
       } & (RouteParameters<Rest> extends object
         ? //@ts-expect-error Hacky type enforcement
           RouteParameters<Rest>

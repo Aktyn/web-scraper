@@ -7,7 +7,7 @@ import {
 import type { ComponentProps, ReactNode } from "react"
 import { useMemo, useState } from "react"
 import { DataTable } from "../common/table/data-table"
-import type { ColumnDef } from "@tanstack/react-table"
+import type { LegacyColumnDef as ColumnDef } from "@tanstack/react-table/legacy"
 import { RefreshButton } from "../common/table/refresh-button"
 import { Button } from "../shadcn/button"
 import { Check, CheckCheck, Loader2, Trash } from "lucide-react"

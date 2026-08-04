@@ -9,18 +9,22 @@ import {
   TableRow,
 } from "@/components/shadcn/table"
 import { cn } from "@/lib/utils"
-import type { TableState } from "@tanstack/react-table"
+import type {
+  SortingState,
+  OnChangeFn,
+  ExpandedState,
+  TableState,
+  StockFeatures,
+  RowData,
+} from "@tanstack/table-core"
 import {
-  type ColumnDef,
-  type ExpandedState,
-  flexRender,
+  type LegacyColumnDef as ColumnDef,
   getCoreRowModel,
   getExpandedRowModel,
-  type Row,
-  useReactTable,
-  type SortingState,
-  type OnChangeFn,
-} from "@tanstack/react-table"
+  type LegacyRow as Row,
+  useLegacyTable as useReactTable,
+} from "@tanstack/react-table/legacy"
+import { flexRender } from "@tanstack/react-table"
 import { ChevronUp } from "lucide-react"
 import type { ReactNode } from "react"
 import {
@@ -33,7 +37,7 @@ import {
 } from "react"
 import { ScrollArea, ScrollBar } from "../../shadcn/scroll-area"
 
-type DataTableProps<TData, TValue> = {
+type DataTableProps<TData extends RowData, TValue> = {
   columns: ColumnDef<TData, TValue>[]
   data: TData[]
   isLoading?: boolean
@@ -44,11 +48,11 @@ type DataTableProps<TData, TValue> = {
   onRowClick?: (row: Row<TData>) => void
   tableProps?: ComponentProps<"table">
   noDataMessage?: ReactNode
-  state?: Partial<TableState>
+  state?: Partial<TableState<StockFeatures>>
   onSortingChange?: OnChangeFn<SortingState>
 } & ComponentProps<"div">
 
-export function DataTable<TData, TValue>({
+export function DataTable<TData extends RowData, TValue>({
   columns,
   data,
   isLoading = false,
@@ -71,10 +75,10 @@ export function DataTable<TData, TValue>({
 
   const expandable = !!SubComponent
 
-  // eslint-disable-next-line react-hooks/incompatible-library
   const table = useReactTable({
     data,
-    columns,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    columns: columns as any,
     state: {
       expanded,
       ...state,

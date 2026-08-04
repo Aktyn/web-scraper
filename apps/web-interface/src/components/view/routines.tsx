@@ -2,7 +2,8 @@ import { useDelete } from "@/hooks/api/useDelete"
 import { useInfiniteGet } from "@/hooks/api/useInfiniteGet"
 import { cn } from "@/lib/utils"
 import { ServerEventsProvider } from "@/providers/server-events.provider"
-import type { ColumnDef, SortingState } from "@tanstack/react-table"
+import type { LegacyColumnDef as ColumnDef } from "@tanstack/react-table/legacy"
+import type { SortingState } from "@tanstack/react-table"
 import type { Routine, RoutineQuery } from "@web-scraper/common"
 import {
   ScraperEventType,

@@ -3,7 +3,10 @@ import { DataTable } from "@/components/common/table/data-table"
 import { useInfiniteGet } from "@/hooks/api/useInfiniteGet"
 import { cn, formatDuration } from "@/lib/utils"
 import { ServerEventsProvider } from "@/providers/server-events.provider"
-import type { ColumnDef, Row } from "@tanstack/react-table"
+import type {
+  LegacyColumnDef as ColumnDef,
+  LegacyRow as Row,
+} from "@tanstack/react-table/legacy"
 import type { ExecutionIterator } from "@web-scraper/common"
 import {
   ScraperEventType,

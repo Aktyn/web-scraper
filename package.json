@@ -33,17 +33,16 @@
   ],
   "devDependencies": {
     "@tsconfig/recommended": "^1.0.13",
-    "prettier": "^3.8.1",
-    "turbo": "^2.9.3"
+    "prettier": "^3.9.6",
+    "turbo": "^2.10.8"
+  },
+  "overrides": {
+    "zod-validation-error": "^4.0.2"
   },
   "packageManager": "npm@11.6.2",
   "allowScripts": {
-    "esbuild@0.27.4": true,
     "esbuild@0.18.20": true,
-    "esbuild@0.25.11": true,
-    "esbuild@0.27.0": true
-  },
-  "dependencies": {
-    "chromium-bidi": "^16.0.1"
+    "esbuild@0.25.12": true,
+    "esbuild@0.28.1": true
   }
 }
