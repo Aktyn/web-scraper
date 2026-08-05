@@ -83,7 +83,7 @@ function fixCode(code) {
     .replace(/require\("shallow-clone", "clone"\);/g, 'utils2.clone = require_shallow_clone();')
     .replace(/require_for_own\(\);/g, 'utils2.forOwn = require_for_own();')
     .replace(
-      /const binPath = path7\.resolve\(`${getDirName\(\)}\/\.\.\/traybin\/${binName}`\);/,
+      /const binPath = path7\.resolve\(`\${getDirName\(\)}\/\.\.\/traybin\/\${binName}`\);/,
       'const binPath = path7.resolve(path7.join(__dirname, "traybin", binName));'
     )
     .replace(
