@@ -25,7 +25,7 @@ if [ "$type" != "major" ] && [ "$type" != "minor" ] && [ "$type" != "patch" ]; t
   exit 1
 fi
 
-npm version patch --workspaces --include-workspace-root true --no-git-tag-version
+npm version "$type" --workspaces --include-workspace-root true --no-git-tag-version
 
 # Get version from package.json
 VERSION=$(jq -r '.version' package.json)
