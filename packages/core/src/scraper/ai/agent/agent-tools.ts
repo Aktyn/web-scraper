@@ -18,7 +18,6 @@ import {
   findAndFocus,
   preciseClick,
 } from "../../execution/page-actions"
-import type { ScrollOptions } from "ghost-cursor"
 import { systemActions } from "../../../system-actions"
 
 export enum AgentToolName {
@@ -149,7 +148,7 @@ export const AgentToolFunctions: {
           return { content: "Incorrect coordinates" }
         }
         await preciseClick(
-          pageContext,
+          pageContext.page,
           transformedCoordinates,
           clickOptions,
           logger,
@@ -198,7 +197,7 @@ export const AgentToolFunctions: {
           return { content: "Incorrect coordinates" }
         }
         await preciseClick(
-          pageContext,
+          pageContext.page,
           transformedCoordinates,
           clickOptions,
           logger,
@@ -237,8 +236,8 @@ export const AgentToolFunctions: {
       await pageContext.page.keyboard.press("Enter")
 
       try {
-        await pageContext.page.waitForNavigation({
-          waitUntil: "networkidle0",
+        await pageContext.page.waitForURL("**", {
+          waitUntil: "networkidle",
           timeout: 20_000,
         })
       } catch (error) {
@@ -259,21 +258,21 @@ export const AgentToolFunctions: {
     return { content: "Text was typed successfully" }
   },
   [AgentToolName.SCROLL]: async ({ direction }, { pageContext }) => {
-    const viewport = pageContext.page.viewport() ?? {
+    const viewport = pageContext.page.viewportSize() ?? {
       width: defaultPreferences.viewportWidth.value,
       height: defaultPreferences.viewportHeight.value,
-    }
-    const scrollOptions: ScrollOptions = {
-      scrollSpeed: 50,
-      scrollDelay: randomInt(100, 500),
     }
 
     switch (direction) {
       case "down":
-        await pageContext.cursor.scroll({ y: viewport.height }, scrollOptions)
+        await pageContext.page.evaluate((y) => {
+          window.scrollBy({ top: y, behavior: "instant" })
+        }, viewport.height)
         return { content: "Scrolled down" }
       case "up":
-        await pageContext.cursor.scroll({ y: -viewport.height }, scrollOptions)
+        await pageContext.page.evaluate((y) => {
+          window.scrollBy({ top: -y, behavior: "instant" })
+        }, viewport.height)
         return { content: "Scrolled up" }
     }
   },

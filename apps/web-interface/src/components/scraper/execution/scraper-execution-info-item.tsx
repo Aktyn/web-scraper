@@ -1,5 +1,4 @@
 import { CopyButton } from "@/components/common/button/copy-button"
-import { ExternalLink } from "@/components/common/button/external-link"
 import { LabeledValue } from "@/components/common/label/labeled-value"
 import { Badge } from "@/components/shadcn/badge"
 import {
@@ -94,14 +93,6 @@ export function ScraperExecutionInfoItem({
           <LabeledValue label="Page index:">
             {executionInfo.pageIndex}
           </LabeledValue>
-          {executionInfo.portalUrl && (
-            <LabeledValue label="Portal URL:">
-              <ExternalLink
-                url={executionInfo.portalUrl}
-                className="max-w-64 inline-block"
-              />
-            </LabeledValue>
-          )}
         </ContainerLayout>
       )
 

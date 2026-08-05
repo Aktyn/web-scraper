@@ -130,7 +130,6 @@ export const scraperInstructionsExecutionInfoSchema = z.array(
     z.object({
       type: z.literal(ScraperInstructionsExecutionInfoType.PageOpened),
       pageIndex: z.number().int().min(0).max(255),
-      portalUrl: z.string().optional(),
     }),
 
     z.object({

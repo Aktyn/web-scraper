@@ -5,7 +5,7 @@ import { cn, formatDateTime, formatDuration } from "@/lib/utils"
 import { ScraperProvider } from "@/providers/scraper.provider"
 import { ServerEventsProvider } from "@/providers/server-events.provider"
 import { useView } from "@/providers/view.provider"
-import type { ColumnDef } from "@tanstack/react-table"
+import type { LegacyColumnDef as ColumnDef } from "@tanstack/react-table/legacy"
 import type { Notification, ScraperType } from "@web-scraper/common"
 import {
   NotificationType,

@@ -18,7 +18,7 @@ function findInPath(executable: string) {
   }
 }
 
-export function getChromeExecutablePath() {
+export function getBrowserExecutablePath() {
   if (IS_TEST_ENV) {
     return ""
   }

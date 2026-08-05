@@ -1,10 +1,13 @@
-import type { Page, Viewport } from "rebrowser-puppeteer"
+import type { Page } from "playwright"
 import { type Coordinates, pick, type SimpleLogger } from "@web-scraper/common"
 import { Jimp, JimpMime, ResizeStrategy } from "jimp"
 import path from "node:path"
 import fs from "node:fs"
 
-export type Resolution = Pick<Viewport, "width" | "height">
+export type Resolution = Pick<
+  { width: number; height: number },
+  "width" | "height"
+>
 
 type ScreenshotData = {
   data: Buffer | Uint8Array<ArrayBufferLike>

@@ -1,7 +1,7 @@
 import { useGet } from "@/hooks/api/useGet"
 import { useInfiniteGet } from "@/hooks/api/useInfiniteGet"
 import { ServerEventsProvider } from "@/providers/server-events.provider"
-import type { ColumnDef } from "@tanstack/react-table"
+import type { LegacyColumnDef as ColumnDef } from "@tanstack/react-table/legacy"
 import type { ExecutingScraperInfo } from "@web-scraper/common"
 import { ScraperEventType, SubscriptionMessageType } from "@web-scraper/common"
 import { useRef, useState } from "react"

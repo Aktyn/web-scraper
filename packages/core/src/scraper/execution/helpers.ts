@@ -1,5 +1,4 @@
-import { randomInt, type SimpleLogger } from "@web-scraper/common"
-import type { ClickOptions } from "ghost-cursor"
+import { type SimpleLogger } from "@web-scraper/common"
 import type { AutonomousAgent } from "../ai/agent/autonomous-agent"
 import type { SmartLocalization } from "../ai/localization/smart-localization"
 import type { DataBridge } from "../data-helper"
@@ -16,14 +15,5 @@ export type ScraperExecutionContext = {
   ai: {
     localization: SmartLocalization
     navigation: AutonomousAgent
-  }
-}
-
-export function getGhostClickOptions(): ClickOptions {
-  return {
-    randomizeMoveDelay: true,
-    moveDelay: 3_000,
-    waitForClick: randomInt(10, 200),
-    hesitate: randomInt(10, 400),
   }
 }

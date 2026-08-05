@@ -1,5 +1,5 @@
 import { ElementSelectorType, type SimpleLogger } from "@web-scraper/common"
-import puppeteer, { type Browser, type Page } from "rebrowser-puppeteer"
+import { chromium, type Browser, type Page } from "playwright"
 import {
   afterAll,
   afterEach,
@@ -42,18 +42,24 @@ describe("selectors", () => {
   let mockContext: ScraperExecutionContext
 
   beforeAll(async () => {
-    browser = await puppeteer.launch({
+    browser = await chromium.launch({
+      executablePath: "/usr/bin/chromium",
       headless: true,
-      args: ["--no-sandbox", "--disable-setuid-sandbox"],
+      args: [
+        "--no-sandbox",
+        "--disable-setuid-sandbox",
+        "--disable-web-security",
+      ],
     })
   })
 
   afterAll(async () => {
-    await browser.close()
+    await browser?.close()
   })
 
   beforeEach(async () => {
-    page = await browser.newPage()
+    const context = await browser.newContext()
+    page = await context.newPage()
     mockContext = {
       logger: voidLogger,
       dataBridge: mockDataBridge,
@@ -74,10 +80,7 @@ describe("selectors", () => {
         { type: ElementSelectorType.Query, query: "#test-div" },
       ])
       expect(handle).not.toBeNull()
-      const text = await page.evaluate(
-        (el) => (el ? el.textContent : null),
-        handle,
-      )
+      const text = await handle?.evaluate((el) => (el ? el.textContent : null))
       expect(text).toBe("Testing query")
     })
 
@@ -93,7 +96,7 @@ describe("selectors", () => {
         },
       ])
       expect(handle).not.toBeNull()
-      const id = await page.evaluate((el) => (el ? el.id : null), handle)
+      const id = await handle?.evaluate((el) => (el ? el.id : null))
       expect(id).toBe("target")
     })
 
@@ -103,10 +106,7 @@ describe("selectors", () => {
         { type: ElementSelectorType.TagName, tagName: "section" },
       ])
       expect(handle).not.toBeNull()
-      const text = await page.evaluate(
-        (el) => (el ? el.textContent : null),
-        handle,
-      )
+      const text = await handle?.evaluate((el) => (el ? el.textContent : null))
       expect(text).toBe("Section content")
     })
 
@@ -116,7 +116,7 @@ describe("selectors", () => {
         { type: ElementSelectorType.TagName, tagName: "span" },
         { type: ElementSelectorType.TextContent, text: "Unique text here" },
       ])
-      expect(handle.asElement()).not.toBeNull()
+      expect(handle).not.toBeNull()
     })
 
     it("should select an element by Attributes", async () => {
@@ -128,8 +128,8 @@ describe("selectors", () => {
           attributes: { "data-custom": "value123" },
         },
       ])
-      expect(handle.asElement()).not.toBeNull()
-      const tag = await page.evaluate((el) => (el ? el.tagName : null), handle)
+      expect(handle).not.toBeNull()
+      const tag = await handle?.evaluate((el) => (el ? el.tagName : null))
       expect(tag).toBe("INPUT")
     })
 
@@ -145,9 +145,8 @@ describe("selectors", () => {
         { type: ElementSelectorType.TextContent, text: "Item 2" },
       ])
       expect(handle).not.toBeNull()
-      const className = await page.evaluate(
-        (el) => (el ? el.className : null),
-        handle,
+      const className = await handle?.evaluate((el) =>
+        el ? el.className : null,
       )
       expect(className).toBe("item target")
     })
@@ -169,7 +168,7 @@ describe("selectors", () => {
       const handle = await evaluateHandle(page, mockContext, [
         { type: ElementSelectorType.Query, query: ".does-not-exist" },
       ])
-      expect(handle.asElement()).toBeNull()
+      expect(handle).toBeNull()
     })
 
     it("should filter out invisible elements", async () => {
@@ -181,7 +180,7 @@ describe("selectors", () => {
         { type: ElementSelectorType.TagName, tagName: "div" },
       ])
       expect(handle).not.toBeNull()
-      const id = await page.evaluate((el) => (el ? el.id : null), handle)
+      const id = await handle?.evaluate((el) => (el ? el.id : null))
       expect(id).toBe("visible")
     })
   })

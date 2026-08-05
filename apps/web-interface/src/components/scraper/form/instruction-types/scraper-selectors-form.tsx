@@ -183,7 +183,7 @@ function SelectorFormByType({ control, fieldName }: SelectorFormByTypeProps) {
           //@ts-expect-error TODO: adjust to recent package version
           name={`${fieldName}.text`}
           label={selectorTypeLabels[selectorType]}
-          placeholder="Button text or /regex/"
+          placeholder="Content text or /regex/"
           description="Text content to search for. Use /pattern/flags for regex."
         />
       )

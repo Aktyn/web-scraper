@@ -71,7 +71,7 @@ export function DateTimePicker({
         onSelect={setDay}
         selected={day}
         classNames={{
-          day_today: "text-accent font-bold!",
+          today: "text-accent font-bold!",
         }}
       />
       <div className="flex flex-col items-stretch max-w-48 mx-auto gap-y-2 p-2 pt-0">

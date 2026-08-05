@@ -1,25 +1,5 @@
-import "puppeteer-extra-plugin-stealth/evasions/chrome.app"
-import "puppeteer-extra-plugin-stealth/evasions/chrome.csi"
-import "puppeteer-extra-plugin-stealth/evasions/chrome.loadTimes"
-import "puppeteer-extra-plugin-stealth/evasions/chrome.runtime"
-import "puppeteer-extra-plugin-stealth/evasions/defaultArgs"
-import "puppeteer-extra-plugin-stealth/evasions/iframe.contentWindow"
-import "puppeteer-extra-plugin-stealth/evasions/media.codecs"
-import "puppeteer-extra-plugin-stealth/evasions/navigator.hardwareConcurrency"
-import "puppeteer-extra-plugin-stealth/evasions/navigator.languages"
-import "puppeteer-extra-plugin-stealth/evasions/navigator.permissions"
-import "puppeteer-extra-plugin-stealth/evasions/navigator.plugins"
-import "puppeteer-extra-plugin-stealth/evasions/navigator.webdriver"
-import "puppeteer-extra-plugin-stealth/evasions/sourceurl"
-import "puppeteer-extra-plugin-stealth/evasions/user-agent-override"
-import "puppeteer-extra-plugin-stealth/evasions/webgl.vendor"
-import "puppeteer-extra-plugin-stealth/evasions/window.outerdimensions"
-import "puppeteer-extra-plugin-user-data-dir"
-import "puppeteer-extra-plugin-user-preferences"
-
 import {
   assert,
-  deepMerge,
   defaultPreferences,
   type ScraperInstructions,
   type ScraperInstructionsExecutionInfo,
@@ -30,23 +10,20 @@ import {
   wait,
 } from "@web-scraper/common"
 import EventEmitter from "node:events"
-import AdblockerPlugin from "puppeteer-extra-plugin-adblocker"
-import PortalPlugin from "puppeteer-extra-plugin-portal"
-import StealthPlugin from "puppeteer-extra-plugin-stealth"
-import puppeteerRealBrowser from "puppeteer-real-browser"
-import puppeteer, {
-  type Browser,
+import {
+  firefox,
+  chromium,
   type LaunchOptions,
+  type Browser,
   type Page,
-  type Viewport,
-} from "rebrowser-puppeteer"
-import { AutonomousAgent } from "./ai/agent/autonomous-agent"
+} from "playwright"
 import { SmartLocalization } from "./ai/localization/smart-localization"
+import { AutonomousAgent } from "./ai/agent/autonomous-agent"
 import type { DataBridge } from "./data-helper"
+import { checkNetworkConnection } from "./helpers"
 import { ExecutionPages, type PageSnapshot } from "./execution/execution-pages"
 import { executeInstructions } from "./execution/instructions"
 import { ScraperExecutionInfo } from "./execution/scraper-execution-info"
-import { checkNetworkConnection } from "./helpers"
 
 type ScraperOptions = Pick<ScraperType, "id" | "name"> & {
   logger?: SimpleLogger
@@ -55,22 +32,17 @@ type ScraperOptions = Pick<ScraperType, "id" | "name"> & {
   /** Used for testing purposes */
   noInit?: boolean
 
-  disableRealBrowser?: boolean
-
   proxy?: string
 
-  plugins?: {
-    portalUrl?: string
-    adblocker?: boolean
-    stealth?: boolean
-  }
-
-  viewport?: Pick<Viewport, "width" | "height">
+  viewport?: { width: number; height: number }
 
   localizationModel?: string
   localizationSystemPrompt?: string
   navigationModel?: string
-} & Partial<LaunchOptions>
+  userDataDir?: string
+  executablePath?: string
+  headless?: boolean
+}
 
 type Metadata = Record<string, unknown>
 
@@ -122,7 +94,7 @@ export class Scraper<
 
   private readonly logger: SimpleLogger
   private readonly dumpError: ScraperOptions["dumpError"]
-  private readonly defaultViewport: Viewport
+  private readonly defaultViewport: { width: number; height: number }
   private readonly localization: SmartLocalization
   private readonly agent: AutonomousAgent
 
@@ -144,11 +116,11 @@ export class Scraper<
       name,
       logger,
       dumpError,
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       proxy,
       viewport,
-      disableRealBrowser,
-      ...browserOptions
+      userDataDir,
+      executablePath,
+      headless,
     } = options
 
     this.logger = logger ?? {
@@ -161,10 +133,6 @@ export class Scraper<
     this.defaultViewport = {
       width: viewport?.width ?? defaultPreferences.viewportWidth.value,
       height: viewport?.height ?? defaultPreferences.viewportHeight.value,
-      isMobile: false,
-      deviceScaleFactor: 1,
-      hasTouch: false,
-      isLandscape: false,
     }
 
     const localizationLogger =
@@ -202,14 +170,24 @@ export class Scraper<
     Scraper.instances.set(this.identifier, this)
 
     if (!options.noInit) {
-      this.init(browserOptions, disableRealBrowser).catch((error) => {
+      this.init({
+        headless,
+        userDataDir,
+        executablePath,
+        proxy,
+      }).catch((error) => {
         this.logger.error(error)
         void this.destroy()
       })
     }
   }
 
-  private init(options: Partial<LaunchOptions>, disableRealBrowser?: boolean) {
+  private init(options: {
+    headless?: boolean
+    userDataDir?: string
+    executablePath?: string
+    proxy?: string
+  }) {
     if (this.browser) {
       return Promise.resolve(this.browser)
     }
@@ -218,69 +196,65 @@ export class Scraper<
       return this.initPromise
     }
 
-    const headless = options?.headless ?? false
-    const launchOptions = deepMerge(
-      {
-        downloadBehavior: { policy: "default" },
-        headless,
-        defaultViewport: this.defaultViewport,
-        args: [
-          "--disable-infobars",
-          "--window-size=1920,1080",
-          "--lang=en-US",
-          "--accept-language=en-US",
-          "--ignore-certificate-errors",
-          process.env.CI ? "--no-sandbox" : undefined,
-        ].filter((arg) => typeof arg === "string"),
-        env: {
-          ...process.env,
-          LANGUAGE: "en-US",
-        },
+    type BrowserLaunchOptions =
+      | LaunchOptions
+      | Parameters<
+          | typeof chromium.launchPersistentContext
+          | typeof firefox.launchPersistentContext
+        >[1]
+    const headless =
+      options?.headless ??
+      (!process.env.DISPLAY && !process.env.WAYLAND_DISPLAY)
+    const executablePath = options.executablePath || "/usr/bin/chromium"
+    // "~/.cache/invisible-playwright/firefox-13/firefox"
+    const launchOptions: BrowserLaunchOptions = {
+      headless,
+      args: [
+        // "--disable-infobars",
+        // "--window-size=1920,1080",
+        // "--lang=en-US",
+        // "--accept-language=en-US",
+        // "--ignore-certificate-errors",
+        // "--disable-web-security",
+        // "--no-sandbox",
+        // "--disable-setuid-sandbox",
+        process.env.CI ? "--no-sandbox" : undefined,
+      ].filter((arg) => typeof arg === "string"),
+      executablePath,
+      proxy: options.proxy ? { server: options.proxy } : undefined,
+      viewport: this.defaultViewport,
+      env: {
+        ...process.env,
+        STEALTHFOX_SEED: "44",
+        STEALTHFOX_TIMEZONE: "Europe/Warsaw",
       },
-      options ?? {},
-    )
+    }
 
-    this.logger.info({ msg: "Launching browser with options", launchOptions })
+    const browserType = executablePath.toLowerCase().endsWith("firefox")
+      ? firefox
+      : chromium
+
+    this.logger.info({
+      msg: `Launching "${browserType === chromium ? "chromium" : "firefox"}" browser with options`,
+      launchOptions,
+    })
 
     this.initPromise = new Promise<Browser>((resolve, reject) => {
-      const launchPromise =
-        process.env.TEST === "true" ||
-        process.env.VITEST === "true" ||
-        process.env.CI === "true" ||
-        disableRealBrowser
-          ? puppeteer.launch(launchOptions)
-          : puppeteerRealBrowser
-              .connect({
-                args: launchOptions.args ?? [],
-                headless: !!launchOptions.headless,
-                customConfig: {
-                  chromePath: launchOptions.executablePath,
-                  userDataDir: launchOptions.userDataDir || false,
-                  chromeFlags: ["--enable-unsafe-webgpu"],
-                },
-                connectOption: {
-                  defaultViewport: this.defaultViewport,
-                  downloadBehavior: { policy: "default" },
-                },
-                disableXvfb: !launchOptions.headless,
-                turnstile: true,
-                plugins: [
-                  this.options.plugins?.adblocker &&
-                    AdblockerPlugin({ blockTrackers: true }),
-                  this.options.plugins?.stealth && StealthPlugin(),
-                  this.options.plugins?.portalUrl &&
-                    PortalPlugin({
-                      webPortalConfig: {
-                        baseUrl: this.options.plugins.portalUrl,
-                      },
-                    }),
-                ].filter((plugin) => !!plugin),
-              })
-              .then((result) => result.browser)
+      const launchPromise = options.userDataDir
+        ? browserType
+            .launchPersistentContext(options.userDataDir, launchOptions)
+            .then((ctx) => ctx.browser())
+        : browserType.launch(launchOptions)
 
       launchPromise
         .then((browser) => {
-          resolve(browser as never)
+          if (!browser) {
+            reject(new Error("Browser is null"))
+            return
+          }
+
+          resolve(browser)
+
           if (this.destroyed) {
             void browser.close()
           }
@@ -294,7 +268,7 @@ export class Scraper<
       .then((browser) => {
         this.browser = browser
 
-        browser.once("disconnected", () => {
+        browser.on("disconnected", () => {
           if (this.destroyed) {
             return
           }
@@ -342,7 +316,6 @@ export class Scraper<
     let promise = Promise.resolve()
 
     if (this.browser) {
-      this.browser.removeAllListeners()
       promise = this.browser
         .close()
         .then(() => this.logger.info("Browser closed"))
@@ -457,10 +430,12 @@ export class Scraper<
     this.state = ScraperState.Executing
 
     if (!this.browser) {
-      this.browser = await this.init(
-        this.options,
-        this.options.disableRealBrowser,
-      )
+      this.browser = await this.init({
+        headless: this.options.headless,
+        userDataDir: this.options.userDataDir,
+        executablePath: this.options.executablePath,
+        proxy: this.options.proxy,
+      })
     }
 
     assert(!this.destroyed, "Cannot execute scraper because it is destroyed")
@@ -468,8 +443,6 @@ export class Scraper<
     const startTime = Date.now()
 
     const pages = new ExecutionPages(this.browser, {
-      proxy: this.options.proxy,
-      portalUrl: this.options.plugins?.portalUrl,
       viewport: this.defaultViewport,
       logger: this.logger,
       executionInfo,
@@ -496,6 +469,12 @@ export class Scraper<
         (instruction) => {
           this._currentlyExecutingInstruction = instruction
           this.emit("executingInstruction", instruction)
+
+          // void pages.getPageSnapshots().then((snapshot) => {
+          //   if (snapshot) {
+          //     this.dumpError(`debug-${instruction.type}`, snapshot)
+          //   }
+          // })
         },
         undefined,
       )

@@ -1,4 +1,3 @@
-import useProxy from "@lem0-packages/puppeteer-page-proxy"
 import {
   assert,
   runUnsafe,
@@ -6,15 +5,12 @@ import {
   ScraperInstructionsExecutionInfoType,
   type SimpleLogger,
 } from "@web-scraper/common"
-import { getRandomPagePoint, GhostCursor } from "ghost-cursor"
-import type { Browser, Page, Viewport } from "rebrowser-puppeteer"
+import type { Browser, Page } from "playwright"
 import type { ScraperExecutionInfo } from "./scraper-execution-info"
 
 export type ScraperPageContext = {
   index: number
   page: Page
-  cursor: GhostCursor
-  pagePortalUrl: string | undefined
 }
 
 export type PageSnapshot = {
@@ -25,9 +21,7 @@ export type PageSnapshot = {
 }
 
 type ExecutionPagesOptions = {
-  proxy?: string
-  portalUrl?: string
-  viewport: Viewport
+  viewport: { width: number; height: number }
   logger: SimpleLogger
   executionInfo: ScraperExecutionInfo
   pageMiddleware?: (page: Page) => void | Promise<void>
@@ -41,76 +35,56 @@ export class ExecutionPages {
   constructor(
     public readonly browser: Browser,
     private readonly options: ExecutionPagesOptions,
-  ) {}
+  ) {
+    const defaultContext = this.browser.contexts()[0]
+    if (defaultContext) {
+      const initialPages = defaultContext.pages()
+      let index = 0
+      for (const page of initialPages) {
+        this.pages.set(index, {
+          index: index,
+          page,
+        })
+        index++
+      }
+    }
+  }
 
   private async openPage() {
-    assert(
-      !!this.browser.connected,
-      "Cannot open page when browser is not connected",
-    )
+    const context =
+      this.browser.contexts()[0] ??
+      (await this.browser.newContext({ viewport: null }))
+    assert(!!context, "Cannot create browser context")
 
-    const firstPage = (await this.browser.pages()).at(0)
-
-    const page =
-      firstPage && firstPage.url() === ExecutionPages.emptyPageUrl
-        ? firstPage
-        : await this.browser.newPage()
-
-    await page.setViewport(this.options.viewport)
+    const page = await context.newPage()
 
     try {
-      const userAgent =
-        "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36"
-      if (userAgent) {
-        this.options.logger.info(`Setting user agent to "${userAgent}"`)
-        await page.setUserAgent(userAgent)
-      }
+      await page.addInitScript(() => {
+        Object.defineProperty(navigator, "language", {
+          get: function () {
+            return "en-US"
+          },
+        })
+        Object.defineProperty(navigator, "languages", {
+          get: function () {
+            return ["en-US", "en"]
+          },
+        })
+        Object.defineProperty(navigator, "webdriver", {
+          get: function () {
+            return undefined
+          },
+        })
+      })
     } catch (error) {
-      this.options.logger.warn({ msg: "Failed to set user agent", error })
+      this.options.logger.warn({ msg: "Failed to set init script", error })
     }
-
-    await page.evaluateOnNewDocument((lang) => {
-      Object.defineProperty(navigator, "language", {
-        get: function () {
-          return lang
-        },
-      })
-    }, "en-US")
-
-    if (this.options.proxy) {
-      await useProxy(page, this.options.proxy)
-    }
-
-    let pagePortalUrl: string | undefined = undefined
-    if (
-      this.options.portalUrl &&
-      "openPortal" in page &&
-      typeof page.openPortal === "function"
-    ) {
-      pagePortalUrl = await page.openPortal()
-      this.options.logger.info({
-        msg: "Opened portal",
-        portalUrl: pagePortalUrl,
-      })
-    }
-
-    const cursor = new GhostCursor(page, {
-      start: await getRandomPagePoint(page),
-      performRandomMoves: true,
-      visible: process.env.NODE_ENV === "development",
-    })
-    cursor.toggleRandomMove(true)
-
-    // `visible` property should not handle the below logic
-    // if (process.env.NODE_ENV === "development") {
-    // await installMouseHelper(page)
-    // }
 
     if (this.options.pageMiddleware) {
       await this.options.pageMiddleware(page)
     }
 
-    return { page, cursor, pagePortalUrl }
+    return { page }
   }
 
   async get(index: number): Promise<ScraperPageContext> {
@@ -126,7 +100,6 @@ export class ExecutionPages {
     this.options.executionInfo.push(
       {
         type: ScraperInstructionsExecutionInfoType.PageOpened,
-        portalUrl: pageContext.pagePortalUrl,
         pageIndex: index,
       },
       false,
@@ -150,10 +123,14 @@ export class ExecutionPages {
     const pages = Array.from(this.pages.values())
 
     for (let i = 0; i < pages.length; i++) {
-      if (i === 0) {
-        await pages[i].page.goto(ExecutionPages.emptyPageUrl)
-      } else {
-        await pages[i].page.close()
+      try {
+        if (i === 0) {
+          await pages[i].page.goto(ExecutionPages.emptyPageUrl)
+        } else {
+          await pages[i].page.close()
+        }
+      } catch {
+        // Page may already be closed or browser context may be gone
       }
     }
 
@@ -163,13 +140,15 @@ export class ExecutionPages {
   getPageSnapshots(): Promise<PageSnapshot[]> {
     return Promise.all(
       Array.from(this.pages.entries()).map(async ([pageIndex, pageContext]) => {
-        const screenshotBase64 = await runUnsafeAsync(() =>
-          pageContext.page.screenshot({
-            encoding: "base64",
-            type: "jpeg",
-            quality: 100,
-            fullPage: true,
-          }),
+        const screenshotBase64 = await runUnsafeAsync<string | null>(
+          async () => {
+            const buffer = await pageContext.page.screenshot({
+              type: "jpeg",
+              quality: 100,
+              fullPage: true,
+            })
+            return buffer.toString("base64")
+          },
         )
 
         return {

@@ -67,9 +67,9 @@ export function ScraperInstructionsForm({
 }: ScraperInstructionsFormProps) {
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore Sometimes typescript can't handle zod schema depth
-  const { fields, append, remove, move } = useFieldArray<UpsertScraper, never>({
+  const { fields, append, remove, move } = useFieldArray<UpsertScraper>({
     control,
-    name,
+    name: name as never,
   })
 
   const addInstruction = () => {

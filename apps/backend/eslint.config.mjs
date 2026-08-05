@@ -5,8 +5,9 @@ import prettier from "eslint-plugin-prettier"
 import eslintConfigPrettier from "eslint-config-prettier"
 import importPlugin from "eslint-plugin-import"
 import typescriptEslint from "typescript-eslint"
+import { defineConfig } from 'eslint/config'
 
-export default tseslint.config(
+export default defineConfig(
   { ignores: ["dist", "node_modules", "drizzle.config.ts"] },
   {
     extends: [

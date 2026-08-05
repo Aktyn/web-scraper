@@ -3,7 +3,7 @@ import { useInfiniteGet } from "@/hooks/api/useInfiniteGet"
 import { useStateToRef } from "@/hooks/useStateToRef"
 import { cn, formatDateTime } from "@/lib/utils"
 import type { SortingState } from "@tanstack/react-table"
-import { type ColumnDef } from "@tanstack/react-table"
+import { type LegacyColumnDef as ColumnDef } from "@tanstack/react-table/legacy"
 import {
   SqliteColumnType,
   type UserDataStore,

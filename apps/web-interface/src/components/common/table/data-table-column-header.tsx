@@ -8,7 +8,8 @@ import {
 import { Tooltip, TooltipContent } from "@/components/shadcn/tooltip"
 import { cn } from "@/lib/utils"
 import { TooltipTrigger } from "@radix-ui/react-tooltip"
-import type { Column } from "@tanstack/react-table"
+import type { LegacyColumn as Column } from "@tanstack/react-table/legacy"
+import type { RowData } from "@tanstack/table-core"
 import {
   ArrowDownWideNarrow,
   ArrowUpDown,
@@ -34,7 +35,7 @@ enum FilterType {
 }
 
 interface DataTableColumnHeaderProps<
-  TData,
+  TData extends RowData,
   TValue,
   Type extends FilterType,
 > extends Omit<ComponentProps<"div">, "title"> {
@@ -45,7 +46,11 @@ interface DataTableColumnHeaderProps<
   options?: { label: string; value: string }[]
 }
 
-export function DataTableColumnHeader<TData, TValue, Type extends FilterType>({
+export function DataTableColumnHeader<
+  TData extends RowData,
+  TValue,
+  Type extends FilterType,
+>({
   column,
   title,
   filterType,

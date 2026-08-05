@@ -2,7 +2,7 @@ import { type SpecialStringContext, randomString } from "@web-scraper/common"
 import dns from "dns"
 import fs from "fs"
 import path from "path"
-import type { Page } from "rebrowser-puppeteer"
+import type { Page } from "playwright"
 import type { ScraperExecutionContext } from "./execution/helpers"
 
 export async function saveScreenshot(page: Page, fileNamePrefix: string) {
