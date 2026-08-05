@@ -6,8 +6,9 @@ import {
 } from "@web-scraper/common"
 import type { ComponentProps, ReactNode } from "react"
 import { useMemo, useState } from "react"
+import type { DataTableFeatures } from "../common/table/data-table"
 import { DataTable } from "../common/table/data-table"
-import type { LegacyColumnDef as ColumnDef } from "@tanstack/react-table/legacy"
+import type { ColumnDef } from "@tanstack/react-table"
 import { RefreshButton } from "../common/table/refresh-button"
 import { Button } from "../shadcn/button"
 import { Check, CheckCheck, Loader2, Trash } from "lucide-react"
@@ -42,7 +43,7 @@ export function Notifications() {
     [notifications],
   )
 
-  const columns = useMemo<ColumnDef<Notification>[]>(
+  const columns = useMemo<ColumnDef<DataTableFeatures, Notification>[]>(
     () => [
       {
         accessorKey: "type",
@@ -103,7 +104,7 @@ export function Notifications() {
   )
 
   return (
-    <div className="size-full *:w-256 *:max-w-full flex flex-col">
+    <div className="size-full *:w-5xl *:max-w-full flex flex-col">
       <div
         data-transition-direction="top"
         className="view-transition p-2 flex flex-row items-center gap-2"

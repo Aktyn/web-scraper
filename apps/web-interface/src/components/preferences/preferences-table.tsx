@@ -10,13 +10,14 @@ import { Switch } from "@/components/shadcn/switch"
 import { useGet } from "@/hooks/api/useGet"
 import { usePut } from "@/hooks/api/usePut"
 import { useMounted } from "@/hooks/useMounted"
-import type { LegacyColumnDef as ColumnDef } from "@tanstack/react-table/legacy"
+import type { ColumnDef } from "@tanstack/react-table"
 import type { Status, UserPreferences } from "@web-scraper/common"
 import { defaultPreferences } from "@web-scraper/common"
 import { CheckIcon, EditIcon, Save, TriangleAlert, XIcon } from "lucide-react"
 import type { RefObject } from "react"
 import { useImperativeHandle, useMemo, useState } from "react"
 import { NullBadge } from "../common/null-badge.js"
+import type { DataTableFeatures } from "../common/table/data-table.js"
 import { DataTable } from "../common/table/data-table.js"
 import { Tooltip, TooltipContent, TooltipTrigger } from "../shadcn/tooltip.js"
 
@@ -55,6 +56,7 @@ export function PreferencesTable({
 
   const columns = useMemo<
     ColumnDef<
+      DataTableFeatures,
       UserPreferences[number] & {
         description: string | null
       }
@@ -120,8 +122,6 @@ function isAvailable(key: PreferenceKey, status: Status) {
     default:
       return true
   }
-
-  return true
 }
 
 type ValueCellProps = {

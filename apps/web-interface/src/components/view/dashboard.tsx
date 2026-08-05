@@ -5,7 +5,7 @@ import { cn, formatDateTime, formatDuration } from "@/lib/utils"
 import { ScraperProvider } from "@/providers/scraper.provider"
 import { ServerEventsProvider } from "@/providers/server-events.provider"
 import { useView } from "@/providers/view.provider"
-import type { LegacyColumnDef as ColumnDef } from "@tanstack/react-table/legacy"
+import type { ColumnDef } from "@tanstack/react-table"
 import type { Notification, ScraperType } from "@web-scraper/common"
 import {
   NotificationType,
@@ -16,6 +16,7 @@ import {
 import { CheckCheck, List, Loader2, Play } from "lucide-react"
 import { useMemo, useRef, useState } from "react"
 import { LabeledValue } from "../common/label/labeled-value"
+import type { DataTableFeatures } from "../common/table/data-table"
 import { DataTable } from "../common/table/data-table"
 import { ExecutionResultInfo } from "../scraper/execution/execution-result-info"
 import { getExecutionInfoDuration } from "../scraper/execution/helpers"
@@ -32,13 +33,13 @@ import { TermInfo } from "../info/term-info"
 
 export function Dashboard() {
   return (
-    <div className="w-full h-full overflow-hidden grid 2xl:grid-cols-[1fr_1px_minmax(auto,calc(var(--spacing)*170))] 2xl:grid-rows-[100%] max-2xl:grid-cols-1 max-2xl:grid-rows-[1fr_1px_1fr] 2xl:[:has(>div[data-empty=true])]:grid-cols-[1fr_1px_minmax(auto,calc(var(--spacing)*118))] max-2xl:[:has(>div[data-empty=true])]:grid-rows-[1fr_1px_calc(var(--spacing)*64)] transition-[grid-template-columns,grid-template-rows]">
+    <div className="w-full h-full overflow-hidden grid 2xl:grid-cols-[1fr_1px_minmax(auto,--spacing(170))] 2xl:grid-rows-[100%] max-2xl:grid-cols-1 max-2xl:grid-rows-[1fr_1px_1fr] 2xl:[:has(>div[data-empty=true])]:grid-cols-[1fr_1px_minmax(auto,--spacing(118))] max-2xl:[:has(>div[data-empty=true])]:grid-rows-[1fr_1px_--spacing(64)] transition-[grid-template-columns,grid-template-rows]">
       <RecentlyExecutedScrapers />
       <Separator
         orientation="vertical"
         className="view-transition delay-100 max-2xl:hidden"
       />
-      <Separator className="view-transition delay-100 min-2xl:hidden" />
+      <Separator className="view-transition delay-100 2xl:hidden" />
       <UnreadNotifications />
     </div>
   )
@@ -106,7 +107,7 @@ function RecentlyExecutedScrapers() {
           <Loader2 className="size-4 animate-spin mx-2" />
         ) : scrapers?.data.length ? (
           <ScrollArea className="overflow-hidden">
-            <div className="p-3 gap-3 grid grid-cols-[repeat(auto-fill,minmax(calc(var(--spacing)*96),1fr))]">
+            <div className="p-3 gap-3 grid grid-cols-[repeat(auto-fill,minmax(--spacing(96),1fr))]">
               {scrapers.data.map((scraper) => (
                 <ScraperProvider key={scraper.id} scraper={scraper}>
                   <ScraperCard
@@ -301,7 +302,9 @@ function UnreadNotifications() {
     refresh(),
   )
 
-  const notificationsColumns = useMemo<ColumnDef<Notification>[]>(
+  const notificationsColumns = useMemo<
+    ColumnDef<DataTableFeatures, Notification>[]
+  >(
     () => [
       {
         accessorKey: "type",

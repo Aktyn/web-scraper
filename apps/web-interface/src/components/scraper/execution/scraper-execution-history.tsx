@@ -1,12 +1,10 @@
 import { TimestampValue } from "@/components/common/label/timestamp-value"
+import type { DataTableFeatures } from "@/components/common/table/data-table"
 import { DataTable } from "@/components/common/table/data-table"
 import { useInfiniteGet } from "@/hooks/api/useInfiniteGet"
 import { cn, formatDuration } from "@/lib/utils"
 import { ServerEventsProvider } from "@/providers/server-events.provider"
-import type {
-  LegacyColumnDef as ColumnDef,
-  LegacyRow as Row,
-} from "@tanstack/react-table/legacy"
+import type { ColumnDef, Row } from "@tanstack/react-table"
 import type { ExecutionIterator } from "@web-scraper/common"
 import {
   ScraperEventType,
@@ -57,7 +55,7 @@ export function ScraperExecutionHistory({
   )
 
   const executionInfoColumns = useMemo(() => {
-    const columns: ColumnDef<ScraperExecutionInfo>[] = [
+    const columns: ColumnDef<DataTableFeatures, ScraperExecutionInfo>[] = [
       {
         accessorKey: "iterations",
         header: "Number of iterations",
@@ -129,7 +127,11 @@ export function ScraperExecutionHistory({
   )
 }
 
-function IterationsTable({ row }: { row: Row<ScraperExecutionInfo> }) {
+function IterationsTable({
+  row,
+}: {
+  row: Row<DataTableFeatures, ScraperExecutionInfo>
+}) {
   return (
     <DataTable
       className={cn(
@@ -145,7 +147,7 @@ function IterationsTable({ row }: { row: Row<ScraperExecutionInfo> }) {
 }
 
 type ExecutionInfoRowProps = {
-  row: Row<ScraperExecutionInfo["iterations"][number]>
+  row: Row<DataTableFeatures, ScraperExecutionInfo["iterations"][number]>
 }
 
 function ExecutionInfoRow({ row }: ExecutionInfoRowProps) {
@@ -167,6 +169,7 @@ function ExecutionInfoRow({ row }: ExecutionInfoRowProps) {
 }
 
 const iterationColumns: ColumnDef<
+  DataTableFeatures,
   ScraperExecutionInfo["iterations"][number]
 >[] = [
   {

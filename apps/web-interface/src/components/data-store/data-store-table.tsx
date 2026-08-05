@@ -3,7 +3,7 @@ import { useInfiniteGet } from "@/hooks/api/useInfiniteGet"
 import { useStateToRef } from "@/hooks/useStateToRef"
 import { cn, formatDateTime } from "@/lib/utils"
 import type { SortingState } from "@tanstack/react-table"
-import { type LegacyColumnDef as ColumnDef } from "@tanstack/react-table/legacy"
+import type { ColumnDef } from "@tanstack/react-table"
 import {
   SqliteColumnType,
   type UserDataStore,
@@ -14,6 +14,7 @@ import type { RefObject } from "react"
 import { type ReactNode, useImperativeHandle, useMemo, useState } from "react"
 import { ConfirmationDialog } from "../common/confirmation-dialog"
 import { NullBadge } from "../common/null-badge"
+import type { DataTableFeatures } from "../common/table/data-table"
 import { DataTable } from "../common/table/data-table"
 import { DataTableColumnHeader } from "../common/table/data-table-column-header"
 import { RefreshButton } from "../common/table/refresh-button"
@@ -114,79 +115,82 @@ export function DataStoreTable({
     [refresh],
   )
 
-  const columns: ColumnDef<Record<string, unknown>>[] = useMemo(
-    () => [
-      ...store.columns.map<ColumnDef<Record<string, unknown>>>((column) => ({
-        accessorKey: column.name,
-        header:
-          column.name === "id"
-            ? ({ column: columnContext }) => (
-                <DataTableColumnHeader column={columnContext} title="ID" />
-              )
-            : column.type === SqliteColumnType.TEXT
+  const columns: ColumnDef<DataTableFeatures, Record<string, unknown>>[] =
+    useMemo(
+      () => [
+        ...store.columns.map<
+          ColumnDef<DataTableFeatures, Record<string, unknown>>
+        >((column) => ({
+          accessorKey: column.name,
+          header:
+            column.name === "id"
               ? ({ column: columnContext }) => (
-                  <DataTableColumnHeader
-                    column={columnContext}
-                    title={<ColumnNameLabel column={column} />}
-                    filterType={DataTableColumnHeader.FilterType.Text}
-                    onFilterChange={(value) =>
-                      setFilters((prev) => ({
-                        ...prev,
-                        [column.name]: value ?? undefined,
-                      }))
-                    }
-                  />
+                  <DataTableColumnHeader column={columnContext} title="ID" />
                 )
-              : () => <ColumnNameLabel column={column} />,
-        cell: ({ row }) => {
-          const value = row.original[column.name]
-          if (value === null) {
-            return <NullBadge />
-          }
-          return <TypedValue value={value} type={column.type} />
+              : column.type === SqliteColumnType.TEXT
+                ? ({ column: columnContext }) => (
+                    <DataTableColumnHeader
+                      column={columnContext}
+                      title={<ColumnNameLabel column={column} />}
+                      filterType={DataTableColumnHeader.FilterType.Text}
+                      onFilterChange={(value) =>
+                        setFilters((prev) => ({
+                          ...prev,
+                          [column.name]: value ?? undefined,
+                        }))
+                      }
+                    />
+                  )
+                : () => <ColumnNameLabel column={column} />,
+          cell: ({ row }) => {
+            const value = row.original[column.name]
+            if (value === null) {
+              return <NullBadge />
+            }
+            return <TypedValue value={value} type={column.type} />
+          },
+        })),
+        {
+          id: "actions",
+          cell: ({ row }) => (
+            <div className="flex items-center gap-1 w-fit">
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={(event) => {
+                      event.stopPropagation()
+                      setRecordToEdit(row.original)
+                      setUpsertRecordDialogOpen(true)
+                    }}
+                  >
+                    <Edit />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>Edit data store</TooltipContent>
+              </Tooltip>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={(event) => {
+                      event.stopPropagation()
+                      handleDeleteClick(row.original)
+                    }}
+                  >
+                    <Trash />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>Delete data store</TooltipContent>
+              </Tooltip>
+            </div>
+          ),
         },
-      })),
-      {
-        id: "actions",
-        cell: ({ row }) => (
-          <div className="flex items-center gap-1 w-fit">
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={(event) => {
-                    event.stopPropagation()
-                    setRecordToEdit(row.original)
-                    setUpsertRecordDialogOpen(true)
-                  }}
-                >
-                  <Edit />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>Edit data store</TooltipContent>
-            </Tooltip>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={(event) => {
-                    event.stopPropagation()
-                    handleDeleteClick(row.original)
-                  }}
-                >
-                  <Trash />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>Delete data store</TooltipContent>
-            </Tooltip>
-          </div>
-        ),
-      },
-    ],
-    [store.columns],
-  )
+      ],
+      [store.columns],
+    )
 
   const refreshRef = useStateToRef(refresh)
   const handleEditSuccess = (store: UserDataStore) => {

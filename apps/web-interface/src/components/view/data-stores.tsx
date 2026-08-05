@@ -1,4 +1,5 @@
 import { ConfirmationDialog } from "@/components/common/confirmation-dialog"
+import type { DataTableFeatures } from "@/components/common/table/data-table"
 import { DataTable } from "@/components/common/table/data-table"
 import { Button } from "@/components/shadcn/button"
 import {
@@ -9,7 +10,7 @@ import {
 import { useDelete } from "@/hooks/api/useDelete"
 import { useInfiniteGet } from "@/hooks/api/useInfiniteGet"
 import { usePinnedDataStores } from "@/providers/pinned-data-stores.provider"
-import type { LegacyColumnDef as ColumnDef } from "@tanstack/react-table/legacy"
+import type { ColumnDef } from "@tanstack/react-table"
 import type { UserDataStore } from "@web-scraper/common"
 import { Edit, Plus, Trash } from "lucide-react"
 import { useMemo, useState } from "react"
@@ -78,7 +79,7 @@ export function DataStores() {
     }
   }
 
-  const columns: ColumnDef<UserDataStore>[] = useMemo(
+  const columns: ColumnDef<DataTableFeatures, UserDataStore>[] = useMemo(
     () => [
       {
         accessorKey: "name",

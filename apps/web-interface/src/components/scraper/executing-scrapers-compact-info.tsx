@@ -1,10 +1,11 @@
 import { useGet } from "@/hooks/api/useGet"
 import { useInfiniteGet } from "@/hooks/api/useInfiniteGet"
 import { ServerEventsProvider } from "@/providers/server-events.provider"
-import type { LegacyColumnDef as ColumnDef } from "@tanstack/react-table/legacy"
+import type { ColumnDef } from "@tanstack/react-table"
 import type { ExecutingScraperInfo } from "@web-scraper/common"
 import { ScraperEventType, SubscriptionMessageType } from "@web-scraper/common"
 import { useRef, useState } from "react"
+import type { DataTableFeatures } from "../common/table/data-table"
 import { DataTable } from "../common/table/data-table"
 import { Separator } from "../shadcn/separator"
 import { ScraperPanelDialog } from "./scraper-panel-dialog"
@@ -100,10 +101,11 @@ export function ExecutingScrapersCompactInfo() {
   )
 }
 
-const columns: ColumnDef<ExecutingScraperInfo>[] = [
+const columns: ColumnDef<DataTableFeatures, ExecutingScraperInfo>[] = [
   {
     accessorKey: "name",
-    header: ({ table }) => `Executing scrapers (${table.getRowCount()})`,
+    header: ({ table }) =>
+      `Executing scrapers (${table.getRowModel().rows.length})`,
     cell: ({ row }) => <div className="font-medium">{row.original.name}</div>,
   },
 ]

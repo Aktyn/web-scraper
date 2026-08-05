@@ -5,10 +5,17 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/shadcn/popover"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/shadcn/select"
 import { Tooltip, TooltipContent } from "@/components/shadcn/tooltip"
 import { cn } from "@/lib/utils"
 import { TooltipTrigger } from "@radix-ui/react-tooltip"
-import type { LegacyColumn as Column } from "@tanstack/react-table/legacy"
+import type { Column } from "@tanstack/react-table"
 import type { RowData } from "@tanstack/table-core"
 import {
   ArrowDownWideNarrow,
@@ -19,13 +26,7 @@ import {
 } from "lucide-react"
 import { useState, type ComponentProps, type ReactNode } from "react"
 import { DateTimePicker } from "../form/datetime-picker"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/shadcn/select"
+import type { DataTableFeatures } from "./data-table"
 
 enum FilterType {
   Text = 1,
@@ -39,7 +40,7 @@ interface DataTableColumnHeaderProps<
   TValue,
   Type extends FilterType,
 > extends Omit<ComponentProps<"div">, "title"> {
-  column: Column<TData, TValue>
+  column: Column<DataTableFeatures, TData, TValue>
   title: ReactNode
   filterType?: Type
   onFilterChange?: FilterChangeCallback<Type>
@@ -67,7 +68,7 @@ export function DataTableColumnHeader<
     onFilterChange?.(value)
   }
 
-  if (!column.getCanSort()) {
+  if (!column.getCanSort?.()) {
     return <div {...divProps}>{title}</div>
   }
 
@@ -83,7 +84,7 @@ export function DataTableColumnHeader<
             <Button
               variant="ghost"
               size="icon"
-              className="in-data-[sorting]:text-accent not-in-data-sorting:opacity-80 hover:opacity-100"
+              className="in-data-sorting:text-accent not-in-data-sorting:opacity-80 hover:opacity-100"
               tabIndex={-1}
               onClick={() => {
                 const sortState = column.getIsSorted()
@@ -99,7 +100,7 @@ export function DataTableColumnHeader<
             >
               <ArrowDownWideNarrow className="hidden in-data-[sorting=true]:inline" />
               <ArrowUpNarrowWide className="hidden in-data-[sorting=false]:inline" />
-              <ArrowUpDown className="in-data-[sorting]:hidden" />
+              <ArrowUpDown className="in-data-sorting:hidden" />
             </Button>
           </TooltipTrigger>
           <TooltipContent>Toggle sorting</TooltipContent>

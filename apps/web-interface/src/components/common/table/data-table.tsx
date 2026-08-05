@@ -14,17 +14,21 @@ import type {
   OnChangeFn,
   ExpandedState,
   TableState,
-  StockFeatures,
   RowData,
 } from "@tanstack/table-core"
 import {
-  type LegacyColumnDef as ColumnDef,
-  getCoreRowModel,
-  getExpandedRowModel,
-  type LegacyRow as Row,
-  useLegacyTable as useReactTable,
-} from "@tanstack/react-table/legacy"
-import { flexRender } from "@tanstack/react-table"
+  type ColumnDef,
+  createExpandedRowModel,
+  type Row,
+  useTable,
+  flexRender,
+} from "@tanstack/react-table"
+import {
+  rowExpandingFeature,
+  rowSelectionFeature,
+  rowSortingFeature,
+  tableFeatures,
+} from "@tanstack/table-core"
 import { ChevronUp } from "lucide-react"
 import type { ReactNode } from "react"
 import {
@@ -37,18 +41,27 @@ import {
 } from "react"
 import { ScrollArea, ScrollBar } from "../../shadcn/scroll-area"
 
+const tableDefinedFeatures = tableFeatures({
+  rowExpandingFeature,
+  rowSortingFeature,
+  expandedRowModel: createExpandedRowModel(),
+  rowSelectionFeature,
+})
+
+export type DataTableFeatures = typeof tableDefinedFeatures
+
 type DataTableProps<TData extends RowData, TValue> = {
-  columns: ColumnDef<TData, TValue>[]
+  columns: ColumnDef<DataTableFeatures, TData, TValue>[]
   data: TData[]
   isLoading?: boolean
   hasMore?: boolean
-  getRowCanExpand?: (row: Row<TData>) => boolean
-  SubComponent?: (props: { row: Row<TData> }) => ReactNode
+  getRowCanExpand?: (row: Row<DataTableFeatures, TData>) => boolean
+  SubComponent?: (props: { row: Row<DataTableFeatures, TData> }) => ReactNode
   onLoadMore?: () => void
-  onRowClick?: (row: Row<TData>) => void
+  onRowClick?: (row: Row<DataTableFeatures, TData>) => void
   tableProps?: ComponentProps<"table">
   noDataMessage?: ReactNode
-  state?: Partial<TableState<StockFeatures>>
+  state?: Partial<TableState<DataTableFeatures>>
   onSortingChange?: OnChangeFn<SortingState>
 } & ComponentProps<"div">
 
@@ -75,7 +88,8 @@ export function DataTable<TData extends RowData, TValue>({
 
   const expandable = !!SubComponent
 
-  const table = useReactTable({
+  const table = useTable({
+    features: tableDefinedFeatures,
     data,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     columns: columns as any,
@@ -84,8 +98,6 @@ export function DataTable<TData extends RowData, TValue>({
       ...state,
     },
     onExpandedChange: setExpanded,
-    getCoreRowModel: getCoreRowModel(),
-    getExpandedRowModel: getExpandedRowModel(),
     getRowCanExpand: getRowCanExpand ?? (SubComponent ? () => true : undefined),
     manualSorting: true,
     onSortingChange,
@@ -151,7 +163,7 @@ export function DataTable<TData extends RowData, TValue>({
   }, [data, hasMore, isLoading, onLoadMore])
 
   const handleRowClick = useCallback(
-    (row: Row<TData>) => {
+    (row: Row<DataTableFeatures, TData>) => {
       if (expandable) {
         row.toggleExpanded()
       }
@@ -208,7 +220,7 @@ export function DataTable<TData extends RowData, TValue>({
                         : "hover:bg-inherit",
                     )}
                   >
-                    {row.getVisibleCells().map((cell) => (
+                    {row.getAllCells().map((cell) => (
                       <TableCell key={cell.id}>
                         {flexRender(
                           cell.column.columnDef.cell,
@@ -220,7 +232,7 @@ export function DataTable<TData extends RowData, TValue>({
                   {SubComponent && row.getIsExpanded() && (
                     <TableRow className="cursor-default">
                       <TableCell
-                        colSpan={row.getVisibleCells().length}
+                        colSpan={row.getAllCells().length}
                         className="p-0"
                       >
                         <SubComponent row={row} />

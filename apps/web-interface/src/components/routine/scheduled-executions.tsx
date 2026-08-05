@@ -3,7 +3,7 @@ import { useInfiniteGet } from "@/hooks/api/useInfiniteGet"
 import { usePost } from "@/hooks/api/usePost"
 import { cn, formatDateTime } from "@/lib/utils"
 import { ServerEventsProvider } from "@/providers/server-events.provider"
-import type { LegacyColumnDef as ColumnDef } from "@tanstack/react-table/legacy"
+import type { ColumnDef } from "@tanstack/react-table"
 import {
   ScraperEventType,
   SubscriptionMessageType,
@@ -15,6 +15,7 @@ import type { ComponentProps } from "react"
 import { useMemo, useState } from "react"
 import { Countdown } from "../common/label/countdown"
 import { NullBadge } from "../common/null-badge"
+import type { DataTableFeatures } from "../common/table/data-table"
 import { DataTable } from "../common/table/data-table"
 import { IteratorDescription } from "../iterator/iterator-description"
 import { Button } from "../shadcn/button"
@@ -60,7 +61,9 @@ export function ScheduledExecutions(divProps: ComponentProps<"div">) {
     { id: routineIdToView ?? 0 },
   )
 
-  const columns = useMemo<ColumnDef<ScheduledScraperExecution>[]>(
+  const columns = useMemo<
+    ColumnDef<DataTableFeatures, ScheduledScraperExecution>[]
+  >(
     () => [
       {
         accessorKey: "scraperName",

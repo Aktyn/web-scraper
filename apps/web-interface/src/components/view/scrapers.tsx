@@ -2,7 +2,7 @@ import { useDelete } from "@/hooks/api/useDelete"
 import { useInfiniteGet } from "@/hooks/api/useInfiniteGet"
 import { usePost } from "@/hooks/api/usePost"
 import { cn } from "@/lib/utils"
-import { type LegacyColumnDef as ColumnDef } from "@tanstack/react-table/legacy"
+import type { ColumnDef } from "@tanstack/react-table"
 import { type SortingState } from "@tanstack/react-table"
 import { type ScraperQuery, type ScraperType } from "@web-scraper/common"
 import { Copy, Edit, FileUp, History, Plus, Trash } from "lucide-react"
@@ -10,6 +10,7 @@ import { useMemo, useState } from "react"
 import { ConfirmationDialog } from "../common/confirmation-dialog"
 import { TimestampValue } from "../common/label/timestamp-value"
 import { NullBadge } from "../common/null-badge"
+import type { DataTableFeatures } from "../common/table/data-table"
 import { DataTable } from "../common/table/data-table"
 import { DataTableColumnHeader } from "../common/table/data-table-column-header"
 import { RefreshButton } from "../common/table/refresh-button"
@@ -82,7 +83,7 @@ export function Scrapers() {
     }
   }
 
-  const columns: ColumnDef<ScraperType>[] = useMemo(
+  const columns: ColumnDef<DataTableFeatures, ScraperType>[] = useMemo(
     () => [
       {
         accessorKey: "name",
@@ -224,7 +225,7 @@ export function Scrapers() {
   )
 
   return (
-    <div className="size-full *:w-256 *:max-w-full grid grid-rows-[auto_1fr_auto] grid-cols-1">
+    <div className="size-full *:w-5xl *:max-w-full grid grid-rows-[auto_1fr_auto] grid-cols-1">
       <div
         data-transition-direction="top"
         className="view-transition p-2 flex flex-row items-center gap-2"

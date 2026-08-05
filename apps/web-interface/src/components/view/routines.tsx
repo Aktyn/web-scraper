@@ -2,7 +2,7 @@ import { useDelete } from "@/hooks/api/useDelete"
 import { useInfiniteGet } from "@/hooks/api/useInfiniteGet"
 import { cn } from "@/lib/utils"
 import { ServerEventsProvider } from "@/providers/server-events.provider"
-import type { LegacyColumnDef as ColumnDef } from "@tanstack/react-table/legacy"
+import type { ColumnDef } from "@tanstack/react-table"
 import type { SortingState } from "@tanstack/react-table"
 import type { Routine, RoutineQuery } from "@web-scraper/common"
 import {
@@ -15,6 +15,7 @@ import { useMemo, useState } from "react"
 import { ConfirmationDialog } from "../common/confirmation-dialog"
 import { TimestampValue } from "../common/label/timestamp-value"
 import { NullBadge } from "../common/null-badge"
+import type { DataTableFeatures } from "../common/table/data-table"
 import { DataTable } from "../common/table/data-table"
 import { DataTableColumnHeader } from "../common/table/data-table-column-header"
 import { RefreshButton } from "../common/table/refresh-button"
@@ -109,7 +110,7 @@ export function Routines() {
     }
   }
 
-  const columns = useMemo<ColumnDef<Routine>[]>(
+  const columns = useMemo<ColumnDef<DataTableFeatures, Routine>[]>(
     () => [
       {
         accessorKey: "status",
@@ -280,7 +281,7 @@ export function Routines() {
   )
 
   return (
-    <div className="size-full *:w-320 *:max-w-full grid grid-rows-[auto_1fr_auto] grid-cols-1">
+    <div className="size-full *:w-7xl *:max-w-full grid grid-rows-[auto_1fr_auto] grid-cols-1">
       <div
         data-transition-direction="top"
         className="view-transition p-2 flex flex-row items-center gap-2"
