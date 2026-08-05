@@ -34,7 +34,7 @@ echo "New version: $VERSION"
 
 git add .
 git commit -m "Release $VERSION"
-git tag v$VERSION
+git tag "v$VERSION"
 git push --tag
 git push
 
