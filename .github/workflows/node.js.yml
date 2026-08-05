@@ -38,7 +38,7 @@ jobs:
 
     - name: Install browsers
       working-directory: ./packages/core
-      run: npm run install:browsers
+      run: npx playwright install --with-deps chromium
 
     - name: Run tests
       run: npm run test 
