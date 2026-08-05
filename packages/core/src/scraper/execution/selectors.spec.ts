@@ -43,6 +43,7 @@ describe("selectors", () => {
 
   beforeAll(async () => {
     browser = await chromium.launch({
+      executablePath: "/usr/bin/chromium",
       headless: true,
       args: [
         "--no-sandbox",
