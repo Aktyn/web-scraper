@@ -37,8 +37,15 @@ jobs:
       run: npm run build
 
     - name: Install browsers
-      working-directory: ./packages/core
-      run: npx playwright install --with-deps chromium
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y chromium-browser || sudo apt-get install -y chromium
+
+        if [ -x /usr/bin/chromium-browser ] && [ ! -e /usr/bin/chromium ]; then
+          sudo ln -s /usr/bin/chromium-browser /usr/bin/chromium
+        fi
+
+        /usr/bin/chromium --version
 
     - name: Run tests
       run: npm run test 
