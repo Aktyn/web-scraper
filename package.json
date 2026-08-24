@@ -34,7 +34,7 @@
   "devDependencies": {
     "@tsconfig/recommended": "^1.0.13",
     "prettier": "^3.9.6",
-    "turbo": "^2.10.8",
+    "turbo": "^2.10.11",
     "zod-validation-error": "^5.0.0"
   },
   "packageManager": "npm@11.6.2",

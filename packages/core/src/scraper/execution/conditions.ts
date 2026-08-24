@@ -37,7 +37,6 @@ export async function checkCondition(
         } else if (secondValue instanceof RegExp) {
           return secondValue.test(String(firstValue))
         } else {
-          //TODO: test whether nulls are correctly handled
           // eslint-disable-next-line eqeqeq
           return firstValue == secondValue
         }

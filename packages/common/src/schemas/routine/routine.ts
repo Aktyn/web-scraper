@@ -69,7 +69,7 @@ export const routineQuerySchema = apiPaginationQuerySchema.extend({
     .enum(["status", "scraperName", "description", "createdAt", "updatedAt"])
     .optional(),
   sortOrder: z.enum(["asc", "desc"]).optional(),
-  status: z.nativeEnum(RoutineStatus).optional(),
+  status: z.enum(RoutineStatus).optional(),
   scraperName: z.string().min(1).optional(),
   description: z.string().min(1).optional(),
   createdAtFrom: timestampSchema.optional(),

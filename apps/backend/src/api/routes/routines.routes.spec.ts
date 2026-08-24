@@ -1,8 +1,8 @@
 import {
-  type Routine,
   RoutineExecutionResult,
   RoutineStatus,
   SchedulerType,
+  type Routine,
   type UpsertRoutine,
 } from "@web-scraper/common"
 import { eq } from "drizzle-orm"
@@ -10,6 +10,8 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 import { routinesTable } from "../../db/schema"
 import { routineExecutionsTable } from "../../db/schema/routine-executions.schema"
 import { setup, type TestModules } from "../../test/setup"
+import * as helpers from "./helpers"
+import { handleRoutineExecutionFinished } from "./routines.routes"
 
 describe("Routines Routes", () => {
   let modules: TestModules
@@ -463,6 +465,147 @@ describe("Routines Routes", () => {
         url: "/routines/999/resume",
       })
       expect(response.statusCode).toBe(404)
+    })
+  })
+
+  describe("handleRoutineExecutionFinished", () => {
+    it("should mark execution as success and set routine to active", async () => {
+      const routineId = 1
+      const routineExecution = {
+        id: 100,
+        routineId,
+        result: null,
+        createdAt: new Date(),
+      }
+      const executionId = 200
+
+      vi.spyOn(helpers, "getScraperExecutionResult").mockResolvedValue(
+        RoutineExecutionResult.Success,
+      )
+
+      await modules.dbModule.db
+        .update(routinesTable)
+        .set({ status: RoutineStatus.Executing })
+        .where(eq(routinesTable.id, routineId))
+
+      await modules.dbModule.db
+        .insert(routineExecutionsTable)
+        .values(routineExecution)
+
+      await handleRoutineExecutionFinished(
+        modules.dbModule.db,
+        modules.events,
+        modules.logger,
+        routineExecution,
+        executionId,
+      )
+
+      const updatedExecution = await modules.dbModule.db
+        .select()
+        .from(routineExecutionsTable)
+        .where(eq(routineExecutionsTable.id, routineExecution.id))
+        .get()
+      expect(updatedExecution?.result).toBe(RoutineExecutionResult.Success)
+
+      const updatedRoutine = await modules.dbModule.db
+        .select()
+        .from(routinesTable)
+        .where(eq(routinesTable.id, routineId))
+        .get()
+      expect(updatedRoutine?.status).toBe(RoutineStatus.Active)
+    })
+
+    it("should mark execution as failed when executionId is not provided", async () => {
+      const routineId = 1
+      const routineExecution = {
+        id: 101,
+        routineId,
+        result: null,
+        createdAt: new Date(),
+      }
+
+      await modules.dbModule.db
+        .update(routinesTable)
+        .set({ status: RoutineStatus.Executing })
+        .where(eq(routinesTable.id, routineId))
+
+      await modules.dbModule.db
+        .insert(routineExecutionsTable)
+        .values(routineExecution)
+
+      await handleRoutineExecutionFinished(
+        modules.dbModule.db,
+        modules.events,
+        modules.logger,
+        routineExecution,
+      )
+
+      const updatedExecution = await modules.dbModule.db
+        .select()
+        .from(routineExecutionsTable)
+        .where(eq(routineExecutionsTable.id, routineExecution.id))
+        .get()
+      expect(updatedExecution?.result).toBe(RoutineExecutionResult.Failed)
+    })
+
+    it("should pause routine if it reaches max number of failed executions", async () => {
+      const routineId = 1
+      const maxFailures = 2
+      const routineExecution = {
+        id: 102,
+        routineId,
+        result: null,
+        createdAt: new Date(),
+      }
+      const executionId = 202
+
+      await modules.dbModule.db
+        .update(routinesTable)
+        .set({
+          status: RoutineStatus.Executing,
+          pauseAfterNumberOfFailedExecutions: maxFailures,
+        })
+        .where(eq(routinesTable.id, routineId))
+
+      await modules.dbModule.db
+        .insert(routineExecutionsTable)
+        .values(routineExecution)
+
+      // Mock failure for the current execution
+      vi.spyOn(helpers, "getScraperExecutionResult").mockResolvedValue(
+        RoutineExecutionResult.Failed,
+      )
+
+      // Insert previous failures to reach the limit
+      await modules.dbModule.db.insert(routineExecutionsTable).values([
+        {
+          routineId,
+          result: RoutineExecutionResult.Failed,
+          createdAt: new Date(Date.now() - 10000),
+        },
+        {
+          routineId,
+          result: RoutineExecutionResult.Failed,
+          createdAt: new Date(Date.now() - 20000),
+        },
+      ])
+
+      await handleRoutineExecutionFinished(
+        modules.dbModule.db,
+        modules.events,
+        modules.logger,
+        routineExecution,
+        executionId,
+      )
+
+      const updatedRoutine = await modules.dbModule.db
+        .select()
+        .from(routinesTable)
+        .where(eq(routinesTable.id, routineId))
+        .get()
+      expect(updatedRoutine?.status).toBe(
+        RoutineStatus.PausedDueToMaxNumberOfFailedExecutions,
+      )
     })
   })
 })

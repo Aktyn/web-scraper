@@ -639,7 +639,7 @@ function parseRoutineFromDb(
   }
 }
 
-async function handleRoutineStatusChange(
+export async function handleRoutineStatusChange(
   db: ApiModuleContext["dbModule"]["db"],
   events: ApiModuleContext["events"],
   routineId: number,
@@ -722,7 +722,7 @@ async function handleRoutineStatusChange(
   return { data }
 }
 
-async function handleRoutineExecutionFinished(
+export async function handleRoutineExecutionFinished(
   db: ApiModuleContext["dbModule"]["db"],
   events: ApiModuleContext["events"],
   logger: ApiModuleContext["logger"],
@@ -778,6 +778,8 @@ async function handleRoutineExecutionFinished(
       .limit(data.pauseAfterNumberOfFailedExecutions)
 
     if (
+      recentRoutineExecutionResults.length >=
+        data.pauseAfterNumberOfFailedExecutions &&
       recentRoutineExecutionResults.every(
         ({ result }) => result === RoutineExecutionResult.Failed,
       )
