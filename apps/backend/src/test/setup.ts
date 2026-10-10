@@ -10,7 +10,7 @@ import { seed } from "../db/seed/seed"
 import { getEventsModule } from "../events/events.module"
 
 const mockConfig: Config = {
-  apiPort: 3001,
+  apiPort: 3003,
   preferences: getDefaultPreferences(),
   updatePreferences: (key, value) => {
     mockConfig.preferences[key] = value

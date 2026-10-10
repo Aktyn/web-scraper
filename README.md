@@ -135,7 +135,7 @@ I'm planning to integrate more suitable LLM in the future: [Holo1](https://huggi
 
 Currently, the only ways to use Web Scraper are through the CLI or the web interface.\
 You can open the web interface at any time through the systray menu.\
-Port (3001 by default) can be changed by setting **API_PORT** environment variable.\
+Port (3003 by default) can be changed by setting **API_PORT** environment variable.\
 *PS: placing **.env** file in the root directory is optional way of setting environment variables.*
 
 ![Web interface](images/tray.webp)

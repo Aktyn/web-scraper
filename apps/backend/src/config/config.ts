@@ -23,7 +23,7 @@ export async function getConfig(dbModule: DbModule) {
   }
 
   return {
-    apiPort: process.env.API_PORT ? parseInt(process.env.API_PORT) : 3001,
+    apiPort: process.env.API_PORT ? parseInt(process.env.API_PORT) : 3003,
     preferences,
     updatePreferences,
     resetPreferences,
