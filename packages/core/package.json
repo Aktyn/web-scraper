@@ -17,29 +17,29 @@
   "dependencies": {
     "@types/node-notifier": "^8.0.5",
     "@web-scraper/common": "*",
-    "is-plain-object": "^5.0.0",
+    "is-plain-object": "^5.1.0",
     "jimp": "^1.6.1",
     "kind-of": "^6.0.3",
-    "node-notifier": "^10.0.1",
-    "ollama": "^0.6.3",
-    "playwright": "1.55.0",
+    "node-notifier": "^11.0.0",
+    "ollama": "^0.6.4",
+    "playwright": "1.64.0",
     "shallow-clone": "^3.0.1",
     "sizzle": "^2.3.10",
-    "zod": "^4.4.3"
+    "zod": "^4.6.5"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
-    "@types/node": "^26.1.2",
+    "@types/node": "^26.6.5",
     "@types/sizzle": "^2.3.10",
     "@typescript/native": "npm:typescript@^7.0.2",
-    "eslint": "^10.8.0",
+    "eslint": "^10.12.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-import": "^2.32.0",
     "eslint-plugin-prettier": "^5.5.6",
-    "globals": "^17.9.0",
-    "prettier": "^3.9.6",
+    "globals": "^17.13.0",
+    "prettier": "^3.9.9",
     "typescript": "npm:@typescript/typescript6@^6.0.2",
-    "typescript-eslint": "^8.66.0",
-    "vitest": "^4.1.10"
+    "typescript-eslint": "^8.71.1",
+    "vitest": "^5.0.3"
   }
 }

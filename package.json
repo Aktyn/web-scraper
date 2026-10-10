@@ -33,14 +33,14 @@
   ],
   "devDependencies": {
     "@tsconfig/recommended": "^1.0.13",
-    "prettier": "^3.9.6",
-    "turbo": "^2.10.11",
+    "prettier": "^3.9.9",
+    "turbo": "^2.11.7",
     "zod-validation-error": "^5.0.0"
   },
   "packageManager": "npm@11.6.2",
   "allowScripts": {
     "esbuild@0.18.20": true,
     "esbuild@0.25.12": true,
-    "esbuild@0.28.1": true
+    "esbuild@0.28.2": true
   }
 }
